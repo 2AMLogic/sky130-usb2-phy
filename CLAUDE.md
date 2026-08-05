@@ -30,7 +30,7 @@ plus an analog front end — so both flows apply.
 
 Copy the digital verification harness pattern from `2AMLogic/sky130-modexp`
 and the analog sim-harness pattern from `2AMLogic/gf180-bandgap` rather than
-reinventing either — see issue #2.
+reinventing either — see issue #3.
 
 <!-- BEGIN LOOM ORCHESTRATION -->
 This repository uses [Loom](https://github.com/rjwalters/loom) for AI-powered development orchestration — see the Loom repository for the full guide (roles, labels, worktrees, configuration). When installed, Loom also writes a locally-substituted copy of that guide to `.loom/CLAUDE.md`.
