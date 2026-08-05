@@ -1,9 +1,11 @@
 # Architecture and partitioning
 
 Status: drafted 2026-08-05, tracks issue #2. Interface requirement numbers
-below are DRAFT — cross-check against `spec/usb2-phy.md` once #1 ratifies
-the target spec; whichever of #1/#2 lands first is an input to the other,
-not an independent source of truth (see both issues' curator notes).
+below were cross-checked against the now-ratified
+[`spec/usb2-phy.md`](usb2-phy.md) (issue #1, ratified 2026-08-05) and agree
+with it — `usb2-phy.md` §6 is the authoritative version of the table below;
+this document's copy is kept for the block-diagram context but should be
+read alongside, not instead of, the ratified spec.
 
 ## Why this document exists
 
@@ -125,9 +127,10 @@ Every "no" row above is a dependency this repo cannot satisfy itself. These
 are the interface requirements this repo hands to whichever sibling repo
 builds each piece — numbers with units, not qualitative descriptions, per
 issue #2's acceptance criteria. Values are drawn from the USB 2.0
-specification (frozen since 2000), Chapter 7 (Electrical). **DRAFT**: cross-
-check against `spec/usb2-phy.md` once #1 ratifies; treat any conflict there
-as authoritative until this document is reconciled.
+specification (frozen since 2000), Chapter 7 (Electrical). These numbers
+have been cross-checked against the ratified `spec/usb2-phy.md` §6 (issue
+#1) and agree with it; that document is the authoritative version if the
+two ever diverge in a future edit.
 
 | Sibling block | Interface requirement | Target value | Notes |
 |---|---|---|---|
@@ -174,10 +177,13 @@ recorded interfaces rather than renegotiating them.
 
 ## Related work
 
-- Issue #1 (target spec ratification) and this issue can be drafted in
-  parallel; neither blocks the other. Cross-check the interface requirement
-  numbers above against `spec/usb2-phy.md` once it lands — see that issue's
-  curator notes for the same cross-reference in the other direction.
+- Issue #1 (target spec ratification) landed after this issue, as planned —
+  the two were drafted in parallel with neither blocking the other. The
+  interface requirement numbers above have been cross-checked against
+  `spec/usb2-phy.md` §6 and agree with it; see that document for the
+  ratified, authoritative version plus the decision log behind the FS/HS,
+  UTMI, clock, supply, and verification-scope calls this partition table
+  assumes.
 - [Vlsir/Usb2Phy](https://github.com/Vlsir/Usb2Phy) built the analog half on
   sky130 and went dormant in February 2023; its partitioning is worth
   comparing against once it is legible from that repo's own state, as a
