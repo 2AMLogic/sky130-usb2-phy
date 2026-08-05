@@ -52,20 +52,18 @@ is the canary's actual job: a block that spans digital synthesis, analog
 design, and the seam between them exercises paths no single-domain block
 reaches.
 
-## Target specification (DRAFT — engineering to ratify, see issue #1)
+## Target specification
 
-| Parameter | Target | Stretch |
-|---|---|---|
-| Signaling | USB 2.0 full-speed, 12 Mbps | high-speed, 480 Mbps |
-| Interface | UTMI | UTMI+ |
-| Supply | 3.3 V I/O, 1.8 V core | — |
-| Reference clock | 12 MHz input, on-chip PLL | — |
-| Verification | bit-exact UTMI-level cocotb suite | link-level compliance testbench |
-| Signoff | DRC + LVS clean | — |
+**Ratified 2026-08-05** — see [`spec/usb2-phy.md`](spec/usb2-phy.md) for the
+full specification: signaling/speed target, UTMI interface, reference clock
+and PLL jitter budget, supply architecture, analog sub-block interface
+requirements, verification scope, and the decision log behind each of those.
+[`spec/architecture.md`](spec/architecture.md) has the block diagram and
+build-here/sibling-canary partition table.
 
 Maturity ladder: spec ratified → UTMI RTL verified → analog blocks available
 → assembly → DRC/LVS-clean → shuttle seat → measured silicon. **Current
-position: pre-spec.**
+position: spec ratified, pre-RTL.**
 
 ## Repo layout
 
