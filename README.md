@@ -71,6 +71,7 @@ position: spec ratified, pre-RTL.**
 spec/          ratified spec + decision records
 rtl/           UTMI-side Verilog sources
 verification/  cocotb testbenches
+flow/          synthesis + P&R recipes (Yosys, OpenROAD), driven through klt
 design/        analog schematics (empty until the sibling blocks land)
 sim/           analog testbenches + PVT corner results (empty for now)
 layout/        GDS + DRC/LVS reports (klayout-tools driven)
