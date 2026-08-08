@@ -1,0 +1,23 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "../rtl/usb_tx_serializer.v",
+    "../rtl/usb_tx_framer.v",
+    "../rtl/usb_bit_stuffer.v",
+    "../rtl/usb_nrzi_encoder.v"
+  ],
+  "hdl_toplevel": "usb_tx_serializer",
+  "testbench": {
+    "module": "test_usb_tx",
+    "testcase": null
+  },
+  "options": {
+    "coverage": false,
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1
+  }
+}

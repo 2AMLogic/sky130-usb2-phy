@@ -177,3 +177,47 @@ What it covers (mapping to issue #13's acceptance criteria):
 unchanged) used only by the offset sweep, which deliberately drives beyond
 the physical USB FS tolerance to find where the design actually breaks —
 see that parameter's docstring.
+
+## `test_usb_tx.py`: the FS transmit-path harness (issue #12)
+
+The first real PHY RTL testbench in this repo (everything above is either
+toolchain plumbing or the shared reference model). `test_usb_tx.py` drives
+`rtl/usb_tx_serializer.v` (which instantiates `rtl/usb_tx_framer.v`,
+`rtl/usb_bit_stuffer.v`, and `rtl/usb_nrzi_encoder.v` — see `rtl/README.md`)
+through its UTMI TX handshake and checks the line-state driver interface
+**bit-identically** against `usbfs.packets`/`usbfs.scenarios` — never
+against a helper written inside the RTL testbench itself, so a passing
+comparison only ever means "the RTL agrees with the independently-verified
+reference," not "the RTL agrees with its own author."
+
+**What it covers**, driven by every scenario in `usbfs.scenarios` plus
+issue #12's own required edge cases:
+
+- Bit-exact DP/DM output for the maximum-length FS payload (64 bytes),
+  the maximum-stuffing (all-ones) and maximum-transition (all-zeros)
+  payloads, a token packet, and a truncated-packet base case.
+- The stuff-bit-immediately-before-EOP edge case, asserted explicitly (not
+  merely covered incidentally by a longer payload).
+- `TxReady` back-pressure timing: a stimulus with one isolated, unambiguous
+  mid-byte stuff bit, verifying the byte-request interval stretches by
+  exactly one bit-time when (and only when) a stuff bit falls within that
+  byte's own 8 bits. Deliberately avoids `all_ones_payload()` for this
+  specific check — see the test's own docstring for why its dense,
+  boundary-straddling stuffing pattern is a bad fit for a *per-byte*
+  timing comparison (the content itself, including that exact pattern, is
+  still fully bit-exact-verified by the payload test above).
+- The bit-stuffing/NRZI bypass mode (`OpMode == 2'b10`, raw/transparent
+  test mode).
+- A negative control: `usbfs.scenarios.missing_stuff_bit()` (the same
+  mutation `test_usbfs_model.py` uses) is demonstrated to disagree with the
+  RTL's correct output, proving the suite's bit-exact comparison can
+  actually fail, not just always pass.
+
+Run it with:
+
+```bash
+klt functional-verification verification/request-usb-tx.json --format json
+```
+
+See `docs/baseline.md` for the measured synthesis result (cell count and
+area) for this design.

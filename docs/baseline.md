@@ -71,3 +71,109 @@ out of scope for this issue per `CLAUDE.md`'s scope-discipline rule.
 (0.67). Filed generically against the tool:
 [2AMLogic/klayout-tools#560](https://github.com/2AMLogic/klayout-tools/issues/560).
 See `docs/environment-setup.md` §4 for the full writeup.
+
+---
+
+# Synthesis record: FS transmit path (issue #12)
+
+**Status: measured, 2026-08-08.** The first synthesis record for real PHY
+digital-layer RTL in this repo (everything above is the toolchain-plumbing
+stub). `rtl/usb_tx_serializer.v` (which instantiates `rtl/usb_tx_framer.v`,
+`rtl/usb_bit_stuffer.v`, and `rtl/usb_nrzi_encoder.v` — see `rtl/README.md`)
+is the FS transmit datapath: UTMI TX handshake, SYNC/EOP packet framing, bit
+stuffing (bypassable), and NRZI encoding.
+
+**Convention note:** issue #12's Deliverables section asks for this record
+"in the convention the physical-flow issue (#11) establishes." As of this
+measurement #11 is still open and has not landed a convention — per that
+issue's own Affected Files guidance, this section reuses the interim
+`klt synthesize` recipe below (the same one `utmi_stub.v`'s baseline above
+uses) rather than blocking on #11.
+
+## The measurement
+
+Same toolchain versions as `utmi_stub.v`'s baseline above (Icarus Verilog
+12.0, cocotb 2.0.1, Yosys 0.67 via `yowasp-yosys`, `sky130_fd_sc_hd` /
+`tt_025C_1v80`, `sky130A` via `volare`, open_pdks commit
+`c6d73a35f524070e85faff4a6a9eef49553ebc2b`).
+
+| Design | Functional verification | sky130 cells | Area (µm²) | Sequential area (µm²) |
+| --- | --- | --- | --- | --- |
+| `usb_tx_serializer.v` — FS transmit datapath (UTMI handshake -> SYNC/EOP framing -> bit stuffing -> NRZI encoding -> line-state driver interface) | 9/9 tests pass | **142** | 1518.9568 | 778.2464 |
+
+**Reading the cell count**: `klt synthesize`'s top-level `instance_count`
+(13) and `instance_counts_by_type` report only the **top module's own**
+scope — 10 standard cells plus 3 un-flattened submodule instance
+references (`usb_bit_stuffer`, `usb_nrzi_encoder`, `usb_tx_framer` each
+counted once, as opaque cells, not their own contents). Yosys' `stat
+-liberty` **does** recursively fold every submodule's own area into the
+top module's `area` figure (`1518.9568` above already **is** the whole
+design's area, matching `area_um2` in `klt synthesize`'s own JSON output —
+no correction needed there), but not its `num_cells`/`num_cells_by_type`
+breakdown. The **142** cell count above is this record's own aggregate:
+every module's `num_cells_by_type` entry, from the same `stat -json`
+sidecar file (`.klt/synthesize/usb_tx_serializer_stats.json`), summed
+while skipping any entry that names a user module (`usb_bit_stuffer`,
+`usb_nrzi_encoder`, `usb_tx_framer`) rather than a `sky130_fd_sc_hd__*`
+leaf cell — see "Reproducing it" below for the exact computation. Of the
+142 cells, 31 are flip-flops (29× `sky130_fd_sc_hd__dfrtp_1` +
+2× `sky130_fd_sc_hd__dfstp_2`, the latter from `usb_nrzi_encoder.v`'s
+`level_out` register, which resets to `1` — a set-type flop, not a
+reset-type one) and 111 are combinational.
+
+**No inferred latches, no combinational loops** (issue #12 acceptance
+criterion): confirmed two ways — (1) the aggregated cell-type breakdown
+above contains no latch primitive (no `sky130_fd_sc_hd__dlx*`/`sky130_fd_sc_hd__dlrtp*`
+entry); (2) a standalone `hierarchy` + `proc` + `opt_clean` + `check
+-noinit` pass (no `synth`/`dfflibmap`/`abc` mapping, so it reports on the
+RTL's own structure directly) prints `Found and reported 0 problems.` for
+every one of the four modules.
+
+## Reproducing it
+
+```bash
+# functional verification (9/9 pass)
+klt functional-verification verification/request-usb-tx.json --format json
+
+# synthesis -- run from a directory outside /tmp, see
+# docs/environment-setup.md §4's yowasp-yosys filesystem note
+mkdir -p ~/scratch/usb_tx_synth && cd ~/scratch/usb_tx_synth
+cp /path/to/sky130-usb2-phy/rtl/usb_tx_serializer.v .
+cp /path/to/sky130-usb2-phy/rtl/usb_tx_framer.v .
+cp /path/to/sky130-usb2-phy/rtl/usb_bit_stuffer.v .
+cp /path/to/sky130-usb2-phy/rtl/usb_nrzi_encoder.v .
+cat > req.json <<'JSON'
+{ "schema": "klt.synthesize.request/1", "engine": "yosys",
+  "sources": ["usb_tx_serializer.v", "usb_tx_framer.v", "usb_bit_stuffer.v", "usb_nrzi_encoder.v"],
+  "hdl_toplevel": "usb_tx_serializer",
+  "pdk": { "cell_library": "sky130_fd_sc_hd", "corner": "tt_025C_1v80" },
+  "constraints": { "clock_period_ns": null } }
+JSON
+PDK=sky130A klt synthesize req.json --format json
+# aggregate the TRUE flat cell count across every module (top-level
+# instance_count/instance_counts_by_type only reflects the top module's
+# own scope, per the "Reading the cell count" note above):
+python3 -c '
+import json
+d = json.load(open(".klt/synthesize/usb_tx_serializer_stats.json"))
+total = 0
+for mod in d["modules"].values():
+    for ctype, cnt in mod["num_cells_by_type"].items():
+        if ctype.startswith("sky130_fd_sc_hd__"):
+            total += cnt
+print(total)
+'
+```
+
+## What this does and does not prove
+
+This is a synthesizability and (aggregate) area/cell-count measurement
+against `sky130_fd_sc_hd` at the nominal (`tt_025C_1v80`) corner — a
+comparison point for the RX path (a future issue) and the eventual top
+level, per issue #12's Deliverables section. It is **not** a timing-closed
+result: `klt synthesize`'s own `--help` documents its `timing` response
+field as always `null` (deferred to a future OpenROAD/OpenSTA step outside
+`klt synthesize`'s own contract), and this record makes no claim about
+which of `spec/decision-records/0001` Decision 5's six committed PVT
+corners this design would close timing against — that is explicitly out of
+scope for this issue and this record.
