@@ -1,0 +1,63 @@
+{
+  "_convention": "Every entry below carries its own 'provenance' field: either a citation into the USB 2.0 Spec Rev 2.0 / the CRC RevEng catalogue, or an explicit statement that this repo derived the value and how. See verification/README.md for the overall golden-vector convention and verification/test_usbfs_model.py for how each entry is consumed.",
+
+  "nrzi_sync": {
+    "description": "NRZI encoding of the USB 2.0 SYNC field byte 0x80 (bits 0,0,0,0,0,0,0,1 transmitted LSB-first), starting from idle line level J.",
+    "provenance": "USB 2.0 Spec Rev 2.0, section 7.1.9: the SYNC field's NRZI pattern is stated directly as 'KJKJKJKK'. Independently re-derived here by hand from the NRZI rule (bit 0 -> transition, bit 1 -> no transition) applied to byte 0x80's LSB-first bits starting from idle J, and cross-checked to match the spec's stated pattern -- see test_usbfs_model.py::test_nrzi_sync_known_vector.",
+    "input_byte": 128,
+    "input_bits_lsb_first": [0, 0, 0, 0, 0, 0, 0, 1],
+    "start_level": "J",
+    "expected_levels": ["K", "J", "K", "J", "K", "J", "K", "K"]
+  },
+
+  "crc5_usb_check": {
+    "description": "CRC-5/USB 'check' value: the CRC-5 (USB 2.0 Spec Rev 2.0 section 8.3.5, poly x^5+x^2+1, LSB-first bit-serial convention: init all-ones, reflected input, complement output) computed over the ASCII bytes '123456789'.",
+    "provenance": "CRC RevEng catalogue (https://reveng.sourceforge.io/crc-catalogue/) entry 'CRC-5/USB': width=5 poly=0x05 init=0x1f refin=true refout=true xorout=0x1f check=0x19 residue=0x06. 'check' is the catalogue-standard self-test value (CRC of ASCII \"123456789\"), used across many independent CRC implementations/libraries as a portable known-answer vector. Same generator polynomial and bit-ordering as USB 2.0 section 8.3.5.",
+    "input_ascii": "123456789",
+    "expected_check": 25
+  },
+
+  "crc16_usb_check": {
+    "description": "CRC-16/USB 'check' value, computed the same way as crc5_usb_check but with the CRC-16 (poly x^16+x^15+x^2+1) parameters USB 2.0 uses for the data-packet CRC.",
+    "provenance": "CRC RevEng catalogue entry 'CRC-16/USB': width=16 poly=0x8005 init=0xffff refin=true refout=true xorout=0xffff check=0xb4c8 residue=0xb001.",
+    "input_ascii": "123456789",
+    "expected_check": 46280
+  },
+
+  "crc5_usb_residue": {
+    "description": "CRC-5/USB residue: recomputing CRC5 (with xorout=0) over any field's bits followed by its own correct CRC5 bits always yields this fixed value -- the invariant `packets.parse()` uses to check a received CRC.",
+    "provenance": "CRC RevEng catalogue 'CRC-5/USB' residue=0x06. Verified in this repo to be constant across many distinct inputs, not just asserted -- see test_usbfs_model.py::test_crc5_residue_invariant_random.",
+    "expected_residue": 6
+  },
+
+  "crc16_usb_residue": {
+    "description": "CRC-16/USB residue, same invariant as crc5_usb_residue.",
+    "provenance": "CRC RevEng catalogue 'CRC-16/USB' residue=0xb001.",
+    "expected_residue": 45057
+  },
+
+  "token_crc5_worked_example": {
+    "description": "CRC5 over an 11-bit ADDR(7)+ENDP(4) token field, ADDR=0x3A ENDP=0xA (both LSB-first, concatenated ADDR then ENDP per USB 2.0 section 8.3.5's token field layout).",
+    "provenance": "Derived in this repo: no USB 2.0 spec worked example for a specific ADDR/ENDP token CRC5 value was available in this environment to cite directly, so this vector was computed with the same CRC-5/USB parameters already independently validated against the RevEng check/residue vectors above (crc5_usb_check, crc5_usb_residue), and cross-checked via the residue invariant: crc5_residue(field_bits + crc5_bits(field_bits)) == 0x06 for this exact field. See test_usbfs_model.py::test_token_crc5_worked_example.",
+    "addr": 58,
+    "endp": 10,
+    "field_bits_lsb_first": [0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1],
+    "expected_crc5": 7
+  },
+
+  "bit_stuffing_six_ones": {
+    "description": "Bit stuffing over a bit stream containing exactly one run of six consecutive 1s: a 0 is inserted immediately after the sixth 1.",
+    "provenance": "USB 2.0 Spec Rev 2.0, section 7.1.9, stated directly: 'a zero is inserted after every six consecutive ones in the data stream before the data is NRZI encoded.' This vector applies that rule by hand to a minimal input.",
+    "input_bits_lsb_first": [1, 0, 1, 1, 1, 1, 1, 1],
+    "expected_stuffed_bits": [1, 0, 1, 1, 1, 1, 1, 1, 0]
+  },
+
+  "stuff_before_eop_data_packet": {
+    "description": "DATA0 packet, single payload byte 0xF9, whose bit-stuffed PID+payload+CRC16 field ends with a forced stuff bit (0) as its very last bit -- immediately preceding where EOP is placed. This is the edge case spec/architecture.md names by hand: a run of six consecutive 1s that reaches all the way to the end of the protected field, not just somewhere in its middle.",
+    "provenance": "Found by exhaustive, deterministic search over all 256 possible 1-byte DATA0 payloads for the first whose bit-stuffed raw stream's final bit is an inserted stuff bit; reproducible via `usbfs.scenarios.find_stuff_before_eop_payload()`, which test_usbfs_model.py asserts reproduces this exact payload.",
+    "pid": "DATA0",
+    "payload_bytes": [249],
+    "raw_bit_count_before_stuffing": 32,
+    "raw_bit_count_after_stuffing": 33
+  }
+}
