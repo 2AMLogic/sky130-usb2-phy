@@ -1944,8 +1944,21 @@ function is_interpreter_opener(line,   n, segs, i, seg, m, toks, j, base) {
         }
         if (j > m) continue
         base = _interp_basename(toks[j])
-        if (base ~ /^(bash|sh|zsh|dash|ksh|python[0-9.]*|perl|ruby|node|nodejs|eval|source|\.)$/)
+        # SHELL-family interpreters: `>`/`>>` inside the heredoc body is
+        # genuinely live shell-redirection syntax, so the body MUST stay
+        # visible to the write-idiom scan (extract_write_targets()).
+        if (base ~ /^(bash|sh|zsh|dash|ksh|eval|source|\.)$/)
             return 1
+        # Non-shell SCRIPT interpreters: `>`/`>>`/`>>=` inside the body are
+        # ordinary comparison/bit-shift OPERATORS in these languages, never
+        # shell redirection (#16) -- this segment alone does not force the
+        # body visible; use `continue` (rather than `return 0`) so a LATER
+        # segment on the same line that IS shell-family (e.g. a chained
+        # `python3 <<A ; bash <<B` -- rare, but the loop is an ANY-of check
+        # across segments) still gets the correct answer instead of being
+        # short-circuited by this segment alone.
+        if (base ~ /^(python[0-9.]*|perl|ruby|node|nodejs)$/)
+            continue
         # (3) Fail CLOSED on a command word that resolves to no name at all --
         # a variable / command substitution, or an empty word. See the
         # FAIL-CLOSED TAIL note above: resolvable-but-unknown command words
