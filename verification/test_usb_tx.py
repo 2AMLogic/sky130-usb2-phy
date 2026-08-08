@@ -279,7 +279,9 @@ async def test_txready_backpressure_stretches_by_one_bit_time_on_stuff(dut):
     cumulative = [0] * (n_bytes + 1)
     for i in range(1, n_bytes + 1):
         cumulative[i] = len(stuffing.stuff(raw[: 8 * i]))
-    expected_bits_per_byte = [cumulative[i] - cumulative[i - 1] for i in range(1, n_bytes + 1)]
+    expected_bits_per_byte = [
+        cumulative[i] - cumulative[i - 1] for i in range(1, n_bytes + 1)
+    ]
 
     assert any(n == 9 for n in expected_bits_per_byte), (
         "test setup error: all_ones_payload should force at least one "
@@ -294,7 +296,9 @@ async def test_txready_backpressure_stretches_by_one_bit_time_on_stuff(dut):
 
     data_bytes = bits_to_bytes(raw)
     capture_times = []
-    send_task = cocotb.start_soon(send_bytes(dut, data_bytes, capture_times=capture_times))
+    send_task = cocotb.start_soon(
+        send_bytes(dut, data_bytes, capture_times=capture_times)
+    )
     await collect_line_states(dut)
     await send_task
 
@@ -335,7 +339,8 @@ def _raw_mode_expected(payload_bytes):
     body bits are placed directly onto the line (bit value == J/K level,
     no NRZI transform, no stuffing); EOP is unaffected by OpMode."""
     sync_states = [
-        level_to_state(level) for level in nrzi_encode(bits_of_byte(SYNC_BYTE), start_level=1)
+        level_to_state(level)
+        for level in nrzi_encode(bits_of_byte(SYNC_BYTE), start_level=1)
     ]
     body_states = [level_to_state(bit) for bit in bytes_to_bits(payload_bytes)]
     return sync_states + body_states + list(EOP_STATES)
@@ -383,5 +388,7 @@ async def test_negative_control_missing_stuff_bit_would_be_caught(dut):
     observed = await _run_scenario(dut, scenario)
     assert observed == scenario.states
 
-    mutated = scenarios.missing_stuff_bit(scenario.fields["pid"], payload=scenario.payload)
+    mutated = scenarios.missing_stuff_bit(
+        scenario.fields["pid"], payload=scenario.payload
+    )
     assert observed != mutated, "negative control did not fail as expected"
