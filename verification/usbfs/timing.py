@@ -40,8 +40,17 @@ class TimingConfig:
     and reproducible given `rng`'s seed.
     """
 
-    def __init__(self, freq_offset_ppm=0.0, bit_jitter_ns=0.0, rng=None):
-        if abs(freq_offset_ppm) > MAX_FREQ_OFFSET_PPM:
+    def __init__(self, freq_offset_ppm=0.0, bit_jitter_ns=0.0, rng=None,
+                 allow_out_of_spec=False):
+        """`allow_out_of_spec`: bypasses the +/-2500 ppm physical-tolerance
+        check below. Exists solely for margin-exploration sweeps (e.g.
+        issue #13's `test_offset_sweep_finds_first_failure`) that
+        deliberately drive a receive path *beyond* any real USB FS device's
+        possible clock offset to locate the design's actual failure point --
+        never set this to claim a device could really run this far out of
+        tolerance; that claim is exactly what the default (False) check
+        exists to prevent."""
+        if not allow_out_of_spec and abs(freq_offset_ppm) > MAX_FREQ_OFFSET_PPM:
             raise ValueError(
                 f"freq_offset_ppm={freq_offset_ppm} exceeds the USB FS reference-clock "
                 f"tolerance of +/-{MAX_FREQ_OFFSET_PPM} ppm (USB 2.0 section 7.1.11)"

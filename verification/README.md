@@ -63,12 +63,14 @@ the §7 "ideal transceiver" case is the default, and non-ideality is opt-in.
 
 ### Stimulus scenarios and negative controls
 
-`usbfs/scenarios.py` builds six named scenarios: a maximum-length (64-byte,
-FS bulk max) payload, a payload chosen to force a bit-stuff immediately
-before EOP, an all-ones payload (maximum stuffing density), an all-zeros
-payload (maximum NRZI transition density), a token packet used as the base
-case for a corrupted-CRC negative control, and a packet used as the base
-case for a truncated-packet negative control.
+`usbfs/scenarios.py` builds named scenarios: a maximum-length (64-byte, FS
+bulk max) payload, a maximum-length (1023-byte, FS isochronous max) payload
+(added by issue #13, for the worst-case drift-accumulation window decision
+record #9's RX-FIFO-depth derivation uses), a payload chosen to force a
+bit-stuff immediately before EOP, an all-ones payload (maximum stuffing
+density), an all-zeros payload (maximum NRZI transition density), a token
+packet used as the base case for a corrupted-CRC negative control, and a
+packet used as the base case for a truncated-packet negative control.
 
 Every scenario is paired with a **negative control** — one of three
 mutations (`flip_crc_bit`, `missing_stuff_bit`, `invert_nrzi_polarity`) or
@@ -127,3 +129,51 @@ digital-layer RTL. The two tests it runs demonstrate `IdealTransceiver`
 driving and monitoring DP/DM in the same test (round-tripping the
 stuff-bit-before-EOP scenario through the loopback), and the timing knobs
 exercised at a non-zero setting against a live simulator.
+
+## `test_usb_rx.py`: the FS receive-path RTL suite (issue #13)
+
+`rtl/usb_bit_sync.v` .. `rtl/usb_rx_cdc.v` (see `rtl/README.md`'s module
+table), integrated as `rtl/usb_rx_path.v`, checked against `usbfs`'s
+reference model with non-ideality knobs turned **on** — the point of issue
+#13 is specifically the frequency-offset behavior, not just zero-offset
+bit-exactness.
+
+```bash
+klt functional-verification verification/request-usb-rx.json --format json
+```
+
+What it covers (mapping to issue #13's acceptance criteria):
+
+- **Bit-exact zero-offset reception** for every scenario in
+  `usbfs.scenarios` (`test_zero_offset_*`), including the 1023-byte FS
+  isochronous max-length payload (`usbfs.scenarios.max_length_isochronous_payload`,
+  added by this issue).
+- **Frequency-offset tolerance**: ±0.25% (2500 ppm) each endpoint alone
+  (`test_offset_host_plus_quarter_percent` / `_minus_quarter_percent`), and
+  ±0.5% combined with host/device offset in opposite directions, both
+  pairings (`test_offset_combined_half_percent_host_fast` /
+  `_host_slow`) — against the max-length isochronous payload, per the
+  decision record's own FIFO-depth worst-case window.
+- **Offset sweep**: `test_offset_sweep_finds_first_failure` locates the
+  design's actual first-failing combined offset (measured well beyond the
+  required ±0.5% bound); see `docs/bit-sync-budget.md` for the full
+  derivation and the measured result.
+- **SOP lock from all 12 oversampling phases**
+  (`test_sop_lock_all_oversample_phases`).
+- **Bit-stuff violation -> `RxError`, no silent corruption**
+  (`test_bit_stuff_violation_asserts_rxerror`, paired with a negative
+  control, `test_no_bit_stuff_violation_on_clean_all_ones`).
+- **EOP detection / `RxActive` deassertion at the correct byte boundary**
+  (`test_eop_deasserts_rxactive_at_correct_boundary`).
+- **`LineState` matches the driven sequence** (`test_linestate_matches_driven_sequence`,
+  using a latency-agnostic de-duplicated-subsequence comparison — see the
+  test file's module docstring for why an absolute-timestamp comparison
+  would be too tight given the CDC latency involved).
+- **Bus reset (sustained SE0) / suspend (sustained idle J) detection**
+  (`test_bus_reset_detected_on_sustained_se0`, `test_suspend_detected_on_sustained_idle_j`).
+
+`verification/usbfs/timing.py`'s `TimingConfig` gained an
+`allow_out_of_spec` escape hatch (default `False`, existing behavior
+unchanged) used only by the offset sweep, which deliberately drives beyond
+the physical USB FS tolerance to find where the design actually breaks —
+see that parameter's docstring.

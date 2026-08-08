@@ -25,6 +25,15 @@ RANDOM_SEED = 20260807
 # USB 2.0 Spec Rev 2.0 Table 5-5: FS bulk endpoint maximum packet size.
 FS_MAX_PACKET_SIZE = 64
 
+# USB 2.0 Spec Rev 2.0: largest single FS transaction is an isochronous data
+# payload of up to 1023 bytes -- the worst-case drift-accumulation window
+# spec/decision-records/0001-clocking-cdc-jitter-metric-and-pvt-envelope.md
+# Decision 3's RX-FIFO-depth derivation uses (682 us at 12 Mbps). Added here
+# (rather than built ad hoc in a testbench) per issue #13's Test Plan, so the
+# RX-path (#13) and TX-path (#12) RTL issues can share one canonical
+# maximum-length-payload scenario instead of each rebuilding it.
+FS_MAX_ISOCHRONOUS_PACKET_SIZE = 1023
+
 # Found by `find_stuff_before_eop_payload()` below; see
 # verification/golden/vectors.json's `stuff_before_eop_data_packet` entry.
 STUFF_BEFORE_EOP_PAYLOAD = bytes([0xF9])
@@ -60,6 +69,26 @@ def max_length_bulk_payload(rng_seed=RANDOM_SEED):
         payload,
         f"{FS_MAX_PACKET_SIZE}-byte (FS bulk max, USB 2.0 Table 5-5) DATA1 "
         f"payload, pseudo-random content seeded with {rng_seed}.",
+    )
+
+
+def max_length_isochronous_payload(rng_seed=RANDOM_SEED):
+    """The 1023-byte (FS isochronous max, USB 2.0) DATA1 payload used to
+    stress drift accumulation over the longest single FS transaction --
+    see `FS_MAX_ISOCHRONOUS_PACKET_SIZE`'s module-level docstring."""
+    rng = random.Random(rng_seed)
+    payload = bytes(rng.randrange(256) for _ in range(FS_MAX_ISOCHRONOUS_PACKET_SIZE))
+    states, fields = _build_data("DATA1", payload)
+    return Scenario(
+        "max_length_isochronous_payload",
+        states,
+        fields,
+        payload,
+        f"{FS_MAX_ISOCHRONOUS_PACKET_SIZE}-byte (FS isochronous max) DATA1 "
+        f"payload, pseudo-random content seeded with {rng_seed}. The "
+        f"largest single FS transaction USB 2.0 defines -- the "
+        f"drift-accumulation worst case Decision 3 of the clocking/CDC "
+        f"decision record sizes the RX byte FIFO against.",
     )
 
 
