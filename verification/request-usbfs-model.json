@@ -1,0 +1,20 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "usbfs_dp_dm_loopback.v"
+  ],
+  "hdl_toplevel": "usbfs_dp_dm_loopback",
+  "testbench": {
+    "module": "test_usbfs_loopback",
+    "testcase": null
+  },
+  "options": {
+    "coverage": false,
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1
+  }
+}
