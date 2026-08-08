@@ -172,6 +172,22 @@ async def test_max_length_bulk_payload(dut):
 
 
 @cocotb.test()
+async def test_max_length_isochronous_payload(dut):
+    """Max-length FS isochronous payload (1023 bytes, USB 2.0 FS
+    isochronous max, `usbfs.scenarios.FS_MAX_ISOCHRONOUS_PACKET_SIZE`) --
+    added to the shared `usbfs.scenarios` library by issue #13 for the
+    RX-side drift-accumulation worst case, but it is still a scenario in
+    the library this issue's own acceptance criterion covers ("for every
+    scenario in the reference model's library..."), and it independently
+    re-confirms the no-under-run/no-dropped-byte property (this issue's
+    own criterion) over a stream 16x longer than the 64-byte bulk-max
+    case above."""
+    scenario = scenarios.max_length_isochronous_payload()
+    observed = await _run_scenario(dut, scenario)
+    assert observed == scenario.states
+
+
+@cocotb.test()
 async def test_all_ones_payload_max_stuffing(dut):
     """All-ones payload: maximum bit-stuffing density (a stuff bit every 6
     payload bits throughout)."""

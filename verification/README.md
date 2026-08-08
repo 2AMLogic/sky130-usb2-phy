@@ -193,8 +193,11 @@ reference," not "the RTL agrees with its own author."
 **What it covers**, driven by every scenario in `usbfs.scenarios` plus
 issue #12's own required edge cases:
 
-- Bit-exact DP/DM output for the maximum-length FS payload (64 bytes),
-  the maximum-stuffing (all-ones) and maximum-transition (all-zeros)
+- Bit-exact DP/DM output for the maximum-length FS bulk payload (64 bytes),
+  the maximum-length FS isochronous payload (1023 bytes — added to the
+  shared `usbfs.scenarios` library by issue #13, but still a scenario this
+  suite's "every scenario in the library" criterion covers), the
+  maximum-stuffing (all-ones) and maximum-transition (all-zeros)
   payloads, a token packet, and a truncated-packet base case.
 - The stuff-bit-immediately-before-EOP edge case, asserted explicitly (not
   merely covered incidentally by a longer payload).

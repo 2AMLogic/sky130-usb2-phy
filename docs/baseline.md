@@ -99,7 +99,7 @@ Same toolchain versions as `utmi_stub.v`'s baseline above (Icarus Verilog
 
 | Design | Functional verification | sky130 cells | Area (µm²) | Sequential area (µm²) |
 | --- | --- | --- | --- | --- |
-| `usb_tx_serializer.v` — FS transmit datapath (UTMI handshake -> SYNC/EOP framing -> bit stuffing -> NRZI encoding -> line-state driver interface) | 9/9 tests pass | **142** | 1518.9568 | 778.2464 |
+| `usb_tx_serializer.v` — FS transmit datapath (UTMI handshake -> SYNC/EOP framing -> bit stuffing -> NRZI encoding -> line-state driver interface) | 10/10 tests pass | **142** | 1518.9568 | 778.2464 |
 
 **Reading the cell count**: `klt synthesize`'s top-level `instance_count`
 (13) and `instance_counts_by_type` report only the **top module's own**
@@ -132,7 +132,7 @@ every one of the four modules.
 ## Reproducing it
 
 ```bash
-# functional verification (9/9 pass)
+# functional verification (10/10 pass)
 klt functional-verification verification/request-usb-tx.json --format json
 
 # synthesis -- run from a directory outside /tmp, see
