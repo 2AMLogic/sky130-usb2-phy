@@ -6,9 +6,11 @@ PDK, designed by AI agents driving
 open-source flow — cocotb + Icarus and Yosys/OpenROAD on the digital side,
 xschem + ngspice on the analog side.
 
-**Status: just opened, specification phase.** Nothing is designed yet. This
-repo currently holds no RTL, no schematics, and no layout. See the scope note
-below for what is deliberately *not* being built yet.
+**Status: digital UTMI-side RTL in progress.** The full-speed receive and
+transmit paths (bit sync, NRZI encode/decode, (de)stuffing, framing, UTMI CDC)
+are implemented and verified under cocotb; the analog front end and layout do
+not exist yet. See the scope note below for what is deliberately *not* being
+built yet.
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -63,7 +65,8 @@ build-here/sibling-canary partition table.
 
 Maturity ladder: spec ratified → UTMI RTL verified → analog blocks available
 → assembly → DRC/LVS-clean → shuttle seat → measured silicon. **Current
-position: spec ratified, pre-RTL.**
+position: spec ratified, FS receive/transmit RTL implemented and
+cocotb-verified; no physical flow (synthesis/P&R/DRC/LVS) run yet.**
 
 ## Repo layout
 
