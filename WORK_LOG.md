@@ -5,6 +5,7 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-08-15
 
+- **Issue #29** (closed): T1/bronze checklist re-read against current evidence (2026-08-15)
 - **Issue #25** (closed): Wire up package.json check scripts to real verification, or remove them: they currently lie about running checks
 - **PR #26**: fix: wire package.json check scripts to real verification, or remove them
 
