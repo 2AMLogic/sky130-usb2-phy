@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-08-15
+
+- **Issue #25** (closed): Wire up package.json check scripts to real verification, or remove them: they currently lie about running checks
+- **PR #26**: fix: wire package.json check scripts to real verification, or remove them
+
 ### 2026-08-11
 
 - **Issue #19** (closed): Guard: worktree-write-confinement-unresolved-var denies mktemp-rooted rm cleanup it cannot statically resolve
