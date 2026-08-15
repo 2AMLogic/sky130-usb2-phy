@@ -16,7 +16,7 @@ _None._
 
 Issues flagged as highest priority (`loom:urgent`).
 
-- **#29**: T1/bronze checklist re-read against current evidence (2026-08-15)
+_None._
 
 ## Ready
 
@@ -28,7 +28,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#29**: T1/bronze checklist re-read against current evidence (2026-08-15)
+_None._
 
 ## PRs Awaiting Review
 
@@ -61,9 +61,9 @@ _None._
 | Tier | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Urgent | 1 |
+| Urgent | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 0 |
