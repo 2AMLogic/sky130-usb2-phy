@@ -11,6 +11,8 @@ __pycache__/
 sim/build/
 # synthesis / P&R scratch
 flow/build/
+# klt functional-verification scratch (created by npm run check:ci)
+verification/.klt/
 # local klt install, created by the setup script
 .venv/
 # >>> loom-managed (do not edit) >>>

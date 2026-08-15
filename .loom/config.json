@@ -11,6 +11,11 @@
   "runtimes": {
     "default": "claude"
   },
+  "buildGate": {
+    "enabled": true,
+    "command": "npm run check:ci",
+    "timeoutSeconds": 600
+  },
   "autonomous": {
     "roleRunner": {
       "enabled": true,
