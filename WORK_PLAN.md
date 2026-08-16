@@ -28,7 +28,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#42**: Auditor Capability Request: cocotb unavailable in klt's tool venv on this host (Python 3.14, cocotb needs <=3.13) -- Layer 2 RTL tests unvalidated
 
 ## PRs Awaiting Review
 
@@ -63,7 +63,7 @@ _None._
 | Operator merge-risk holds | 0 |
 | Urgent | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 0 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 0 |
