@@ -3,6 +3,15 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-08-16
+
+- **Issue #39** (closed): Add a CI workflow that runs the verification harness on every PR (T1 item 10)
+- **PR #43**: ci: add GitHub Actions workflow running the verification suite on every PR
+- **Issue #34** (closed): Decompose the T1 re-read's failing items (#29) into dispatchable issues
+- **Issue #41** (closed): scratch permission probe - safe to delete
+- **Issue #35** (closed): Docs: dedupe hand-maintained interface-requirements table in spec/architecture.md
+- **PR #36**: docs: dedupe interface-requirements table in spec/architecture.md
+
 ### 2026-08-15
 
 - **Issue #29** (closed): T1/bronze checklist re-read against current evidence (2026-08-15)
