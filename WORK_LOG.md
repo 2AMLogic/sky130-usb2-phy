@@ -5,6 +5,7 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-08-16
 
+- **Issue #42** (closed): Auditor Capability Request: cocotb unavailable in klt's tool venv on this host (Python 3.14, cocotb needs <=3.13) -- Layer 2 RTL tests unvalidated
 - **Issue #39** (closed): Add a CI workflow that runs the verification harness on every PR (T1 item 10)
 - **PR #43**: ci: add GitHub Actions workflow running the verification suite on every PR
 - **Issue #34** (closed): Decompose the T1 re-read's failing items (#29) into dispatchable issues
