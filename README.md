@@ -1,5 +1,7 @@
 # sky130-usb2-phy
 
+[![CI](https://github.com/2AMLogic/sky130-usb2-phy/actions/workflows/ci.yml/badge.svg)](https://github.com/2AMLogic/sky130-usb2-phy/actions/workflows/ci.yml)
+
 A USB 2.0 PHY on the [sky130](https://github.com/google/skywater-pdk) open
 PDK, designed by AI agents driving
 [klayout-tools](https://github.com/2AMLogic/klayout-tools) and the
@@ -80,6 +82,15 @@ sim/           analog testbenches + PVT corner results (empty for now)
 layout/        GDS + DRC/LVS reports (klayout-tools driven)
 measurements/  silicon characterization (empty until tape-out)
 ```
+
+## Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `npm run
+check:ci` on every pull request and push to `main`, bootstrapping Icarus
+Verilog, `klt`, and cocotb so both the pytest and cocotb/RTL layers of the
+verification suite actually run — see
+[`verification/README.md`](verification/README.md#ci-coverage-githubworkflowsciyml)
+for exactly what is (and, on purpose, is not) exercised in CI.
 
 ## License
 

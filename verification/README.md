@@ -3,6 +3,31 @@
 cocotb testbenches and Icarus cross-checks. Recorded results are append-only
 evidence.
 
+## CI coverage (`.github/workflows/ci.yml`)
+
+Every pull request and push to `main` runs `npm run check:ci`
+(`scripts/check-ci.sh`) via GitHub Actions. The workflow bootstraps Icarus
+Verilog, `klt`, and cocotb (injected into `klt`'s own tool venv) from a clean
+`ubuntu-latest` runner — the same recipe as `docs/environment-setup.md`
+§§2–3 — so **both** layers `check-ci.sh` drives actually run in CI, not just
+the pytest layer:
+
+- Layer 1/3 (`verification/test_usbfs_model.py`, pytest) — protocol
+  reference + packet builders.
+- Layer 2 + RTL (`klt functional-verification` against every
+  `verification/request-*.json`) — the cocotb/Icarus testbenches
+  (`test_utmi_stub`, `test_usbfs_loopback`, `test_usb_rx`, `test_usb_tx`).
+
+**Not installed in CI, on purpose:** Yosys (`yowasp-yosys`) and the sky130A
+PDK (`volare fetch`/`enable`), the other two pieces of
+`docs/environment-setup.md`'s full bootstrap. `npm run check:ci` never calls
+`klt synthesize` — none of the `request-*.json` files drive a synthesis
+request, and none of the RTL under test instantiates `sky130_fd_sc_hd`
+cells — so the synthesis smoke test in `docs/environment-setup.md` §8 /
+`docs/baseline.md` is out of scope for this CI job. If a future issue folds
+a synthesis check into `npm run check:ci`, this job's toolchain bootstrap
+will need those two steps added back in.
+
 ## Harness plumbing
 
 - `test_utmi_stub.py` — cocotb testbench for `rtl/utmi_stub.v`, a trivial
