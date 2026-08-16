@@ -1,0 +1,91 @@
+name: CI
+
+# Runs this repo's real verification suite (`npm run check:ci`, wired to
+# `scripts/check-ci.sh`) on every pull request and on every push to `main`.
+# See verification/README.md and docs/environment-setup.md for what the
+# suite covers and how to reproduce it locally.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-ci:
+    name: verification suite (npm run check:ci)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # Layer 1/3 (verification/test_usbfs_model.py, pytest): protocol
+      # reference + packet builders, no simulator required. actions/setup-python
+      # gives us a pip that isn't PEP-668 "externally managed" (unlike the
+      # distro python3 on the runner), so a plain `pip install` works.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest (Layer 1/3 dependency)
+        run: python3 -m pip install pytest
+
+      # --------------------------------------------------------------------
+      # Layer 2 (cocotb/Icarus RTL testbenches, driven through `klt
+      # functional-verification`): bootstrap the same toolchain documented,
+      # verbatim, in docs/environment-setup.md, so this layer actually runs
+      # in CI instead of being silently skipped (scripts/check-ci.sh skips
+      # it with a warning -- but still exits 0 -- whenever `klt` is absent
+      # from PATH; without the steps below, this job would only be
+      # exercising the pytest layer while still reporting green).
+      #
+      # Deliberately NOT installed here: Yosys (`yowasp-yosys`) and the
+      # sky130A PDK (`volare fetch`). Both are part of environment-setup.md's
+      # full bootstrap, but they back `klt synthesize` (the docs/baseline.md
+      # synthesis smoke test), which `scripts/check-ci.sh` never invokes --
+      # it only calls `klt functional-verification` against the
+      # `verification/request-*.json` cocotb testbenches, none of which
+      # instantiate sky130 standard cells. Installing a PDK toolchain this
+      # suite never exercises would add CI runtime/flakiness for zero
+      # additional coverage, so it's left out on purpose. If a future issue
+      # adds a synthesis check to `npm run check:ci`, this job will need
+      # those steps added back in -- see docs/environment-setup.md ss4-5.
+      # --------------------------------------------------------------------
+
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+          iverilog -V
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install klt (klayout-tools)
+        run: |
+          uv tool install klayout-tools
+          echo "$(uv tool dir --bin)" >> "$GITHUB_PATH"
+
+      - name: Install cocotb into klt's own tool venv
+        run: |
+          uv pip install --python "$(uv tool dir)/klayout-tools/bin/python" cocotb
+          "$(uv tool dir)/klayout-tools/bin/python" -c "import cocotb; print(cocotb.__version__)"
+
+      - name: Confirm the RTL-layer toolchain is on PATH
+        run: |
+          klt --version
+          iverilog -V
+
+      # --------------------------------------------------------------------
+      # Run the real verification suite. This must invoke the same command
+      # a human/agent runs locally (`npm run check:ci` -> scripts/check-ci.sh)
+      # -- not a stub -- so it fails the PR check whenever either layer
+      # fails.
+      # --------------------------------------------------------------------
+      - name: Run verification suite (npm run check:ci)
+        run: npm run check:ci
