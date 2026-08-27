@@ -183,8 +183,9 @@ duplicate it inline.
 
 Post a single PR review comment (or, for a dry run against a closed/still-
 open historical case with no live PR review to post into, a document in
-[`dry-runs/`](dry-runs/) shaped the same way minus the PR-review wrapper)
-with this structure:
+`dry-runs/` — created on first use; this directory is not present in this
+repo until then — shaped the same way minus the PR-review wrapper) with this
+structure:
 
 ```markdown
 <!-- RATIFY-KEY: ee verdict=<approve|request-changes> block=<repo>#<PR-or-issue> reviewer=<agent-id> date=<ISO-8601> -->
