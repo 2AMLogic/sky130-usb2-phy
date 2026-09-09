@@ -7,7 +7,9 @@ UTMI-side Verilog sources.
   `spec/usb2-phy.md` §3). **Not** the real UTMI digital layer — it exists
   solely to prove the cocotb/Icarus + Yosys toolchain works end-to-end in
   this repo (issue #3). The measured synthesis baseline for this stub is
-  recorded in `docs/baseline.md`.
+  recorded in `docs/baseline.md`. The real UTMI digital layer is
+  `usb_utmi_top.v` (below), which is the `hdl_toplevel` any flow work should
+  target; this stub stays only as the toolchain-plumbing proof.
 
 ## FS receive path (issue #13)
 
@@ -59,10 +61,48 @@ threshold is demonstrated to make the suite fail). See
 `verification/test_usb_tx.py` and `verification/README.md`.
 
 **Clock-domain-crossing note:** `TxValid`/`TxReady`/`DataOut`/`OpMode` are
-presented here as already-synchronized 144 MHz-domain signals, per
-`spec/decision-records/0001` Decision 3's per-signal CDC table (which
-specifies 2-flop synchronizers crossing these to/from the 30 MHz UTMI
-domain). The synchronizer instances themselves, and the top-level module
-that would instantiate this serializer alongside 30 MHz-domain UTMI ports,
-are integration-level work for a future issue — out of this issue's stated
-deliverables.
+presented *at this module's own ports* as already-synchronized 144 MHz-domain
+signals, per `spec/decision-records/0001` Decision 3's per-signal CDC table
+(which specifies 2-flop synchronizers crossing these to/from the 30 MHz UTMI
+domain). Those synchronizer instances live one level up, in
+`usb_utmi_top.v` (below), which is what a link controller actually connects
+to; `usb_tx_serializer.v` itself is unchanged by that integration.
+
+## The UTMI digital top (issue #52)
+
+`usb_utmi_top.v` is **the** HDL toplevel for this repo's digital half — the
+module `verification/request-usb-utmi_top.json` drives, and the
+`hdl_toplevel` a synthesis / place-and-route flow should target (it replaces
+`utmi_stub.v`, which was only ever toolchain-plumbing for issue #3).
+
+| Module | Clock domain | Implements |
+|---|---|---|
+| `usb_utmi_top.v` | Both (integration top) | Instantiates `usb_tx_serializer.v` and `usb_rx_path.v` **unmodified**, exposes decision record #9 Decision 4's full UTMI port table (`Clock`, `Reset`, `TxValid`/`TxReady`/`DataOut[7:0]`, `RxValid`/`RxActive`/`RxError`/`DataIn[7:0]`, `LineState[1:0]`, `OpMode[1:0]`, `TermSelect`, `XcvrSelect[1:0]`, `SuspendM`) alongside the pad-side interface owed to the sibling analog canaries (`dp`/`dm` in, `tx_drive_en`/`tx_oe`/`tx_dp`/`tx_dn` out, `spec/usb2-phy.md` §6), and adds the TX-side 30↔144 MHz crossings and per-domain reset synchronizers Decision 3's CDC table specifies. |
+
+What the top adds on top of the two datapaths (all derived in its header
+comment, which cross-references every port to Decision 4's table row):
+
+- **30 → 144 MHz**: 2-flop synchronizers on `TxValid`, `DataOut[7:0]`,
+  `OpMode[1:0]`, `TermSelect`, `XcvrSelect[1:0]`, `SuspendM`, plus one
+  destination-domain skew-guard flop on `TxValid` (not a third synchronizer
+  stage) so `DataOut` is settled in the 144 MHz domain before the serializer
+  is told a byte is available.
+- **144 → 30 MHz `TxReady`**: a toggle (pulse) synchronizer — Decision 3's
+  2-flop synchronizer on a level, plus a destination-domain edge detector —
+  producing a **one-`Clock`-cycle** acknowledge per byte consumed. A plain
+  level synchronizer would break Decision 4's "one byte per `TxReady`"
+  handshake, because the serializer's `TxReady` level spans a whole 83.33 ns
+  FS bit time (2.5 periods of the 33.33 ns UTMI clock).
+- **Per-domain resets**: async-assert / sync-deassert, one synchronizer per
+  domain, the same pattern `usb_rx_cdc.v` uses.
+- **Pad-side driver gating**: `OpMode == 2'b01` (Decision 4's "Non-driving")
+  and `SuspendM == 0` (suspend) deassert `tx_drive_en`/`tx_oe`. Disabling the
+  drivers is an act on the pad-side control interface, which only exists at
+  this level, so `usb_tx_serializer.v` (which implements only the
+  `OpMode == 2'b10` bypass) is untouched.
+
+Verified end-to-end by `verification/test_usb_utmi_top.py`: a DP/DM loopback
+(TX ports → pads → RX ports, byte-exact against `usbfs`), RX-only and TX-only
+replays of `test_usb_rx.py`/`test_usb_tx.py`'s scenario lists through the
+top's ports, `OpMode`/`SuspendM` behaviour at the pad-side ports, the
+synchronizer depths, and a negative control on the handshake crossing.

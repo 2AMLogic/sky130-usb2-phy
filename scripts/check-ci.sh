@@ -25,7 +25,8 @@ if command -v klt >/dev/null 2>&1; then
   done
 else
   echo "WARNING: klt not found on PATH -- skipping cocotb/RTL testbenches" >&2
-  echo "  (test_utmi_stub, test_usbfs_loopback, test_usb_rx, test_usb_tx)." >&2
+  echo "  (test_utmi_stub, test_usbfs_loopback, test_usb_rx, test_usb_tx," >&2
+  echo "   test_usb_utmi_top)." >&2
   echo "  See docs/environment-setup.md to install the toolchain." >&2
 fi
 
