@@ -16,7 +16,9 @@ the pytest layer:
   reference + packet builders.
 - Layer 2 + RTL (`klt functional-verification` against every
   `verification/request-*.json`) — the cocotb/Icarus testbenches
-  (`test_utmi_stub`, `test_usbfs_loopback`, `test_usb_rx`, `test_usb_tx`).
+  (`test_utmi_stub`, `test_usbfs_loopback`, `test_usb_rx`, `test_usb_tx`,
+  `test_usb_utmi_top`). `scripts/check-ci.sh` globs `request-*.json`, so a
+  new request file is picked up by CI with no edit to the script.
 
 **Not installed in CI, on purpose:** Yosys (`yowasp-yosys`) and the sky130A
 PDK (`volare fetch`/`enable`), the other two pieces of
@@ -249,3 +251,53 @@ klt functional-verification verification/request-usb-tx.json --format json
 
 See `docs/baseline.md` for the measured synthesis result (cell count and
 area) for this design.
+
+## `test_usb_utmi_top.py`: the UTMI digital top, end to end (issue #52)
+
+`rtl/usb_utmi_top.v` — the integration top that instantiates
+`usb_tx_serializer.v` and `usb_rx_path.v` unmodified and adds the TX-side
+30↔144 MHz CDC (`rtl/README.md` has the module table). This is the first
+suite that drives **only the top's own ports**: the 30 MHz UTMI interface on
+one side, the pad-side `dp`/`dm`/`tx_*` on the other, so the CDC and both
+datapaths are exercised together.
+
+```bash
+klt functional-verification verification/request-usb-utmi_top.json --format json
+```
+
+What it covers (26 tests, mapping to issue #52's acceptance criteria):
+
+- **DP/DM loopback** (`test_loopback_*`): a packet is handed to the UTMI TX
+  ports at 30 MHz, transmitted, wired back from `tx_dp`/`tx_dn` into
+  `dp`/`dm`, and checked as it re-emerges on `RxValid`/`DataIn`. Three
+  independent `usbfs` comparisons per packet — the transmitted line states
+  equal `scenario.states`, `usbfs.packets.parse()` of them equals
+  `scenario.fields`, and the received bytes equal the
+  `usbfs.packets.raw_field_bits()` byte stream the link handed over —
+  including the stuff-bit-before-EOP, all-ones and all-zeros payloads, a
+  64-byte FS bulk-max payload, and a token packet.
+- **RX-only and TX-only replays** (`test_rx_only_*` / `test_tx_only_*`) of
+  the same scenario list `test_usb_rx.py` and `test_usb_tx.py` use, now
+  through the top's ports (and hence through the CDC).
+- **`OpMode` at the top's ports**: `2'b10` bit-stuffing/NRZI bypass
+  (`test_opmode_bypass_at_top_ports`) and `2'b01` non-driving
+  (`test_opmode_non_driving_at_top_ports`), plus the `SuspendM` driver gate
+  (`test_suspendm_disables_the_line_drivers`) — each paired with a positive
+  control on the identical stimulus, so a gate stuck permanently off could
+  not pass.
+- **CDC structure**: synchronizer depth of every 30→144 MHz crossing
+  (`test_control_input_synchronizer_depth_is_two`,
+  `test_txvalid_lags_dataout_by_the_skew_guard_flop`) and the one-byte-per-
+  acknowledge property of the 144→30 MHz `TxReady` crossing
+  (`test_txready_is_exactly_one_utmi_cycle_per_byte`).
+- **A negative control**
+  (`test_negative_control_over_advancing_link_corrupts_packet`): a link
+  controller that advances more than one byte per acknowledge — exactly what
+  a mis-designed `TxReady` crossing would cause — must produce a packet that
+  does *not* match the reference.
+
+Mutation-tested against the RTL (recorded here as evidence the suite can
+fail, not just pass): replacing the toggle-based `TxReady` crossing with a
+plain 2-flop level synchronizer fails the loopback and the one-byte-per-
+acknowledge test; dropping the `TxValid` skew-guard flop, or collapsing a
+control synchronizer to one flop, fails the corresponding depth test.

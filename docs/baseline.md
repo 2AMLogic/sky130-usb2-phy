@@ -5,9 +5,13 @@ repo's digital flow, produced while bootstrapping the harness itself (issue
 #3). Unlike `2AMLogic/sky130-modexp`'s `docs/baseline.md` (a real design's
 area/optimization baseline), this document exists to prove the harness
 works end-to-end, not to anchor a future optimization program — `utmi_stub.v`
-is a deliberately trivial registered pass-through, not real UTMI logic. When
-the actual UTMI digital layer lands (a separate, future issue), it gets its
-own baseline record; this one stays as the toolchain-plumbing proof.
+is a deliberately trivial registered pass-through, not real UTMI logic. The
+actual UTMI digital layer has since landed as `rtl/usb_utmi_top.v` (issue
+#52) — the integration top that instantiates the TX and RX datapaths and the
+CDC between them, and the `hdl_toplevel` a synthesis / place-and-route flow
+should target. Its own synthesis baseline is not recorded here: measuring it
+belongs to the physical-flow bootstrap (issue #11), not to this
+toolchain-plumbing record, which stays as-is.
 
 ## The measurement
 
@@ -59,9 +63,9 @@ Yosys against `sky130_fd_sc_hd`, both driven through `klt`) works
 end-to-end in this repo, copied from `2AMLogic/sky130-modexp`'s working
 pattern rather than invented fresh — the acceptance criterion issue #3 set
 out to satisfy. It says nothing about the real UTMI digital layer's
-eventual area, timing, or correctness; that RTL does not exist yet (see
-`spec/architecture.md`'s partition table and "first buildable slice") and is
-out of scope for this issue per `CLAUDE.md`'s scope-discipline rule.
+eventual area, timing, or correctness: that layer is `rtl/usb_utmi_top.v`
+(issue #52), and measuring it is the physical-flow bootstrap's job (issue
+#11), out of scope for this record per `CLAUDE.md`'s scope-discipline rule.
 
 ## Known friction filed
 
@@ -169,8 +173,9 @@ print(total)
 
 This is a synthesizability and (aggregate) area/cell-count measurement
 against `sky130_fd_sc_hd` at the nominal (`tt_025C_1v80`) corner — a
-comparison point for the RX path (a future issue) and the eventual top
-level, per issue #12's Deliverables section. It is **not** a timing-closed
+comparison point for the RX path and for the UTMI top
+(`rtl/usb_utmi_top.v`, issue #52) once the physical flow measures it (issue
+#11), per issue #12's Deliverables section. It is **not** a timing-closed
 result: `klt synthesize`'s own `--help` documents its `timing` response
 field as always `null` (deferred to a future OpenROAD/OpenSTA step outside
 `klt synthesize`'s own contract), and this record makes no claim about

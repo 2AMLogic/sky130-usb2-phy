@@ -6,8 +6,9 @@
 // UTMI signal names from `spec/usb2-phy.md` section 3 so the plumbing is
 // exercised with the right shapes, but the behavior is a trivial registered
 // pass-through: no NRZI encode/decode, no bit stuffing, no line-state
-// handling. The real UTMI digital layer is a separate, future issue that
-// depends on this harness, not the other way around.
+// handling. The real UTMI digital layer is `usb_utmi_top.v` (issue #52),
+// which built on this harness rather than the other way around; this stub
+// remains only as the toolchain-plumbing proof issue #3 recorded.
 //
 // Behavior: on every rising clock edge (while not in reset), DataOut is
 // registered onto DataIn, and TxValid is registered onto both TxReady and
