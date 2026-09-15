@@ -38,23 +38,40 @@ stage).
 
 ## Reproducing it
 
+The synthesis request is a **committed file**,
+[`flow/request-synth-utmi_stub.json`](../flow/request-synth-utmi_stub.json),
+not a recipe to retype. (It was a hand-typed heredoc in this document until
+issue #11 built `flow/`; a request you have to transcribe by hand is not
+reproducible, and its content hash cannot be cited by an evidence record.)
+
 ```bash
 # functional verification (2/2 pass)
 klt functional-verification verification/request-utmi_stub.json --format json
 
-# synthesis (9 cells) -- run from a directory outside /tmp, see
-# docs/environment-setup.md §4's yowasp-yosys filesystem note
-mkdir -p ~/scratch/utmi_stub_synth && cd ~/scratch/utmi_stub_synth
-cp /path/to/sky130-usb2-phy/rtl/utmi_stub.v .
-cat > req.json <<'JSON'
-{ "schema": "klt.synthesize.request/1", "engine": "yosys",
-  "sources": ["utmi_stub.v"], "hdl_toplevel": "utmi_stub",
-  "pdk": { "cell_library": "sky130_fd_sc_hd", "corner": "tt_025C_1v80" },
-  "constraints": { "clock_period_ns": null } }
-JSON
-PDK=sky130A klt synthesize req.json --format json \
+# synthesis (9 cells), from the committed request
+PDK=sky130A klt synthesize flow/request-synth-utmi_stub.json --format json \
   | python3 -c 'import sys,json;print(json.load(sys.stdin)["instance_count"])'
 ```
+
+Two notes on the committed request versus the heredoc it replaced. It sets
+`constraints.clock_period_ns` to `33.333` (the ratified 30 MHz UTMI clock
+period, `spec/usb2-phy.md` §3) where the heredoc used `null`; for this design
+that changes nothing measured here — Yosys maps the same nine `dfrtp_1`
+flip-flops either way, since there is no combinational logic for a timing
+target to influence. And `sources` is `../rtl/utmi_stub.v`, resolved against
+the request file's own directory, so there is no copy step: `klt synthesize`
+reads the RTL in place.
+
+Running the whole physical flow — this synthesis plus place-and-route,
+extraction, LVS, DRC and per-corner timing, across all six committed PVT
+corners, writing append-only evidence records — is one command:
+
+```bash
+PDK=sky130A python3 flow/run_flow.py
+```
+
+See [`flow/README.md`](../flow/README.md) for the evidence-record convention
+that run produces, and for what its verdicts do and do not claim.
 
 ## What this does and does not prove
 

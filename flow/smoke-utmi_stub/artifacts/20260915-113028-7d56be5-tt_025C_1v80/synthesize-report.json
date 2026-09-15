@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "engine": "yosys",
+  "engine_version": "0.67",
+  "hdl_toplevel": "utmi_stub",
+  "status": "ok",
+  "instance_count": 9,
+  "area_um2": 225.216,
+  "sequential_area_um2": 225.216,
+  "instance_counts_by_type": {
+    "sky130_fd_sc_hd__dfrtp_1": 9
+  },
+  "leakage_power_nw": 0.10487052,
+  "leakage_by_type_nw": {
+    "sky130_fd_sc_hd__dfrtp_1": 0.01165228
+  },
+  "timing": null,
+  "sta": null,
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 0,
+    "multi_driven": 0,
+    "has_critical": false
+  },
+  "warnings": {
+    "total": 1,
+    "by_category": {
+      "other": 1
+    },
+    "representatives": [
+      {
+        "category": "other",
+        "count": 1,
+        "text": "Detected 9 multi-output cells (for example, \"sky130_fd_sc_hd__fa_1\")."
+      }
+    ]
+  },
+  "netlist_path": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-11/flow/build/tt_025C_1v80/.klt/synthesize/utmi_stub_synth.v",
+  "script_path": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-11/flow/build/tt_025C_1v80/.klt/synthesize/synth_utmi_stub.ys",
+  "provenance": {
+    "klt_version": "0.4.0",
+    "klayout_version": "0.30.10",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+    },
+    "deck": {
+      "name": "sky130_fd_sc_hd__tt_025C_1v80",
+      "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:b11cf0e00737eff6a01a76a37e08a0508a22827a1a438c3194d891c31750d548"
+    }
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}

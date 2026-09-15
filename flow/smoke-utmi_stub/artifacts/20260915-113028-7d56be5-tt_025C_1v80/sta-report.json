@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "engine": "openroad",
+  "engine_version": "26Q3-1510-g6cb3f2b704",
+  "hdl_toplevel": "utmi_stub",
+  "status": "ok",
+  "def_path": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-11/flow/build/tt_025C_1v80/.klt/place-and-route/utmi_stub.def",
+  "verilog_path": null,
+  "geometry_source": "routed",
+  "wire_load_model": null,
+  "wire_load_mode": null,
+  "spef_path": null,
+  "worst_slack_ns": 1e+39,
+  "total_negative_slack_ns": 0,
+  "worst_hold_slack_ns": 1e+39,
+  "total_negative_hold_slack_ns": 0,
+  "fmax_mhz": 59.066,
+  "setup_violation_count": 0,
+  "hold_violation_count": 0,
+  "clock_skew_ns": 0,
+  "estimated_power_mw": 0.0187,
+  "provenance": {
+    "klt_version": "0.4.0",
+    "klayout_version": "0.30.10",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+    },
+    "deck": {
+      "name": "sky130_fd_sc_hd__tt_025C_1v80",
+      "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:30cdff5770963790367f9505e93580d032d774d470dc318b79dd858c3538872b"
+    }
+  },
+  "spef_annotation": null
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout",
+  "layout": {
+    "netlist": ".klt/extract/utmi_stub.gate.spice",
+    "top": "utmi_stub"
+  },
+  "reference": {
+    "netlist": ".klt/place-and-route/utmi_stub.v",
+    "top": "utmi_stub",
+    "form": "gate-level-verilog",
+    "library": "sky130_fd_sc_hd",
+    "pdk": "sky130A"
+  }
+}

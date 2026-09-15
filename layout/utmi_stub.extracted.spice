@@ -1,0 +1,194 @@
+* extracted by klt extract --deck sky130
+
+* cell utmi_stub
+* pin DataIn[0]
+* pin DataIn[1]
+* pin DataIn[2]
+* pin DataIn[3]
+* pin DataIn[4]
+* pin DataIn[5]
+* pin DataIn[6]
+* pin DataIn[7]
+* pin DataOut[0]
+* pin DataOut[1]
+* pin DataOut[2]
+* pin DataOut[3]
+* pin DataOut[4]
+* pin DataOut[5]
+* pin DataOut[6]
+* pin DataOut[7]
+* pin RxValid
+* pin TxValid
+* pin VGND
+* pin VPWR
+* pin clk
+* pin clknet_0_clk
+* pin clknet_1_0__leaf_clk
+* pin clknet_1_1__leaf_clk
+* pin rst_n
+.SUBCKT utmi_stub DataIn[0] DataIn[1] DataIn[2] DataIn[3] DataIn[4] DataIn[5]
++ DataIn[6] DataIn[7] DataOut[0] DataOut[1] DataOut[2] DataOut[3] DataOut[4]
++ DataOut[5] DataOut[6] DataOut[7] RxValid TxValid VGND VPWR clk clknet_0_clk
++ clknet_1_0__leaf_clk clknet_1_1__leaf_clk rst_n
+* cell instance sky130_fd_sc_hd__buf_4_0 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_0 clk \$62 \$74 \$74 clknet_0_clk sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_1 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_1 clknet_0_clk \$28 \$15 \$15 clknet_1_0__leaf_clk
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__buf_4_2 r0 *1 0,0
+Xsky130_fd_sc_hd__buf_4_2 clknet_0_clk \$85 VPWR VPWR clknet_1_1__leaf_clk
++ sky130_fd_sc_hd__buf_4
+* cell instance sky130_fd_sc_hd__dfrtp_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_0 clknet_1_0__leaf_clk DataOut[0] DataIn[0] rst_n
++ \$28 \$49 \$49 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_1 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_1 clknet_1_0__leaf_clk DataOut[2] DataIn[2] rst_n
++ \$28 \$15 \$15 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_2 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_2 clknet_1_0__leaf_clk DataOut[1] DataIn[1] rst_n
++ \$28 \$49 \$49 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_3 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_3 clknet_1_1__leaf_clk DataOut[4] DataIn[4] rst_n
++ \$62 \$49 \$49 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_4 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_4 clknet_1_1__leaf_clk DataOut[7] DataIn[7] rst_n
++ \$62 \$74 \$74 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_5 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_5 clknet_1_1__leaf_clk TxValid RxValid rst_n \$85
++ \$74 \$74 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_6 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_6 clknet_1_1__leaf_clk DataOut[3] DataIn[3] rst_n
++ \$85 VPWR VPWR sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_7 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_7 clknet_1_1__leaf_clk DataOut[5] DataIn[5] rst_n
++ VGND VPWR VPWR sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__dfrtp_1_8 r0 *1 0,0
+Xsky130_fd_sc_hd__dfrtp_1_8 clknet_1_0__leaf_clk DataOut[6] DataIn[6] rst_n \$1
++ \$15 \$15 sky130_fd_sc_hd__dfrtp_1
+* cell instance sky130_fd_sc_hd__fill_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_1_0 \$1 \$15 \$15 sky130_fd_sc_hd__fill_1
+* cell instance sky130_fd_sc_hd__fill_2_0 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_2_0 \$28 \$49 \$49 sky130_fd_sc_hd__fill_2
+* cell instance sky130_fd_sc_hd__fill_2_1 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_2_1 \$62 \$49 \$49 sky130_fd_sc_hd__fill_2
+* cell instance sky130_fd_sc_hd__fill_2_2 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_2_2 \$85 \$74 \$74 sky130_fd_sc_hd__fill_2
+* cell instance sky130_fd_sc_hd__fill_2_3 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_2_3 VGND VPWR VPWR sky130_fd_sc_hd__fill_2
+* cell instance sky130_fd_sc_hd__fill_2_4 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_2_4 \$1 \$15 \$15 sky130_fd_sc_hd__fill_2
+* cell instance sky130_fd_sc_hd__fill_4_0 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_4_0 \$62 \$74 \$74 sky130_fd_sc_hd__fill_4
+* cell instance sky130_fd_sc_hd__fill_4_1 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_4_1 \$1 \$15 \$15 sky130_fd_sc_hd__fill_4
+* cell instance sky130_fd_sc_hd__fill_4_2 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_4_2 \$62 \$49 \$49 sky130_fd_sc_hd__fill_4
+* cell instance sky130_fd_sc_hd__fill_4_3 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_4_3 \$85 \$74 \$74 sky130_fd_sc_hd__fill_4
+* cell instance sky130_fd_sc_hd__fill_4_4 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_4_4 VGND VPWR VPWR sky130_fd_sc_hd__fill_4
+* cell instance sky130_fd_sc_hd__fill_4_5 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_4_5 \$62 \$74 \$74 sky130_fd_sc_hd__fill_4
+* cell instance sky130_fd_sc_hd__fill_4_6 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_4_6 \$1 \$15 \$15 sky130_fd_sc_hd__fill_4
+* cell instance sky130_fd_sc_hd__fill_8_0 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_0 \$1 \$15 \$15 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_1 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_1 \$28 \$15 \$15 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_2 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_2 \$62 \$49 \$49 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_3 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_3 \$62 \$74 \$74 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_4 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_4 \$85 \$74 \$74 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_5 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_5 \$85 VPWR VPWR sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_6 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_6 VGND VPWR VPWR sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_7 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_7 \$1 \$15 \$15 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_8 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_8 \$28 \$15 \$15 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_9 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_9 \$62 \$49 \$49 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_10 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_10 \$85 \$74 \$74 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_11 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_11 \$85 VPWR VPWR sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_12 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_12 VGND VPWR VPWR sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_13 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_13 \$28 \$15 \$15 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_14 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_14 \$28 \$49 \$49 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_15 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_15 \$62 \$49 \$49 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_16 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_16 \$62 \$74 \$74 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_17 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_17 \$85 \$74 \$74 sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_18 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_18 \$85 VPWR VPWR sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__fill_8_19 r0 *1 0,0
+Xsky130_fd_sc_hd__fill_8_19 VGND VPWR VPWR sky130_fd_sc_hd__fill_8
+* cell instance sky130_fd_sc_hd__inv_1_0 r0 *1 0,0
+Xsky130_fd_sc_hd__inv_1_0 clknet_1_0__leaf_clk \$1 \$15 \$15 \$2
++ sky130_fd_sc_hd__inv_1
+.ENDS utmi_stub
+
+* cell sky130_fd_sc_hd__inv_1
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin Y
+.SUBCKT sky130_fd_sc_hd__inv_1 A VGND VPB VPWR Y
+.ENDS sky130_fd_sc_hd__inv_1
+
+* cell sky130_fd_sc_hd__fill_8
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__fill_8 VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__fill_8
+
+* cell sky130_fd_sc_hd__fill_4
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__fill_4 VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__fill_4
+
+* cell sky130_fd_sc_hd__fill_2
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__fill_2 VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__fill_2
+
+* cell sky130_fd_sc_hd__fill_1
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__fill_1 VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__fill_1
+
+* cell sky130_fd_sc_hd__dfrtp_1
+* pin CLK
+* pin D
+* pin Q
+* pin RESET_B
+* pin VGND
+* pin VPB
+* pin VPWR
+.SUBCKT sky130_fd_sc_hd__dfrtp_1 CLK D Q RESET_B VGND VPB VPWR
+.ENDS sky130_fd_sc_hd__dfrtp_1
+
+* cell sky130_fd_sc_hd__buf_4
+* pin A
+* pin VGND
+* pin VPB
+* pin VPWR
+* pin X
+.SUBCKT sky130_fd_sc_hd__buf_4 A VGND VPB VPWR X
+.ENDS sky130_fd_sc_hd__buf_4

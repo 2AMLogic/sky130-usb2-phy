@@ -5,8 +5,8 @@
   "scripts": {
     "worktree:return": "./.loom/scripts/worktree-return.sh",
     "check:ci": "./scripts/check-ci.sh",
-    "check:all": "./scripts/check-ci.sh",
+    "check:all": "npm run lint && ./scripts/check-ci.sh",
     "test": "python3 -m pytest verification/test_usbfs_model.py -v",
-    "lint": "echo 'No linter is configured for this repo yet (no eslintrc/flake8/pyproject lint config present). This is not a stand-in for check:ci -- see verification/README.md for the real suite.' && exit 0"
+    "lint": "./.github/scripts/lint.sh"
   }
 }

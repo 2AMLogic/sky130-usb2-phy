@@ -1,0 +1,103 @@
+{
+  "schema": "usb2phy.flow.drc-deck-coverage/1",
+  "deck": "sky130",
+  "engine": "curated",
+  "content_hash": "sha256:a903acb18b47d47e73460b10e9c80edd3466193ffc9da0c01c2103f7fdfcf36f",
+  "klt_release": {
+    "git_tag": "v0.5.0",
+    "git_commit": "6bf5610939a096b81605a381e70454bf1cb20316",
+    "package_version": "0.5.0"
+  },
+  "rule_count": 47,
+  "why_this_file_exists": "T1 evidence item 3 treats a clean DRC verdict from a deck with undisclosed coverage holes as a false claim. This file is the disclosure, pinned to the exact deck revision it describes by `content_hash`. flow/check_records.py refuses to accept a DRC record whose deck content hash does not equal the value above, so this enumeration cannot silently go stale behind a deck upgrade: bumping klt forces this file to be re-derived and re-reviewed.",
+  "sources": [
+    "klayout-tools docs/cli/drc.md, the sky130 deck section",
+    "klayout-tools src/klayout_tools/decks/sky130.py -- module docstring plus the per-rule inline provenance comments, at git commit 6bf5610939a096b81605a381e70454bf1cb20316",
+    "Upstream rule text: fossi-foundation/open-pdks, sky130/klayout/sky130.lydrc and sky130/klayout/sky130A_mr.drc at open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+  ],
+  "what_it_is": "klt's own headless, pip-only rule deck built from KLayout Region check primitives. It is a deliberately partial, curated transcription of the sky130 DRM -- NOT the PDK-native sky130A.lydrc deck, and not a signoff deck. It is what `klt drc --engine curated --deck sky130` runs.",
+  "transcribed_rules": [
+    "poly.width.1", "diff.width.1", "li1.width.1", "li1.space.1",
+    "met1.width.1", "met1.space.1", "met1.enclosing.mcon.1",
+    "diff.enclosing.licon.1", "poly.enclosing.licon.1",
+    "li1.enclosing.licon1.1", "mcon.space.1",
+    "met2.width.1", "met2.space.1", "via.width.1", "via.space.1",
+    "met1.enclosing.via.1", "met2.enclosing.via.1",
+    "met3.width.1", "met3.space.1", "via2.width.1", "via2.space.1",
+    "met2.enclosing.via2.1", "met3.enclosing.via2.1",
+    "met4.width.1", "met4.space.1", "via3.width.1", "via3.space.1",
+    "met3.enclosing.via3.1", "met4.enclosing.via3.1",
+    "met5.width.1", "met5.space.1", "via4.width.1", "via4.space.1",
+    "met4.enclosing.via4.1", "met5.enclosing.via4.1",
+    "capm.width.1", "capm.space.1", "met3.enclosing.capm.1",
+    "capm.enclosing.via3.1", "capm.separation.via3.1",
+    "capm2.width.1", "capm2.space.1", "met4.enclosing.capm2.1",
+    "capm2.enclosing.via4.1", "capm2.separation.via4.1",
+    "nwell.width.1", "nwell.space.1"
+  ],
+  "known_gaps": [
+    {
+      "id": "gap-01-curated-subset",
+      "kind": "scope",
+      "summary": "47 rules, not the full DRM. Whole rule chapters have no representation at all.",
+      "detail": "The deck covers width / spacing / enclosure / separation checks over poly, diff, li1, licon1/mcon, met1-met5, via1-via4, the MiM-cap stack (capm/capm2), and nwell. There are no antenna rules, no density rules, no latch-up rules, no implant (nsdm/psdm) rules, no deep-nwell rules, no pad/seal-ring rules, and no rules on any layer outside the scope list. A `status: clean` verdict is a statement about those 47 rules only."
+    },
+    {
+      "id": "gap-02-m2.6-min-area",
+      "kind": "not-transcribed",
+      "summary": "m2.6 (minimum met2 area, 0.0676 um^2) is not transcribed, and no area-class rule of any kind is present for sky130.",
+      "detail": "Authoring area / density / antenna rules for this deck is tracked upstream as candidate follow-on work rather than silently dropped. Consequence for this repo: a sliver of met2 below the minimum-area threshold would pass."
+    },
+    {
+      "id": "gap-03-difftap.8-difftap.10",
+      "kind": "not-transcribed",
+      "summary": "nwell's enclosure of opposite-type diffusion/tap (difftap.8, difftap.10) is deliberately not transcribed.",
+      "detail": "Both official rules are scoped to a psdm/nsdm implant-layer boolean expression. The deck's extraction side has no psdm/nsdm fields, so the rules are left explicitly open rather than approximated by an unscoped stand-in. See the 'nwell (well-layer) rule coverage' note in sky130.py's module docstring."
+    },
+    {
+      "id": "gap-04-compound-layer-approximation",
+      "kind": "approximation",
+      "summary": "diff.width.1 approximates the official difftap.1 rule, which is defined on the compound layer diff.or(tap), by checking diff.drawing alone.",
+      "detail": "The Region check primitives evaluate one layer, or one layer against one other layer, at a time -- they do not evaluate arbitrary layer boolean expressions the way a DRC-DSL script runner does. A width violation that exists only on the diff-or-tap union, and not on diff alone, is not caught."
+    },
+    {
+      "id": "gap-05-via-rectangularity-and-max-length",
+      "kind": "approximation",
+      "summary": "via.width.1 / via2.width.1 / via3.width.1 / via4.width.1 enforce only the minimum-size half of their source rules.",
+      "detail": "Each official via rule additionally requires the cut be rectangular and capped at a maximum length (e.g. via.1a_a / via.1a_b). The width_check primitive supports a minimum-width lower bound only, so an oversized or non-rectangular cut passes."
+    },
+    {
+      "id": "gap-06-li.5-two-adjacent-edges",
+      "kind": "threshold-deviation",
+      "summary": "li1.enclosing.licon1.1 is the one rule in the deck whose threshold is deliberately NOT its source value: 0.0 um instead of li.5's 0.08 um.",
+      "detail": "li.5 requires its 0.08 um margin on only two adjacent edges of each cut -- a per-edge-pair conditional the rule vocabulary cannot express, and real standard-cell layout relies on it (a minimum-width li1 strap sits flush with the cut on the other two edges). The rule is transcribed at li.5's unconditional floor: 'li1 must actually cover the licon1 cut it lands on'. That catches a conductor missing part of its cut with no false positives on correct geometry; the 0.08 um two-adjacent-edges half stays uncovered. This gap is load-bearing for this repo: every geometry checked here is standard-cell layout, which is exactly the geometry class the exception was created for."
+    },
+    {
+      "id": "gap-07-wide-metal-spacing-exceptions",
+      "kind": "not-modelled",
+      "summary": "The wide-metal spacing exceptions m1.3ab (0.28 um), m2.3ab (0.28 um), m3.3cd (0.4 um) and m4.5ab (0.4 um) are not modelled.",
+      "detail": "Only each layer's general-case minimum spacing is checked. A wide metal shape that must honour the larger spacing, but honours only the general-case value, passes."
+    },
+    {
+      "id": "gap-08-primary-rule-only-via-enclosure",
+      "kind": "not-modelled",
+      "summary": "Each via-enclosure rule models only its primary variant; the relaxed and area-scoped refinements are absent.",
+      "detail": "Affected: met1.enclosing.mcon.1 (sibling refinement m1.5 absent), met1.enclosing.via.1 (via.5a, 0.085 um, absent), met2.enclosing.via.1 (m2.4_b periphery-scoped 0.045 um and m2.5 0.085 um both absent), and the met2/met3/met4/met5 enclosure rules for via2/via3/via4 in the same shape. The deck models no areaid.* layers anywhere, so no area-scoped variant of any rule can be expressed."
+    },
+    {
+      "id": "gap-09-macro-cell-exclusions",
+      "kind": "approximation",
+      "summary": "li1.width.1 drops the source rule's not_in_cell5_li exclusion and applies the general-case threshold everywhere.",
+      "detail": "The official li.1 rule exempts a handful of named analog macro cells. Those cells are not modelled here; the general-case 0.17 um threshold is applied unconditionally. This is conservative (it can only over-report), so it cannot hide a defect -- recorded for completeness."
+    },
+    {
+      "id": "gap-10-per-run-machine-derived",
+      "kind": "per-run",
+      "summary": "Two further coverage facts are per-run, not per-deck, and are recorded from each run's own output rather than here.",
+      "detail": "Every klt drc JSON envelope carries a `coverage` block with `rules_skipped` (rules whose layers are absent from this particular stream, so they never executed) and `layers_in_stream_without_rules` (layers present in the stream that no rule in the deck references). Both are copied verbatim into each DRC evidence record. A clean verdict alongside a long `layers_in_stream_without_rules` means most of the drawn geometry was never examined -- read them together, never the verdict alone."
+    }
+  ],
+  "not_a_gap": [
+    "The deck is run headlessly through KLayout's native Region primitives in-process -- there is no standalone klayout binary, GUI, or Qt dependency involved, and no subprocess whose exit status could be misread as a verdict."
+  ]
+}

@@ -5,3 +5,12 @@
 # fully re-derived by the next resync regardless of which side "wins".
 .loom/install-metadata.json merge=ours
 # END LOOM-MANAGED (merge drivers, #4528)
+
+# Layout streams are binary. Marked explicitly so no `text=auto` heuristic can
+# ever line-ending-normalize one: a single byte changed in layout/*.gds breaks
+# the content hash every flow/ evidence record cites for it, and the record
+# would be reported stale rather than the corruption being reported as
+# corruption. See flow/README.md, "The freshness rule".
+*.gds binary
+*.gds2 binary
+*.oas binary

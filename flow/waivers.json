@@ -1,0 +1,6 @@
+{
+  "schema": "usb2phy.flow.waivers/1",
+  "_note": "Timing waivers, keyed by corner name. A corner whose recorded setup WNS is negative FAILS the flow (flow/run_flow.py exits non-zero, and flow/check_records.py rejects the record) unless that corner has an entry here. An entry must be a non-empty object with a `reason` (free text, why the violation is acceptable), an `author`, and a `date` (ISO-8601). Adding one is a deliberate, reviewable act recorded in the record itself -- never a flag on the command line.",
+  "_scope": "A waiver covers a negative WNS only. It does NOT cover the unconstrained-sentinel case (no constrained timing path at all); that is a distinct verdict with its own required disclosure field, and no waiver can turn it into a pass.",
+  "waivers": {}
+}
