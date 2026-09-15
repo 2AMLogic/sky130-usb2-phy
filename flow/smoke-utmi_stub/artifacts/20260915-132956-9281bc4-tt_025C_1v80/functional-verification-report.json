@@ -1,0 +1,53 @@
+{
+    "schema_version": 1,
+    "engine": "icarus",
+    "hdl_toplevel": "utmi_stub",
+    "testbench": "test_utmi_stub",
+    "status": "pass",
+    "test_count": 2,
+    "passed_count": 2,
+    "failed_count": 0,
+    "skipped_count": 0,
+    "tests": [
+        {
+            "name": "test_reset_clears_outputs",
+            "status": "passed",
+            "sim_time_ns": null,
+            "real_time_s": 0.001
+        },
+        {
+            "name": "test_registered_pass_through",
+            "status": "passed",
+            "sim_time_ns": null,
+            "real_time_s": 0.01
+        }
+    ],
+    "coverage": null,
+    "environment": {
+        "engine": "icarus",
+        "engine_version": "13.0",
+        "cocotb_version": "2.1.0",
+        "results_xml": "/Users/rwalters/GitHub/sky130-usb2-phy/.loom/worktrees/issue-37/verification/.klt/functional-verification/results_icarus.xml",
+        "random_seed": 1,
+        "sdf": null
+    },
+    "provenance_extra": {
+        "netlist_under_test": {
+            "path": "layout/utmi_stub.asbuilt.v",
+            "content_hash": "sha256:79394a26f024f079191a6c05ca60c3857938d4e33cdac41a0725e3c71f5bedcc",
+            "role": "as-built gate-level netlist (the LVS reference); LVS-proven structurally equivalent to layout/utmi_stub.extracted.spice"
+        },
+        "cell_library": {
+            "name": "sky130_fd_sc_hd",
+            "pdk": "sky130A",
+            "pdk_root": "/Users/rwalters/.volare",
+            "sources": {
+                "primitives.v": "sha256:7d4b1441d06b0f2b9662befa675a0484d77149e04eb42a5f1fa2d4cfded7b2ce",
+                "sky130_fd_sc_hd.v": "sha256:12d5d6448ccf265c544d88402d5c10ab6de9bee8b8cde48eee1f31ea8c3c3e45"
+            },
+            "model": "FUNCTIONAL (zero-delay UDP-based simulation model)"
+        },
+        "sdf_back_annotation": false,
+        "sdf_note": "No SDF file exists for this design: issue #11/PR #55's P&R request never set post_route_sdf. This is a zero/unit-delay functional-only check, not a timing-annotated re-verification."
+    }
+}
