@@ -1,0 +1,15 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout",
+  "layout": {
+    "netlist": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-11/flow/build/ff_100C_1v95/.klt/extract/utmi_stub.gate.spice",
+    "top": "utmi_stub"
+  },
+  "reference": {
+    "netlist": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-11/flow/build/ff_100C_1v95/.klt/place-and-route/utmi_stub.v",
+    "top": "utmi_stub",
+    "form": "gate-level-verilog",
+    "library": "sky130_fd_sc_hd",
+    "pdk": "sky130A"
+  }
+}

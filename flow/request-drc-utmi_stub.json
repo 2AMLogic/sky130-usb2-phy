@@ -1,0 +1,10 @@
+{
+  "schema": "usb2phy.flow.drc-invocation/1",
+  "_schema_note": "NOT a klt schema. `klt drc` is argv-only -- it has no request-document surface, unlike klt synthesize / place-and-route / sta / lvs. Filed upstream as klayout-tools#1867. flow/run_flow.py translates this document into argv; if #1867 ever lands a real `klt.drc.request/1`, this file should be replaced by one rather than kept alongside it.",
+  "file": ".klt/place-and-route/utmi_stub.gds",
+  "deck": "sky130",
+  "engine": "curated",
+  "top": "utmi_stub",
+  "deck_vars": {},
+  "_engine_note": "The `curated` engine is klt's own pip-only Region-primitive deck -- a deliberately partial transcription of the sky130 DRM, NOT the PDK-native sky130A.lydrc deck. Its coverage gaps are enumerated in every record this request produces and in flow/README.md. A `status: clean` verdict from this deck is a claim about the rules it transcribes, and nothing else."
+}

@@ -9,8 +9,12 @@ __pycache__/
 # (append-only record trail), so they escape the *.log rule.
 !sim/*/corners/**/*.log
 sim/build/
-# synthesis / P&R scratch
+# synthesis / P&R scratch: flow/run_flow.py's per-corner working directories
+# (flow/build/<corner>/, each with its own .klt/ output tree), plus any .klt/
+# tree left behind by running a klt command by hand from flow/. The committed
+# evidence is flow/smoke-utmi_stub/ and layout/, never these.
 flow/build/
+flow/.klt/
 # klt functional-verification scratch (created by npm run check:ci)
 verification/.klt/
 # local klt install, created by the setup script

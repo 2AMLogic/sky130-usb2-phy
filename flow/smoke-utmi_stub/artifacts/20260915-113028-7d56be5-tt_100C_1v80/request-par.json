@@ -1,0 +1,36 @@
+{
+  "schema": "klt.place-and-route.request/1",
+  "engine": "openroad",
+  "netlist": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-11/flow/build/tt_100C_1v80/.klt/synthesize/utmi_stub_synth.v",
+  "hdl_toplevel": "utmi_stub",
+  "pdk": {
+    "cell_library": "sky130_fd_sc_hd",
+    "corner": "tt_100C_1v80",
+    "interconnect_corner": "nom",
+    "sweep_corners": [
+      "ss_n40C_1v60",
+      "ss_100C_1v60",
+      "tt_025C_1v80",
+      "tt_100C_1v80",
+      "ff_n40C_1v95",
+      "ff_100C_1v95"
+    ]
+  },
+  "floorplan": {
+    "method": "utilization",
+    "utilization_pct": 40,
+    "aspect_ratio": 1.0,
+    "core_margin_um": 2.0,
+    "site": "unithd"
+  },
+  "io": {
+    "layer_h": "met3",
+    "layer_v": "met2"
+  },
+  "constraints": {
+    "clock_port": "clk",
+    "clock_period_ns": 33.333
+  },
+  "seed": 1,
+  "target_stage": "route"
+}

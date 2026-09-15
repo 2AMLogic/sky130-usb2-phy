@@ -1,0 +1,11 @@
+{
+  "schema": "usb2phy.flow.extract-invocation/1",
+  "_schema_note": "NOT a klt schema. `klt extract` is argv-only -- it has no request-document surface, unlike klt synthesize / place-and-route / sta / lvs. Filed upstream as klayout-tools#1867. flow/run_flow.py translates this document into argv; if #1867 ever lands a real `klt.extract.request/1`, this file should be replaced by one rather than kept alongside it.",
+  "file": ".klt/place-and-route/utmi_stub.gds",
+  "deck": "sky130",
+  "top": "utmi_stub",
+  "output": ".klt/extract/utmi_stub.gate.spice",
+  "abstract_cells": "sky130_fd_sc_hd__*",
+  "def_net_names": true,
+  "_abstract_cells_note": "Cell-instance granularity: every standard cell becomes a pin-only black box. Required for a digital gate-level LVS -- the reference side (klt place-and-route's as-built write_verilog netlist) instantiates cells, not transistors, so a default transistor-level extraction could never match it. See klayout-tools docs/cli/lvs.md, 'Digital gate-level LVS'."
+}

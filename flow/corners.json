@@ -1,0 +1,22 @@
+{
+  "schema": "usb2phy.flow.corner-matrix/1",
+  "source": "spec/decision-records/0001-clocking-cdc-jitter-metric-and-pvt-envelope.md, Decision 5 (\"Committed multi-corner STA set\")",
+  "cell_library": "sky130_fd_sc_hd",
+  "provisional": false,
+  "committed": [
+    "ss_n40C_1v60",
+    "ss_100C_1v60",
+    "tt_025C_1v80",
+    "tt_100C_1v80",
+    "ff_n40C_1v95",
+    "ff_100C_1v95"
+  ],
+  "nominal": "tt_025C_1v80",
+  "presumptive_setup_binding": "ss_n40C_1v60",
+  "presumptive_hold_binding": "ff_n40C_1v95",
+  "notes": [
+    "This is the ratified committed set, not a provisional placeholder: decision record 0001 landed before this flow was built, so the slow/typ/fast triple issue #11 named as an interim matrix is superseded by the full six-corner set below.",
+    "Every name here must be a corner the installed sky130_fd_sc_hd liberty grid actually ships. Decision 5 chose the envelope that way on purpose -- see its 'Options considered' section.",
+    "The grid has no tt_n40C corner. Typical-process cold behaviour is bounded between ss_n40C_1v60 and ff_n40C_1v95 rather than measured directly. This is a PDK limitation, restated here so a reader of a flow record does not have to go find it."
+  ]
+}

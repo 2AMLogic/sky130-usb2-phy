@@ -1,9 +1,22 @@
 name: CI
 
-# Runs this repo's real verification suite (`npm run check:ci`, wired to
-# `scripts/check-ci.sh`) on every pull request and on every push to `main`.
-# See verification/README.md and docs/environment-setup.md for what the
-# suite covers and how to reproduce it locally.
+# Two independent jobs, on every pull request and every push to `main`:
+#
+#   check-ci      -- this repo's real functional verification suite
+#                    (`npm run check:ci`, wired to scripts/check-ci.sh):
+#                    the pytest usbfs_model layer plus the cocotb/Icarus RTL
+#                    testbenches driven through `klt functional-verification`.
+#                    Needs a provisioned EDA toolchain; takes minutes.
+#
+#   flow-records  -- the digital-flow evidence lint (`npm run lint`, wired to
+#                    .github/scripts/lint.sh): flow/check_records.py plus its
+#                    own self-tests. Pure Python, no klt / PDK / OpenROAD, so
+#                    it runs in seconds and still gates the PR.
+#
+# They are deliberately separate: the evidence lint must stay green (and stay
+# fast) even when the heavy toolchain job is slow or its provisioning is
+# broken, and a failure in one must not be reported as a failure of the other.
+# See verification/README.md, flow/README.md, and docs/environment-setup.md.
 on:
   pull_request:
   push:
@@ -89,3 +102,47 @@ jobs:
       # --------------------------------------------------------------------
       - name: Run verification suite (npm run check:ci)
         run: npm run check:ci
+
+  # ------------------------------------------------------------------------
+  # Digital-flow evidence lint (issue #11). Independent of `check-ci` above:
+  # no klt, no PDK, no OpenROAD, no Icarus -- flow/check_records.py reads only
+  # committed files. It enforces the append-only / required-field / corner-
+  # coverage / freshness / timing-gate / DRC-deck-pinning rules that
+  # flow/README.md defines, and runs its own self-tests (which prove the lint
+  # actually fails on each condition rather than merely claiming to).
+  # ------------------------------------------------------------------------
+  flow-records:
+    name: digital-flow evidence lint (npm run lint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # The append-only check compares every record present in the base ref
+      # against the working tree, so the base ref's history must be present --
+      # a default shallow clone would silently degrade that check to a skip.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest (the lint's own self-tests)
+        run: python3 -m pip install pytest
+
+      # Resolve the ref the append-only rule is enforced against. On a PR that
+      # is the base branch as GitHub reports it; on a push to main it is the
+      # commit before the push. Fetched explicitly so `git show <ref>:<path>`
+      # can read the base ref's record blobs.
+      - name: Resolve the append-only base ref
+        run: |
+          if [ -n "${{ github.base_ref }}" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+            echo "FLOW_LINT_BASE_REF=origin/${{ github.base_ref }}" >> "$GITHUB_ENV"
+          else
+            echo "FLOW_LINT_BASE_REF=${{ github.event.before || 'HEAD~1' }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run the evidence lint (npm run lint)
+        run: npm run lint
