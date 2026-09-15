@@ -68,7 +68,17 @@ build-here/sibling-canary partition table.
 Maturity ladder: spec ratified → UTMI RTL verified → analog blocks available
 → assembly → DRC/LVS-clean → shuttle seat → measured silicon. **Current
 position: spec ratified, FS receive/transmit RTL implemented and
-cocotb-verified; no physical flow (synthesis/P&R/DRC/LVS) run yet.**
+cocotb-verified; the physical flow (synthesis/P&R/STA/LVS/DRC) has been run
+only for the toolchain-plumbing stub, never for the real UTMI RTL.**
+
+## Characterization
+
+[`docs/characterization.md`](docs/characterization.md) is the authoritative
+characterization summary: every row of `spec/usb2-phy.md` §6 indexed against
+the evidence records that exist, per PVT corner, with the record id behind
+each entry. Its headline today is that **zero spec rows have design-anchored
+evidence** — the committed records are the `smoke-utmi_stub` toolchain
+experiment (`design.anchors_design_claim: false`), not the real datapath.
 
 ## Repo layout
 
