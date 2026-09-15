@@ -89,6 +89,33 @@ bind-mounts `$PDK_ROOT` — so every stage dies on an opaque `cannot read file
 <liberty>` from inside the container. Delete the workaround once #1868 is
 fixed.
 
+### Post-layout functional re-verification (issue #37)
+
+A seventh, separate stage — not one of the six above, and not driven by
+`run_flow.py` — re-runs `verification/test_utmi_stub.py` against the
+post-layout gate-level netlist instead of the pre-layout RTL:
+
+```bash
+PDK=sky130A python3 flow/postlayout_verify_utmi_stub.py --format json
+```
+
+This augments the *existing* nominal-corner record rather than opening a new
+experiment slug: it mints a new record that `supersedes` the prior
+`tt_025C_1v80` record, copying that record's six-stage measurements
+unchanged and adding a `functional_verification` stage on top — see
+`flow/smoke-utmi_stub/records/20260915-132956-9281bc4-tt_025C_1v80.md` for
+the full result and exactly what it does and does not model (in short: a
+functional-only, zero-delay check against `layout/utmi_stub.asbuilt.v` — LVS
+already proved that structurally equivalent to `layout/utmi_stub.extracted.spice`,
+the netlist `klt functional-verification` cannot simulate directly — no SDF
+back-annotation, and no claim about the real UTMI digital datapath). Unlike
+the six committed `flow/request-*.json` documents, this stage's request
+cannot be a static committed file: its `sources` must name the PDK's
+`sky130_fd_sc_hd` behavioral Verilog models, which live outside this repo at
+a host-resolved path, so the script resolves the PDK root itself (the same
+`klt pdk find` workaround as `resolve_pdk_root` above) and builds the request
+in memory instead.
+
 ## Corner matrix
 
 `flow/corners.json` is the single source of truth, and it is **not
@@ -344,9 +371,17 @@ Stated so no reader mistakes the committed GDS for a signoff artifact:
   every LVS record carries.)
 - **No IO ring, no metal fill, no `DONT_USE_CELLS` exclusion.** Core-only
   floorplan.
-- **No post-layout functional simulation.** LVS here proves *structural*
-  equivalence between the layout and the as-built netlist. Re-running the
-  cocotb suites against the extracted netlist is issue #37's scope, and it is
-  a different claim.
+- **No SDF-annotated post-layout timing simulation.** Issue #37 re-ran
+  `verification/test_utmi_stub.py` against the post-layout gate-level netlist
+  (`layout/utmi_stub.asbuilt.v`, LVS-proven structurally equivalent to
+  `layout/utmi_stub.extracted.spice`) and it passed — see
+  `flow/postlayout_verify_utmi_stub.py` and the `functional_verification`
+  stage of `flow/smoke-utmi_stub/records/20260915-132956-9281bc4-tt_025C_1v80.md`.
+  That is a **functional-only** check (zero-delay `FUNCTIONAL` cell models, no
+  SDF back-annotation — no post-route SDF exists for this design in the first
+  place), and only for the toolchain-smoke design. It is **not** a
+  timing-annotated re-verification, and it is **not** a post-layout claim
+  about the real UTMI digital datapath — see that record's own "Post-layout
+  functional re-verification" section for the exact scope statement.
 - **No antenna/ERC signoff.** `klt place-and-route` reports zero post-repair
   antenna violations; a real ERC pass (`klt erc`) has not been run.
