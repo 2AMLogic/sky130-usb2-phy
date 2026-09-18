@@ -11,6 +11,32 @@ UTMI-side Verilog sources.
   `usb_utmi_top.v` (below), which is the `hdl_toplevel` any flow work should
   target; this stub stays only as the toolchain-plumbing proof.
 
+## Relationship to sibling PDK repos (issue #60)
+
+The FS RX/TX modules here are known to diverge from the same-named modules in
+`gf180-usb2-phy` — `usb_nrzi_encoder.v` is the sharpest case, where the two
+repos share a module name but not an interface (this repo's `bit_stb`/`bypass`/
+`sof`/`bit_in`/`level_out` versus that repo's `data_valid`/`init`/`data_bit`/
+`line_valid`/`line_bit`). These are independent implementations, not shared
+code. For the sky130 side, the divergence is **deliberate**: the port and clock
+domain shapes fall out of this repo's own ratified
+`spec/decision-records/0001-clocking-cdc-jitter-metric-and-pvt-envelope.md` —
+the 144 MHz oversampling domain and its `bit_stb` bit-time strobe from Decision
+3, and the `bypass` port wired to `OpMode == 2'b10` from Decision 4's port
+table. That is not a claim made only here: every FS RX/TX module's header cites
+the decision record for its own domain and port choices — see
+`usb_nrzi_encoder.v` (the `bit_stb` domain gating and the `OpMode`-driven
+bypass), `usb_bit_sync.v` (the `clk_144` recovery domain), and
+`usb_linestate.v` (why `LineState[1:0]` is the raw `{D-, D+}` sample rather
+than a pre-encoded J/K value) — and the per-path tables below say the same at
+the module-catalog level. Why `gf180-usb2-phy`'s implementation looks the way
+it does is a question for that repo, not answerable from here. The *mechanism*
+for keeping future shared PDK-independent RTL from diverging uncoordinated — a
+single master plus a provenance manifest, rather than an unmarked copy — is
+being decided cross-repo in 2AMLogic/2am#899. This note is a recorded fact and
+a pointer only: it is **not** proposing a merge or reconciliation of the two
+existing implementations, which remains out of scope.
+
 ## FS receive path (issue #13)
 
 The FS receive datapath, from the DP/DM line-level inputs (delivered by the
