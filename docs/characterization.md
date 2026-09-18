@@ -9,6 +9,18 @@ supersedes [`docs/baseline.md`](baseline.md) as the authoritative summary;
 that document is kept as the original point-in-time synthesis record it
 always was, not deleted.
 
+> **Partially stale as of issue #59.** That issue added a power grid to the
+> P&R request and re-ran the flow across all six corners, so six records
+> stamped `20260918-214755-fb60e2c-*` now supersede the six indexed in §1
+> below. The **result this report exists to state is unchanged**: the new
+> records also carry `design.anchors_design_claim: false`, so zero §6 rows
+> have design-anchored evidence and every §6 row below still reads
+> `NO EVIDENCE`. What *is* stale is the detail — §1's record index, §3's
+> per-corner utilisation/wirelength numbers, and §3's per-run DRC coverage
+> counts. Regenerating the report against the newest records is tracked in
+> issue #64; until then, check any number below against the newest record
+> for that corner before quoting it as current.
+
 ## Headline
 
 > **Zero of the 16 rows of `spec/usb2-phy.md` §6 currently have
@@ -166,12 +178,17 @@ were shared or copied.
 **No committed record contains a power number, at any corner.** The flow has
 six stages (synthesis, P&R, STA, extraction, LVS, DRC) plus #37's
 functional-verification stage, and none of them performs power analysis.
-There is also no PDN at all: `flow/request-par-utmi_stub.json` omits `power`,
-so there is no power grid, no tapcell insertion and no explicit filler
-placement (see [`flow/README.md`](../flow/README.md) → "What this flow does
-*not* produce"), and the post-layout functional run compiled the cell library
-**without** `USE_POWER_PINS` to match the as-built netlist's port list.
-Power is unmeasured, not "measured and fine".
+At the revision this report was generated against there was also no PDN at
+all — `flow/request-par-utmi_stub.json` omitted `power`, so no power grid, no
+tapcell insertion and no explicit filler placement. **Issue #59 changed
+that**: the P&R request now declares a `power` block and the records minted
+after it carry a real grid plus `klt lvs`'s `power_connectivity: match`
+verdict (see [`flow/README.md`](../flow/README.md) → "The power-connectivity
+rule"). That is a *connectivity* verdict and nothing more — it changes
+nothing in this section's headline, because no stage in the flow performs
+power analysis either before or after. The post-layout functional run also
+compiled the cell library **without** `USE_POWER_PINS`, to match the
+as-built netlist's port list. Power is unmeasured, not "measured and fine".
 
 ### Post-layout functional verification (record `…-9281bc4-tt_025C_1v80`)
 
@@ -190,6 +207,13 @@ Power is unmeasured, not "measured and fine".
 
 It closes nothing in §6. It is evidence that the post-layout
 re-verification *pipeline* works, on the stub.
+
+**Superseded by issue #59's PDN re-run, and not yet re-minted (issue #63).**
+That record names the pre-PDN `layout/utmi_stub.asbuilt.v` as an input, and
+the re-run replaced both the netlist and the nominal-corner record, so the
+current nominal record carries no `functional_verification` stage. The claim
+above stands as history against the netlist it names, and as nothing about
+the committed netlist today.
 
 ### Standing caveats that travel with every DRC/LVS verdict above
 

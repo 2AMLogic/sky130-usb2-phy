@@ -84,6 +84,21 @@ def checks_in(findings: check_records.Findings) -> set[str]:
     return {check for check, _ in findings.items}
 
 
+def standing_record(sandbox: Path) -> Path:
+    """A record no other record supersedes.
+
+    Freshness is only asked of records that still stand: a superseded record is
+    frozen evidence of what the flow reported against an earlier revision of
+    its own committed inputs, and is deliberately exempt. A freshness test must
+    therefore corrupt a standing record, not just the oldest one on disk.
+    """
+    records = sorted((sandbox / "smoke-utmi_stub" / "records").glob("*.md"))
+    superseded = check_records.superseded_record_ids([read_meta(p) for p in records])
+    standing = [p for p in records if p.stem not in superseded]
+    assert standing, "fixture has no standing (un-superseded) record to corrupt"
+    return standing[0]
+
+
 def read_meta(path: Path) -> dict:
     text = path.read_text(encoding="utf-8")
     start = text.index("<!-- record-meta") + len("<!-- record-meta")
@@ -330,7 +345,7 @@ def test_corner_matrix_disagreeing_with_corners_json_fails(sandbox: Path):
 # Freshness
 # --------------------------------------------------------------------------
 def test_stale_input_hash_fails(sandbox: Path):
-    target = sorted((sandbox / "smoke-utmi_stub" / "records").glob("*.md"))[0]
+    target = standing_record(sandbox)
     meta = read_meta(target)
     assert meta["provenance"]["inputs"], "record carries no provenance inputs"
     meta["provenance"]["inputs"][0]["content_hash"] = "sha256:" + "0" * 64
@@ -344,7 +359,7 @@ def test_stale_input_hash_fails(sandbox: Path):
 
 
 def test_vanished_input_fails(sandbox: Path):
-    target = sorted((sandbox / "smoke-utmi_stub" / "records").glob("*.md"))[0]
+    target = standing_record(sandbox)
     meta = read_meta(target)
     meta["provenance"]["inputs"].append(
         {"path": "rtl/does_not_exist.v", "content_hash": "sha256:" + "1" * 64}
@@ -355,6 +370,141 @@ def test_vanished_input_fails(sandbox: Path):
     code, findings = run_lint(sandbox)
     assert code == 1
     assert "freshness" in checks_in(findings), findings.items
+
+
+def test_superseded_record_is_exempt_from_freshness(sandbox: Path):
+    """A frozen record is not retro-failed when a committed input changes.
+
+    Adding the `power` block to `request-par-utmi_stub.json` (issue #59)
+    changed a file every prior record cites. Those records are append-only
+    evidence of what the flow reported *before* that change, so freshness must
+    skip them once a newer record for the same corner supersedes them.
+    """
+    records = sorted((sandbox / "smoke-utmi_stub" / "records").glob("*.md"))
+    metas = [read_meta(p) for p in records]
+    superseded = check_records.superseded_record_ids(metas)
+    assert superseded, "fixture has no superseded record to exercise the exemption"
+
+    target = next(p for p in records if p.stem in superseded)
+    meta = read_meta(target)
+    assert meta["provenance"]["inputs"], "record carries no provenance inputs"
+    meta["provenance"]["inputs"][0]["content_hash"] = "sha256:" + "0" * 64
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+
+
+# --------------------------------------------------------------------------
+# The power/ground half of LVS (issue #59)
+# --------------------------------------------------------------------------
+def pdn_record(sandbox: Path) -> Path:
+    """A standing record whose place-and-route run generated a real PDN."""
+    records = sorted((sandbox / "smoke-utmi_stub" / "records").glob("*.md"))
+    superseded = check_records.superseded_record_ids([read_meta(p) for p in records])
+    for path in records:
+        if path.stem in superseded:
+            continue
+        meta = read_meta(path)
+        if (meta.get("stages", {}).get("place_and_route", {}).get("power") or {}).get("pdn"):
+            return path
+    raise AssertionError("fixture has no standing record that reports a generated PDN")
+
+
+def test_power_connectivity_mismatch_fails(sandbox: Path):
+    target = pdn_record(sandbox)
+    meta = read_meta(target)
+    meta["stages"]["lvs"]["power_connectivity"].update(
+        {"status": "mismatch", "finding_count": 3}
+    )
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "power-connectivity" in checks_in(findings), findings.items
+
+
+def test_pdn_record_without_power_verdict_fails(sandbox: Path):
+    """A signal-only LVS `match` may never stand in for a power verdict."""
+    target = pdn_record(sandbox)
+    meta = read_meta(target)
+    del meta["stages"]["lvs"]["power_connectivity"]
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "power-connectivity" in checks_in(findings), findings.items
+
+
+def test_unverified_power_connectivity_must_carry_a_note(sandbox: Path):
+    target = pdn_record(sandbox)
+    meta = read_meta(target)
+    meta["stages"]["lvs"]["power_connectivity"].update(
+        {"status": "unreported", "note": "   "}
+    )
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "power-connectivity" in checks_in(findings), findings.items
+
+
+def test_par_request_must_declare_a_power_block(sandbox: Path):
+    """Without `power`, `klt place-and-route` emits no PDN at all (issue #59)."""
+    request = sandbox / "request-par-utmi_stub.json"
+    doc = json.loads(request.read_text(encoding="utf-8"))
+    del doc["power"]
+    request.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "request" in checks_in(findings), findings.items
+    assert any(
+        "power.straps" in message for _, message in findings.items
+    ), findings.items
+
+
+def test_lvs_request_must_declare_expected_supply_nets(sandbox: Path):
+    """Without `expected_nets` the power check is only self-consistency.
+
+    Every instance agreeing on the *wrong* net passes a relative check --
+    which is how the pre-#59 evidence corresponded `VGND` to `TXREADY` and
+    still reported `match`.
+    """
+    request = sandbox / "request-lvs-utmi_stub.json"
+    doc = json.loads(request.read_text(encoding="utf-8"))
+    del doc["options"]["power_connectivity"]["expected_nets"]
+    request.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "request" in checks_in(findings), findings.items
+    assert any(
+        "options.power_connectivity.expected_nets" in message
+        for _, message in findings.items
+    ), findings.items
+
+
+def test_unresolved_expected_power_pin_fails(sandbox: Path):
+    """A declared pin the check never resolved is not a clean verdict.
+
+    `klt lvs` emits no finding for it, so without gating on
+    `unchecked_expected_pins` it reads exactly like a pin that was checked and
+    found correct (klayout-tools#1978).
+    """
+    target = pdn_record(sandbox)
+    meta = read_meta(target)
+    meta["stages"]["lvs"]["power_connectivity"]["unchecked_expected_pins"] = ["VPWR"]
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "power-connectivity" in checks_in(findings), findings.items
 
 
 # --------------------------------------------------------------------------

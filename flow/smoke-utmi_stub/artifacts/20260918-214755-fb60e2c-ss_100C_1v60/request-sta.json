@@ -1,0 +1,14 @@
+{
+  "schema": "klt.sta.request/1",
+  "def": "/Users/rwalters/GitHub/sky130-usb2-phy/.loom/worktrees/issue-59/flow/build/ss_100C_1v60/.klt/place-and-route/utmi_stub.def",
+  "hdl_toplevel": "utmi_stub",
+  "pdk": {
+    "cell_library": "sky130_fd_sc_hd",
+    "corner": "ss_100C_1v60"
+  },
+  "constraints": {
+    "clock_port": "clk",
+    "clock_period_ns": 33.333
+  },
+  "geometry_source": "routed"
+}

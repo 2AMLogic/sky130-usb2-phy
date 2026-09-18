@@ -130,6 +130,15 @@ REQUEST_REQUIREMENTS: dict[str, tuple[str, ...]] = {
         "floorplan.method",
         "io.layer_h",
         "io.layer_v",
+        # Without `power`, `klt place-and-route` generates no PDN at all: every
+        # standard cell's VPWR/VGND pin belongs to no net, no tapcells are
+        # inserted, and LVS's signal-only compare still reports `match`
+        # because its gate-level-verilog reference carries no supply pins.
+        # Requiring these three here is what stops that hole reappearing
+        # silently in this template (issue #59).
+        "power.power_net",
+        "power.ground_net",
+        "power.straps",
         "constraints.clock_port",
         "constraints.clock_period_ns",
         "seed",
@@ -161,6 +170,14 @@ REQUEST_REQUIREMENTS: dict[str, tuple[str, ...]] = {
         "reference.top",
         "reference.form",
         "reference.library",
+        # Omitted, `klt lvs` still runs the power/ground check, but only as a
+        # *relative* one: every instance's same-named pin must reach the same
+        # net as every other instance's. That passes on a design where all of
+        # them agree on the wrong net -- which is exactly how the pre-#59
+        # evidence came to correspond `VGND` to the signal net `TXREADY` while
+        # reporting `match`. Naming the nets makes it absolute: each supply
+        # pin must reach the net the P&R request's `power` block declares.
+        "options.power_connectivity.expected_nets",
     ),
     "request-drc-utmi_stub.json": (
         "schema",
@@ -498,7 +515,29 @@ def check_corner_matrix(
 # --------------------------------------------------------------------------
 # Rule 4 -- freshness
 # --------------------------------------------------------------------------
-def check_freshness(meta: dict, path: Path, findings: Findings) -> None:
+def superseded_record_ids(metas: list[dict]) -> set[str]:
+    """Every record id that some other record names in its `supersedes` field.
+
+    Freshness is a claim about the *current* tree, so it can only sensibly be
+    asked of records that still stand. A superseded record is frozen evidence
+    of what the flow reported at an earlier revision of its own committed
+    inputs -- it is append-only precisely so it can go on saying that, and
+    re-running the flow after a deliberate request change (e.g. adding the
+    `power` block, issue #59) must not retro-fail it.
+    """
+    ids: set[str] = set()
+    for meta in metas:
+        prior = meta.get("supersedes")
+        if isinstance(prior, str) and prior.strip():
+            ids.add(prior.strip())
+    return ids
+
+
+def check_freshness(
+    meta: dict, path: Path, findings: Findings, superseded: set[str] | None = None
+) -> None:
+    if superseded and meta.get("record_id") in superseded:
+        return
     inputs = meta.get("provenance", {}).get("inputs")
     if not isinstance(inputs, list):
         return
@@ -634,6 +673,92 @@ def check_timing_gate(meta: dict, path: Path, findings: Findings) -> None:
                 "timing-gate",
                 f"{path.name}: timing.verdict is 'pass' but TNS is negative ({tns})",
             )
+
+
+# --------------------------------------------------------------------------
+# Rule 5b -- a record that claims a PDN must carry a power/ground verdict
+# --------------------------------------------------------------------------
+VALID_POWER_CONNECTIVITY_STATUSES = {"match", "mismatch", "unchecked", "unreported"}
+
+
+def check_power_connectivity(meta: dict, path: Path, findings: Findings) -> None:
+    """`klt lvs`'s signal verdict says nothing about power -- issue #59.
+
+    The LVS reference this flow uses is `klt place-and-route`'s as-built
+    gate-level Verilog, which carries no supply pins. The signal compare
+    therefore drops the layout's supply nets instead of failing on them, and
+    reports `status: "match"` on a layout with no power grid at all. The
+    power/ground half is a separate verdict (`power_connectivity`,
+    klayout-tools#1964) and this repo must never let the first stand in for
+    the second.
+
+    Scoped to records that actually claim a PDN (`stages.place_and_route.power.pdn`
+    is true). Records minted before `request-par-utmi_stub.json` grew its
+    `power` block predate the verdict entirely and are append-only evidence of
+    exactly that -- they are not retro-failed here; the PDN itself is enforced
+    at the request level by `REQUEST_REQUIREMENTS`.
+    """
+    try:
+        pdn = dotted_get(meta, "stages.place_and_route.power.pdn")
+    except KeyError:
+        return
+    if pdn is not True:
+        return
+
+    try:
+        power = dotted_get(meta, "stages.lvs.power_connectivity")
+    except KeyError:
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: place_and_route reports a generated PDN but the record carries "
+            "no `stages.lvs.power_connectivity` verdict -- a signal-only LVS `match` is "
+            "not evidence that the design is powered (issue #59)",
+        )
+        return
+    if not isinstance(power, dict):
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: `stages.lvs.power_connectivity` must be an object",
+        )
+        return
+
+    status = power.get("status")
+    if status not in VALID_POWER_CONNECTIVITY_STATUSES:
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: stages.lvs.power_connectivity.status {status!r} is not one of "
+            f"{sorted(VALID_POWER_CONNECTIVITY_STATUSES)}",
+        )
+        return
+
+    if status == "mismatch":
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: stages.lvs.power_connectivity.status is 'mismatch' "
+            f"({power.get('finding_count')} finding(s)) -- the power/ground half of LVS "
+            "failed and this record must not read as a clean LVS result",
+        )
+    if status in ("unchecked", "unreported") and not str(power.get("note", "")).strip():
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: stages.lvs.power_connectivity.status is {status!r} but the "
+            "record carries no note saying power connectivity went unverified -- an "
+            "unverified half of LVS must be written down, not implied",
+        )
+
+    # `klt lvs` produces no finding for an `expected_nets` pin it never
+    # resolved, so a typo'd or absent pin name reads exactly like a pin that
+    # was checked and found correct (klayout-tools#1978). The report names
+    # them; a record that carries names here is not a clean verdict.
+    unchecked_pins = power.get("unchecked_expected_pins")
+    if unchecked_pins:
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: stages.lvs.power_connectivity.unchecked_expected_pins is "
+            f"{unchecked_pins!r} -- request-lvs-utmi_stub.json declares an expected net "
+            "for a pin the check never resolved, so that part of the verdict was never "
+            "asked rather than answered",
+        )
 
 
 # --------------------------------------------------------------------------
@@ -865,14 +990,21 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
         git_status = check_append_only_git(records_dir, args.base_ref, findings)
     print(f"  append-only  : {len(record_paths)} record(s); git {git_status}")
 
+    parsed: list[tuple[Path, dict]] = []
     for path in record_paths:
         meta = extract_record_meta(path.read_text(encoding="utf-8"), path, findings)
         if meta is None:
             continue
+        parsed.append((path, meta))
+
+    superseded = superseded_record_ids([meta for _, meta in parsed])
+
+    for path, meta in parsed:
         check_required_fields(meta, path, findings)
         check_corner_matrix(meta, path, committed, findings)
-        check_freshness(meta, path, findings)
+        check_freshness(meta, path, findings, superseded)
         check_timing_gate(meta, path, findings)
+        check_power_connectivity(meta, path, findings)
         check_drc_deck(meta, path, coverage, findings)
 
     if args.klt_check:

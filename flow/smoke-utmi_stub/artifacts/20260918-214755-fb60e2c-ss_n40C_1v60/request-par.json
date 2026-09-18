@@ -1,11 +1,11 @@
 {
   "schema": "klt.place-and-route.request/1",
   "engine": "openroad",
-  "netlist": ".klt/synthesize/utmi_stub_synth.v",
+  "netlist": "/Users/rwalters/GitHub/sky130-usb2-phy/.loom/worktrees/issue-59/flow/build/ss_n40C_1v60/.klt/synthesize/utmi_stub_synth.v",
   "hdl_toplevel": "utmi_stub",
   "pdk": {
     "cell_library": "sky130_fd_sc_hd",
-    "corner": "tt_025C_1v80",
+    "corner": "ss_n40C_1v60",
     "interconnect_corner": "nom",
     "sweep_corners": [
       "ss_n40C_1v60",

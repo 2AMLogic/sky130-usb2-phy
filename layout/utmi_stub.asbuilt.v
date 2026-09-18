@@ -29,15 +29,15 @@ module utmi_stub (RxValid,
     .D(DataOut[1]),
     .RESET_B(rst_n),
     .Q(DataIn[1]));
- sky130_fd_sc_hd__dfrtp_1 _3_ (.CLK(clknet_1_0__leaf_clk),
+ sky130_fd_sc_hd__dfrtp_1 _3_ (.CLK(clknet_1_1__leaf_clk),
     .D(DataOut[2]),
     .RESET_B(rst_n),
     .Q(DataIn[2]));
- sky130_fd_sc_hd__dfrtp_1 _4_ (.CLK(clknet_1_1__leaf_clk),
+ sky130_fd_sc_hd__dfrtp_1 _4_ (.CLK(clknet_1_0__leaf_clk),
     .D(DataOut[3]),
     .RESET_B(rst_n),
     .Q(DataIn[3]));
- sky130_fd_sc_hd__dfrtp_1 _5_ (.CLK(clknet_1_1__leaf_clk),
+ sky130_fd_sc_hd__dfrtp_1 _5_ (.CLK(clknet_1_0__leaf_clk),
     .D(DataOut[4]),
     .RESET_B(rst_n),
     .Q(DataIn[4]));
@@ -45,7 +45,7 @@ module utmi_stub (RxValid,
     .D(DataOut[5]),
     .RESET_B(rst_n),
     .Q(DataIn[5]));
- sky130_fd_sc_hd__dfrtp_1 _7_ (.CLK(clknet_1_0__leaf_clk),
+ sky130_fd_sc_hd__dfrtp_1 _7_ (.CLK(clknet_1_1__leaf_clk),
     .D(DataOut[6]),
     .RESET_B(rst_n),
     .Q(DataIn[6]));
