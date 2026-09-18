@@ -1,0 +1,15 @@
+{
+  "schema": "klt.synthesize.request/1",
+  "engine": "yosys",
+  "sources": [
+    "/Users/rwalters/GitHub/sky130-usb2-phy/.loom/worktrees/issue-59/rtl/utmi_stub.v"
+  ],
+  "hdl_toplevel": "utmi_stub",
+  "pdk": {
+    "cell_library": "sky130_fd_sc_hd",
+    "corner": "ff_n40C_1v95"
+  },
+  "constraints": {
+    "clock_period_ns": 33.333
+  }
+}

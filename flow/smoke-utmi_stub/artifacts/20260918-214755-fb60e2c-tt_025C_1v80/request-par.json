@@ -1,7 +1,7 @@
 {
   "schema": "klt.place-and-route.request/1",
   "engine": "openroad",
-  "netlist": ".klt/synthesize/utmi_stub_synth.v",
+  "netlist": "/Users/rwalters/GitHub/sky130-usb2-phy/.loom/worktrees/issue-59/flow/build/tt_025C_1v80/.klt/synthesize/utmi_stub_synth.v",
   "hdl_toplevel": "utmi_stub",
   "pdk": {
     "cell_library": "sky130_fd_sc_hd",

@@ -242,10 +242,12 @@ drift apart.
   `timing.total_negative_slack_ns`, `timing.verdict`, `timing.waiver`,
   `timing.note`.
 - **Stages** — a status for each of the six, plus the numbers each stage's
-  verdict rests on: synthesis instance count, P&R `stage_reached` and
-  `gds_path`, LVS engine and its warnings-only mismatches, DRC violation
-  count, deck name, deck content hash, the deck's known coverage gaps, and
-  the run's own per-run coverage block.
+  verdict rests on: synthesis instance count, P&R `stage_reached`,
+  `gds_path` and the `power` block `klt place-and-route` echoes back (what
+  PDN it actually generated), LVS engine, its warnings-only mismatches and
+  its separate `power_connectivity` verdict, DRC violation count, deck name,
+  deck content hash, the deck's known coverage gaps, and the run's own
+  per-run coverage block.
 - **Provenance** — `klt` / KLayout / OpenROAD / Yosys versions, the resolved
   PDK, `provenance.inputs` (every committed file the run consumed, with its
   content hash), and `provenance.artifacts` (every committed output, with its
@@ -264,6 +266,19 @@ never to edit the hash.
 This is what makes "staleness is failure" enforceable rather than
 aspirational: editing `rtl/utmi_stub.v` or any committed request document
 turns every existing record red until the flow is re-run.
+
+**One exemption, and only one: a record another record supersedes.** Records
+are append-only, so a re-run never edits or deletes its predecessor — it
+mints a new record naming the old one in `supersedes`. The superseded record
+is then frozen evidence of what the flow reported against an *earlier*
+revision of its own committed inputs, and that is exactly what it is kept
+for; freshness, which is a claim about the current tree, is not asked of it.
+Freshness still applies in full to every **standing** record, so a request
+change with no re-run still turns the evidence red — the only thing the
+exemption removes is retro-failing history that a deliberate, recorded
+re-run has already replaced. `run_flow.py` fills `supersedes` in
+automatically from the newest existing record for the same corner, so the
+chain is machine-maintained rather than hand-asserted.
 
 A deeper tier exists and is opt-in, because it needs a toolchain:
 
@@ -347,6 +362,80 @@ The deck is `klt`'s **curated** sky130 deck: 47 rules built from KLayout
 `Region` primitives, not the PDK-native `sky130A.lydrc` signoff deck. It is a
 real check, and it is not signoff.
 
+## The power-connectivity rule
+
+**An LVS `match` is a verdict about signals only. It is not evidence that the
+design is powered, and this flow never lets the first stand in for the
+second.**
+
+The LVS reference here is `klt place-and-route`'s own as-built
+`write_verilog` netlist, which carries no supply pins at all. A
+`gate-level-verilog` compare therefore *drops* the layout's supply nets
+rather than failing on them — so a layout with no power grid whatsoever can
+and did report `status: "match"` at all six corners — with one supply rail
+corresponded to a *signal* net in the bargain (`VGND` → `TXREADY`). That was
+issue #59,
+and the hole mattered because this experiment is the template the real UTMI
+digital layer inherits.
+
+Four things close it, and all four are enforced, not documented:
+
+- **`request-par-utmi_stub.json` must declare a `power` block.**
+  `check_records.py`'s `REQUEST_REQUIREMENTS` requires `power.power_net`,
+  `power.ground_net` and `power.straps` on the P&R request. Without them
+  `klt place-and-route` generates no PDN at all: no straps, no global
+  connect, no tapcells, and every standard cell's `VPWR`/`VGND` pin left on
+  a per-row island. The committed block is met1 `FOLLOWPIN` rails plus met4
+  and met5 straps, with met1↔met4 and met4↔met5 connects.
+- **`request-lvs-utmi_stub.json` must declare
+  `options.power_connectivity.expected_nets`** (also enforced by
+  `REQUEST_REQUIREMENTS`). Omitted, `klt lvs` still runs the check — but only
+  as a *relative* one: every instance's same-named pin must reach the same
+  net as every other instance's. A design where all of them agree on the
+  *wrong* net passes that, which is exactly how the pre-#59 evidence
+  corresponded `VGND` to `TXREADY` and still reported `match`. Naming the
+  nets makes it absolute — verified by construction: re-running `klt lvs` on
+  the committed `tt_025C_1v80` artifacts with `VPWR` declared as `TXREADY`
+  returns `power_connectivity.status: "mismatch"` ("must reach net 'TXREADY'
+  … but 57 instance(s) reach a different net") while the signal `status`
+  stays `match`. `klt lvs` also emits no finding for a declared pin it never
+  resolved, so `unchecked_expected_pins` is recorded and gated on as well
+  (klayout-tools#1978) — the `klt` build behind the current records predates
+  that field, so it reads `null` there and the gate is latent rather than
+  exercised.
+- **Every record carries `stages.lvs.power_connectivity`**, `klt lvs`'s
+  separate power/ground verdict (klayout-tools#1964), reported *beside*
+  `status` and never folded into it. `run_flow.py` records a klt build that
+  emits no such block as its own `unreported` status with a written note —
+  never as a pass.
+- **`run_flow.py` and `check_records.py` both gate on it.** A `mismatch` is a
+  gate failure (`run_flow.py` exits 1; the lint rejects the record); an
+  `unchecked`/`unreported`/absent verdict on a record that claims a generated
+  PDN is UNVERIFIED and must be written down as such. Records minted before
+  the `power` block existed predate the verdict entirely and are not
+  retro-failed — they are append-only evidence of exactly the state this
+  section describes.
+
+What the committed evidence now says, concretely: every record reports
+`place_and_route.power.pdn: true` with a real `tapcell_master`, and
+`lvs.power_connectivity.status: match` over 57 instances with zero findings,
+at all six corners. Read that verdict together with the LVS `status` above
+it, never instead of it.
+
+**One caveat, in the check itself, filed as
+[klayout-tools#2076](https://github.com/2AMLogic/klayout-tools/issues/2076).**
+Every record's `power_connectivity.power_pins` reads
+`["VGND", "VPB", "VPWR", "Y"]`. `Y` is a signal output, not a supply: `klt`
+derives the power-pin universe as "declared by the library, not carried by
+the gate-level-Verilog reference", and CTS's clock-load `inv_1` has its `Y`
+output dangling, so no reference pin of that name exists to subtract. Here it
+is harmless — one instance, so the check's "all instances of this pin reach
+the same net" rule passes trivially, and the `VGND`/`VPWR`/`VPB` half of the
+verdict is the real one. It will **not** stay harmless on the real UTMI
+layer: CTS emits a clock load per leaf, and two of them on different leaf
+nets turn that rule into a spurious `mismatch`. Expect to re-read this
+verdict, not just inherit it, when the real datapath goes through.
+
 ## Upstream tool gaps found while building this flow
 
 Per `CLAUDE.md`'s friction protocol, each is filed generically against the
@@ -358,6 +447,8 @@ tool at `2AMLogic/klayout-tools`, and each is linked from every record:
 | [#1866](https://github.com/2AMLogic/klayout-tools/issues/1866) | The per-corner sweep reports WNS only — no per-corner TNS, so recovering it costs one extra `klt sta` run per corner. |
 | [#1867](https://github.com/2AMLogic/klayout-tools/issues/1867) | `klt drc` and `klt extract` are the only physical-flow stages with no request-document surface. |
 | [#1868](https://github.com/2AMLogic/klayout-tools/issues/1868) | `place-and-route` resolves the PDK via a search root, but the documented `openroad` container wrapper only mounts `$PDK_ROOT` — every stage dies on an opaque `cannot read file`. |
+| [#2073](https://github.com/2AMLogic/klayout-tools/issues/2073) | Stage responses use two shapes for the same output-artifact path field — `synthesize` emits `{"path": …, "scope": "repo"}`, `place-and-route` a plain absolute string — with `schema_version` unchanged, so a flow chaining the stages cannot detect which it will get. `run_flow.py`'s `envelope_path()` accepts both. |
+| [#2076](https://github.com/2AMLogic/klayout-tools/issues/2076) | `lvs`'s `power_connectivity` admits a dangling signal output (CTS's clock-load `inv_1.Y`) into its power-pin universe when the design has no other carrier of that pin name — harmless at one instance, a spurious `mismatch` at two. See "The power-connectivity rule". |
 
 An earlier filing,
 [#560](https://github.com/2AMLogic/klayout-tools/issues/560) (`klt synthesize`
@@ -370,12 +461,19 @@ worked around by using `yowasp-yosys`.
 Stated so no reader mistakes the committed GDS for a signoff artifact:
 
 - **No timing closure.** See above.
-- **No PDN.** `request-par-utmi_stub.json` omits `power`, so there is no
-  power grid, no tapcell insertion and no explicit filler placement. (`klt`
-  still emits its own row-rail obstruction and filler cells for
-  `sky130_fd_sc_hd`; those show up in the extracted netlist and are pruned by
-  `klt lvs` as power-only cells, which is the one warnings-only mismatch
-  every LVS record carries.)
+- **A PDN, but no power signoff.** `request-par-utmi_stub.json` now declares
+  a `power` block (met1 `FOLLOWPIN` rails, met4 + met5 straps, met1↔met4 and
+  met4↔met5 connects), so `klt place-and-route` generates a real grid,
+  inserts `sky130_fd_sc_hd__tapvpwrvgnd_1` tapcells and places fillers
+  explicitly — and `klt lvs`'s `power_connectivity` verdict is `match` at
+  every corner (see "The power-connectivity rule" above). What that is
+  **not**: an IR-drop, electromigration or power-integrity analysis, or a
+  power number of any kind. No stage in this flow performs power analysis,
+  and the grid's geometry was chosen to be a working, checkable PDN on this
+  PDK, not a budgeted one. (The `sky130_fd_sc_hd` tap and filler cells have
+  only supply pins, which the as-built gate-level Verilog reference does not
+  carry, so `klt lvs` prunes them as power-only cells before comparing —
+  that is the one warnings-only mismatch every LVS record carries.)
 - **No IO ring, no metal fill, no `DONT_USE_CELLS` exclusion.** Core-only
   floorplan.
 - **No SDF-annotated post-layout timing simulation.** Issue #37 re-ran
@@ -390,5 +488,13 @@ Stated so no reader mistakes the committed GDS for a signoff artifact:
   timing-annotated re-verification, and it is **not** a post-layout claim
   about the real UTMI digital datapath — see that record's own "Post-layout
   functional re-verification" section for the exact scope statement.
+  **And as of issue #59 it is history, not a standing claim:** that record
+  names the pre-PDN `layout/utmi_stub.asbuilt.v` as an input, and the PDN
+  re-run superseded it, so the *current* nominal-corner record carries no
+  `functional_verification` stage at all.
+  `flow/postlayout_verify_utmi_stub.py` runs the regression but mints no
+  record, so re-establishing that evidence is its own change — issue #63.
+  Stated here rather than left to look as though the old claim still covers
+  the committed netlist.
 - **No antenna/ERC signoff.** `klt place-and-route` reports zero post-repair
   antenna violations; a real ERC pass (`klt erc`) has not been run.

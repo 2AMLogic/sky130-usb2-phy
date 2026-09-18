@@ -65,6 +65,8 @@ TOOL_GAPS = [
     "https://github.com/2AMLogic/klayout-tools/issues/1866",
     "https://github.com/2AMLogic/klayout-tools/issues/1867",
     "https://github.com/2AMLogic/klayout-tools/issues/1868",
+    "https://github.com/2AMLogic/klayout-tools/issues/2073",
+    "https://github.com/2AMLogic/klayout-tools/issues/2076",
 ]
 
 UNCONSTRAINED_NOTE = (
@@ -192,6 +194,39 @@ def rel_to_repo(path: str | Path) -> str:
         return str(p.resolve().relative_to(REPO_ROOT))
     except ValueError:
         return str(p)
+
+
+def envelope_path(value, field: str) -> str:
+    """Resolve one `klt` response path field to an absolute filesystem path.
+
+    Two shapes are in the wild for the same field, and this flow has to chain
+    whichever one the installed `klt` emits into the next stage:
+
+    * a plain absolute path string -- every stage emitted this before
+      klayout-tools#1844, and `klt place-and-route`'s `def_path`/`gds_path`/
+      `verilog_path` still do;
+    * a `{"path": <repo-relative POSIX path>, "scope": "repo"|"external"|
+      "absent"}` object -- `klt synthesize`'s `netlist_path`/`script_path`
+      since klayout-tools#1844, with `schema_version` left at 1, so a
+      consumer cannot detect the change from the envelope and must accept
+      both shapes. Filed upstream as klayout-tools#2073.
+
+    The object form is repo-relative to the *invoking* repo, which is this
+    repo -- `run_flow.py` always runs `klt` with a cwd inside `flow/build/`.
+    """
+    if isinstance(value, str) and value:
+        return str(Path(value).resolve())
+    if isinstance(value, dict):
+        scope = value.get("scope")
+        path = value.get("path")
+        if scope == "repo" and isinstance(path, str) and path:
+            return str((REPO_ROOT / path).resolve())
+        raise StageError(
+            f"`{field}` is a path object this flow cannot resolve: {value!r}. "
+            "Only `scope: \"repo\"` is chainable -- an `external`/`absent` "
+            "scope carries no path at all (klayout-tools#2073)."
+        )
+    raise StageError(f"`{field}` is missing from the stage response: {value!r}")
 
 
 # --------------------------------------------------------------------------
@@ -339,6 +374,108 @@ def warnings_only_mismatches(lvs: dict) -> list[dict]:
     ]
 
 
+def latest_record_for_corner(records_dir: Path, corner: str) -> str | None:
+    """The newest already-committed record id for this corner, or `None`.
+
+    Records are append-only: a re-run never edits or deletes what came before,
+    it mints a new record that names its predecessor in `supersedes`. Filling
+    that field in is what lets `flow/check_records.py` tell a *frozen* record
+    (evidence of what the flow reported against an earlier revision of its own
+    committed request documents) from a *stale* one (a standing claim whose
+    inputs have since changed underneath it). Leaving it `None` -- as this
+    script did before issue #59 -- meant any deliberate request change, such
+    as adding the `power` block, retro-failed the freshness check on every
+    record ever written.
+
+    Record ids are `<YYYYMMDD>-<HHMMSS>-<sha>-<corner>`, so a lexical max over
+    the same corner's ids is a chronological max.
+    """
+    if not records_dir.is_dir():
+        return None
+    ids = sorted(
+        p.stem for p in records_dir.glob(f"*-{corner}.md") if p.stem.endswith(f"-{corner}")
+    )
+    return ids[-1] if ids else None
+
+
+POWER_CONNECTIVITY_UNREPORTED_NOTE = (
+    "This run's `klt lvs` emitted no `power_connectivity` block at all, so the "
+    "power/ground half of LVS was NOT verified by this record. `klt lvs`'s "
+    "reference form here is `gate-level-verilog`, whose reference netlist "
+    "carries no supply pins; the signal compare therefore drops the layout's "
+    "supply nets rather than failing on them, and a bare `status: \"match\"` "
+    "from that compare says nothing whatsoever about whether the design is "
+    "powered. The separate check that does say something -- "
+    "`power_connectivity`, klayout-tools#1964 -- is missing from this klt "
+    "build. Treat this as UNVERIFIED, never as a pass: that conflation is the "
+    "exact defect issue #59 was filed about."
+)
+
+POWER_CONNECTIVITY_NOTE = (
+    "`klt lvs`'s power/ground half of the verdict (klayout-tools#1964), "
+    "reported beside `status` and never folded into it. A signal-only "
+    "`gate-level-verilog` compare cannot see supply nets at all, so "
+    "`status: \"match\"` alone is NOT a full-LVS pass -- this flow gates on "
+    "both, and treats a `mismatch` here as a gate failure and an `unchecked` "
+    "or absent block as UNVERIFIED. `expected_nets` comes from the committed "
+    "`request-lvs-utmi_stub.json`: it makes the check absolute (each supply "
+    "pin must reach the net named here) rather than merely self-consistent "
+    "across instances. `unchecked_expected_pins` names any declared pin the "
+    "check never resolved -- a non-empty list means part of this verdict was "
+    "silently not asked (klayout-tools#1978) and this flow fails on it. Note "
+    "that `power_pins` can also over-report: klayout-tools#2076 -- a dangling "
+    "signal output is admitted as a power pin when the design has no other "
+    "carrier of that pin name, which is why `Y` appears there."
+)
+
+
+def power_connectivity_meta(lvs: dict) -> dict:
+    """Extract `klt lvs`'s power/ground verdict, distinguishing 'not reported'.
+
+    `klt lvs` gained the `power_connectivity` block in klayout-tools#1964. A
+    klt build predating it emits no such key -- which must NOT be read as
+    "power is fine", so it is recorded as its own `"unreported"` status with
+    the klt version that produced it, rather than defaulting to a pass.
+    """
+    block = lvs.get("power_connectivity")
+    if not isinstance(block, dict):
+        return {
+            "status": "unreported",
+            "reason": (
+                "this `klt lvs` build emits no `power_connectivity` block "
+                "(predates klayout-tools#1964)"
+            ),
+            "klt_version": (lvs.get("provenance") or {}).get("klt_version"),
+            "power_pins": None,
+            "instance_count": None,
+            "expected_nets": None,
+            "unchecked_expected_pins": None,
+            "finding_count": None,
+            "findings": [],
+            "note": POWER_CONNECTIVITY_UNREPORTED_NOTE,
+        }
+    return {
+        "status": block.get("status"),
+        "reason": block.get("reason"),
+        "klt_version": (lvs.get("provenance") or {}).get("klt_version"),
+        "power_pins": block.get("power_pins"),
+        "instance_count": block.get("instance_count"),
+        "expected_nets": block.get("expected_nets"),
+        "unchecked_expected_pins": block.get("unchecked_expected_pins"),
+        "finding_count": block.get("finding_count"),
+        "findings": [
+            {
+                "category": f.get("category"),
+                "severity": f.get("severity"),
+                "description": f.get("description"),
+            }
+            for f in (block.get("findings") or [])
+            if isinstance(f, dict)
+        ],
+        "note": POWER_CONNECTIVITY_NOTE,
+    }
+
+
 def build_record_meta(
     *,
     record_id: str,
@@ -348,6 +485,7 @@ def build_record_meta(
     subset_justification: str | None,
     synth: dict,
     par: dict,
+    par_paths: dict[str, str],
     sta: dict,
     extract: dict,
     lvs: dict,
@@ -360,6 +498,7 @@ def build_record_meta(
     artifacts: list[dict],
     or_version: str | None,
     committed_copies: dict | None,
+    supersedes: str | None,
 ) -> dict:
     return {
         "schema": RECORD_SCHEMA,
@@ -368,7 +507,7 @@ def build_record_meta(
         "corner": corner,
         "created_utc": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "git_revision": git_revision(),
-        "supersedes": None,
+        "supersedes": supersedes,
         "design": {
             "hdl_toplevel": synth.get("hdl_toplevel", "utmi_stub"),
             "sources": ["rtl/utmi_stub.v"],
@@ -422,10 +561,19 @@ def build_record_meta(
                 "route_drc_violation_count": par.get("route_drc_violation_count"),
                 "antenna_violation_count": par.get("antenna_violation_count"),
                 "clock_skew_ns": par.get("clock_skew_ns"),
-                "def_path": rel_to_repo(par.get("def_path") or ""),
-                "gds_path": rel_to_repo(par.get("gds_path") or ""),
-                "as_built_netlist_path": rel_to_repo(par.get("verilog_path") or ""),
+                "def_path": rel_to_repo(par_paths.get("def") or ""),
+                "gds_path": rel_to_repo(par_paths.get("gds") or ""),
+                "as_built_netlist_path": rel_to_repo(par_paths.get("verilog") or ""),
                 "layer_map": par.get("layer_map"),
+                "power": par.get("power"),
+                "power_note": (
+                    "`klt place-and-route`'s own echo of what request.power actually "
+                    "applied: the PDN straps/global-connect rules/tapcell and filler "
+                    "masters this build was configured with. `pdn: false` means no "
+                    "power grid was generated at all -- only the request.power-"
+                    "independent row-rail followpin fallback (`row_rail.emitted`), "
+                    "which alone leaves every row's rail on its own island."
+                ),
                 "committed_copies": committed_copies,
                 "committed_copies_note": (
                     "Only the nominal corner's physical artifacts are copied into the "
@@ -466,6 +614,7 @@ def build_record_meta(
                 "category_counts": lvs.get("category_counts"),
                 "counts": lvs.get("counts"),
                 "warnings_only_mismatches": warnings_only_mismatches(lvs),
+                "power_connectivity": power_connectivity_meta(lvs),
                 "reference": (
                     "klt place-and-route's own as-built write_verilog netlist for this "
                     "corner (post-CTS, post-resize, post-antenna-repair), converted by "
@@ -546,6 +695,17 @@ def render_record(meta: dict) -> str:
     )
     skipped = drc["coverage"].get("rules_skipped") or []
     unruled = drc["coverage"].get("layers_in_stream_without_rules") or []
+
+    power = lvs["power_connectivity"]
+    power_finding_lines = (
+        "\n".join(
+            f"  - `{f['category']}` ({f['severity']}) — {f['description']}"
+            for f in power["findings"]
+        )
+        or "  - none"
+    )
+    power_pins = power.get("power_pins")
+    power_pin_text = ", ".join(f"`{p}`" for p in power_pins) if power_pins else "—"
 
     return f"""<!-- record-meta
 {json.dumps(meta, indent=2)}
@@ -634,6 +794,24 @@ Measured by: {timing['measured_by']}.
 - Warnings-only mismatches (non-`error` severity), listed in full:
 
 {warn_lines}
+
+### Power/ground connectivity — verdict: **{str(power['status']).upper()}**
+
+Read together with the LVS verdict above, never instead of it. The verdict
+above is the **signal** compare only: its reference is a `gate-level-verilog`
+netlist, which carries no supply pins, so that compare drops the layout's
+supply nets rather than failing on them. A `MATCH` there is not evidence the
+design is powered.
+
+- Power/ground pins checked: {power_pin_text}
+- Instances covered: {power['instance_count'] if power['instance_count'] is not None else '—'}
+- Findings: {power['finding_count'] if power['finding_count'] is not None else '—'}
+- Reason (only set when the check did not run): {power['reason'] or '—'}
+- Reported by `klt` `{power['klt_version'] or 'unknown'}`.
+
+{power_finding_lines}
+
+- {power['note']}
 
 ## Extraction
 
@@ -769,6 +947,7 @@ def main(argv: list[str] | None = None) -> int:
     ]
 
     gate_failures: list[str] = []
+    power_unverified: list[str] = []
     written: list[Path] = []
     verdict_tally: dict[str, list[str]] = {}
 
@@ -785,29 +964,42 @@ def main(argv: list[str] | None = None) -> int:
             synth = stage_synthesize(corner, work, env)
 
             log("  [2/6] klt place-and-route")
-            par = stage_place_and_route(corner, work, synth["netlist_path"], env)
+            par = stage_place_and_route(
+                corner,
+                work,
+                envelope_path(synth.get("netlist_path"), "synthesize.netlist_path"),
+                env,
+            )
             if not par.get("gds_path"):
                 raise StageError(
                     f"place-and-route reached {par.get('stage_reached')!r} but emitted no "
                     "gds_path -- nothing downstream can run"
                 )
+            par_paths = {
+                "def": envelope_path(par.get("def_path"), "place-and-route.def_path"),
+                "gds": envelope_path(par.get("gds_path"), "place-and-route.gds_path"),
+                "verilog": envelope_path(
+                    par.get("verilog_path"), "place-and-route.verilog_path"
+                ),
+            }
 
             log("  [3/6] klt sta")
-            sta = stage_sta(corner, work, par["def_path"], env)
+            sta = stage_sta(corner, work, par_paths["def"], env)
 
             log("  [4/6] klt extract")
-            extract, extracted_netlist = stage_extract(work, par["gds_path"], env)
+            extract, extracted_netlist = stage_extract(work, par_paths["gds"], env)
 
             log("  [5/6] klt lvs")
-            lvs = stage_lvs(work, extracted_netlist, par["verilog_path"], env)
+            lvs = stage_lvs(work, extracted_netlist, par_paths["verilog"], env)
 
             log("  [6/6] klt drc")
-            drc = stage_drc(work, par["gds_path"], env)
+            drc = stage_drc(work, par_paths["gds"], env)
         except StageError as exc:
             print(f"\nrun_flow: stage failed at corner {corner}:\n  {exc}", file=sys.stderr)
             return 2
 
         record_id = f"{stamp}-{short_sha}-{corner}"
+        supersedes = latest_record_for_corner(records_dir, corner)
         artifacts_dir = artifacts_root / record_id
         artifacts_dir.mkdir(parents=True, exist_ok=True)
         for name, envelope in (
@@ -831,9 +1023,9 @@ def main(argv: list[str] | None = None) -> int:
         committed_copies: dict | None = None
         if corner == nominal:
             LAYOUT_DIR.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(par["gds_path"], LAYOUT_DIR / "utmi_stub.gds")
-            shutil.copy2(par["def_path"], LAYOUT_DIR / "utmi_stub.def")
-            shutil.copy2(par["verilog_path"], LAYOUT_DIR / "utmi_stub.asbuilt.v")
+            shutil.copy2(par_paths["gds"], LAYOUT_DIR / "utmi_stub.gds")
+            shutil.copy2(par_paths["def"], LAYOUT_DIR / "utmi_stub.def")
+            shutil.copy2(par_paths["verilog"], LAYOUT_DIR / "utmi_stub.asbuilt.v")
             shutil.copy2(extracted_netlist, LAYOUT_DIR / "utmi_stub.extracted.spice")
             committed_copies = {
                 "layout/utmi_stub.gds": "routed GDS (DEF merged with the standard-cell GDS views)",
@@ -884,6 +1076,7 @@ def main(argv: list[str] | None = None) -> int:
             subset_justification=subset_justification,
             synth=synth,
             par=par,
+            par_paths=par_paths,
             sta=sta,
             extract=extract,
             lvs=lvs,
@@ -896,16 +1089,19 @@ def main(argv: list[str] | None = None) -> int:
             artifacts=artifacts,
             or_version=or_version,
             committed_copies=committed_copies,
+            supersedes=supersedes,
         )
         record_path = records_dir / f"{record_id}.md"
         record_path.write_text(render_record(meta), encoding="utf-8")
         written.append(record_path)
         log(f"  record -> {rel_to_repo(record_path)}")
 
+        power_meta = meta["stages"]["lvs"]["power_connectivity"]
+        power_status = power_meta["status"]
         log(
             f"  verdicts: timing={verdict}  drc={drc.get('status')}"
             f"({drc.get('violation_count')})  lvs={lvs.get('status')}"
-            f"(errors={lvs.get('error_count')})"
+            f"(errors={lvs.get('error_count')})  power_connectivity={power_status}"
         )
         verdict_tally.setdefault(verdict, []).append(corner)
         if verdict == "fail":
@@ -919,6 +1115,26 @@ def main(argv: list[str] | None = None) -> int:
             gate_failures.append(
                 f"{corner}: LVS is {lvs.get('status')!r} with "
                 f"{lvs.get('error_count')} error(s)"
+            )
+        # The power/ground half of LVS is a verdict in its own right -- a
+        # signal-only `match` is NOT evidence the design is powered (issue #59).
+        if power_status == "mismatch":
+            gate_failures.append(
+                f"{corner}: LVS power connectivity is 'mismatch' with "
+                f"{power_meta.get('finding_count')} finding(s)"
+            )
+        elif power_status != "match":
+            power_unverified.append(f"{corner} ({power_status})")
+        # A declared `expected_nets` pin the check never resolved produces no
+        # finding at all -- indistinguishable from "checked and correct"
+        # without this field (klayout-tools#1978). Gate on it, or declaring a
+        # pin name with a typo in it would quietly buy a weaker verdict.
+        unchecked_pins = power_meta.get("unchecked_expected_pins")
+        if unchecked_pins:
+            gate_failures.append(
+                f"{corner}: LVS power connectivity never resolved declared "
+                f"pin(s) {', '.join(unchecked_pins)} -- that half of "
+                "request-lvs-utmi_stub.json's expected_nets went unchecked"
             )
 
     rebuild_manifest(records_dir)
@@ -947,7 +1163,17 @@ def main(argv: list[str] | None = None) -> int:
             "timing at those corners. That is not a pass -- see each record's "
             "timing.note and klayout-tools#1865."
         )
-    else:
+    if power_unverified:
+        log("")
+        log(
+            f"no gate failed, but LVS power connectivity is UNVERIFIED at "
+            f"{len(power_unverified)} corner(s): {', '.join(power_unverified)}. "
+            "The LVS `match` above is the signal compare only; its "
+            "gate-level-verilog reference carries no supply pins, so it cannot "
+            "see whether the design is powered. That is not a pass -- see each "
+            "record's stages.lvs.power_connectivity and klayout-tools#1964."
+        )
+    if not unconstrained and not power_unverified:
         log("all gates passed")
     return 0
 

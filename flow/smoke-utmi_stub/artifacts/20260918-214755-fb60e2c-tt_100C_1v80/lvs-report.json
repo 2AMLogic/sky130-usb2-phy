@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "engine": "klayout",
+  "layout": "/Users/rwalters/GitHub/sky130-usb2-phy/.loom/worktrees/issue-59/flow/build/tt_100C_1v80/.klt/extract/utmi_stub.gate.spice",
+  "reference": "/Users/rwalters/GitHub/sky130-usb2-phy/.loom/worktrees/issue-59/flow/build/tt_100C_1v80/.klt/place-and-route/utmi_stub.v",
+  "top": "UTMI_STUB",
+  "reference_top": "UTMI_STUB",
+  "parameter_tolerance": null,
+  "options": {
+    "combine_devices": false,
+    "combine_devices_per_circuit": null,
+    "flatten_layout": false,
+    "flatten_reference": false,
+    "netgen_setup": null,
+    "parameter_tolerance": null,
+    "compare_parameters": null,
+    "power_connectivity": {
+      "expected_nets": {
+        "VPWR": "VPWR",
+        "VGND": "VGND"
+      }
+    }
+  },
+  "status": "match",
+  "power_connectivity": {
+    "status": "match",
+    "reason": null,
+    "power_pins": [
+      "VGND",
+      "VPB",
+      "VPWR",
+      "Y"
+    ],
+    "instance_count": 57,
+    "expected_nets": {
+      "VGND": "VGND",
+      "VPWR": "VPWR"
+    },
+    "findings": [],
+    "finding_count": 0
+  },
+  "mismatch_count": 1,
+  "error_count": 0,
+  "category_counts": {
+    "topology.power_only_pruned": 1
+  },
+  "category_error_counts": {},
+  "counts": {
+    "nets": {
+      "layout": 26,
+      "reference": 24,
+      "matched": 42
+    },
+    "devices": {
+      "layout": 0,
+      "reference": 0,
+      "matched": 0
+    },
+    "pins": {
+      "layout": 25,
+      "reference": 21,
+      "matched": 42
+    }
+  },
+  "device_classes": null,
+  "environment": {
+    "engine": "klayout",
+    "engine_version": "0.30.12",
+    "layout_sha256": "9e9db1af50c4e80d6aaa3eed1046639258f1072b10603dd7efac799b2db76335",
+    "reference_sha256": "c94344f7e1d277acd27fd92471d391659e4f168a7557d8bc0e3610b504ecdd19",
+    "extracted_netlist": null
+  },
+  "provenance": {
+    "klt_version": "0.5.0",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+    },
+    "deck": null,
+    "input": null,
+    "klayout_version_mismatch": true
+  },
+  "mismatches": [
+    {
+      "category": "topology.power_only_pruned",
+      "severity": "warning",
+      "description": "removed layout-side circuit(s) whose every declared pin is a power/ground pin of the reference library (a pin the library declares but the gate-level-Verilog reference never carries), and every instance of them, before comparing -- 5 circuit(s): SKY130_FD_SC_HD__FILL_1, SKY130_FD_SC_HD__FILL_2, SKY130_FD_SC_HD__FILL_4, SKY130_FD_SC_HD__FILL_8, SKY130_FD_SC_HD__TAPVPWRVGND_1 (see docs/cli/lvs.md, \"topology.power_only_pruned\")",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    }
+  ],
+  "net_correspondence": [
+    {
+      "layout": "VGND",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VPB",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "Y",
+      "reference": null,
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true
+    },
+    {
+      "layout": "CLK",
+      "reference": "CLK",
+      "pin": true
+    },
+    {
+      "layout": "CLK",
+      "reference": "CLK",
+      "pin": true
+    },
+    {
+      "layout": "CLKNET_0_CLK",
+      "reference": "CLKNET_0_CLK",
+      "pin": true
+    },
+    {
+      "layout": "CLKNET_1_0__LEAF_CLK",
+      "reference": "CLKNET_1_0__LEAF_CLK",
+      "pin": true
+    },
+    {
+      "layout": "CLKNET_1_1__LEAF_CLK",
+      "reference": "CLKNET_1_1__LEAF_CLK",
+      "pin": true
+    },
+    {
+      "layout": "D",
+      "reference": "D",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[0]",
+      "reference": "DATAIN[0]",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[1]",
+      "reference": "DATAIN[1]",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[2]",
+      "reference": "DATAIN[2]",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[3]",
+      "reference": "DATAIN[3]",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[4]",
+      "reference": "DATAIN[4]",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[5]",
+      "reference": "DATAIN[5]",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[6]",
+      "reference": "DATAIN[6]",
+      "pin": true
+    },
+    {
+      "layout": "DATAIN[7]",
+      "reference": "DATAIN[7]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[0]",
+      "reference": "DATAOUT[0]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[1]",
+      "reference": "DATAOUT[1]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[2]",
+      "reference": "DATAOUT[2]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[3]",
+      "reference": "DATAOUT[3]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[4]",
+      "reference": "DATAOUT[4]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[5]",
+      "reference": "DATAOUT[5]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[6]",
+      "reference": "DATAOUT[6]",
+      "pin": true
+    },
+    {
+      "layout": "DATAOUT[7]",
+      "reference": "DATAOUT[7]",
+      "pin": true
+    },
+    {
+      "layout": "Q",
+      "reference": "Q",
+      "pin": true
+    },
+    {
+      "layout": "RESET_B",
+      "reference": "RESET_B",
+      "pin": true
+    },
+    {
+      "layout": "RST_N",
+      "reference": "RST_N",
+      "pin": true
+    },
+    {
+      "layout": "RXVALID",
+      "reference": "RXVALID",
+      "pin": true
+    },
+    {
+      "layout": "VGND",
+      "reference": "TXREADY",
+      "pin": true
+    },
+    {
+      "layout": "TXVALID",
+      "reference": "TXVALID",
+      "pin": true
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true
+    }
+  ]
+}
