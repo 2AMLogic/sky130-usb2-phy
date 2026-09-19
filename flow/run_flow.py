@@ -676,11 +676,87 @@ def committed_copies_line(par_stage: dict) -> str:
     return ", ".join(f"`{path}`" for path in sorted(copies))
 
 
+def render_functional_verification(fv: dict) -> str:
+    """Render the optional seventh stage's prose from its own record-meta block.
+
+    `run_flow.py` never produces this stage -- `flow/postlayout_verify_utmi_stub.py`
+    does, and then mints its record through `build_record_meta`/`render_record`
+    here rather than hand-writing a second one. That is the whole point: per
+    `flow/README.md`'s "Required fields", the JSON is what the lint reads and
+    the prose is what a human reads, and they are generated together from one
+    source so they cannot drift apart. Everything below is read out of the
+    `functional_verification` stage dict; nothing is restated independently.
+    """
+    dut = fv.get("design_under_test") or {}
+    library = fv.get("cell_library") or {}
+    testbench = fv.get("testbench") or {}
+    sources = library.get("sources") or {}
+    source_lines = "\n".join(f"  - `{name}` — `{digest}`" for name, digest in sorted(sources.items()))
+    copied_from = fv.get("physical_stages_copied_from")
+    copied_line = (
+        f"""
+This record **supersedes** `{copied_from}` (per the append-only convention —
+that record is untouched on disk, never edited or deleted). The
+synthesis/place-and-route/STA/extraction/LVS/DRC measurements below are
+copied from it **unchanged**, regenerated from its own committed `klt`
+envelopes rather than restated by hand; the only new work this record adds is
+the `functional_verification` stage.
+"""
+        if copied_from
+        else ""
+    )
+    return f"""
+## Post-layout functional verification — verdict: **{str(fv.get('status')).upper()}**
+{copied_line}
+**Claim**: `{testbench.get('source')}` — the same cocotb testbench that already
+passed against the pre-layout RTL — also passes against `{dut.get('path')}`,
+the post-layout as-built gate-level netlist this flow committed.
+
+**Result**: **{str(fv.get('status')).upper()}** — {fv.get('passed_count')}/{fv.get('test_count')} tests, \
+{fv.get('failed_count')} failed, {fv.get('skipped_count')} skipped.
+
+- Engine: `{fv.get('engine')}` `{fv.get('engine_version')}`, cocotb \
+`{fv.get('cocotb_version')}`, random seed `{fv.get('random_seed')}`.
+- Design under test: `{dut.get('path')}` (`{dut.get('content_hash')}`) — {dut.get('role')}
+- Testbench: `{testbench.get('module')}` from `{testbench.get('source')}`. {testbench.get('note')}
+- Cell library: `{library.get('name')}` for `{library.get('pdk')}` \
+(`{library.get('pdk_version')}`), model: {library.get('model')}.
+- `USE_POWER_PINS`: **{'yes' if library.get('power_pins_modeled') else 'no'}**. \
+{library.get('power_pins_note')}
+- PDK-external sources, cited by content hash (not under `provenance.inputs`,
+  which is reserved for files this repo's own freshness check can re-hash):
+
+{source_lines}
+
+**Why `{Path(str(dut.get('path'))).name}` and not the extracted SPICE netlist**: \
+{dut.get('why_not_the_extracted_spice_netlist')}
+
+**SDF back-annotation: {'yes' if fv.get('sdf_back_annotation') else 'no'}.** {fv.get('sdf_note')}
+
+**Scope**: {fv.get('scope_note')}
+
+**Driver**: `{fv.get('driver_script')}`. {fv.get('driver_script_note')}
+"""
+
+
 def render_record(meta: dict) -> str:
     timing = meta["timing"]
     stages = meta["stages"]
     drc = stages["drc"]
     lvs = stages["lvs"]
+    functional = stages.get("functional_verification")
+    functional_section = render_functional_verification(functional) if functional else ""
+    physical_evidence_id = (functional or {}).get("physical_stages_copied_from")
+    if physical_evidence_id:
+        raw_evidence = f"""Every `klt` JSON envelope behind the *physical-flow* numbers above is
+committed verbatim under
+`flow/{EXPERIMENT}/artifacts/{physical_evidence_id}/` — the superseded
+record's own artifact directory. Those files are unchanged and this record
+does not duplicate them. This record's own new envelope is committed at
+`{functional.get('raw_envelope_artifact')}`."""
+    else:
+        raw_evidence = f"""Every `klt` JSON envelope behind the numbers above is committed verbatim under
+`flow/{EXPERIMENT}/artifacts/{meta['record_id']}/`."""
 
     gap_lines = "\n".join(
         f"  - `{gap['id']}` ({gap['kind']}) — {gap['summary']}"
@@ -726,7 +802,7 @@ logic — a registered pass-through using UTMI signal *names* and none of UTMI's
 behaviour. The point of running it through the full physical flow is to make
 every tool failure unambiguously a *tool* failure. Nothing here says anything
 about the USB 2.0 PHY's eventual area, timing, or correctness.
-
+{functional_section}
 ## Design provenance
 
 - Source: `rtl/utmi_stub.v`
@@ -843,8 +919,7 @@ design is powered.
 
 ## Raw evidence
 
-Every `klt` JSON envelope behind the numbers above is committed verbatim under
-`flow/{EXPERIMENT}/artifacts/{meta['record_id']}/`.
+{raw_evidence}
 """
 
 

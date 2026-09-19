@@ -107,11 +107,12 @@ PDK=sky130A python3 flow/postlayout_verify_utmi_stub.py --format json
 ```
 
 This augments the *existing* nominal-corner record rather than opening a new
-experiment slug: it mints a new record that `supersedes` the prior
-`tt_025C_1v80` record, copying that record's six-stage measurements
-unchanged and adding a `functional_verification` stage on top — see
-`flow/smoke-utmi_stub/records/20260915-132956-9281bc4-tt_025C_1v80.md` for
-the full result and exactly what it does and does not model (in short: a
+experiment slug: it mints a new record that `supersedes` the newest
+`tt_025C_1v80` record, regenerating that record's six-stage measurements
+unchanged from its own committed `klt` envelopes and adding a
+`functional_verification` stage on top — see
+`flow/smoke-utmi_stub/records/20260919-001148-0f7636d-tt_025C_1v80.md` for
+the current result and exactly what it does and does not model (in short: a
 functional-only, zero-delay check against `layout/utmi_stub.asbuilt.v` — LVS
 already proved that structurally equivalent to `layout/utmi_stub.extracted.spice`,
 the netlist `klt functional-verification` cannot simulate directly — no SDF
@@ -122,6 +123,19 @@ cannot be a static committed file: its `sources` must name the PDK's
 a host-resolved path, so the script resolves the PDK root itself (the same
 `klt pdk find` workaround as `resolve_pdk_root` above) and builds the request
 in memory instead.
+
+**The record is written by `run_flow.py`'s own machinery, not a second
+writer** (issue #63). `flow/postlayout_verify_utmi_stub.py` calls
+`build_record_meta`, `render_record`, `latest_record_for_corner` and
+`rebuild_manifest` directly, so a record carrying this seventh stage has its
+JSON block and its prose generated from the same source as every other
+record here — the property "Required fields" below depends on. Before it
+writes anything it re-hashes every input and artifact the superseded record
+names and refuses to proceed if a physical-flow input moved: a changed
+netlist means the flow was re-run, and a fresh functional-verification stage
+must not be stapled onto physical measurements that no longer describe it.
+Re-run `flow/run_flow.py` first in that case. `--no-record` runs the
+regression and writes nothing, for a dry check.
 
 ## Corner matrix
 
@@ -481,20 +495,16 @@ Stated so no reader mistakes the committed GDS for a signoff artifact:
   (`layout/utmi_stub.asbuilt.v`, LVS-proven structurally equivalent to
   `layout/utmi_stub.extracted.spice`) and it passed — see
   `flow/postlayout_verify_utmi_stub.py` and the `functional_verification`
-  stage of `flow/smoke-utmi_stub/records/20260915-132956-9281bc4-tt_025C_1v80.md`.
-  That is a **functional-only** check (zero-delay `FUNCTIONAL` cell models, no
-  SDF back-annotation — no post-route SDF exists for this design in the first
-  place), and only for the toolchain-smoke design. It is **not** a
-  timing-annotated re-verification, and it is **not** a post-layout claim
-  about the real UTMI digital datapath — see that record's own "Post-layout
-  functional re-verification" section for the exact scope statement.
-  **And as of issue #59 it is history, not a standing claim:** that record
-  names the pre-PDN `layout/utmi_stub.asbuilt.v` as an input, and the PDN
-  re-run superseded it, so the *current* nominal-corner record carries no
-  `functional_verification` stage at all.
-  `flow/postlayout_verify_utmi_stub.py` runs the regression but mints no
-  record, so re-establishing that evidence is its own change — issue #63.
-  Stated here rather than left to look as though the old claim still covers
-  the committed netlist.
+  stage of `flow/smoke-utmi_stub/records/20260919-001148-0f7636d-tt_025C_1v80.md`,
+  the standing nominal-corner record, which re-ran the regression against the
+  post-PDN netlist issue #59 committed (issue #63; the earlier
+  `…-9281bc4-…` record it descends from names the pre-PDN netlist and stands
+  as history only). That is a **functional-only** check (zero-delay
+  `FUNCTIONAL` cell models, no SDF back-annotation — no post-route SDF exists
+  for this design in the first place), and only for the toolchain-smoke
+  design. It is **not** a timing-annotated re-verification, and it is **not**
+  a post-layout claim about the real UTMI digital datapath — see that
+  record's own "Post-layout functional verification" section for the exact
+  scope statement.
 - **No antenna/ERC signoff.** `klt place-and-route` reports zero post-repair
   antenna violations; a real ERC pass (`klt erc`) has not been run.
