@@ -453,6 +453,55 @@ def test_unverified_power_connectivity_must_carry_a_note(sandbox: Path):
     assert "power-connectivity" in checks_in(findings), findings.items
 
 
+def test_standing_record_missing_power_echo_fails(sandbox: Path):
+    """A standing record with no `power` echo at all must not escape the gate.
+
+    `stages.place_and_route.power.pdn` is deliberately absent from
+    `REQUIRED_FIELDS` so records that predate the `power` block are not
+    retro-failed (issue #59's follow-up, issue #67). But that exemption must
+    be scoped to records some other record `supersedes` -- a *standing*
+    record that simply omits the echo cannot say whether it generated a PDN,
+    and must fail rather than take the same silent-skip path a genuine
+    pre-`power`-block vintage record takes.
+    """
+    target = pdn_record(sandbox)
+    meta = read_meta(target)
+    del meta["stages"]["place_and_route"]["power"]
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "power-connectivity" in checks_in(findings), findings.items
+
+
+def test_superseded_record_missing_power_echo_stays_exempt(sandbox: Path):
+    """The vintage exemption is real: a superseded record may still lack `power`.
+
+    This repo's own committed evidence already has this shape -- records
+    minted before `request-par-utmi_stub.json` grew its `power` block, later
+    superseded by a record that carries one. They are frozen, append-only
+    evidence and must not be retro-failed just because a *later* record's
+    schema grew a field they never had.
+    """
+    records = sorted((sandbox / "smoke-utmi_stub" / "records").glob("*.md"))
+    metas = {p.stem: read_meta(p) for p in records}
+    superseded_ids = check_records.superseded_record_ids(list(metas.values()))
+    target = next(
+        (p for p in records if p.stem in superseded_ids
+         and "power" not in metas[p.stem].get("stages", {}).get("place_and_route", {})),
+        None,
+    )
+    assert target is not None, (
+        "fixture has no superseded record that already lacks `power` -- "
+        "this test needs one to demonstrate the exemption without fabricating it"
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert "power-connectivity" not in checks_in(findings), findings.items
+
+
 def test_par_request_must_declare_a_power_block(sandbox: Path):
     """Without `power`, `klt place-and-route` emits no PDN at all (issue #59)."""
     request = sandbox / "request-par-utmi_stub.json"

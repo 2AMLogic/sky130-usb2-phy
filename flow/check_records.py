@@ -681,7 +681,9 @@ def check_timing_gate(meta: dict, path: Path, findings: Findings) -> None:
 VALID_POWER_CONNECTIVITY_STATUSES = {"match", "mismatch", "unchecked", "unreported"}
 
 
-def check_power_connectivity(meta: dict, path: Path, findings: Findings) -> None:
+def check_power_connectivity(
+    meta: dict, path: Path, findings: Findings, superseded: set[str] | None = None
+) -> None:
     """`klt lvs`'s signal verdict says nothing about power -- issue #59.
 
     The LVS reference this flow uses is `klt place-and-route`'s as-built
@@ -692,16 +694,52 @@ def check_power_connectivity(meta: dict, path: Path, findings: Findings) -> None
     klayout-tools#1964) and this repo must never let the first stand in for
     the second.
 
-    Scoped to records that actually claim a PDN (`stages.place_and_route.power.pdn`
-    is true). Records minted before `request-par-utmi_stub.json` grew its
-    `power` block predate the verdict entirely and are append-only evidence of
-    exactly that -- they are not retro-failed here; the PDN itself is enforced
-    at the request level by `REQUEST_REQUIREMENTS`.
+    Scoped to records that actually claim a PDN
+    (`stages.place_and_route.power.pdn` is true). `stages.place_and_route.power`
+    is deliberately *not* in `REQUIRED_FIELDS`, because records minted before
+    `request-par-utmi_stub.json` grew its `power` block predate the verdict
+    entirely -- they are append-only evidence of exactly that, and the PDN
+    itself is enforced at the request level by `REQUEST_REQUIREMENTS`.
+
+    But that exemption must not become a way to make the check silently
+    decline to run: a *standing* (non-superseded) record that omits the
+    `power` echo entirely cannot say whether it generated a PDN, and issue #67
+    is exactly that hole -- an absent echo taking the same code path as a
+    genuine pre-`power`-block vintage record. The vintage exemption is
+    therefore scoped the same way `check_freshness`'s supersession exemption
+    is: only a record some other record `supersedes` is frozen evidence of an
+    earlier schema and stays exempt. A standing record with no `power` key is
+    a finding, not a pass-by-omission.
     """
-    try:
-        pdn = dotted_get(meta, "stages.place_and_route.power.pdn")
-    except KeyError:
+    if superseded and meta.get("record_id") in superseded:
         return
+
+    try:
+        par = dotted_get(meta, "stages.place_and_route")
+    except KeyError:
+        return  # already reported by check_required_fields
+    if not isinstance(par, dict):
+        return
+
+    if "power" not in par:
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: stages.place_and_route carries no `power` echo at all -- a "
+            "standing record that cannot say whether it generated a PDN does not pass "
+            "the PDN check (issue #67); a record that genuinely predates the `power` "
+            "echo must be superseded, not left standing without one",
+        )
+        return
+
+    power_echo = par.get("power")
+    if not isinstance(power_echo, dict):
+        findings.add(
+            "power-connectivity",
+            f"{path.name}: stages.place_and_route.power must be an object",
+        )
+        return
+
+    pdn = power_echo.get("pdn")
     if pdn is not True:
         return
 
@@ -1004,7 +1042,7 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
         check_corner_matrix(meta, path, committed, findings)
         check_freshness(meta, path, findings, superseded)
         check_timing_gate(meta, path, findings)
-        check_power_connectivity(meta, path, findings)
+        check_power_connectivity(meta, path, findings, superseded)
         check_drc_deck(meta, path, coverage, findings)
 
     if args.klt_check:
