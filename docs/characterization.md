@@ -17,7 +17,12 @@ always was, not deleted.
 > have design-anchored evidence and every §6 row below still reads
 > `NO EVIDENCE`. What *is* stale is the detail — §1's record index, §3's
 > per-corner utilisation/wirelength numbers, and §3's per-run DRC coverage
-> counts. Regenerating the report against the newest records is tracked in
+> counts. Issue #63 then re-minted the nominal corner's
+> `functional_verification` stage against the post-PDN netlist, so the
+> current `tt_025C_1v80` record is
+> `20260919-001148-0f7636d-tt_025C_1v80` — §3's "Post-layout functional
+> verification" subsection below reflects that run; §1's index does not yet.
+> Regenerating the report against the newest records is tracked in
 > issue #64; until then, check any number below against the newest record
 > for that corner before quoting it as current.
 
@@ -190,10 +195,10 @@ power analysis either before or after. The post-layout functional run also
 compiled the cell library **without** `USE_POWER_PINS`, to match the
 as-built netlist's port list. Power is unmeasured, not "measured and fine".
 
-### Post-layout functional verification (record `…-9281bc4-tt_025C_1v80`)
+### Post-layout functional verification (record `…-0f7636d-tt_025C_1v80`)
 
 - `functional_verification.status: pass`, 2 of 2 tests, 0 failed, 0 skipped,
-  `random_seed: 1`, Icarus 13.0 + cocotb 2.1.0.
+  `random_seed: 1`, Icarus 12.0 + cocotb 2.1.0.
 - Design under test: `layout/utmi_stub.asbuilt.v` — the as-built gate-level
   netlist, which that record's own LVS stage proves structurally equivalent
   to `layout/utmi_stub.extracted.spice`.
@@ -208,12 +213,15 @@ as-built netlist's port list. Power is unmeasured, not "measured and fine".
 It closes nothing in §6. It is evidence that the post-layout
 re-verification *pipeline* works, on the stub.
 
-**Superseded by issue #59's PDN re-run, and not yet re-minted (issue #63).**
-That record names the pre-PDN `layout/utmi_stub.asbuilt.v` as an input, and
-the re-run replaced both the netlist and the nominal-corner record, so the
-current nominal record carries no `functional_verification` stage. The claim
-above stands as history against the netlist it names, and as nothing about
-the committed netlist today.
+**This is a standing claim about the committed netlist** (issue #63). The
+original `…-9281bc4-…` record named the *pre-PDN*
+`layout/utmi_stub.asbuilt.v` as an input and was superseded by issue #59's
+PDN re-run, which left the nominal-corner record with no
+`functional_verification` stage at all;
+`flow/postlayout_verify_utmi_stub.py` now mints its own record through
+`run_flow.py`'s record machinery, and the run above is against the post-PDN
+netlist that is committed today. The `…-9281bc4-…` figures stand as history
+against the netlist they name, and say nothing about the current one.
 
 ### Standing caveats that travel with every DRC/LVS verdict above
 
