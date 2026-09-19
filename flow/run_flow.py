@@ -877,7 +877,14 @@ Read together with the LVS verdict above, never instead of it. The verdict
 above is the **signal** compare only: its reference is a `gate-level-verilog`
 netlist, which carries no supply pins, so that compare drops the layout's
 supply nets rather than failing on them. A `MATCH` there is not evidence the
-design is powered.
+design is powered. Expect its `net_correspondence` to go further and pair a
+layout supply net with an unrelated reference *signal* net while the overall
+`status` stays `match` — every record minted by this flow so far carries such
+a pairing. That is an artifact of the pin-less reference, not a design
+defect, and it is exactly why this section (`power_connectivity`), not the
+LVS `status` above, is this flow's power verdict. Read `net_correspondence`
+as saying nothing whatsoever about power. Filed upstream as
+klayout-tools#2136; see `flow/README.md`'s "The power-connectivity rule".
 
 - Power/ground pins checked: {power_pin_text}
 - Instances covered: {power['instance_count'] if power['instance_count'] is not None else '—'}
