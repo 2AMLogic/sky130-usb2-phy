@@ -1,6 +1,6 @@
 # Characterization report — per-spec-row evidence index
 
-**Generated 2026-09-15 against `main` at `ee9611b`.** This is the
+**Generated 2026-09-18 against `main` at `1d78689`.** This is the
 authoritative characterization summary for this repo: one place that indexes
 every row of the ratified spec's interface-requirement table
 ([`spec/usb2-phy.md`](../spec/usb2-phy.md) §6) against the evidence records
@@ -9,30 +9,13 @@ supersedes [`docs/baseline.md`](baseline.md) as the authoritative summary;
 that document is kept as the original point-in-time synthesis record it
 always was, not deleted.
 
-> **Partially stale as of issue #59.** That issue added a power grid to the
-> P&R request and re-ran the flow across all six corners, so six records
-> stamped `20260918-214755-fb60e2c-*` now supersede the six indexed in §1
-> below. The **result this report exists to state is unchanged**: the new
-> records also carry `design.anchors_design_claim: false`, so zero §6 rows
-> have design-anchored evidence and every §6 row below still reads
-> `NO EVIDENCE`. What *is* stale is the detail — §1's record index, §3's
-> per-corner utilisation/wirelength numbers, and §3's per-run DRC coverage
-> counts. Issue #63 then re-minted the nominal corner's
-> `functional_verification` stage against the post-PDN netlist, so the
-> current `tt_025C_1v80` record is
-> `20260919-001148-0f7636d-tt_025C_1v80` — §3's "Post-layout functional
-> verification" subsection below reflects that run; §1's index does not yet.
-> Regenerating the report against the newest records is tracked in
-> issue #64; until then, check any number below against the newest record
-> for that corner before quoting it as current.
-
 ## Headline
 
 > **Zero of the 16 rows of `spec/usb2-phy.md` §6 currently have
 > design-anchored evidence, at any corner.**
 
-This is not a formatting caveat, it is the result. Seven evidence records are
-committed under `flow/smoke-utmi_stub/records/` and all seven carry
+This is not a formatting caveat, it is the result. Fourteen evidence records
+are committed under `flow/smoke-utmi_stub/records/` and all fourteen carry
 `design.anchors_design_claim: false`. They are the
 [`smoke-utmi_stub`](../flow/README.md) experiment: `rtl/utmi_stub.v`, nine
 flip-flops with no combinational logic and no USB protocol behaviour, run
@@ -62,22 +45,47 @@ names any of those files in its `provenance.inputs` — see §4.
 | [`20260915-113028-7d56be5-tt_025C_1v80`](../flow/smoke-utmi_stub/records/20260915-113028-7d56be5-tt_025C_1v80.md) | `tt_025C_1v80` | `9281bc4` | #11 / PR #55 | synth, P&R, STA, extract, LVS, DRC | — (superseded, see below) |
 | [`20260915-113028-7d56be5-tt_100C_1v80`](../flow/smoke-utmi_stub/records/20260915-113028-7d56be5-tt_100C_1v80.md) | `tt_100C_1v80` | `9281bc4` | #11 / PR #55 | synth, P&R, STA, extract, LVS, DRC | — |
 | [`20260915-132956-9281bc4-tt_025C_1v80`](../flow/smoke-utmi_stub/records/20260915-132956-9281bc4-tt_025C_1v80.md) | `tt_025C_1v80` | `6cb5cc6` | #37 / PR #57 | the six above **+ functional_verification** | `20260915-113028-7d56be5-tt_025C_1v80` |
+| [`20260918-214755-fb60e2c-ff_100C_1v95`](../flow/smoke-utmi_stub/records/20260918-214755-fb60e2c-ff_100C_1v95.md) | `ff_100C_1v95` | `e7aca0b` | #59 / PR #65 | synth, P&R (**+ PDN**), STA, extract, LVS (**+ power_connectivity**), DRC | `20260915-113028-7d56be5-ff_100C_1v95` |
+| [`20260918-214755-fb60e2c-ff_n40C_1v95`](../flow/smoke-utmi_stub/records/20260918-214755-fb60e2c-ff_n40C_1v95.md) | `ff_n40C_1v95` | `e7aca0b` | #59 / PR #65 | synth, P&R (**+ PDN**), STA, extract, LVS (**+ power_connectivity**), DRC | `20260915-113028-7d56be5-ff_n40C_1v95` |
+| [`20260918-214755-fb60e2c-ss_100C_1v60`](../flow/smoke-utmi_stub/records/20260918-214755-fb60e2c-ss_100C_1v60.md) | `ss_100C_1v60` | `e7aca0b` | #59 / PR #65 | synth, P&R (**+ PDN**), STA, extract, LVS (**+ power_connectivity**), DRC | `20260915-113028-7d56be5-ss_100C_1v60` |
+| [`20260918-214755-fb60e2c-ss_n40C_1v60`](../flow/smoke-utmi_stub/records/20260918-214755-fb60e2c-ss_n40C_1v60.md) | `ss_n40C_1v60` | `e7aca0b` | #59 / PR #65 | synth, P&R (**+ PDN**), STA, extract, LVS (**+ power_connectivity**), DRC | `20260915-113028-7d56be5-ss_n40C_1v60` |
+| [`20260918-214755-fb60e2c-tt_025C_1v80`](../flow/smoke-utmi_stub/records/20260918-214755-fb60e2c-tt_025C_1v80.md) | `tt_025C_1v80` | `e7aca0b` | #59 / PR #65 | synth, P&R (**+ PDN**), STA, extract, LVS (**+ power_connectivity**), DRC | `20260915-132956-9281bc4-tt_025C_1v80` (superseded in turn, see below) |
+| [`20260918-214755-fb60e2c-tt_100C_1v80`](../flow/smoke-utmi_stub/records/20260918-214755-fb60e2c-tt_100C_1v80.md) | `tt_100C_1v80` | `e7aca0b` | #59 / PR #65 | synth, P&R (**+ PDN**), STA, extract, LVS (**+ power_connectivity**), DRC | `20260915-113028-7d56be5-tt_100C_1v80` |
+| [`20260919-001148-0f7636d-tt_025C_1v80`](../flow/smoke-utmi_stub/records/20260919-001148-0f7636d-tt_025C_1v80.md) | `tt_025C_1v80` | `75a03b7` | #63 / PR #68 | the six above **+ functional_verification** | `20260918-214755-fb60e2c-tt_025C_1v80` |
 
-All seven: `experiment: smoke-utmi_stub`, `design.hdl_toplevel: utmi_stub`,
-`design.sources: ["rtl/utmi_stub.v"]`, `design.anchors_design_claim: false`.
+All fourteen: `experiment: smoke-utmi_stub`,
+`design.hdl_toplevel: utmi_stub`, `design.sources: ["rtl/utmi_stub.v"]`,
+`design.anchors_design_claim: false`.
 
-**Current record per corner**: the last row supersedes the `tt_025C_1v80`
-record from the first sweep, so the current `tt_025C_1v80` evidence is
-`20260915-132956-9281bc4-tt_025C_1v80`. The superseded record is kept (the
+The index reads as three landings. The first sweep (`9281bc4`, #11 / PR #55)
+produced the six `…-7d56be5-…` records; #37 / PR #57 re-minted the nominal
+corner with a `functional_verification` stage on top of it. Issue #59 then
+added a power grid to `flow/request-par-utmi_stub.json` and re-ran the full
+six-corner flow (`e7aca0b`, PR #65), so the six `…-fb60e2c-…` records
+supersede everything before them; issue #63 re-ran the post-layout
+functional regression against that post-PDN netlist and minted
+`20260919-001148-0f7636d-tt_025C_1v80` (`75a03b7`, PR #68) through
+`run_flow.py`'s own record machinery.
+
+**Current record per corner**: `20260918-214755-fb60e2c-<corner>` at
+`ss_n40C_1v60`, `ss_100C_1v60`, `tt_100C_1v80`, `ff_n40C_1v95` and
+`ff_100C_1v95`, and `20260919-001148-0f7636d-tt_025C_1v80` at the nominal
+corner. Every earlier record is superseded. Superseded records are kept (the
 append-only rule in [`flow/README.md`](../flow/README.md) — records are never
-edited or deleted) and is cited here for completeness, not as live evidence.
+edited or deleted) and are indexed here for completeness, not as live
+evidence.
 
 The corner set is the six committed corners of
 [`spec/decision-records/0001-clocking-cdc-jitter-metric-and-pvt-envelope.md`](../spec/decision-records/0001-clocking-cdc-jitter-metric-and-pvt-envelope.md)
 Decision 5, mirrored in [`flow/corners.json`](../flow/corners.json):
 `ss_n40C_1v60`, `ss_100C_1v60`, `tt_025C_1v80`, `tt_100C_1v80`,
-`ff_n40C_1v95`, `ff_100C_1v95`. Every record's `corner_matrix.run` lists all
-six, i.e. the full matrix was run — no subset.
+`ff_n40C_1v95`, `ff_100C_1v95`. Both physical sweeps ran the full matrix —
+every one of those twelve records has all six corners in its
+`corner_matrix.run`, no subset. The two functional-verification records
+(`…-9281bc4-…`, `…-0f7636d-…`) list only `tt_025C_1v80` there, and say so in
+their own `corner_matrix.subset_justification`: they do not re-run the
+physical flow, they add a nominal-corner-only stage on top of the sweep
+whose physical results they carry forward.
 
 ## 2. `spec/usb2-phy.md` §6 — per-row evidence index
 
@@ -140,18 +148,34 @@ without saying what is in them.
 
 | Corner | Current record | Fmax | Synth cells | Synth area (µm²) | Die (µm²) | Core (µm²) | Util (%) | Wirelength (µm) | STA verdict | DRC | LVS |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `ss_n40C_1v60` | `20260915-113028-7d56be5-ss_n40C_1v60` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 50.25 | 407 | `unconstrained` | clean (0) | match |
-| `ss_100C_1v60` | `20260915-113028-7d56be5-ss_100C_1v60` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 50.25 | 407 | `unconstrained` | clean (0) | match |
-| `tt_025C_1v80` | `20260915-132956-9281bc4-tt_025C_1v80` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 50.25 | 407 | `unconstrained` | clean (0) | match |
-| `tt_100C_1v80` | `20260915-113028-7d56be5-tt_100C_1v80` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 50.25 | 407 | `unconstrained` | clean (0) | match |
-| `ff_n40C_1v95` | `20260915-113028-7d56be5-ff_n40C_1v95` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 50.25 | 407 | `unconstrained` | clean (0) | match |
-| `ff_100C_1v95` | `20260915-113028-7d56be5-ff_100C_1v95` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 50.25 | 407 | `unconstrained` | clean (0) | match |
+| `ss_n40C_1v60` | `20260918-214755-fb60e2c-ss_n40C_1v60` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 51.5 | 485 | `unconstrained` | clean (0) | match |
+| `ss_100C_1v60` | `20260918-214755-fb60e2c-ss_100C_1v60` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 51.5 | 485 | `unconstrained` | clean (0) | match |
+| `tt_025C_1v80` | `20260919-001148-0f7636d-tt_025C_1v80` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 51.5 | 485 | `unconstrained` | clean (0) | match |
+| `tt_100C_1v80` | `20260918-214755-fb60e2c-tt_100C_1v80` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 51.5 | 485 | `unconstrained` | clean (0) | match |
+| `ff_n40C_1v95` | `20260918-214755-fb60e2c-ff_n40C_1v95` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 51.5 | 485 | `unconstrained` | clean (0) | match |
+| `ff_100C_1v95` | `20260918-214755-fb60e2c-ff_100C_1v95` | not derivable | 9 | 225.216 | 768.953 | 500.48 | 51.5 | 485 | `unconstrained` | clean (0) | match |
+
+The nominal corner's row cites the functional-verification record, whose
+physical stages are carried forward unchanged from
+`20260918-214755-fb60e2c-tt_025C_1v80` (`physical_stages_copied_from` in the
+record), so all six rows describe the same post-PDN physical build.
 
 Also identical across all six corners: `route_drc_violation_count: 0`,
 `antenna_violation_count: 0`, `clock_skew_ns: 0`, extraction
-`33 nets / 25 pins / 0 devices`, LVS `error_count: 0` with the single
+`26 nets / 25 pins / 0 devices`, LVS `error_count: 0` with the single
 warnings-only `topology.power_only_pruned` mismatch every record carries, and
-the synthesized cell breakdown `9× sky130_fd_sc_hd__dfrtp_1`.
+the synthesized cell breakdown `9× sky130_fd_sc_hd__dfrtp_1`. Tool versions
+behind these numbers: Yosys `0.69+post`, OpenROAD `26Q3-2276-g4a7cf9b22a`,
+KLayout `0.30.12`, `klt` `0.5.0`.
+
+Utilisation and wirelength are the two figures that moved when issue #59
+added the power grid (50.25% → 51.5%, 407 µm → 485 µm). The only thing that
+changed between the two sweeps is `flow/request-par-utmi_stub.json`'s new
+`power` block: the build now inserts tapcells and places fillers explicitly,
+which occupy core area the earlier build left empty, and routes met1/met4/met5
+straps, which add metal. The netlist is the same nine flip-flops either way.
+Die and core area are unchanged — the floorplan is fixed by the request, not
+inferred from the design.
 
 ### Fmax — why the column says "not derivable"
 
@@ -178,24 +202,39 @@ the same netlist with the same seed (`1`), producing an identical floorplan.
 This is expected for a design this trivial; it is not a sign that corners
 were shared or copied.
 
-### Power — not measured anywhere
+### Power — a grid that is checked for connectivity, and no power number
+
+There is a real power distribution network, and there is no power
+measurement. Those are two separate facts and both are load-bearing.
+
+**The grid exists and is checked.** `flow/request-par-utmi_stub.json`
+declares a `power` block, so every current record's
+`stages.place_and_route.power` reads `pdn: true` with met1 `FOLLOWPIN` rails,
+met4 and met5 straps, met1↔met4 and met4↔met5 connects,
+`sky130_fd_sc_hd__tapvpwrvgnd_1` tapcells and the four `fill_*` filler
+masters. `klt lvs` reports its separate `power_connectivity` verdict beside
+the signal-only compare, and at every one of the six corners it is `match` —
+57 instances, zero findings, each supply pin resolved against the net named
+in the committed `request-lvs-utmi_stub.json` (see
+[`flow/README.md`](../flow/README.md) → "The power-connectivity rule"). That
+is a *connectivity* verdict: the supplies reach the cells that need them.
 
 **No committed record contains a power number, at any corner.** The flow has
-six stages (synthesis, P&R, STA, extraction, LVS, DRC) plus #37's
-functional-verification stage, and none of them performs power analysis.
-At the revision this report was generated against there was also no PDN at
-all — `flow/request-par-utmi_stub.json` omitted `power`, so no power grid, no
-tapcell insertion and no explicit filler placement. **Issue #59 changed
-that**: the P&R request now declares a `power` block and the records minted
-after it carry a real grid plus `klt lvs`'s `power_connectivity: match`
-verdict (see [`flow/README.md`](../flow/README.md) → "The power-connectivity
-rule"). That is a *connectivity* verdict and nothing more — it changes
-nothing in this section's headline, because no stage in the flow performs
-power analysis either before or after. The post-layout functional run also
-compiled the cell library **without** `USE_POWER_PINS`, to match the
-as-built netlist's port list. Power is unmeasured, not "measured and fine".
+six stages (synthesis, P&R, STA, extraction, LVS, DRC) plus the nominal
+corner's functional-verification stage, and none of them performs power
+analysis — no IR drop, no electromigration, no dynamic or leakage figure.
+The grid's geometry was chosen to be a working, checkable PDN on this PDK,
+not a budgeted one. The post-layout functional run compiles the cell library
+**without** `USE_POWER_PINS`, because OpenROAD's as-built `write_verilog`
+omits supply connectivity from the netlist it simulates; that is a property
+of the netlist format, not a statement that the design is unpowered, and
+that stage makes no claim about supplies either way. Power is unmeasured,
+not "measured and fine".
 
-### Post-layout functional verification (record `…-0f7636d-tt_025C_1v80`)
+### Post-layout functional verification (record `20260919-001148-0f7636d-tt_025C_1v80`)
+
+This stage is standing evidence, not history: it lives on the current
+nominal-corner record and it was run against the netlist committed today.
 
 - `functional_verification.status: pass`, 2 of 2 tests, 0 failed, 0 skipped,
   `random_seed: 1`, Icarus 12.0 + cocotb 2.1.0.
@@ -228,17 +267,21 @@ against the netlist they name, and say nothing about the current one.
 - The DRC deck is `klt`'s curated sky130 deck (47 rules), not the PDK-native
   signoff deck, with ten enumerated coverage gaps pinned by content hash in
   [`flow/drc-deck-coverage.json`](../flow/drc-deck-coverage.json). Each run
-  additionally reports its own per-run coverage: for these records, 22 rules
-  never executed (their layers are absent from the stream) and 18 layers
-  present in the stream that no rule references. A `clean` verdict must be
-  read together with both numbers.
+  additionally reports its own per-run coverage: for these records, 10 rules
+  never executed (their layers are absent from the stream) and 21 layers
+  present in the stream that no rule references — down from 22/18 on the
+  pre-PDN records, because the PDN puts real geometry on met4/met5/via3/via4,
+  so the rules that reference those layers now execute. A `clean` verdict
+  must be read together with both numbers.
 - LVS is a KLayout `NetlistComparer` graph-isomorphism compare against P&R's
   own as-built netlist, not against the pre-CTS synthesis netlist.
 - Upstream tool gaps filed while producing these records:
   [#1865](https://github.com/2AMLogic/klayout-tools/issues/1865),
   [#1866](https://github.com/2AMLogic/klayout-tools/issues/1866),
   [#1867](https://github.com/2AMLogic/klayout-tools/issues/1867),
-  [#1868](https://github.com/2AMLogic/klayout-tools/issues/1868).
+  [#1868](https://github.com/2AMLogic/klayout-tools/issues/1868),
+  [#2073](https://github.com/2AMLogic/klayout-tools/issues/2073),
+  [#2076](https://github.com/2AMLogic/klayout-tools/issues/2076).
 
 ## 4. The real UTMI RTL: what exists, and what it is not evidence of
 
@@ -268,14 +311,14 @@ physical-flow experiment whose `design.hdl_toplevel` is `usb_utmi_top`,
 `design.anchors_design_claim: true`, under its own experiment slug (the
 `smoke-utmi_stub` slug is reserved for the plumbing experiment —
 `flow/README.md`: "Real RTL gets its own slug"). No such experiment exists as
-of `ee9611b`.
+of `1d78689`.
 
 ## 5. Provenance
 
 This report is a derived artifact. Everything below is re-derivable with the
 commands in §6.
 
-**Generated against**: `main` @ `ee9611b` (`ee9611bdc8d14c2f1b02afaa63db4a627688cf34`).
+**Generated against**: `main` @ `1d78689` (`1d7868992bc689ac826defb968d474bc3f7a5cb7`).
 
 **Cited evidence records**, hashes as listed in
 [`flow/smoke-utmi_stub/records/MANIFEST.sha256`](../flow/smoke-utmi_stub/records/MANIFEST.sha256):
@@ -289,18 +332,28 @@ commands in §6.
 | `20260915-113028-7d56be5-tt_025C_1v80.md` | `a428a1b2b9b86eaf480543ae5ef8bd98540b460b215593360f569b2cfd803849` |
 | `20260915-113028-7d56be5-tt_100C_1v80.md` | `417bd4c25748e73ddc911bad037cf005b185f3a201d802530e1c128be6b4aa3c` |
 | `20260915-132956-9281bc4-tt_025C_1v80.md` | `99138f03129d4ff503fae4860254eb3e40f0b2518e88983f2dbe46499d0059b1` |
+| `20260918-214755-fb60e2c-ff_100C_1v95.md` | `451a5ac5dcfbdae8c20d52749be1deed84102fb1ee71e0885f5c77f841261077` |
+| `20260918-214755-fb60e2c-ff_n40C_1v95.md` | `7b81695aa581d8b1094b2b22c330938c8fb31cf887377625d4cf6064f769760b` |
+| `20260918-214755-fb60e2c-ss_100C_1v60.md` | `d2b63b0b880654b5fb16d9c62925c56723b4f6c437440e0b2ffe99bb849cccf8` |
+| `20260918-214755-fb60e2c-ss_n40C_1v60.md` | `f3432de97325ab85332409378b4740031d8dc13f4a578513544d34c6e32116d4` |
+| `20260918-214755-fb60e2c-tt_025C_1v80.md` | `d5df38cd0d49517030d4d729b0a02f2695283a728fe4f136a2ff9fdb2206c072` |
+| `20260918-214755-fb60e2c-tt_100C_1v80.md` | `aac6e8d4a7039dc89fa21875acbf48554ce102c5a2e97023bae0313bda2c9b6d` |
+| `20260919-001148-0f7636d-tt_025C_1v80.md` | `7da73afc47fa85c56905b74f600935a9b16a30ac546fd98ed43dacf2e26eb6c3` |
 
 **Commits behind those records**: `9281bc4` (#11 / PR #55, six-corner sweep,
-flow run at revision `7d56be5`) and `6cb5cc6` (#37 / PR #57, post-layout
-functional verification, flow run at revision `9281bc4`). A record's
-`git_revision` is the revision the flow *ran at* — necessarily the parent of
-the commit that adds it.
+flow run at revision `7d56be5`), `6cb5cc6` (#37 / PR #57, post-layout
+functional verification, flow run at revision `9281bc4`), `e7aca0b` (#59 /
+PR #65, power-grid re-run across all six corners, flow run at revision
+`fb60e2c`), and `75a03b7` (#63 / PR #68, re-minted post-layout
+functional-verification record against the post-PDN netlist, flow run at
+revision `0f7636d`). A record's `git_revision` is the revision the flow *ran
+at* — necessarily the parent of the commit that adds it.
 
-**RTL sources on `main` @ `ee9611b`**, with the record that measures each:
+**RTL sources on `main` @ `1d78689`**, with the record that measures each:
 
 | Source | sha256 | Measured by |
 |---|---|---|
-| `rtl/utmi_stub.v` | `b11cf0e00737eff6a01a76a37e08a0508a22827a1a438c3194d891c31750d548` | all seven records (`provenance.inputs`) |
+| `rtl/utmi_stub.v` | `b11cf0e00737eff6a01a76a37e08a0508a22827a1a438c3194d891c31750d548` | all fourteen records (`provenance.inputs`) |
 | `rtl/usb_utmi_top.v` | `da74d9a87c09317719cff4be9a2ebf315038bddab7336c25725c811bf2a290c1` | no physical-flow record |
 | `rtl/usb_tx_serializer.v` | `62f097bcb5c4feee2d1f6ce20f3744fc8d7898ac34a9424fa487a9529deceaca` | no physical-flow record |
 | `rtl/usb_tx_framer.v` | `ee88fd2b593fa631a212d41fd00034422e7a8e99caaee96184d943475080952e` | no physical-flow record |
@@ -315,12 +368,12 @@ the commit that adds it.
 | `rtl/usb_linestate.v` | `beb5a2f4c30e74d7cd883de9d241edccf5cd8631fcfd0df056d277b2234222a7` | no physical-flow record |
 
 `rtl/utmi_stub.v`'s hash above matches the `provenance.inputs` hash recorded
-in all seven records, so the freshness rule holds as of `ee9611b`: the
+in all fourteen records, so the freshness rule holds as of `1d78689`: the
 evidence still describes the source it names. The other twelve files appear
 in no record's `provenance.inputs` at all — that is the "no design-anchored
 evidence" finding, stated as a hash comparison rather than a claim.
 
-**Spec source indexed**: `spec/usb2-phy.md` §6 as of `ee9611b`, 16 table
+**Spec source indexed**: `spec/usb2-phy.md` §6 as of `1d78689`, 16 table
 rows. If that table gains, loses, or reorders a row, §2's `§6-NN` handles
 shift and this report must be regenerated.
 
