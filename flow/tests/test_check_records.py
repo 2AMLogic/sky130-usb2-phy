@@ -756,3 +756,61 @@ def test_record_meta_round_trips_as_json():
     for record in real_record_paths():
         meta = read_meta(record)
         assert json.loads(json.dumps(meta)) == copy.deepcopy(meta)
+
+
+# --------------------------------------------------------------------------
+# Issue #66: the supply-to-signal correspondence artifact must stay disclosed
+# --------------------------------------------------------------------------
+SUPPLY_NETS = {"VGND", "VPWR", "VPB", "VNB"}
+
+
+def supply_to_signal_pairings(lvs_report: Path) -> list[dict]:
+    """Rows where the layout's supply net was corresponded to a signal net."""
+    correspondence = json.loads(lvs_report.read_text())["net_correspondence"]
+    return [
+        row
+        for row in correspondence
+        if row.get("layout") in SUPPLY_NETS
+        and row.get("reference")
+        and row["reference"] not in SUPPLY_NETS
+    ]
+
+
+def test_committed_lvs_reports_still_pair_a_supply_net_to_a_signal_net():
+    """The artifact #66 documents is real and present, not a historical note.
+
+    This is the premise the disclosure rests on. If `klt` ever stops emitting
+    the pairing, this test fails and the README/per-record prose asserting it
+    in the present tense must be revisited -- a disclosure that has silently
+    become false is the exact failure mode #66 was filed about.
+    """
+    reports = sorted(
+        (FLOW_DIR / "smoke-utmi_stub" / "artifacts").glob("*/lvs-report.json")
+    )
+    assert reports, "no committed lvs-report.json artifacts found"
+    for report in reports:
+        pairings = supply_to_signal_pairings(report)
+        assert pairings, f"{report.parent.name} no longer carries the pairing"
+        # And the compare still calls the overall result a match anyway.
+        assert json.loads(report.read_text())["status"] == "match", report.parent.name
+
+
+def test_rendered_power_section_discloses_the_correspondence_artifact():
+    """`render_record()` must disclose the artifact in the power section.
+
+    The power verdict is only trustworthy to a reader who knows not to read
+    `net_correspondence` as a power statement, so every record that carries a
+    `power_connectivity` verdict must say so in the same breath.
+    """
+    rendered = 0
+    for record in real_record_paths():
+        meta = read_meta(record)
+        if "power_connectivity" not in (meta.get("stages", {}).get("lvs") or {}):
+            continue  # predates the verdict entirely; nothing to disclose beside
+        body = run_flow.render_record(meta)
+        _, _, power_section = body.partition("### Power/ground connectivity")
+        assert power_section, record.name
+        assert "net_correspondence" in power_section, record.name
+        assert "2136" in power_section, record.name
+        rendered += 1
+    assert rendered, "no committed record exercised the power-section rendering"

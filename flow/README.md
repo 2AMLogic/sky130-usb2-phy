@@ -450,6 +450,40 @@ layer: CTS emits a clock load per leaf, and two of them on different leaf
 nets turn that rule into a spurious `mismatch`. Expect to re-read this
 verdict, not just inherit it, when the real datapath goes through.
 
+**The `VGND` → `TXREADY` pairing is still present in every committed
+`lvs-report.json`, present tense, and that is expected.** It is not only the
+pre-#59 evidence: all six corners of the post-PDN `20260918-214755-fb60e2c-*`
+set still carry, verbatim,
+`{"layout": "VGND", "reference": "TXREADY", "pin": true}` in
+`net_correspondence`, under an overall `status: "match"` — the same pairing
+issue #59 was filed about, unremoved by the PDN fix described above. (Each
+corner carries four `VGND` rows: three with `"reference": null` — the
+dropped-supply-net behaviour this section opens with — and this fourth
+mis-pairing.)
+
+This is not an oversight left over from #59. It is the direct consequence of
+the `gate-level-verilog` reference carrying no supply pins at all, the same
+root cause as the dropped rows beside it: with no `VGND` of its own to match
+against, the compare has nothing to reject the correspondence *with*, so it
+pairs the rail off against an unrelated signal net and reports `match`
+regardless. Expect it to reappear every time this record set is regenerated
+against a reference of the same shape; it is not something a future `klt` run
+is expected to clear on its own.
+
+**This is exactly why `power_connectivity` — not the LVS `status` above it —
+is this flow's power verdict.** `power_connectivity` is derived from the
+library's own declared supply pins rather than from the reference's
+(non-existent) supply nets, so it is the field that actually answers "is
+`VGND` connected correctly" — and it answers it independently of anything
+`net_correspondence` says. Read a `net_correspondence` expecting this pairing
+to be in it, and do not read its `match` as saying anything whatsoever about
+power. Filed generically upstream as
+[klayout-tools#2136](https://github.com/2AMLogic/klayout-tools/issues/2136)
+(a signal compare that corresponds a supply net to an unrelated signal net
+and still reports `match`) — distinct from #2076 above, which is a spurious
+*signal* admitted to the power side, not a *power* net wrongly matched on the
+signal side.
+
 ## Upstream tool gaps found while building this flow
 
 Per `CLAUDE.md`'s friction protocol, each is filed generically against the
@@ -463,6 +497,7 @@ tool at `2AMLogic/klayout-tools`, and each is linked from every record:
 | [#1868](https://github.com/2AMLogic/klayout-tools/issues/1868) | `place-and-route` resolves the PDK via a search root, but the documented `openroad` container wrapper only mounts `$PDK_ROOT` — every stage dies on an opaque `cannot read file`. |
 | [#2073](https://github.com/2AMLogic/klayout-tools/issues/2073) | Stage responses use two shapes for the same output-artifact path field — `synthesize` emits `{"path": …, "scope": "repo"}`, `place-and-route` a plain absolute string — with `schema_version` unchanged, so a flow chaining the stages cannot detect which it will get. `run_flow.py`'s `envelope_path()` accepts both. |
 | [#2076](https://github.com/2AMLogic/klayout-tools/issues/2076) | `lvs`'s `power_connectivity` admits a dangling signal output (CTS's clock-load `inv_1.Y`) into its power-pin universe when the design has no other carrier of that pin name — harmless at one instance, a spurious `mismatch` at two. See "The power-connectivity rule". |
+| [#2136](https://github.com/2AMLogic/klayout-tools/issues/2136) | `lvs`'s signal compare corresponds a supply net in the layout to an unrelated signal net in the reference and still reports `status: "match"` on that pairing, with no distinguishing flag, when the reference (`gate-level-verilog`) carries no supply pins to match against. See "The power-connectivity rule". |
 
 An earlier filing,
 [#560](https://github.com/2AMLogic/klayout-tools/issues/560) (`klt synthesize`
