@@ -1,0 +1,10 @@
+{
+  "block": "sky130-usb2-phy",
+  "kind": "mixed-signal",
+  "evidence": {
+    "8": {
+      "file": "signoff/evidence/characterization-report.json",
+      "content_hash": "sha256:9ef3d0ed8a3791ced5cd0f8c58ec0c52ebc22f1a155c1aa976977263006fe09b"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "note": [
+    "The klt build that GRADES this block's T1 state (klt signoff --manifest).",
+    "This repo has no committed klt-produced layout evidence yet, so there is",
+    "no producer pin to separate this from: the physical-flow records under",
+    "flow/smoke-utmi_stub/ are a toolchain smoke (design.anchors_design_claim:",
+    "false, flow/README.md) and are deliberately NOT cited by the manifest.",
+    "When real layout evidence lands and gets cited, the convention to follow",
+    "is gf180-temp-por's: pin the producer separately from the grader,",
+    "because the two move on different clocks.",
+    "",
+    "Grader distribution discipline (load-bearing): the pin is the *PyPI",
+    "registry wheel*, never a same-version git snapshot or full-repo install.",
+    "Under the same version string, a git+... snapshot can grade differently",
+    "-- observed live for 0.5.0 (klayout-tools#2216) -- and the committed",
+    "signoff-report.json is only byte-reproducible when graded with the",
+    "distribution it was committed from. signoff/check.py asserts the full",
+    "build identity (git_tag v0.5.0, is_release true) before grading."
+  ],
+  "klt": {
+    "package_version": "0.5.0",
+    "install": "pip install klayout-tools==0.5.0",
+    "release": {
+      "package_version": "0.5.0",
+      "git_tag": "v0.5.0",
+      "is_release": true
+    }
+  },
+  "tiers_doc": {
+    "pinned_source": "klayout-tools origin/main at commit 31a3e3c4 (feat(erc): declare a tap by assertion or disclose it as unexpressible, #2240)",
+    "file": "signoff/design-evidence-tiers.md",
+    "sha256": "sha256:c7a1e7e10627fae396007e0ff951734f37d95028b8f49f2e21e802e9f552f318",
+    "known_gap": [
+      "T1 item 11, 'Power delivery (structural)', was added upstream on",
+      "2026-09-17 (klayout-tools#2025, grading rules in #2057) and exists in",
+      "no released klt bundle: the pinned 0.5.0 wheel's bundled checklist",
+      "stops at item 10, and its own grading rules predate item 11 entirely.",
+      "The vendored copy pinned here supplies the 11-item skeleton so every",
+      "item -- item 11 included -- gets its row (this repo's companion issue",
+      "is #72: no klt erc supply spec or report exists yet, so item 11's rows",
+      "render unmet/no_evidence, which is the honest state).",
+      "",
+      "When a released klt bundles an 11-item checklist AND grades item 11,",
+      "retire the vendored doc and the --tiers-doc flag together, bump this",
+      "pin (this file, signoff/check.py's GRADER_* constants, and the signoff",
+      "CI job's pip install move as one), re-grade, and re-commit the report.",
+      "A newly-citeable item-11 evidence chain at that point is issue #72's",
+      "to land -- the manifest gains the citation when that evidence exists."
+    ]
+  }
+}

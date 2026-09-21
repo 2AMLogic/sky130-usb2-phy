@@ -1,6 +1,6 @@
 name: CI
 
-# Two independent jobs, on every pull request and every push to `main`:
+# Three independent jobs, on every pull request and every push to `main`:
 #
 #   check-ci      -- this repo's real functional verification suite
 #                    (`npm run check:ci`, wired to scripts/check-ci.sh):
@@ -13,10 +13,18 @@ name: CI
 #                    own self-tests. Pure Python, no klt / PDK / OpenROAD, so
 #                    it runs in seconds and still gates the PR.
 #
-# They are deliberately separate: the evidence lint must stay green (and stay
-# fast) even when the heavy toolchain job is slow or its provisioning is
-# broken, and a failure in one must not be reported as a failure of the other.
-# See verification/README.md, flow/README.md, and docs/environment-setup.md.
+#   signoff       -- the T1 tier-verdict freshness gate (issue #73):
+#                    signoff/check.py re-grades signoff/block-manifest.json
+#                    with the pinned released `klt` and fails on any drift
+#                    from the committed signoff/signoff-report.json, so a
+#                    manifest citation whose underlying artifact has changed
+#                    fails the PR instead of silently rotting.
+#
+# They are deliberately separate: the evidence lint and the signoff gate must
+# stay green (and stay fast) even when the heavy toolchain job is slow or its
+# provisioning is broken, and a failure in one must not be reported as a
+# failure of the others. See verification/README.md, flow/README.md,
+# signoff/README.md, and docs/environment-setup.md.
 on:
   pull_request:
   push:
@@ -146,3 +154,39 @@ jobs:
 
       - name: Run the evidence lint (npm run lint)
         run: npm run lint
+
+  # ------------------------------------------------------------------------
+  # T1 tier-verdict freshness gate (issue #73, signoff/README.md).
+  # Independent of the jobs above: no PDK, no OpenROAD, no Icarus --
+  # signoff/check.py re-grades the committed block manifest with the pinned
+  # released klt and requires the committed signoff-report.json to match
+  # what the current tree grades to. It also re-hashes the artifact behind
+  # the manifest's generic citation (docs/characterization.md), which
+  # `klt signoff` itself cannot re-open -- klt compares pinned hashes
+  # against the envelope's own recorded hash, never against the file.
+  # ------------------------------------------------------------------------
+  signoff:
+    name: klt signoff (T1 tier-verdict freshness)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Keep this pin in sync with signoff/toolchain.json and
+      # signoff/check.py's GRADER_* constants: the committed report is only
+      # byte-comparable when graded with the released registry wheel it was
+      # committed from (same-version git snapshots have been observed to
+      # grade differently -- klayout-tools#2216).
+      - name: Install the pinned grading klt (klayout-tools)
+        run: python3 -m pip install klayout-tools==0.5.0
+
+      - name: Confirm the grading build is the pinned release
+        run: klt version --format json
+
+      - name: Re-grade the block manifest; require the committed report to match
+        run: python3 signoff/check.py
