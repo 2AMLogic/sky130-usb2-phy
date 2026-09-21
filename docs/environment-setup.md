@@ -128,6 +128,58 @@ visible inside the sandbox at that path. **Run `klt synthesize` from a
 directory under your home directory (or elsewhere outside `/tmp`)**, not a
 `/tmp` scratch dir, when using `yowasp-yosys`.
 
+### Agent-session scratch: use `.loom/tmp/` in your worktree
+
+Autonomous sessions (Loom sweeps, worktree-resident agents — anyone whose
+cwd is an issue worktree under `.loom/worktrees/`) should put intermediate
+scratch output — comparison runs between two revisions, intermediate JSON,
+stderr captures — in **`.loom/tmp/` at the root of their own worktree**, not
+`/tmp`. The directory is gitignored (entry `.loom/tmp/` in the repo-owned
+section of `.gitignore`, #76), survives inside the worktree only, and is
+throwaway: scratch is never recorded evidence (append-only evidence stays in
+its own trees, e.g. `sim/*/corners/`, `flow/smoke-utmi_stub/`) and never
+reaches a commit.
+
+Why not `/tmp`: the `worktree-write-confinement` guard scans Bash write
+targets statically, and a quoted redirect target containing a command
+substitution with a pipe — e.g. the shape that was denied twice on
+2026-09-18 (`.loom/logs/guard-decisions.log`) —
+`klt erc ... > "/tmp/erc-$(echo $label|tr -d '()').json"` —
+mis-tokenizes, and the truncated fragment is misresolved against the main
+checkout, failing closed as `worktree-write-confinement` while a managed
+worktree exists. In-worktree, fully-literal scratch targets resolve cleanly
+by construction.
+
+Worked example — comparing ERC reports between two revisions from a
+worktree-resident session (note: typed-out filenames, one command per
+revision, no command substitution in the write targets):
+
+```bash
+# cwd = your issue worktree root (e.g. .loom/worktrees/issue-76)
+klt erc old.gds /path/to/spec.json --top top --format json > ".loom/tmp/erc-old.json" 2> ".loom/tmp/erc-old.err" || true
+klt erc new.gds /path/to/spec.json --top top --format json > ".loom/tmp/erc-new.json" 2> ".loom/tmp/erc-new.err" || true
+```
+
+Rules of thumb for guard-compatible scratch writes:
+
+1. Type out the filename per run (fully-literal targets) — simplest and
+   always allowed inside your worktree.
+2. If a computed component is unavoidable, declare it literally in the SAME
+   command before the write — `label=OLD; ... > ".loom/tmp/erc-$label.json"`
+   — so the guard's same-command resolver sees the resolved path.
+3. Keep `$(...)` (especially with pipes inside) out of write targets: an
+   unresolvable target fails closed even when the destination is in-worktree.
+
+Boundary (unchanged by this convention): while any `.loom-managed` worktree
+exists, sessions in the **main checkout remain confined** by
+worktree-isolation — a `>.loom/tmp/...` write from the main checkout is
+still denied; only worktree-resident sessions gain the scratch path.
+Spelled-out literal `/tmp` targets also remain allowed as before —
+`.loom/tmp/` is the sanctioned, discoverable default, not a new restriction.
+
+Cleanup is optional and local: `rm -rf .loom/tmp/` from the owning worktree
+(its contents are untracked and never enter diffs or commits).
+
 ## 5. Fetch the sky130 PDK via volare
 
 ```bash

@@ -80,3 +80,7 @@ verification/.klt/
 
 # Repo Skills machine-local install metadata (absolute source path + timestamp)
 .claude/skills/repo/.install-local.json
+# Agent-session scratch output inside issue worktrees (#76): gitignored
+# throwaway space for worktree-resident comparison/intermediate files —
+# see docs/environment-setup.md "Agent-session scratch"
+.loom/tmp/
