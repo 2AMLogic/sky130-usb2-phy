@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "summary": "Aggregated characterization report for the sky130-usb2-phy block: docs/characterization.md indexes every row of the ratified spec's interface-requirement table (spec/usb2-phy.md sec 6) against the evidence records that exist, per PVT corner, naming the record id behind every verdict. Disclosed, not omitted: the report's own headline result is that zero of the 16 spec rows have design-anchored evidence at any corner today -- its per-row content is an honest NO EVIDENCE verdict, not measured performance, because the only physical-flow records in the repo are the smoke-utmi_stub toolchain experiment (design.anchors_design_claim: false, flow/README.md). This envelope asserts that the aggregated, committed, current characterization artifact T1 item 8 asks for exists and its content is the honest per-row evidence index above -- it does NOT assert that any spec row is measured, characterized, or passing.",
+  "source": "docs/characterization.md",
+  "provenance": {
+    "klt_version": null,
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:9ef3d0ed8a3791ced5cd0f8c58ec0c52ebc22f1a155c1aa976977263006fe09b"
+    }
+  }
+}
