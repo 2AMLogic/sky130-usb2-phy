@@ -1,0 +1,26 @@
+# .loom/resync-ignore -- paths Loom must not overwrite or delete.
+#
+# One `.loom/`-relative path per line. Blank lines and `#` comments ignored;
+# matching is exact (no globs). See `.loom/docs/repo-owned-files.md`.
+#
+# A pin here is this repo declaring "this path is mine, not Loom's". It also
+# turns off the `loom:installed-file-write` PreToolUse guard for that one path
+# (#7995), which is what lets an agent create/maintain the file at all.
+
+# Repo-owned guard regression tests (issue #87).
+#
+# Upstream Loom does not ship this file; it is this repo's own regression test
+# for a false DENY in the vendored `loom:installed-file-write` guard
+# (`.loom/scripts/lib/installed-file-guard.sh`). Pinned so a `loom update`
+# `--clean` sweep cannot delete it, and so a Builder can write it without the
+# installed-file-write guard denying its own test.
+#
+# NOTE: this pin covers the TEST ONLY. The guard bug the test documents is
+# deliberately NOT fixed by hand-editing the vendored guard library here -- the
+# durable fix belongs upstream and is filed as rjwalters/loom#9154 against
+# `defaults/scripts/lib/installed-file-guard.sh` +
+# `defaults/hooks/guard-loom-workflow.sh`. Do NOT pin those two paths: a pin
+# cannot protect a file Loom *does* ship from an `install.sh
+# --confirm-reinstall` re-copy, and it would block every future upstream guard
+# fix from reaching this repo.
+hooks/tests/test-guard-installed-file-write-cd-relative.sh
