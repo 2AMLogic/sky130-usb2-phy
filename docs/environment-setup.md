@@ -27,7 +27,7 @@ rest (klt invocations, PDK fetch, environment variables) is unchanged.
 |---|---|---|
 | `klt` (klayout-tools) | 0.2.0 | `uv tool install klayout-tools` (already present on this machine) |
 | Icarus Verilog | **12.0** (stable) | `apt install iverilog` (Ubuntu noble universe) |
-| cocotb | **2.0.1** | `uv pip install --python <klt's tool venv> cocotb` (see §3 — **not** a plain distro `pip install`, see the note there) |
+| cocotb | 2.0.1 *(not a pin — see note below)* | `uv pip install --python <klt's tool venv> cocotb` (see §3 — **not** a plain distro `pip install`, see the note there) |
 | Yosys | **0.67** (git sha1 `2d1509d1b`) | [`yowasp-yosys`](https://pypi.org/project/yowasp-yosys/) `0.67.0.0.post1190` (pip) — **not** the distro `apt install yosys` package; see §4's friction note for why |
 | volare | 0.20.6 | already present on this machine (`/tmp/volare-venv/bin/volare`) |
 | sky130A PDK | open_pdks commit **`c6d73a35f524070e85faff4a6a9eef49553ebc2b`** | `volare fetch`, already present at `~/.volare/sky130A` on this machine |
@@ -35,6 +35,13 @@ rest (klt invocations, PDK fetch, environment variables) is unchanged.
 The sky130A hash above is the one recorded here for reproducibility; re-check
 `volare output --pdk sky130` if a later session shows a different hash and
 update this doc rather than silently treating a drifted PDK as equivalent.
+
+**The cocotb version is *not* a pin.** `2.0.1` is simply what the
+unpinned §3 install command resolved to on 2026-08-05; nothing in this repo
+requires that exact release, and a newer one is expected on a fresh install
+(the current release as of 2026-09-29 is `2.1.0`, which — unlike 2.0.x —
+ships CPython 3.14 wheels). Install whatever `uv pip install … cocotb`
+resolves to and record it; do not downgrade to match this table.
 
 ## 2. Install Icarus Verilog
 
@@ -61,6 +68,16 @@ cocotb is not installed (import failed: No module named 'cocotb_tools') --
 install it with `pip install cocotb` (cocotb 2.0 supports Python <= 3.13)
 ```
 
+That `(cocotb 2.0 supports Python <= 3.13)` parenthetical is a fixed hint
+string `klt` emits on *any* `cocotb_tools` import failure — including a plain
+"not installed yet" — so do not read it as a live version check. cocotb
+dropped that ceiling after 2.0.x: as of 2026-09-29 the current release
+(`2.1.0`) declares `requires-python >= 3.9` with no upper bound and ships
+CPython 3.14 wheels. The unpinned install below is therefore expected to
+succeed even when `uv tool install klayout-tools` resolved a tool venv above
+Python 3.13; no `--python 3.13` pin is needed. Stale hint reported upstream as
+[2AMLogic/klayout-tools#2610](https://github.com/2AMLogic/klayout-tools/issues/2610).
+
 Inject cocotb into that same environment with `uv`:
 
 ```bash
@@ -71,7 +88,9 @@ Verify:
 
 ```bash
 "$(uv tool dir)/klayout-tools/bin/python" -c "import cocotb; print(cocotb.__version__)"
-# expect: 2.0.1
+# expect: any current cocotb release, e.g. 2.1.0 (current as of 2026-09-29).
+# This command deliberately installs cocotb unpinned — printing a version
+# newer than the 2.0.1 recorded in §1 is the expected outcome, not a failure.
 ```
 
 If `klt` was installed a different way (not `uv tool install`), install
@@ -243,7 +262,10 @@ logic). See [`docs/baseline.md`](baseline.md) for the full recorded result.
 - [ ] From a **new terminal** (nothing pre-sourced from a prior session),
       confirm `iverilog -V` reports `12.0` and
       `"$(uv tool dir)/klayout-tools/bin/python" -c "import cocotb; print(cocotb.__version__)"`
-      reports `2.0.1`.
+      prints *some* version without erroring — i.e. cocotb is importable from
+      `klt`'s own tool venv. Any current release satisfies this (`2.1.0` as of
+      2026-09-29; `2.0.1` was what §1 recorded on 2026-08-05) — a version
+      newer than §1's does **not** fail this item.
 - [ ] Confirm `yosys --version` resolves to `~/.local/bin/yosys` (the
       `yowasp-yosys` symlink from §4), **not** `/usr/bin/yosys` — `which
       yosys` should print the `~/.local/bin` path.
@@ -262,3 +284,8 @@ logic). See [`docs/baseline.md`](baseline.md) for the full recorded result.
   split (e.g. Ubuntu noble's distro-packaged Yosys 0.33) — see §4. Filed
   generically (no design-specific detail) per `CLAUDE.md`'s friction
   protocol.
+- [2AMLogic/klayout-tools#2610](https://github.com/2AMLogic/klayout-tools/issues/2610) —
+  `klt functional-verification`'s "cocotb is not installed" message hardcodes
+  a stale `(cocotb 2.0 supports Python <= 3.13)` hint, emitted on any
+  `cocotb_tools` import failure regardless of the installed/available cocotb
+  version — see §3. Filed generically per `CLAUDE.md`'s friction protocol.
