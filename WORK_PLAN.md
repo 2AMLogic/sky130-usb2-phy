@@ -51,7 +51,7 @@ Issues carrying `loom:curated`.
 
 ## Proposed (Architect / Hermit)
 
-- **#91**: Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py *(hermit)*
+- **#95**: Remove unused Fraction import: verification/test_usb_rx.py:71 *(hermit)*
 
 ## Epics
 
