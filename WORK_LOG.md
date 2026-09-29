@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-09-29
+
+- **Issue #91** (closed): Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py
+- **PR #93**: Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py
+
 ### 2026-09-26
 
 - **Issue #87** (closed): Guard trigger review: loom:installed-file-write false-denies a same-command cd-then-relative-write into a scratch dir
