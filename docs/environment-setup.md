@@ -40,8 +40,9 @@ update this doc rather than silently treating a drifted PDK as equivalent.
 unpinned §3 install command resolved to on 2026-08-05; nothing in this repo
 requires that exact release, and a newer one is expected on a fresh install
 (the current release as of 2026-09-29 is `2.1.0`, which — unlike 2.0.x —
-ships CPython 3.14 wheels). Install whatever `uv pip install … cocotb`
-resolves to and record it; do not downgrade to match this table.
+ships CPython 3.14 wheels — measured working end-to-end on CPython 3.14.6 in
+§3.1). Install whatever `uv pip install … cocotb` resolves to and record it;
+do not downgrade to match this table.
 
 ## 2. Install Icarus Verilog
 
@@ -73,9 +74,10 @@ string `klt` emits on *any* `cocotb_tools` import failure — including a plain
 "not installed yet" — so do not read it as a live version check. cocotb
 dropped that ceiling after 2.0.x: as of 2026-09-29 the current release
 (`2.1.0`) declares `requires-python >= 3.9` with no upper bound and ships
-CPython 3.14 wheels. The unpinned install below is therefore expected to
-succeed even when `uv tool install klayout-tools` resolved a tool venv above
-Python 3.13; no `--python 3.13` pin is needed. Stale hint reported upstream as
+CPython 3.14 wheels. The unpinned install below therefore succeeds even when
+`uv tool install klayout-tools` resolved a tool venv above Python 3.13; no
+`--python 3.13` pin is needed (measured — see §3.1). Stale hint reported
+upstream as
 [2AMLogic/klayout-tools#2610](https://github.com/2AMLogic/klayout-tools/issues/2610).
 
 Inject cocotb into that same environment with `uv`:
@@ -98,6 +100,43 @@ cocotb into whichever Python environment `klt`'s own shebang points at
 (`head -1 "$(command -v klt)"`), the same way — a plain
 `python3 -m pip install cocotb` on Ubuntu 24.04 will itself refuse with
 `error: externally-managed-environment` (PEP 668) unless run inside a venv.
+
+### 3.1 Recorded: unpinned cocotb on a **Python 3.14** `klt` environment (2026-09-29)
+
+The claim above ("no `--python 3.13` pin is needed") is a measurement, not an
+inference from PyPI metadata. Recorded end-to-end on Ubuntu, x86_64:
+
+| Fact | Value |
+|---|---|
+| Interpreter | CPython **3.14.6** |
+| `klt` | **0.6.0+ge55764df04d8** (same git rev as this machine's `uv tool install`ed `klt`) |
+| Before installing cocotb | `klt functional-verification` fails with the exact `cocotb is not installed (import failed: No module named 'cocotb_tools') -- ... (cocotb 2.0 supports Python <= 3.13)` message quoted above |
+| Unpinned `uv pip install … cocotb` | resolves **cocotb 2.1.0**, installs `cocotb-2.1.0-cp314-cp314-manylinux2014_x86_64…whl` — **no version-refusal error** |
+| After installing cocotb | all five `verification/request-*.json` testbenches report `"status": "pass"` (59 tests: 2 + 19 + 10 + 26 + 2, 0 failed), `"cocotb_version": "2.1.0"`, `"engine_version": "13.0"` |
+
+So the `(cocotb 2.0 supports Python <= 3.13)` hint is the only thing about a
+Python-3.14 `klt` venv that is version-related; the install path itself is
+unaffected. A Python-3.14-resolving tool venv is **not** a reason to re-pin
+`klt`'s interpreter.
+
+**How to reproduce this without touching a shared `klt` install.** On a shared
+fleet host, `$(uv tool dir)/klayout-tools/` is provisioned identically across
+every worker and must not be mutated. Build the equivalent environment inside
+your own worktree instead — same `klt` rev, same unpinned cocotb command, only
+the `--python` target differs:
+
+```bash
+# from your worktree root; everything lands under the gitignored .loom/tmp/
+export UV_PYTHON_INSTALL_DIR="$PWD/.loom/tmp/uv-python"
+export UV_CACHE_DIR="$PWD/.loom/tmp/uv-cache"
+uv venv --python 3.14 .loom/tmp/venv314
+# pin the SAME klt rev the shared tool has: see $(uv tool dir)/klayout-tools/uv-receipt.toml
+uv pip install --python .loom/tmp/venv314/bin/python \
+  "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools.git@<rev>"
+uv pip install --python .loom/tmp/venv314/bin/python cocotb   # the §3 command, unpinned
+.loom/tmp/venv314/bin/klt functional-verification verification/request-utmi_stub.json --format json
+rm -rf .loom/tmp/venv314 .loom/tmp/uv-python .loom/tmp/uv-cache   # scratch, never evidence
+```
 
 ## 4. Install a working Yosys via `yowasp-yosys` (not `apt install yosys`)
 
@@ -265,7 +304,8 @@ logic). See [`docs/baseline.md`](baseline.md) for the full recorded result.
       prints *some* version without erroring — i.e. cocotb is importable from
       `klt`'s own tool venv. Any current release satisfies this (`2.1.0` as of
       2026-09-29; `2.0.1` was what §1 recorded on 2026-08-05) — a version
-      newer than §1's does **not** fail this item.
+      newer than §1's does **not** fail this item, and neither does a tool
+      venv resolving Python 3.14 (measured in §3.1).
 - [ ] Confirm `yosys --version` resolves to `~/.local/bin/yosys` (the
       `yowasp-yosys` symlink from §4), **not** `/usr/bin/yosys` — `which
       yosys` should print the `~/.local/bin` path.
