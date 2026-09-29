@@ -12,9 +12,9 @@ Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementat
 
 _None._
 
-## Urgent
+## Operator Priority
 
-Issues flagged as highest priority (`loom:urgent`).
+Issues the operator starred (`loom:operator-priority`); land these first.
 
 _None._
 
@@ -46,11 +46,12 @@ _None._
 
 Issues carrying `loom:curated`.
 
-_None._
+- **#84**: Guard trigger review: worktree-write-confinement DENY on /tmp scratch ERC comparison command (refine or confirm fixed) *(curated)*
+- **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#11**: Bootstrap the physical flow: synthesis → P&R → GDS → DRC/LVS, multi-corner timing, evidence records and CI *(architect)*
+- **#91**: Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py *(hermit)*
 
 ## Epics
 
@@ -61,12 +62,12 @@ _None._
 | Tier | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Urgent | 0 |
+| Operator priority | 0 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 0 |
+| Curated | 2 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
