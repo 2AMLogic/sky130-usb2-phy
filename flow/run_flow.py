@@ -37,7 +37,6 @@ from __future__ import annotations
 import argparse
 import copy
 import datetime as dt
-import hashlib
 import json
 import os
 import shutil
@@ -52,7 +51,6 @@ LAYOUT_DIR = REPO_ROOT / "layout"
 
 sys.path.insert(0, str(FLOW_DIR))
 from check_records import (  # noqa: E402  (path set above on purpose)
-    UNCONSTRAINED_SENTINEL_FLOOR,
     is_sentinel,
     sha256_file,
 )

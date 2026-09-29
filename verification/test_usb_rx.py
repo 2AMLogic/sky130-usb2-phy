@@ -76,7 +76,7 @@ from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, Timer
 
 from usbfs import packets, pid, scenarios
 from usbfs.linestate import LineState, to_dpdm
-from usbfs.timing import FS_BIT_PERIOD_NS, MAX_FREQ_OFFSET_PPM, TimingConfig
+from usbfs.timing import MAX_FREQ_OFFSET_PPM, TimingConfig
 from usbfs.transceiver import IdealTransceiver
 
 CLK144_PERIOD_NS_NOMINAL = 1000.0 / 144.0  # 6.9444... ns (144 MHz)
