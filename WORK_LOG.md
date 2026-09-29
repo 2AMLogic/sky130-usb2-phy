@@ -5,6 +5,9 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-09-29
 
+- **Issue #95** (closed): Remove unused Fraction import: verification/test_usb_rx.py:71
+- **PR #98**: Remove unused Fraction import in test_usb_rx.py
+- **PR #97**: docs: stop implying cocotb must be exactly 2.0.1 in environment-setup
 - **Issue #91** (closed): Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py
 - **PR #93**: Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py
 

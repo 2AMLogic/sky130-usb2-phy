@@ -28,7 +28,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#94**: Auditor Capability Request: cocotb unavailable in klt's tool venv on loom-worker fleet host (Python 3.14.6, recurrence of #42)
 
 ## PRs Awaiting Review
 
@@ -48,10 +48,11 @@ Issues carrying `loom:curated`.
 
 - **#84**: Guard trigger review: worktree-write-confinement DENY on /tmp scratch ERC comparison command (refine or confirm fixed) *(curated)*
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
+- **#94**: Auditor Capability Request: cocotb unavailable in klt's tool venv on loom-worker fleet host (Python 3.14.6, recurrence of #42) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-- **#95**: Remove unused Fraction import: verification/test_usb_rx.py:71 *(hermit)*
+_None._
 
 ## Epics
 
@@ -64,10 +65,10 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Operator priority | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 0 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 2 |
-| Architect / Hermit proposals | 1 |
+| Curated | 3 |
+| Architect / Hermit proposals | 0 |
 | Active epics | 1 |
 <!-- guide:plan-body:end -->
