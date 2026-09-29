@@ -68,8 +68,6 @@ line state...at every sample point across a full packet" without
 depending on nailing an exact absolute-time alignment.
 """
 
-from fractions import Fraction
-
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, Timer
