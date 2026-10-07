@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-09-29
 
+- **Issue #94** (closed): Auditor Capability Request: cocotb unavailable in klt's tool venv on loom-worker fleet host (Python 3.14.6, recurrence of #42)
+- **PR #101**: docs: record unpinned cocotb working on a Python 3.14 klt env
 - **Issue #95** (closed): Remove unused Fraction import: verification/test_usb_rx.py:71
 - **PR #98**: Remove unused Fraction import in test_usb_rx.py
 - **PR #97**: docs: stop implying cocotb must be exactly 2.0.1 in environment-setup
