@@ -3,6 +3,14 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-03
+
+- **Issue #89** (closed): Guard telemetry: bare rm -rf / (filesystem-root wipe) DENY confirmed correct
+- **Issue #90** (closed): Guard telemetry: rm -rf on unresolvable variable target fails closed correctly (rm-scope-unresolved-var)
+- **Issue #99** (closed): Guard friction: worktree-write-confinement denies /tmp scratch writes (4+ hits)
+- **Issue #85** (closed): Guard trigger review: stash-scope:create-redirect DENY on worktree git stash (keep flagged)
+- **Issue #77** (closed): Guard trigger review: gh-api-rawfield-body-literal-at DENY on -f body=@file (keep flagged)
+
 ### 2026-09-29
 
 - **Issue #94** (closed): Auditor Capability Request: cocotb unavailable in klt's tool venv on loom-worker fleet host (Python 3.14.6, recurrence of #42)
