@@ -1,0 +1,26 @@
+{
+  "schema": "klt.synthesize.request/1",
+  "engine": "yosys",
+  "sources": [
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_bit_sync.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_nrzi_decoder.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_bit_destuffer.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_rx_framer.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_linestate.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_rx_cdc.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_rx_path.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_nrzi_encoder.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_bit_stuffer.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_tx_framer.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_tx_serializer.v",
+    "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-104/rtl/usb_utmi_top.v"
+  ],
+  "hdl_toplevel": "usb_utmi_top",
+  "pdk": {
+    "cell_library": "sky130_fd_sc_hd",
+    "corner": "tt_025C_1v80"
+  },
+  "constraints": {
+    "clock_period_ns": 33.333
+  }
+}

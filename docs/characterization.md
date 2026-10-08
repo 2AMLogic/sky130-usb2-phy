@@ -299,19 +299,47 @@ reason: **no physical-flow record names it**.
 - What that is: RTL-level functional simulation against a behavioral
   ideal-transceiver model, which is exactly the floor `spec/usb2-phy.md` §7
   sets for this milestone.
-- What that is **not**: a synthesis, place-and-route, timing, LVS, DRC or
-  post-layout result for the real datapath, at any corner. Grep the records
-  and every `provenance.inputs` entry is `rtl/utmi_stub.v`; none is
-  `rtl/usb_utmi_top.v`. And an RTL simulation against a behavioral model
-  cannot, even in principle, evidence an electrical row like §6-04's voltage
-  swing or §6-05's output resistance.
+- What that is **not**: a place-and-route, timing, LVS, DRC or post-layout
+  result for the real datapath, at any corner. And an RTL simulation against a
+  behavioral model cannot, even in principle, evidence an electrical row like
+  §6-04's voltage swing or §6-05's output resistance.
 
-The gap that would move §6-08/§6-13/§6-16 off `NO EVIDENCE` is a
-physical-flow experiment whose `design.hdl_toplevel` is `usb_utmi_top`,
-`design.anchors_design_claim: true`, under its own experiment slug (the
-`smoke-utmi_stub` slug is reserved for the plumbing experiment —
-`flow/README.md`: "Real RTL gets its own slug"). No such experiment exists as
-of `1d78689`.
+**Update (issue #104): the real top has now been synthesized — and only
+that.** Experiment `utmi-top` holds one synthesis-only record,
+[`flow/utmi-top/records/20261008-210449-1a11293-tt_025C_1v80.md`](../flow/utmi-top/records/20261008-210449-1a11293-tt_025C_1v80.md)
+(`design.hdl_toplevel: usb_utmi_top`, `design.anchors_design_claim: true`,
+every `rtl/usb_*.v` in `provenance.inputs`), with the gate-level netlist at
+[`design/netlist/usb_utmi_top.v`](../design/netlist/usb_utmi_top.v). What it
+says, and no more:
+
+- 943 `sky130_fd_sc_hd` cells, 310 of them flip-flops, 11865.13 µm² (8100.27
+  µm² sequential), nominal corner `tt_025C_1v80` only; area by cell is in the
+  record. Two `klt synthesize` runs from clean scratch directories produced a
+  byte-identical netlist.
+- **`klt synthesize` exits 3: the RTL has a combinational loop.** In
+  `rtl/usb_rx_cdc.v`, `wr_en = rx_byte_valid & ~full` and `full` is computed
+  from `wptr_bin + wr_en`, so the write enable depends combinationally on
+  itself. The record discloses it; the RTL was not touched here. This is a
+  finding about the design, not a clean synthesis result.
+- The design has **two clocks** — `clk_144` (144 MHz) and `clk_utmi`
+  (30 MHz) — and `klt synthesize`'s single `clock_period_ns` describes
+  neither separately. No timing claim is made for either domain.
+- The unmodified `verification/test_usb_utmi_top.py` still passes 26/26 on the
+  RTL. Against the gate-level netlist (sky130_fd_sc_hd zero-delay functional
+  models) it passes **25/26**; the one failure is
+  `test_control_input_synchronizer_depth_is_two`, an `AttributeError` — the
+  test peeks at the RTL net `term_select_144`, which synthesis removed
+  (`TermSelect`/`XcvrSelect` have no consumers in the full-speed-only RTL).
+  That is a hierarchy dependence of the white-box test, reported as a failure
+  and not worked around.
+- Stages 2–6 (place and route, STA, extraction, LVS, DRC) were **not run**;
+  the record declares each `not_run`. This is not a §6 row result: no spec
+  row moves off `NO EVIDENCE` on synthesis alone, and nothing here is cited by
+  the signoff manifest (see item 1 in [`signoff/README.md`](../signoff/README.md)).
+
+The gap that would move §6-08/§6-13/§6-16 off `NO EVIDENCE` is still the
+physical flow for `usb_utmi_top` under this experiment slug (follow-on issue
+#105).
 
 ## 5. Provenance
 

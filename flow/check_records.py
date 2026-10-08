@@ -109,6 +109,67 @@ REQUIRED_FIELDS: tuple[tuple[str, bool], ...] = (
 
 VALID_TIMING_VERDICTS = {"pass", "fail", "waived", "unconstrained"}
 
+# --------------------------------------------------------------------------
+# Synthesis-only records (experiment `utmi-top`, issue #104)
+#
+# A record normally describes the whole six-stage flow and `REQUIRED_FIELDS`
+# demands a result for every stage. A synthesis-only record declares
+# `"record_kind": "synthesis-only"` and is held to `SYNTH_ONLY_REQUIRED_FIELDS`
+# instead. It is NOT a relaxed full-flow record: every stage after synthesis
+# must be present and explicitly `{"status": "not_run", "reason": ...}` with
+# no result fields, and there is no `timing` verdict at all (the unconstrained
+# sentinel means "STA ran and found no path", which is not "STA did not run").
+# Anything else is a finding, so a synthesis-only record cannot smuggle in, or
+# imply, a place-and-route / timing / LVS / DRC result that was never produced.
+# --------------------------------------------------------------------------
+RECORD_KIND_SYNTH_ONLY = "synthesis-only"
+VALID_RECORD_KINDS = {RECORD_KIND_SYNTH_ONLY}
+
+SYNTH_ONLY_REQUIRED_FIELDS: tuple[tuple[str, bool], ...] = (
+    ("schema", False),
+    ("record_kind", False),
+    ("record_id", False),
+    ("experiment", False),
+    ("corner", False),
+    ("created_utc", False),
+    ("git_revision", False),
+    ("supersedes", True),
+    ("design.hdl_toplevel", False),
+    ("design.sources", False),
+    ("design.anchors_design_claim", False),
+    ("design.clock_note", False),
+    ("corner_matrix.committed", False),
+    ("corner_matrix.run", False),
+    ("corner_matrix.subset_justification", True),
+    ("stages.synthesize.status", False),
+    ("stages.synthesize.instance_count", False),
+    ("stages.synthesize.flip_flop_count", False),
+    ("stages.synthesize.area_um2", False),
+    ("stages.synthesize.instance_counts_by_type", False),
+    ("stages.synthesize.area_by_cell_um2", False),
+    ("stages.synthesize.netlist.path", False),
+    ("stages.synthesize.netlist.sha256", False),
+    ("stages.synthesize.reproduction.byte_identical", False),
+    ("stages.synthesize.reproduction.normalisation", False),
+    ("stages.gate_level_functional_verification.status", False),
+    ("stages.gate_level_functional_verification.test_count", False),
+    ("stages.gate_level_functional_verification.passed_count", False),
+    ("stages.gate_level_functional_verification.failed_count", False),
+    ("stages.gate_level_functional_verification.failing_tests", False),
+    ("provenance.klt_version", False),
+    ("provenance.pdk", False),
+    ("provenance.inputs", False),
+    ("provenance.artifacts", False),
+    ("tool_gaps", False),
+)
+
+# Stages a synthesis-only record must declare as not run, and the only keys
+# such a declaration may carry.
+SYNTH_ONLY_NOT_RUN_STAGES = ("place_and_route", "sta", "extract", "lvs", "drc")
+NOT_RUN_KEYS = {"status", "reason"}
+# Timing result fields that may never appear in a synthesis-only record.
+TIMING_RESULT_KEYS = {"verdict", "worst_slack_ns", "total_negative_slack_ns", "waiver"}
+
 # Committed request documents, and the fields each one must actually carry for
 # the stage it drives to be reproducible from the file alone.
 REQUEST_REQUIREMENTS: dict[str, tuple[str, ...]] = {
@@ -187,6 +248,22 @@ REQUEST_REQUIREMENTS: dict[str, tuple[str, ...]] = {
     ),
 }
 
+# Request documents that belong to one experiment and are only required (and
+# only validated) when that experiment is in scope.
+EXPERIMENT_REQUEST_REQUIREMENTS: dict[str, dict[str, tuple[str, ...]]] = {
+    "utmi-top": {
+        "request-synth-usb_utmi_top.json": (
+            "schema",
+            "engine",
+            "sources",
+            "hdl_toplevel",
+            "pdk.cell_library",
+            "pdk.corner",
+            "constraints.clock_period_ns",
+        ),
+    },
+}
+
 
 class Findings:
     """Collects failures, each tagged with the check that produced it."""
@@ -252,8 +329,24 @@ def extract_record_meta(text: str, path: Path, findings: Findings):
 # --------------------------------------------------------------------------
 # Condition 1 -- required fields
 # --------------------------------------------------------------------------
+def record_kind(meta: dict) -> str:
+    """`"full-flow"` unless the record declares a known alternative kind."""
+    return meta.get("record_kind") or "full-flow"
+
+
 def check_required_fields(meta: dict, path: Path, findings: Findings) -> None:
-    for dotted, may_be_null in REQUIRED_FIELDS:
+    if "record_kind" in meta and meta["record_kind"] not in VALID_RECORD_KINDS:
+        findings.add(
+            "required-field",
+            f"{path.name}: record_kind {meta['record_kind']!r} is not one of "
+            f"{sorted(VALID_RECORD_KINDS)} (omit it for a full-flow record)",
+        )
+    required = (
+        SYNTH_ONLY_REQUIRED_FIELDS
+        if meta.get("record_kind") == RECORD_KIND_SYNTH_ONLY
+        else REQUIRED_FIELDS
+    )
+    for dotted, may_be_null in required:
         try:
             value = dotted_get(meta, dotted)
         except KeyError:
@@ -713,6 +806,8 @@ def check_power_connectivity(
     """
     if superseded and meta.get("record_id") in superseded:
         return
+    if meta.get("record_kind") == RECORD_KIND_SYNTH_ONLY:
+        return  # no place-and-route ran; check_synthesis_only owns this case
 
     try:
         par = dotted_get(meta, "stages.place_and_route")
@@ -800,6 +895,212 @@ def check_power_connectivity(
 
 
 # --------------------------------------------------------------------------
+# Rule 8 -- synthesis-only records
+# --------------------------------------------------------------------------
+def check_synthesis_only(meta: dict, path: Path, findings: Findings) -> None:
+    """Hold a `synthesis-only` record to what it claims and to nothing more."""
+    if meta.get("record_kind") != RECORD_KIND_SYNTH_ONLY:
+        return
+    name = path.name
+    stages = meta.get("stages")
+    if not isinstance(stages, dict):
+        return  # reported by check_required_fields
+
+    # 8a. every later stage is declared not run, and carries no result.
+    for stage in SYNTH_ONLY_NOT_RUN_STAGES:
+        block = stages.get(stage)
+        if not isinstance(block, dict):
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.{stage} must be present and declared "
+                '{"status": "not_run", "reason": ...} -- silence is not a declaration',
+            )
+            continue
+        if block.get("status") != "not_run":
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.{stage}.status is {block.get('status')!r}; a synthesis-only "
+                "record never ran this stage and must say status 'not_run'",
+            )
+        if not str(block.get("reason", "")).strip():
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.{stage} is 'not_run' with no `reason`",
+            )
+        extra = sorted(set(block) - NOT_RUN_KEYS)
+        if extra:
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.{stage} is 'not_run' but carries result field(s) {extra} -- "
+                "a stage that did not run has no results",
+            )
+    timing = meta.get("timing")
+    if isinstance(timing, dict):
+        leaked = sorted(set(timing) & TIMING_RESULT_KEYS)
+        if leaked:
+            findings.add(
+                "synthesis-only",
+                f"{name}: a synthesis-only record carries timing field(s) {leaked} -- no "
+                "timing was measured (and the unconstrained sentinel is not a stand-in "
+                "for 'not run')",
+            )
+    elif timing is not None:
+        findings.add("synthesis-only", f"{name}: `timing` must be absent or an object")
+
+    # 8b. the synthesis result is internally consistent.
+    synth = stages.get("synthesize")
+    if isinstance(synth, dict):
+        if synth.get("status") != "ok":
+            findings.add("synthesis-only", f"{name}: stages.synthesize.status is not 'ok'")
+        counts = synth.get("instance_counts_by_type")
+        if isinstance(counts, dict):
+            if sum(v for v in counts.values() if isinstance(v, int)) != synth.get(
+                "instance_count"
+            ):
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: instance_counts_by_type does not sum to instance_count",
+                )
+            areas = synth.get("area_by_cell_um2")
+            if not isinstance(areas, dict) or set(areas) != set(counts):
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: area_by_cell_um2 must have exactly the cells in "
+                    "instance_counts_by_type",
+                )
+            elif isinstance(synth.get("area_um2"), (int, float)):
+                total = sum(v for v in areas.values() if isinstance(v, (int, float)))
+                if abs(total - synth["area_um2"]) > 0.01:
+                    findings.add(
+                        "synthesis-only",
+                        f"{name}: area_by_cell_um2 sums to {total}, area_um2 is "
+                        f"{synth['area_um2']}",
+                    )
+        repro = synth.get("reproduction")
+        if isinstance(repro, dict):
+            if repro.get("byte_identical") is not True and str(
+                repro.get("normalisation", "none")
+            ).strip().lower() in ("", "none"):
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: reproduction is not byte-identical and no normalisation rule "
+                    "is documented -- differing netlists may not be silently accepted",
+                )
+        structural = synth.get("structural")
+        if isinstance(structural, dict) and (
+            structural.get("has_critical") or structural.get("comb_loops")
+        ):
+            if not str(synth.get("comb_loop_finding", "")).strip():
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: klt's structural verdict reports a critical finding "
+                    "(e.g. a combinational loop) but stages.synthesize.comb_loop_finding "
+                    "does not disclose it",
+                )
+        netlist = synth.get("netlist")
+        if isinstance(netlist, dict) and isinstance(netlist.get("path"), str):
+            target = REPO_ROOT / netlist["path"]
+            if not target.exists():
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: netlist {netlist['path']} does not exist",
+                )
+            elif "sha256:" + str(netlist.get("sha256")) != sha256_file(target):
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: netlist {netlist['path']} no longer matches the recorded sha256",
+                )
+
+    # 8c. the gate-level result cannot be a false pass.
+    gl = stages.get("gate_level_functional_verification")
+    if isinstance(gl, dict):
+        status, total = gl.get("status"), gl.get("test_count")
+        passed, failed = gl.get("passed_count"), gl.get("failed_count")
+        failing = gl.get("failing_tests")
+        if status not in ("pass", "fail"):
+            findings.add(
+                "synthesis-only",
+                f"{name}: gate-level functional verification status {status!r} is not "
+                "'pass' or 'fail'",
+            )
+        elif isinstance(passed, int) and isinstance(failed, int) and isinstance(total, int):
+            if status == "pass" and (failed != 0 or passed != total):
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: gate-level status is 'pass' but {passed}/{total} passed, "
+                    f"{failed} failed",
+                )
+            if status == "fail" and failed == 0:
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: gate-level status is 'fail' but failed_count is 0",
+                )
+            if isinstance(failing, list) and len(failing) < failed:
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: failing_tests lists {len(failing)} test(s) but failed_count "
+                    f"is {failed} -- every failure must be named",
+                )
+
+    # 8d. every rtl/usb_*.v source is named, hashed, and no stub leaks in.
+    design = meta.get("design", {})
+    sources = design.get("sources") if isinstance(design, dict) else None
+    inputs = meta.get("provenance", {}).get("inputs")
+    if isinstance(sources, list) and isinstance(inputs, list):
+        hashed = {e.get("path") for e in inputs if isinstance(e, dict)}
+        for src in sources:
+            if src not in hashed:
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: source {src} is not in provenance.inputs (unhashed source)",
+                )
+        if "rtl/utmi_stub.v" in sources:
+            findings.add(
+                "synthesis-only", f"{name}: rtl/utmi_stub.v is the stub, not the real top"
+            )
+        on_disk = sorted(
+            p.relative_to(REPO_ROOT).as_posix() for p in (REPO_ROOT / "rtl").glob("usb_*.v")
+        )
+        missing = [p for p in on_disk if p not in sources]
+        if missing:
+            findings.add(
+                "synthesis-only",
+                f"{name}: design.sources omits rtl source(s) present in the tree: {missing}",
+            )
+
+    # 8e. artifact hashes (the synthesis envelope must be among them).
+    artifacts = meta.get("provenance", {}).get("artifacts")
+    if isinstance(artifacts, list):
+        if not any(
+            isinstance(a, dict) and str(a.get("path", "")).endswith("/synthesize-report.json")
+            for a in artifacts
+        ):
+            findings.add(
+                "synthesis-only",
+                f"{name}: provenance.artifacts does not include the synthesize-report.json "
+                "envelope",
+            )
+        for entry in artifacts:
+            if not isinstance(entry, dict) or "path" not in entry or "content_hash" not in entry:
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: provenance.artifacts entry needs `path` and `content_hash`: "
+                    f"{entry!r}",
+                )
+                continue
+            target = REPO_ROOT / entry["path"]
+            if not target.exists():
+                findings.add(
+                    "synthesis-only", f"{name}: artifact {entry['path']} does not exist"
+                )
+            elif sha256_file(target) != entry["content_hash"]:
+                findings.add(
+                    "synthesis-only",
+                    f"{name}: artifact {entry['path']} does not match its recorded hash",
+                )
+
+
+# --------------------------------------------------------------------------
 # Rule 6 -- DRC deck pinning and gap enumeration
 # --------------------------------------------------------------------------
 def check_drc_deck(meta: dict, path: Path, coverage: dict, findings: Findings) -> None:
@@ -850,9 +1151,17 @@ def check_drc_deck(meta: dict, path: Path, coverage: dict, findings: Findings) -
 # --------------------------------------------------------------------------
 # Rule 7 -- committed request documents
 # --------------------------------------------------------------------------
-def check_requests(flow_dir: Path, findings: Findings) -> int:
+def check_requests(
+    flow_dir: Path, findings: Findings, experiments: list[str] | None = None
+) -> int:
     checked = 0
-    for name, required in sorted(REQUEST_REQUIREMENTS.items()):
+    requirements = dict(REQUEST_REQUIREMENTS)
+    known = set(requirements)
+    for exp, extra in EXPERIMENT_REQUEST_REQUIREMENTS.items():
+        known.update(extra)
+        if experiments is None or exp in experiments:
+            requirements.update(extra)
+    for name, required in sorted(requirements.items()):
         path = flow_dir / name
         if not path.exists():
             findings.add("request", f"{name} is missing -- every stage must be committed data")
@@ -878,7 +1187,7 @@ def check_requests(flow_dir: Path, findings: Findings) -> int:
     # Stray request files that nothing knows how to validate are a trap: they
     # look authoritative and are not checked by anything.
     for path in sorted(flow_dir.glob("request-*.json")):
-        if path.name not in REQUEST_REQUIREMENTS:
+        if path.name not in known:
             findings.add(
                 "request",
                 f"{path.name} is not in check_records.py's REQUEST_REQUIREMENTS table -- "
@@ -891,7 +1200,7 @@ def check_corner_requests_agree(flow_dir: Path, corners: dict, findings: Finding
     """Every request's `pdk.corner` must name a corner in the committed matrix."""
     committed = set(corners.get("committed", []))
     for name in ("request-synth-utmi_stub.json", "request-par-utmi_stub.json",
-                 "request-sta-utmi_stub.json"):
+                 "request-sta-utmi_stub.json", "request-synth-usb_utmi_top.json"):
         path = flow_dir / name
         if not path.exists():
             continue
@@ -952,6 +1261,59 @@ def run_klt_checks(artifacts_root: Path, findings: Findings) -> str:
     return f"re-verified {checked} committed klt report(s)"
 
 
+def lint_experiment(
+    flow_dir: Path,
+    experiment: str,
+    committed: list[str],
+    coverage: dict,
+    args,
+    findings: Findings,
+) -> int:
+    """Lint one experiment's records; returns the number of records found."""
+    records_dir = flow_dir / experiment / "records"
+    if not records_dir.is_dir():
+        findings.add(
+            "records", f"{records_dir} does not exist -- there is no evidence to lint"
+        )
+        return 0
+
+    record_paths = sorted(p for p in records_dir.glob("*.md"))
+    if not record_paths:
+        findings.add("records", f"{records_dir} contains no records")
+
+    check_append_only_manifest(records_dir, record_paths, findings)
+    if args.no_git:
+        git_status = "skipped (--no-git)"
+    else:
+        git_status = check_append_only_git(records_dir, args.base_ref, findings)
+    print(f"  append-only  : {experiment}: {len(record_paths)} record(s); git {git_status}")
+
+    parsed: list[tuple[Path, dict]] = []
+    for path in record_paths:
+        meta = extract_record_meta(path.read_text(encoding="utf-8"), path, findings)
+        if meta is None:
+            continue
+        parsed.append((path, meta))
+
+    superseded = superseded_record_ids([meta for _, meta in parsed])
+
+    for path, meta in parsed:
+        if meta.get("experiment") != experiment:
+            findings.add(
+                "required-field",
+                f"{path.name}: experiment is {meta.get('experiment')!r} but the record "
+                f"lives under flow/{experiment}/",
+            )
+        check_required_fields(meta, path, findings)
+        check_corner_matrix(meta, path, committed, findings)
+        check_freshness(meta, path, findings, superseded)
+        check_timing_gate(meta, path, findings)
+        check_power_connectivity(meta, path, findings, superseded)
+        check_drc_deck(meta, path, coverage, findings)
+        check_synthesis_only(meta, path, findings)
+    return len(record_paths)
+
+
 # --------------------------------------------------------------------------
 def main(argv: list[str] | None = None, findings: Findings | None = None) -> int:
     """Run the lint. `findings` lets a caller (the test suite) inspect results."""
@@ -964,8 +1326,10 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
     )
     parser.add_argument(
         "--experiment",
-        default="smoke-utmi_stub",
-        help="experiment directory under flow/ holding records/ and artifacts/",
+        action="append",
+        default=None,
+        help="experiment directory under flow/ holding records/ and artifacts/ "
+        "(repeatable; default: every experiment directory that has a records/ dir)",
     )
     parser.add_argument(
         "--base-ref",
@@ -1000,61 +1364,42 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
 
     print("flow/check_records.py")
     print(f"  flow dir     : {flow_dir.relative_to(REPO_ROOT) if flow_dir.is_relative_to(REPO_ROOT) else flow_dir}")
-    print(f"  experiment   : {args.experiment}")
     print(f"  corners      : {len(committed)} committed ({', '.join(committed)})")
 
-    n_requests = check_requests(flow_dir, findings)
+    if args.experiment:
+        experiments = list(args.experiment)
+    else:
+        experiments = sorted(
+            p.name for p in flow_dir.iterdir() if p.is_dir() and (p / "records").is_dir()
+        ) or ["smoke-utmi_stub"]
+    print(f"  experiment   : {', '.join(experiments)}")
+
+    n_requests = check_requests(flow_dir, findings, experiments)
     check_corner_requests_agree(flow_dir, corners, findings)
     print(f"  requests     : {n_requests} committed request document(s) validated")
 
-    records_dir = flow_dir / args.experiment / "records"
-    if not records_dir.is_dir():
-        findings.add(
-            "records", f"{records_dir} does not exist -- there is no evidence to lint"
+    total_records = 0
+    for experiment in experiments:
+        total_records += lint_experiment(
+            flow_dir, experiment, committed, coverage, args, findings
         )
-        print()
-        print("FAIL")
-        findings.report()
-        return 1
-
-    record_paths = sorted(p for p in records_dir.glob("*.md"))
-    if not record_paths:
-        findings.add("records", f"{records_dir} contains no records")
-
-    check_append_only_manifest(records_dir, record_paths, findings)
-    if args.no_git:
-        git_status = "skipped (--no-git)"
-    else:
-        git_status = check_append_only_git(records_dir, args.base_ref, findings)
-    print(f"  append-only  : {len(record_paths)} record(s); git {git_status}")
-
-    parsed: list[tuple[Path, dict]] = []
-    for path in record_paths:
-        meta = extract_record_meta(path.read_text(encoding="utf-8"), path, findings)
-        if meta is None:
-            continue
-        parsed.append((path, meta))
-
-    superseded = superseded_record_ids([meta for _, meta in parsed])
-
-    for path, meta in parsed:
-        check_required_fields(meta, path, findings)
-        check_corner_matrix(meta, path, committed, findings)
-        check_freshness(meta, path, findings, superseded)
-        check_timing_gate(meta, path, findings)
-        check_power_connectivity(meta, path, findings, superseded)
-        check_drc_deck(meta, path, coverage, findings)
+        if not (flow_dir / experiment / "records").is_dir():
+            print()
+            print("FAIL")
+            findings.report()
+            return 1
 
     if args.klt_check:
-        klt_status = run_klt_checks(flow_dir / args.experiment / "artifacts", findings)
-        print(f"  klt --check  : {klt_status}")
+        for experiment in experiments:
+            klt_status = run_klt_checks(flow_dir / experiment / "artifacts", findings)
+            print(f"  klt --check  : {experiment}: {klt_status}")
 
     print()
     if findings:
         print(f"FAIL -- {len(findings.items)} finding(s):")
         findings.report()
         return 1
-    print(f"OK -- {len(record_paths)} record(s) clean")
+    print(f"OK -- {total_records} record(s) clean across {len(experiments)} experiment(s)")
     return 0
 
 
