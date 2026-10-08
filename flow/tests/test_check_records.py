@@ -863,3 +863,225 @@ def test_rendered_power_section_discloses_the_correspondence_artifact():
         assert "2136" in power_section, record.name
         rendered += 1
     assert rendered, "no committed record exercised the power-section rendering"
+
+
+# --------------------------------------------------------------------------
+# Synthesis-only records (experiment `utmi-top`, issue #104)
+# --------------------------------------------------------------------------
+@pytest.fixture
+def synth_sandbox(sandbox: Path) -> Path:
+    """The `sandbox` plus a copy of the committed `utmi-top` experiment."""
+    shutil.copy2(
+        FLOW_DIR / "request-synth-usb_utmi_top.json", sandbox / "request-synth-usb_utmi_top.json"
+    )
+    shutil.copytree(FLOW_DIR / "utmi-top" / "records", sandbox / "utmi-top" / "records")
+    return sandbox
+
+
+def synth_record(sandbox: Path) -> Path:
+    records = sorted((sandbox / "utmi-top" / "records").glob("*.md"))
+    assert records, "the utmi-top experiment has no committed record"
+    return records[-1]
+
+
+def mutate_synth(sandbox: Path, mutate) -> check_records.Findings:
+    path = synth_record(sandbox)
+    meta = read_meta(path)
+    mutate(meta)
+    write_meta(path, meta)
+    rebuild_manifest(path.parent)
+    _, findings = run_lint(sandbox)
+    return findings
+
+
+def test_committed_synthesis_only_record_passes(synth_sandbox: Path):
+    code, findings = run_lint(synth_sandbox)
+    assert code == 0, findings.items
+    assert read_meta(synth_record(synth_sandbox))["record_kind"] == "synthesis-only"
+
+
+def test_committed_synthesis_record_anchors_a_design_claim_and_hashes_every_rtl_source():
+    meta = read_meta(synth_record(FLOW_DIR))
+    assert meta["design"]["anchors_design_claim"] is True
+    hashed = {e["path"] for e in meta["provenance"]["inputs"]}
+    for src in sorted((REPO_ROOT / "rtl").glob("usb_*.v")):
+        assert src.relative_to(REPO_ROOT).as_posix() in hashed
+
+
+def test_synthesis_only_record_missing_a_field_fails(synth_sandbox: Path):
+    findings = mutate_synth(
+        synth_sandbox, lambda m: m["stages"]["synthesize"].pop("flip_flop_count")
+    )
+    assert "required-field" in checks_in(findings)
+
+
+def test_full_flow_record_cannot_borrow_the_synthesis_only_field_set(sandbox: Path):
+    path = standing_record(sandbox)
+    meta = read_meta(path)
+    meta["record_kind"] = "synthesis-only"
+    write_meta(path, meta)
+    rebuild_manifest(path.parent)
+    _, findings = run_lint(sandbox)
+    assert "required-field" in checks_in(findings) or "synthesis-only" in checks_in(findings)
+
+
+def test_unknown_record_kind_fails(synth_sandbox: Path):
+    findings = mutate_synth(synth_sandbox, lambda m: m.update(record_kind="partial"))
+    assert "required-field" in checks_in(findings)
+
+
+@pytest.mark.parametrize("stage", ["place_and_route", "sta", "extract", "lvs", "drc"])
+def test_synthesis_only_record_claiming_a_downstream_result_fails(synth_sandbox: Path, stage):
+    def claim(meta):
+        meta["stages"][stage] = {"status": "ok"}
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, claim))
+
+
+def test_not_run_stage_carrying_result_fields_fails(synth_sandbox: Path):
+    def smuggle(meta):
+        meta["stages"]["drc"]["violation_count"] = 0
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, smuggle))
+
+
+def test_omitting_a_not_run_declaration_fails(synth_sandbox: Path):
+    findings = mutate_synth(synth_sandbox, lambda m: m["stages"].pop("lvs"))
+    assert "synthesis-only" in checks_in(findings)
+
+
+def test_not_run_without_a_reason_fails(synth_sandbox: Path):
+    findings = mutate_synth(
+        synth_sandbox, lambda m: m["stages"]["sta"].update(reason="  ")
+    )
+    assert "synthesis-only" in checks_in(findings)
+
+
+def test_unconstrained_timing_sentinel_is_not_a_stand_in_for_not_run(synth_sandbox: Path):
+    def fake(meta):
+        meta["timing"] = {"verdict": "unconstrained", "worst_slack_ns": 1e39}
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, fake))
+
+
+def test_falsely_passing_gate_level_result_fails(synth_sandbox: Path):
+    def lie(meta):
+        meta["stages"]["gate_level_functional_verification"]["status"] = "pass"
+
+    gl = read_meta(synth_record(synth_sandbox))["stages"]["gate_level_functional_verification"]
+    if gl["failed_count"] == 0:
+        pytest.skip("committed gate-level run has no failures to hide")
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, lie))
+
+
+def test_gate_level_failures_must_be_named(synth_sandbox: Path):
+    gl = read_meta(synth_record(synth_sandbox))["stages"]["gate_level_functional_verification"]
+    if gl["failed_count"] == 0:
+        pytest.skip("committed gate-level run has no failures")
+
+    def drop(meta):
+        meta["stages"]["gate_level_functional_verification"]["failing_tests"] = []
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, drop))
+
+
+def test_unhashed_source_fails(synth_sandbox: Path):
+    def drop(meta):
+        meta["provenance"]["inputs"] = [
+            e for e in meta["provenance"]["inputs"] if e["path"] != "rtl/usb_rx_cdc.v"
+        ]
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, drop))
+
+
+def test_source_list_missing_an_rtl_file_fails(synth_sandbox: Path):
+    def drop(meta):
+        meta["design"]["sources"].remove("rtl/usb_rx_cdc.v")
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, drop))
+
+
+def test_stub_source_in_the_real_top_record_fails(synth_sandbox: Path):
+    def leak(meta):
+        meta["design"]["sources"].append("rtl/utmi_stub.v")
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, leak))
+
+
+def test_changed_input_hash_fails(synth_sandbox: Path):
+    def stale(meta):
+        meta["provenance"]["inputs"][0]["content_hash"] = "sha256:" + "0" * 64
+
+    assert "freshness" in checks_in(mutate_synth(synth_sandbox, stale))
+
+
+def test_changed_artifact_hash_fails(synth_sandbox: Path):
+    def stale(meta):
+        meta["provenance"]["artifacts"][0]["content_hash"] = "sha256:" + "0" * 64
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, stale))
+
+
+def test_missing_synthesis_envelope_artifact_fails(synth_sandbox: Path):
+    def drop(meta):
+        meta["provenance"]["artifacts"] = [
+            a
+            for a in meta["provenance"]["artifacts"]
+            if not a["path"].endswith("synthesize-report.json")
+        ]
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, drop))
+
+
+def test_netlist_hash_drift_fails(synth_sandbox: Path):
+    def drift(meta):
+        meta["stages"]["synthesize"]["netlist"]["sha256"] = "0" * 64
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, drift))
+
+
+def test_non_reproducible_netlist_without_normalisation_fails(synth_sandbox: Path):
+    def diverge(meta):
+        meta["stages"]["synthesize"]["reproduction"]["byte_identical"] = False
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, diverge))
+
+
+def test_undisclosed_structural_finding_fails(synth_sandbox: Path):
+    def hide(meta):
+        meta["stages"]["synthesize"]["comb_loop_finding"] = ""
+
+    structural = read_meta(synth_record(synth_sandbox))["stages"]["synthesize"]["structural"]
+    if not structural.get("has_critical"):
+        pytest.skip("committed synthesis reported no structural finding")
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, hide))
+
+
+def test_synthesis_only_corner_subset_requires_justification(synth_sandbox: Path):
+    findings = mutate_synth(
+        synth_sandbox, lambda m: m["corner_matrix"].update(subset_justification=None)
+    )
+    assert "corner-matrix" in checks_in(findings)
+
+
+def test_synthesis_request_missing_a_field_fails(synth_sandbox: Path):
+    path = synth_sandbox / "request-synth-usb_utmi_top.json"
+    doc = json.loads(path.read_text())
+    del doc["hdl_toplevel"]
+    path.write_text(json.dumps(doc))
+    _, findings = run_lint(synth_sandbox)
+    assert "request" in checks_in(findings)
+
+
+def test_utmi_top_experiment_requires_its_request(synth_sandbox: Path):
+    (synth_sandbox / "request-synth-usb_utmi_top.json").unlink()
+    _, findings = run_lint(synth_sandbox)
+    assert "request" in checks_in(findings)
+
+
+def test_stub_experiment_manifest_is_untouched_by_the_new_experiment():
+    """The stub's append-only evidence must verify exactly as committed."""
+    records = FLOW_DIR / "smoke-utmi_stub" / "records"
+    findings = check_records.Findings()
+    check_records.check_append_only_manifest(records, sorted(records.glob("*.md")), findings)
+    assert not findings.items

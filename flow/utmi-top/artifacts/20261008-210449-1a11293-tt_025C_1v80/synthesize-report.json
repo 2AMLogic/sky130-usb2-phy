@@ -1,0 +1,208 @@
+{
+  "schema_version": 2,
+  "engine": "yosys",
+  "engine_version": "0.67+post",
+  "hdl_toplevel": "usb_utmi_top",
+  "run_id": "run-a076ae369e5b4b1fa3bd82accb518873",
+  "status": "ok",
+  "instance_count": 943,
+  "area_um2": 11865.1296,
+  "sequential_area_um2": 8100.2688,
+  "instance_counts_by_type": {
+    "sky130_fd_sc_hd__a211o_1": 1,
+    "sky130_fd_sc_hd__a211oi_1": 2,
+    "sky130_fd_sc_hd__a21boi_0": 3,
+    "sky130_fd_sc_hd__a21o_1": 4,
+    "sky130_fd_sc_hd__a21oi_1": 59,
+    "sky130_fd_sc_hd__a221oi_1": 1,
+    "sky130_fd_sc_hd__a222oi_1": 14,
+    "sky130_fd_sc_hd__a22o_1": 10,
+    "sky130_fd_sc_hd__a22oi_1": 4,
+    "sky130_fd_sc_hd__a2bb2oi_1": 2,
+    "sky130_fd_sc_hd__a311oi_1": 2,
+    "sky130_fd_sc_hd__a31oi_1": 18,
+    "sky130_fd_sc_hd__a32o_1": 1,
+    "sky130_fd_sc_hd__a41oi_1": 3,
+    "sky130_fd_sc_hd__and2_1": 12,
+    "sky130_fd_sc_hd__and3_1": 17,
+    "sky130_fd_sc_hd__and3b_1": 3,
+    "sky130_fd_sc_hd__and4_1": 19,
+    "sky130_fd_sc_hd__and4b_1": 1,
+    "sky130_fd_sc_hd__clkbuf_1": 31,
+    "sky130_fd_sc_hd__clkinv_1": 1,
+    "sky130_fd_sc_hd__conb_1": 4,
+    "sky130_fd_sc_hd__dfrtp_1": 228,
+    "sky130_fd_sc_hd__dfstp_2": 18,
+    "sky130_fd_sc_hd__edfxtp_1": 64,
+    "sky130_fd_sc_hd__inv_1": 29,
+    "sky130_fd_sc_hd__mux2_2": 24,
+    "sky130_fd_sc_hd__mux2i_1": 2,
+    "sky130_fd_sc_hd__mux4_2": 2,
+    "sky130_fd_sc_hd__nand2_1": 73,
+    "sky130_fd_sc_hd__nand2b_1": 10,
+    "sky130_fd_sc_hd__nand3_1": 13,
+    "sky130_fd_sc_hd__nand3b_1": 5,
+    "sky130_fd_sc_hd__nand4_1": 15,
+    "sky130_fd_sc_hd__nand4b_1": 1,
+    "sky130_fd_sc_hd__nor2_1": 66,
+    "sky130_fd_sc_hd__nor2b_1": 7,
+    "sky130_fd_sc_hd__nor3_1": 27,
+    "sky130_fd_sc_hd__nor3b_1": 8,
+    "sky130_fd_sc_hd__nor4_1": 14,
+    "sky130_fd_sc_hd__o211a_1": 3,
+    "sky130_fd_sc_hd__o21a_1": 2,
+    "sky130_fd_sc_hd__o21ai_0": 54,
+    "sky130_fd_sc_hd__o21bai_1": 2,
+    "sky130_fd_sc_hd__o22a_1": 2,
+    "sky130_fd_sc_hd__o2bb2ai_1": 1,
+    "sky130_fd_sc_hd__o31a_1": 1,
+    "sky130_fd_sc_hd__o31ai_1": 11,
+    "sky130_fd_sc_hd__o41a_1": 1,
+    "sky130_fd_sc_hd__or2_2": 3,
+    "sky130_fd_sc_hd__or3_1": 2,
+    "sky130_fd_sc_hd__or4_1": 3,
+    "sky130_fd_sc_hd__xnor2_1": 25,
+    "sky130_fd_sc_hd__xor2_1": 15
+  },
+  "leakage_power_nw": 4.927526112699999,
+  "leakage_by_type_nw": {
+    "sky130_fd_sc_hd__a211o_1": 0.003137275,
+    "sky130_fd_sc_hd__a211oi_1": 0.0009781671,
+    "sky130_fd_sc_hd__a21boi_0": 0.002477802,
+    "sky130_fd_sc_hd__a21o_1": 0.005903084,
+    "sky130_fd_sc_hd__a21oi_1": 0.001652086,
+    "sky130_fd_sc_hd__a221oi_1": 0.001777997,
+    "sky130_fd_sc_hd__a222oi_1": 0.00243475,
+    "sky130_fd_sc_hd__a22o_1": 0.004062747,
+    "sky130_fd_sc_hd__a22oi_1": 0.002575718,
+    "sky130_fd_sc_hd__a2bb2oi_1": 0.003382974,
+    "sky130_fd_sc_hd__a311oi_1": 0.0009691861,
+    "sky130_fd_sc_hd__a31oi_1": 0.001483519,
+    "sky130_fd_sc_hd__a32o_1": 0.00229652,
+    "sky130_fd_sc_hd__a41oi_1": 0.001359811,
+    "sky130_fd_sc_hd__and2_1": 0.002665008,
+    "sky130_fd_sc_hd__and3_1": 0.005593908,
+    "sky130_fd_sc_hd__and3b_1": 0.007056872,
+    "sky130_fd_sc_hd__and4_1": 0.003400194,
+    "sky130_fd_sc_hd__and4b_1": 0.005986822,
+    "sky130_fd_sc_hd__clkbuf_1": 0.001181018,
+    "sky130_fd_sc_hd__clkinv_1": 0.001567582,
+    "sky130_fd_sc_hd__conb_1": 0.003240037,
+    "sky130_fd_sc_hd__dfrtp_1": 0.01165228,
+    "sky130_fd_sc_hd__dfstp_2": 0.01051627,
+    "sky130_fd_sc_hd__edfxtp_1": 0.009787006,
+    "sky130_fd_sc_hd__inv_1": 0.005326682,
+    "sky130_fd_sc_hd__mux2_2": 0.003919761,
+    "sky130_fd_sc_hd__mux2i_1": 0.005890537,
+    "sky130_fd_sc_hd__mux4_2": 0.006370509,
+    "sky130_fd_sc_hd__nand2_1": 0.00211796,
+    "sky130_fd_sc_hd__nand2b_1": 0.002254918,
+    "sky130_fd_sc_hd__nand3_1": 0.001027398,
+    "sky130_fd_sc_hd__nand3b_1": 0.001398257,
+    "sky130_fd_sc_hd__nand4_1": 0.0005259485,
+    "sky130_fd_sc_hd__nand4b_1": 0.001031096,
+    "sky130_fd_sc_hd__nor2_1": 0.0019697,
+    "sky130_fd_sc_hd__nor2b_1": 0.002179742,
+    "sky130_fd_sc_hd__nor3_1": 0.0009251654,
+    "sky130_fd_sc_hd__nor3b_1": 0.001296897,
+    "sky130_fd_sc_hd__nor4_1": 0.0005011251,
+    "sky130_fd_sc_hd__o211a_1": 0.01065766,
+    "sky130_fd_sc_hd__o21a_1": 0.002208678,
+    "sky130_fd_sc_hd__o21ai_0": 0.001038509,
+    "sky130_fd_sc_hd__o21bai_1": 0.002868294,
+    "sky130_fd_sc_hd__o22a_1": 0.002758667,
+    "sky130_fd_sc_hd__o2bb2ai_1": 0.001846366,
+    "sky130_fd_sc_hd__o31a_1": 0.002066099,
+    "sky130_fd_sc_hd__o31ai_1": 0.001699723,
+    "sky130_fd_sc_hd__o41a_1": 0.001373468,
+    "sky130_fd_sc_hd__or2_2": 0.002404548,
+    "sky130_fd_sc_hd__or3_1": 0.001284555,
+    "sky130_fd_sc_hd__or4_1": 0.0008534742,
+    "sky130_fd_sc_hd__xnor2_1": 0.002065353,
+    "sky130_fd_sc_hd__xor2_1": 0.004277774
+  },
+  "timing": {
+    "source": "abc_stime",
+    "wire_load": null,
+    "critical_path_ps": 2439.96,
+    "delay_target_ps": 33333
+  },
+  "sta": null,
+  "sta_unavailable_reason": "the optional klt_statime_native extension is not installed, so no gate-level static timing analysis was attempted -- from a repo checkout, run `uv sync --group statime` (or `maturin develop --release` inside native/statime/) and re-run to populate `sta`",
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 1,
+    "multi_driven": 0,
+    "has_critical": true
+  },
+  "cell_exclusions": {
+    "mode": "additive",
+    "requested": [],
+    "library_defaults": [
+      "sky130_fd_sc_hd__lpflow_*",
+      "sky130_fd_sc_hd__probe*"
+    ],
+    "effective": [
+      "sky130_fd_sc_hd__lpflow_*",
+      "sky130_fd_sc_hd__probe*"
+    ],
+    "validated": null,
+    "engine_supports_dont_use": true
+  },
+  "warnings": {
+    "total": 5,
+    "by_category": {
+      "logic_loop": 4,
+      "other": 1
+    },
+    "representatives": [
+      {
+        "category": "logic_loop",
+        "count": 4,
+        "text": "found logic loop in module usb_rx_cdc:"
+      },
+      {
+        "category": "other",
+        "count": 1,
+        "text": "Replacing memory \\mem with list of registers. See rtl/usb_rx_cdc.v:102"
+      }
+    ]
+  },
+  "netlist_path": {
+    "path": "flow/build/utmi-top/run-a/.klt/synthesize/run-a076ae369e5b4b1fa3bd82accb518873/usb_utmi_top_synth.v",
+    "scope": "repo"
+  },
+  "netlist_sha256": "36d12cc101033f0bbf25f6b2c5db79fe42500d45178d8fc37ee4359f9e20744b",
+  "script_path": {
+    "path": "flow/build/utmi-top/run-a/.klt/synthesize/run-a076ae369e5b4b1fa3bd82accb518873/synth_usb_utmi_top.ys",
+    "scope": "repo"
+  },
+  "run_script_path": {
+    "path": "flow/build/utmi-top/run-a/.klt/synthesize/run-a076ae369e5b4b1fa3bd82accb518873/synth_usb_utmi_top.run.ys",
+    "scope": "repo"
+  },
+  "provenance": {
+    "klt_version": "0.7.0+g4cbdfa769875",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+    },
+    "deck": {
+      "name": "sky130_fd_sc_hd__tt_025C_1v80",
+      "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:dbcfa8ddfadb059b22c6b738ea906ee1e04ec0bacce4d405fc35e3a06ea79547",
+      "role": "source"
+    }
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}

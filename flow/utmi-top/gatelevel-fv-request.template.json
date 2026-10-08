@@ -1,0 +1,26 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "_comment": "Template, not directly runnable: flow/run_synth_utmi_top.py replaces `sources` with the host-resolved PDK model files (@PDK_VERILOG@ = <PDK_ROOT>/sky130A/libs.ref/sky130_fd_sc_hd/verilog) followed by the absolute path of design/netlist/usb_utmi_top.v. The as-run request is committed beside each record as request-gatelevel-fv.json.",
+  "engine": "icarus",
+  "sources": [
+    "@PDK_VERILOG@/primitives.v",
+    "@PDK_VERILOG@/sky130_fd_sc_hd.v",
+    "../../design/netlist/usb_utmi_top.v"
+  ],
+  "hdl_toplevel": "usb_utmi_top",
+  "testbench": {
+    "module": "test_usb_utmi_top",
+    "testcase": null
+  },
+  "options": {
+    "coverage": false,
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1,
+    "defines": {
+      "FUNCTIONAL": "1"
+    }
+  }
+}

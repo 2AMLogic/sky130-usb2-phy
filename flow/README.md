@@ -182,7 +182,8 @@ flow/
   waivers.json                   # timing waivers, keyed by corner
   drc-deck-coverage.json         # the DRC deck's known gaps, pinned by content hash
   request-*.json                 # one committed request per stage
-  run_flow.py                    # the driver
+  run_flow.py                    # the driver (smoke-utmi_stub, all six stages)
+  run_synth_utmi_top.py          # sibling driver: utmi-top, synthesis only
   check_records.py               # the lint
   tests/                         # the lint's own self-tests
   build/<corner>/                # per-corner scratch (gitignored)
@@ -192,6 +193,9 @@ flow/
       MANIFEST.sha256            # one line per record: <sha256>  <filename>
     artifacts/
       <record-id>/               # every klt JSON envelope, verbatim
+  utmi-top/                      # the real digital datapath (synthesis only so far)
+    records/ artifacts/          # same layout; records are `synthesis-only`
+    gatelevel-fv-request.template.json
 ```
 
 - **`<experiment-slug>`** — one directory per distinct claim under test, not
@@ -484,6 +488,69 @@ and still reports `match`) — distinct from #2076 above, which is a spurious
 *signal* admitted to the power side, not a *power* net wrongly matched on the
 signal side.
 
+## Synthesis-only records and the `utmi-top` experiment
+
+`utmi-top` is the experiment for the real digital datapath (`usb_utmi_top`
+and the other `rtl/usb_*.v` sources; `rtl/utmi_stub.v` is excluded). It is
+driven by a sibling script, `flow/run_synth_utmi_top.py`, rather than a mode
+of `run_flow.py`, so the stub experiment's driver, requests and committed
+records stay byte-identical. Its stage-1 request is
+`flow/request-synth-usb_utmi_top.json`.
+
+```bash
+PDK=sky130A python3 flow/run_synth_utmi_top.py --dry-run   # the plan
+PDK=sky130A python3 flow/run_synth_utmi_top.py             # synthesize x2, RTL + gate-level FV, record
+```
+
+The driver runs `klt synthesize` twice from fresh scratch directories under
+`flow/build/utmi-top/`, refuses to proceed unless the two netlists are
+byte-identical (no normalisation is applied; if one is ever needed it must be
+committed and documented first), copies the netlist to
+`design/netlist/usb_utmi_top.v`, runs `verification/test_usb_utmi_top.py`
+through `klt functional-verification` against the RTL and against that netlist
+(plus `sky130_fd_sc_hd` `primitives.v` / `sky130_fd_sc_hd.v`, `-DFUNCTIONAL`,
+no power pins), and writes the record. `klt functional-verification` needs
+cocotb, which the shared worker's `klt` does not have, so the default is a
+throwaway `uvx --from klayout-tools==0.7.0 --with cocotb==2.0.1 klt`
+(`--fv-klt` overrides).
+
+**How a synthesis-only record differs from a full-flow record.** It declares
+`"record_kind": "synthesis-only"` (full-flow records omit the key) and is
+held to a different required-field set (`SYNTH_ONLY_REQUIRED_FIELDS` in
+`check_records.py`). It is not a relaxed full-flow record:
+
+- `stages.place_and_route`, `sta`, `extract`, `lvs` and `drc` must each be
+  present as exactly `{"status": "not_run", "reason": ...}`. A missing
+  declaration, a non-`not_run` status, an empty reason or any extra result
+  field is a finding (`synthesis-only`), so a result for a stage that did not
+  run cannot be smuggled in.
+- There is no `timing` block. The unconstrained sentinel means "STA ran and
+  found no path"; it is never a stand-in for "STA did not run", and timing
+  verdict fields are refused.
+- `stages.synthesize` carries cell count, flip-flop count, `area_by_cell_um2`
+  (checked to sum to `area_um2`), the netlist path and sha256 (re-hashed
+  against the file), the structural verdict (a critical one, e.g. a
+  combinational loop, must be disclosed in `comb_loop_finding`) and the
+  reproduction result.
+- `design.sources` must name every `rtl/usb_*.v` in the tree, every one must
+  be in `provenance.inputs` (freshness-checked like any record), and
+  `provenance.artifacts` must include the `synthesize-report.json` envelope;
+  all artifact hashes are re-checked.
+- `stages.gate_level_functional_verification` records the exact outcome. A
+  `pass` must have zero failures; every failure must be named.
+- `design.clock_note` is required: `klt synthesize`'s single
+  `clock_period_ns` cannot describe a two-clock design (`clk_144` at 144 MHz,
+  `clk_utmi` at 30 MHz; klayout-tools#2883).
+
+**Corner subset.** A synthesis-only record runs the nominal corner only. The
+existing `corner_matrix.subset_justification` rule applies unchanged and the
+record states why: logic synthesis maps against one liberty deck, and the
+other five corners matter for STA, which was not run. It establishes no
+six-corner timing claim, and no timing claim at all.
+
+`python3 flow/check_records.py` with no `--experiment` lints every experiment
+directory that has a `records/` directory; `--experiment` (repeatable) narrows it.
+
 ## Upstream tool gaps found while building this flow
 
 Per `CLAUDE.md`'s friction protocol, each is filed generically against the
@@ -509,7 +576,9 @@ worked around by using `yowasp-yosys`.
 
 Stated so no reader mistakes the committed GDS for a signoff artifact:
 
-- **No timing closure.** See above.
+- **No timing closure.** See above. (The `utmi-top` experiment is synthesis
+  only: place and route, STA, extraction, LVS and DRC for the real datapath
+  are not run — see "Synthesis-only records" above.)
 - **A PDN, but no power signoff.** `request-par-utmi_stub.json` now declares
   a `power` block (met1 `FOLLOWPIN` rails, met4 + met5 straps, met1↔met4 and
   met4↔met5 connects), so `klt place-and-route` generates a real grid,
