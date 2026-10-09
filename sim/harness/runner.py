@@ -208,6 +208,14 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
         lines += ["", "## Method", ""] + [f"- {x}" for x in meta["method"]]
     if detailed:
         lines += ["", "## Measurement ranges over the grid", ""] + _measurement_ranges(m)
+        if meta.get("corner_table"):
+            cols = meta["corner_table"]
+            lines += ["", "## Per-corner selection", "",
+                      "| corner | " + " | ".join(f"`{c}`" for c in cols) + " |",
+                      "|---|" + "---|" * len(cols)]
+            for r in m["results"]:
+                cells = [f"{r['measurements'][c]:.6g}" if c in r["measurements"] else "-" for c in cols]
+                lines.append(f"| `{r['corner_id']}` | " + " | ".join(cells) + " |")
         lines += ["", "## Failures (corner id: measurement and value)", ""]
         lines += [f"- {p}" for p in m["problems"]] if m["problems"] else ["- none"]
     lines += ["", meta["footer"], ""]

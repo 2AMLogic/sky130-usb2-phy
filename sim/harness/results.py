@@ -11,6 +11,7 @@ from __future__ import annotations
 import math
 
 from . import matrix as mx
+from . import trim as trimmod
 
 DEFAULT_TIMEOUT_S = 300
 
@@ -100,6 +101,17 @@ def evaluate(report: dict, expected_points, tb: dict) -> tuple[list[dict], list[
         if absent:
             status = "failed"
             problems.append(f"{cid}: missing or non-finite measurement(s) {absent}")
+        # Optional existential best-trim evaluation (see harness/trim.py): derived per-code
+        # resistances, best code, steps; the corner fails unless some code is inside the window.
+        if tb.get("trim"):
+            tcfg = tb["trim"]
+            raw = [meas.get(f"{tcfg['measure_prefix']}{i:02d}_v") for i in range(int(tcfg["codes"]))]
+            # Missing/non-finite code measurements were already reported above; do not repeat.
+            derived, tprob = trimmod.analyse(raw, k[2], tcfg) if None not in raw else ({}, [])
+            meas.update(derived)
+            for tp in tprob:
+                status = "failed"
+                problems.append(f"{cid}: {tp}")
         for name, rule in (tb.get("checks") or {}).items():
             v = meas.get(name)
             if v is None:
