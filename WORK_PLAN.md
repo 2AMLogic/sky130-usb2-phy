@@ -28,8 +28,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#112**: analog port: FS line driver to sky130 - schematic with OE and 45-corner signal-quality testbench (inherits four failing driver rows)
-- **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates
+_None._
 
 ## PRs Awaiting Review
 
@@ -49,7 +48,6 @@ Issues carrying `loom:curated`.
 
 - **#84**: Guard trigger review: worktree-write-confinement DENY on /tmp scratch ERC comparison command (refine or confirm fixed) *(curated)*
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
-- **#112**: analog port: FS line driver to sky130 - schematic with OE and 45-corner signal-quality testbench (inherits four failing driver rows) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -68,10 +66,10 @@ _None._
 | Operator merge-risk holds | 0 |
 | Operator priority | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 4 |
+| Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->

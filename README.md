@@ -14,9 +14,9 @@ The full-speed receive and transmit paths (bit sync, NRZI encode/decode,
 design-anchored synthesis experiment and gate-level netlist now exist for the
 real `usb_utmi_top`, with the disclosed combinational-loop and gate-level-test
 limitations recorded in the characterization report; real-UTMI place-and-route
-remains pending. The first analog block, the differential receiver, now has
-schematic-level sky130 simulation evidence. See the scope note below for what
-remains.
+remains pending. The FS line driver, differential and single-ended receivers,
+and trimmed D+ pull-up now have schematic-level sky130 simulation evidence.
+See the scope note below for the coverage limits.
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -41,10 +41,14 @@ pull-up, and a digital UTMI layer.
   [`gf180-usb2-phy`](https://github.com/2AMLogic/gf180-usb2-phy)**, one block
   per issue, per the operator ruling of 2026-10-08 (#40). The plan, with the
   pinned source commit and the four driver rows that fail in the source, is
-  [`docs/porting-plan.md`](docs/porting-plan.md). The differential receiver
-  has schematic-level sensitivity evidence across 45 PVT corners at each of
-  three common-mode points (135 combinations, all passing); layout, mismatch
-  and dynamic behavior remain unverified. The other block ports remain pending.
+  [`docs/porting-plan.md`](docs/porting-plan.md). All four block ports are
+  merged, with schematic-level evidence over the 45-corner MOS PVT grid;
+  differential sensitivity covers three common-mode points (135 combinations).
+  Driver signal-quality and static results pass all 45 corners. Layout,
+  mismatch, passive process spread and integrated PHY behavior remain
+  unverified; resistor-spread coverage (#126) and disabled-pad behavior above
+  the I/O supply (#130) remain open. See [`design/README.md`](design/README.md)
+  for the per-block results and limitations.
 - **PLL** — not designed here: consumed by pinned reference to
   [`sky130-pll`](https://github.com/2AMLogic/sky130-pll)
   (see [`reuse.lock.json`](reuse.lock.json)).

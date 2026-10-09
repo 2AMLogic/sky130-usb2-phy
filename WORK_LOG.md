@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-09
 
+- **PR #131**: feat: sky130 FS line driver with OE, 45-corner signal-quality and static evidence (#112)
+- **Issue #112** (closed): analog port: FS line driver to sky130 - schematic with OE and 45-corner signal-quality testbench (inherits four failing driver rows)
 - **PR #125**: feat: sky130 trimmed D+ pull-up schematic and 45-corner tolerance record (#113)
 - **Issue #113** (closed): analog port: trimmed D+ pull-up and termination to sky130 - schematic and 45-corner tolerance testbench
 - **PR #124**: analog port: single-ended D+/D- receivers to sky130 with 45-corner threshold evidence (#110)
