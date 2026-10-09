@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-09
 
+- **PR #122**: analog port: differential receiver to sky130 with 45-corner x 3 CM evidence (#111)
+- **Issue #111** (closed): analog port: differential receiver to sky130 - schematic and 45-corner sensitivity testbench at three common-mode points
 - **PR #120**: feat: sky130 analog sim harness and 45-corner PVT matrix (#109)
 - **Issue #109** (closed): analog port: bootstrap the sky130 analog sim harness and 45-corner PVT matrix (prerequisite for the #106 block ports)
 - **PR #114**: docs: plan the gf180-usb2-phy analog port; lift the no-analog scope rule (#106)
