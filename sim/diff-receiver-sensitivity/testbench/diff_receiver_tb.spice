@@ -1,0 +1,36 @@
+* diff-receiver-sensitivity -- sky130 differential receiver sensitivity at three common-mode points
+*
+* Circuit body for `klt sim`. The design netlist (design/netlist/differential_receiver.spice)
+* is appended by the runner (tb.json "include") and frozen into the immutable snapshot.
+* The request supplies the .lib corner section, .temp and the supply sweep (vsup).
+*
+* One receiver instance per common-mode point (0.8 / 1.65 / 2.5 V), all driven by the
+* same differential sweep, so each of the 45 PVT corners yields all three common-mode
+* points. Definition:   DP = VCM + VDIFF/2      DM = VCM - VDIFF/2     VDIFF = DP - DM
+* VDIFF is swept -400 mV ... +400 mV in 1 mV steps (both polarities, 801 points).
+* Common-mode sources are ideal (zero source impedance); the supply is the swept I/O rail.
+
+vsup vdd 0 dc 3.3
+vd vd 0 dc 0
+ehalf half 0 vol='v(vdd)/2'
+
+* ---- common mode 0.8 V ----
+vi08 vdd vdd08 dc 0
+vcm08 cm08 0 dc 0.8
+edp08 dp08 0 vol='v(cm08)+v(vd)/2'
+edm08 dm08 0 vol='v(cm08)-v(vd)/2'
+x08 vdd08 0 dp08 dm08 rxd08 differential_receiver
+
+* ---- common mode 1.65 V ----
+vi165 vdd vdd165 dc 0
+vcm165 cm165 0 dc 1.65
+edp165 dp165 0 vol='v(cm165)+v(vd)/2'
+edm165 dm165 0 vol='v(cm165)-v(vd)/2'
+x165 vdd165 0 dp165 dm165 rxd165 differential_receiver
+
+* ---- common mode 2.5 V ----
+vi25 vdd vdd25 dc 0
+vcm25 cm25 0 dc 2.5
+edp25 dp25 0 vol='v(cm25)+v(vd)/2'
+edm25 dm25 0 vol='v(cm25)-v(vd)/2'
+x25 vdd25 0 dp25 dm25 rxd25 differential_receiver

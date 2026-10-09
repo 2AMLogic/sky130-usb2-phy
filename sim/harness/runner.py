@@ -146,21 +146,47 @@ def write_evidence(exp_dir: Path, rid: str, parts: dict) -> Path:
     return rec
 
 
+#: Record prose used when a testbench declares no `record` block: the harness
+#: smoke wording. Experiments that make real electrical claims override these
+#: (see `tb["record"]` in sim/README.md); the defaults must not change.
+SMOKE_RECORD_DEFAULTS = {
+    "netlist_provenance": "schematic-level hand netlist (harness smoke deck); no layout, no PHY block",
+    "statistical_convention": "not applicable (deterministic operating-point corners, no Monte Carlo)",
+    "bounds": "the harness-only bounds in tb.json",
+    "footer": "No design claim: this record is harness evidence only.",
+}
+
+
+def _measurement_ranges(m: dict) -> list[str]:
+    """Per-measurement min/max over the corners that produced a value, with the corner ids."""
+    rows = []
+    names = sorted({n for r in m["results"] for n in r["measurements"]})
+    for n in names:
+        vals = [(r["measurements"][n], r["corner_id"]) for r in m["results"] if n in r["measurements"]]
+        lo, hi = min(vals), max(vals)
+        rows.append(f"| `{n}` | {len(vals)} | {lo[0]:.6g} (`{lo[1]}`) | {hi[0]:.6g} (`{hi[1]}`) |")
+    return ["| measurement | corners with a value | min (corner) | max (corner) |", "|---|---|---|---|"] + rows
+
+
 def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
     rel = f"sim/{m['experiment']}"
     ok = sum(1 for r in m["results"] if r["status"] == "ok")
+    meta = {**SMOKE_RECORD_DEFAULTS, **(parts.get("record_meta") or {})}
+    detailed = bool(meta.get("detailed"))
+    shown = m["problems"] if detailed else m["problems"][:5]
     lines = [
         f"# {m['experiment']} -- {rid}", "",
         f"- **Record ID**: {rid}",
         f"- **Status**: {m['status']}",
         f"- **Claim**: {parts['claim']}",
-        "- **Netlist provenance**: schematic-level hand netlist (harness smoke deck); no layout, no PHY block",
+        f"- **Netlist provenance**: {meta['netlist_provenance']}",
         f"- **Corner matrix run**: {len(m['results'])} points = process {{{', '.join(m['axes']['process'])}}} x "
         f"temperature {{{', '.join(f'{t:g}' for t in m['axes']['temperature_c'])}}} C x supply "
         f"{{{', '.join(f'{v:g}' for v in m['axes']['supply_v'])}}} V (sim/corners.json); full matrix, no subset",
-        "- **Statistical convention**: not applicable (deterministic operating-point corners, no Monte Carlo)",
+        f"- **Statistical convention**: {meta['statistical_convention']}",
         f"- **Result**: {m['status']} -- {ok}/{len(m['results'])} corners simulated with finite measurements inside "
-        "the harness-only bounds in tb.json" + (f"; problems: {'; '.join(m['problems'][:5])}" if m["problems"] else ""),
+        f"{meta['bounds']}" + (f"; {len(m['problems'])} problem(s)" + ("" if detailed else f": {'; '.join(shown)}")
+                              if m["problems"] else ""),
         f"- **Links**: {rel}/testbench/, {rel}/netlist-snapshots/{rid}.spice, {rel}/corners/{rid}/ "
         f"(evidence.json sha256 `{manifest_sha}`)",
         f"- **Timestamp / author**: {m['started_utc']} / {m['author']}",
@@ -171,8 +197,14 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
         f"- PDK: `{m['pdk'].get('name')}` open_pdks `{m['pdk'].get('open_pdks_commit')}`; "
         f"model library sha256 `{m['pdk'].get('lib_sha256')}`",
         f"- harness {HARNESS_VERSION}; repo HEAD `{m['git']['head']}` dirty={m['git']['dirty']}",
-        "", "No design claim: this record is harness evidence only.", "",
     ]
+    if meta.get("method"):
+        lines += ["", "## Method", ""] + [f"- {x}" for x in meta["method"]]
+    if detailed:
+        lines += ["", "## Measurement ranges over the grid", ""] + _measurement_ranges(m)
+        lines += ["", "## Failures (corner id: measurement and value)", ""]
+        lines += [f"- {p}" for p in m["problems"]] if m["problems"] else ["- none"]
+    lines += ["", meta["footer"], ""]
     return "\n".join(lines)
 
 
@@ -185,6 +217,8 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
         raise RunError(f"no experiment {experiment!r}: {tb_path} missing")
     tb = json.loads(tb_path.read_text())
     body = (exp_dir / "testbench" / tb["netlist"]).read_bytes()
+    for inc in tb.get("include", []):  # design netlists the deck instantiates, frozen into the snapshot
+        body += b"\n* ---- included: " + inc.encode() + b" ----\n" + (exp_dir / "testbench" / inc).read_bytes()
 
     full = not any(subset.values())
     if record and not full:
@@ -234,6 +268,7 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
     }
     parts = {"body": body, "request_bytes": request_bytes, "tb_bytes": tb_path.read_bytes(),
              "matrix_bytes": mx.CORNERS_JSON.read_bytes(), "claim": tb["claim"], "supersedes": supersedes,
+             "record_meta": tb.get("record") or {},
              "logs": {}, "stderr": "", "report": None}
 
     try:
