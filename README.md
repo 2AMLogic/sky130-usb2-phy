@@ -13,8 +13,10 @@ The full-speed receive and transmit paths (bit sync, NRZI encode/decode,
 (de)stuffing, framing, UTMI CDC) are implemented and verified under cocotb. A
 design-anchored synthesis experiment and gate-level netlist now exist for the
 real `usb_utmi_top`, with the disclosed combinational-loop and gate-level-test
-limitations recorded in the characterization report; place-and-route and the
-analog front end do not exist yet. See the scope note below for what remains.
+limitations recorded in the characterization report; real-UTMI place-and-route
+remains pending. The first analog block, the differential receiver, now has
+schematic-level sky130 simulation evidence. See the scope note below for what
+remains.
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -39,8 +41,10 @@ pull-up, and a digital UTMI layer.
   [`gf180-usb2-phy`](https://github.com/2AMLogic/gf180-usb2-phy)**, one block
   per issue, per the operator ruling of 2026-10-08 (#40). The plan, with the
   pinned source commit and the four driver rows that fail in the source, is
-  [`docs/porting-plan.md`](docs/porting-plan.md). No analog block has sky130
-  evidence yet.
+  [`docs/porting-plan.md`](docs/porting-plan.md). The differential receiver
+  has schematic-level sensitivity evidence across 45 PVT corners at each of
+  three common-mode points (135 combinations, all passing); layout, mismatch
+  and dynamic behavior remain unverified. The other block ports remain pending.
 - **PLL** — not designed here: consumed by pinned reference to
   [`sky130-pll`](https://github.com/2AMLogic/sky130-pll)
   (see [`reuse.lock.json`](reuse.lock.json)).
@@ -97,8 +101,8 @@ spec/          ratified spec + decision records
 rtl/           UTMI-side Verilog sources
 verification/  cocotb testbenches
 flow/          synthesis + P&R recipes (Yosys, OpenROAD), driven through klt
-design/        analog schematics (empty until the per-block port issues land)
-sim/           analog testbenches + PVT corner results (empty for now)
+design/        analog schematics + derived netlists (differential receiver)
+sim/           analog simulation harness, testbenches + PVT corner results
 layout/        GDS + DRC/LVS reports (klayout-tools driven)
 measurements/  silicon characterization (empty until tape-out)
 ```
