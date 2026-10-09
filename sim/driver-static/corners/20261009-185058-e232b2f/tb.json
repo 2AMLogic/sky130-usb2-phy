@@ -1,0 +1,412 @@
+{
+  "name": "driver-static",
+  "description": "sky130 FS line driver (design/differential_driver.sch): static VOH/VOL, total output resistance, enable truth table and disabled-pad leakage across the 45-point PVT matrix.",
+  "claim": "Static behaviour of the sky130 FS line driver over the 45-point PVT matrix against spec/usb2-phy.md section 6 rows 'Output voltage swing, static' (VOH 2.8-3.6 V, VOL 0.0-0.3 V; loads per USB 2.0 section 7.1.1.1, plus the literal 1.5 kohm-to-3.6 V reading for VOH) and 'Driver output resistance' (28-44 ohm), plus the drive-enable/OE truth table; disabled-pad leakage as engineering data (no ratified limit exists and none is applied). Schematic-level, deterministic, no mismatch (no Monte Carlo), no passive-process spread, no layout parasitics; not a signoff claim.",
+  "netlist": "driver_static_tb.spice",
+  "include": [
+    "../../../design/netlist/differential_driver.spice"
+  ],
+  "analysis": {
+    "kind": "dc",
+    "args": "vf 0 3.65 0.05"
+  },
+  "timeout_s": 900,
+  "measure": {
+    "tt_dp_d00_e00_v": {
+      "spice": ".meas dc tt_dp_d00_e00_v FIND v(tt_dp_d00_e00) AT=0"
+    },
+    "tt_dm_d00_e00_v": {
+      "spice": ".meas dc tt_dm_d00_e00_v FIND v(tt_dm_d00_e00) AT=0"
+    },
+    "tt_dp_d00_e01_v": {
+      "spice": ".meas dc tt_dp_d00_e01_v FIND v(tt_dp_d00_e01) AT=0"
+    },
+    "tt_dm_d00_e01_v": {
+      "spice": ".meas dc tt_dm_d00_e01_v FIND v(tt_dm_d00_e01) AT=0"
+    },
+    "tt_dp_d00_e10_v": {
+      "spice": ".meas dc tt_dp_d00_e10_v FIND v(tt_dp_d00_e10) AT=0"
+    },
+    "tt_dm_d00_e10_v": {
+      "spice": ".meas dc tt_dm_d00_e10_v FIND v(tt_dm_d00_e10) AT=0"
+    },
+    "tt_dp_d00_e11_v": {
+      "spice": ".meas dc tt_dp_d00_e11_v FIND v(tt_dp_d00_e11) AT=0"
+    },
+    "tt_dm_d00_e11_v": {
+      "spice": ".meas dc tt_dm_d00_e11_v FIND v(tt_dm_d00_e11) AT=0"
+    },
+    "tt_dp_d01_e00_v": {
+      "spice": ".meas dc tt_dp_d01_e00_v FIND v(tt_dp_d01_e00) AT=0"
+    },
+    "tt_dm_d01_e00_v": {
+      "spice": ".meas dc tt_dm_d01_e00_v FIND v(tt_dm_d01_e00) AT=0"
+    },
+    "tt_dp_d01_e01_v": {
+      "spice": ".meas dc tt_dp_d01_e01_v FIND v(tt_dp_d01_e01) AT=0"
+    },
+    "tt_dm_d01_e01_v": {
+      "spice": ".meas dc tt_dm_d01_e01_v FIND v(tt_dm_d01_e01) AT=0"
+    },
+    "tt_dp_d01_e10_v": {
+      "spice": ".meas dc tt_dp_d01_e10_v FIND v(tt_dp_d01_e10) AT=0"
+    },
+    "tt_dm_d01_e10_v": {
+      "spice": ".meas dc tt_dm_d01_e10_v FIND v(tt_dm_d01_e10) AT=0"
+    },
+    "tt_dp_d01_e11_v": {
+      "spice": ".meas dc tt_dp_d01_e11_v FIND v(tt_dp_d01_e11) AT=0"
+    },
+    "tt_dm_d01_e11_v": {
+      "spice": ".meas dc tt_dm_d01_e11_v FIND v(tt_dm_d01_e11) AT=0"
+    },
+    "tt_dp_d10_e00_v": {
+      "spice": ".meas dc tt_dp_d10_e00_v FIND v(tt_dp_d10_e00) AT=0"
+    },
+    "tt_dm_d10_e00_v": {
+      "spice": ".meas dc tt_dm_d10_e00_v FIND v(tt_dm_d10_e00) AT=0"
+    },
+    "tt_dp_d10_e01_v": {
+      "spice": ".meas dc tt_dp_d10_e01_v FIND v(tt_dp_d10_e01) AT=0"
+    },
+    "tt_dm_d10_e01_v": {
+      "spice": ".meas dc tt_dm_d10_e01_v FIND v(tt_dm_d10_e01) AT=0"
+    },
+    "tt_dp_d10_e10_v": {
+      "spice": ".meas dc tt_dp_d10_e10_v FIND v(tt_dp_d10_e10) AT=0"
+    },
+    "tt_dm_d10_e10_v": {
+      "spice": ".meas dc tt_dm_d10_e10_v FIND v(tt_dm_d10_e10) AT=0"
+    },
+    "tt_dp_d10_e11_v": {
+      "spice": ".meas dc tt_dp_d10_e11_v FIND v(tt_dp_d10_e11) AT=0"
+    },
+    "tt_dm_d10_e11_v": {
+      "spice": ".meas dc tt_dm_d10_e11_v FIND v(tt_dm_d10_e11) AT=0"
+    },
+    "tt_dp_d11_e00_v": {
+      "spice": ".meas dc tt_dp_d11_e00_v FIND v(tt_dp_d11_e00) AT=0"
+    },
+    "tt_dm_d11_e00_v": {
+      "spice": ".meas dc tt_dm_d11_e00_v FIND v(tt_dm_d11_e00) AT=0"
+    },
+    "tt_dp_d11_e01_v": {
+      "spice": ".meas dc tt_dp_d11_e01_v FIND v(tt_dp_d11_e01) AT=0"
+    },
+    "tt_dm_d11_e01_v": {
+      "spice": ".meas dc tt_dm_d11_e01_v FIND v(tt_dm_d11_e01) AT=0"
+    },
+    "tt_dp_d11_e10_v": {
+      "spice": ".meas dc tt_dp_d11_e10_v FIND v(tt_dp_d11_e10) AT=0"
+    },
+    "tt_dm_d11_e10_v": {
+      "spice": ".meas dc tt_dm_d11_e10_v FIND v(tt_dm_d11_e10) AT=0"
+    },
+    "tt_dp_d11_e11_v": {
+      "spice": ".meas dc tt_dp_d11_e11_v FIND v(tt_dp_d11_e11) AT=0"
+    },
+    "tt_dm_d11_e11_v": {
+      "spice": ".meas dc tt_dm_d11_e11_v FIND v(tt_dm_d11_e11) AT=0"
+    },
+    "voh_dp_v": {
+      "spice": ".meas dc voh_dp_v FIND v(voh_dp) AT=0"
+    },
+    "voh15_dp_v": {
+      "spice": ".meas dc voh15_dp_v FIND v(voh15_dp) AT=0"
+    },
+    "vol_dp_v": {
+      "spice": ".meas dc vol_dp_v FIND v(vol_dp) AT=0"
+    },
+    "rout_high_dp_ohm": {
+      "spice": ".meas dc rout_high_dp_ohm FIND v(rhv_dp) AT=0"
+    },
+    "rout_low_dp_ohm": {
+      "spice": ".meas dc rout_low_dp_ohm FIND v(rlv_dp) AT=0"
+    },
+    "voh_dm_v": {
+      "spice": ".meas dc voh_dm_v FIND v(voh_dm) AT=0"
+    },
+    "voh15_dm_v": {
+      "spice": ".meas dc voh15_dm_v FIND v(voh15_dm) AT=0"
+    },
+    "vol_dm_v": {
+      "spice": ".meas dc vol_dm_v FIND v(vol_dm) AT=0"
+    },
+    "rout_high_dm_ohm": {
+      "spice": ".meas dc rout_high_dm_ohm FIND v(rhv_dm) AT=0"
+    },
+    "rout_low_dm_ohm": {
+      "spice": ".meas dc rout_low_dm_ohm FIND v(rlv_dm) AT=0"
+    },
+    "leak_dp_0v_na": {
+      "spice": ".meas dc leak_dp_0v_na FIND i(vsap) AT=0",
+      "scale": 1000000000.0
+    },
+    "leak_dp_1p5v_na": {
+      "spice": ".meas dc leak_dp_1p5v_na FIND i(vsap) AT=1.5",
+      "scale": 1000000000.0
+    },
+    "leak_dp_3p0v_na": {
+      "spice": ".meas dc leak_dp_3p0v_na FIND i(vsap) AT=3.0",
+      "scale": 1000000000.0
+    },
+    "leak_dp_3p6v_na": {
+      "spice": ".meas dc leak_dp_3p6v_na FIND i(vsap) AT=3.6",
+      "scale": 1000000000.0
+    },
+    "leak_dp_max_na": {
+      "spice": ".meas dc leak_dp_max_na MAX i(vsap) FROM=0 TO=3.6",
+      "scale": 1000000000.0
+    },
+    "leak_dp_min_na": {
+      "spice": ".meas dc leak_dp_min_na MIN i(vsap) FROM=0 TO=3.6",
+      "scale": 1000000000.0
+    },
+    "leak_dm_0v_na": {
+      "spice": ".meas dc leak_dm_0v_na FIND i(vsbm) AT=0",
+      "scale": 1000000000.0
+    },
+    "leak_dm_1p5v_na": {
+      "spice": ".meas dc leak_dm_1p5v_na FIND i(vsbm) AT=1.5",
+      "scale": 1000000000.0
+    },
+    "leak_dm_3p0v_na": {
+      "spice": ".meas dc leak_dm_3p0v_na FIND i(vsbm) AT=3.0",
+      "scale": 1000000000.0
+    },
+    "leak_dm_3p6v_na": {
+      "spice": ".meas dc leak_dm_3p6v_na FIND i(vsbm) AT=3.6",
+      "scale": 1000000000.0
+    },
+    "leak_dm_max_na": {
+      "spice": ".meas dc leak_dm_max_na MAX i(vsbm) FROM=0 TO=3.6",
+      "scale": 1000000000.0
+    },
+    "leak_dm_min_na": {
+      "spice": ".meas dc leak_dm_min_na MIN i(vsbm) FROM=0 TO=3.6",
+      "scale": 1000000000.0
+    },
+    "leak_dm_mid_na": {
+      "spice": ".meas dc leak_dm_mid_na FIND i(vsam) AT=0",
+      "scale": 1000000000.0
+    },
+    "leak_dp_mid_na": {
+      "spice": ".meas dc leak_dp_mid_na FIND i(vsbp) AT=0",
+      "scale": 1000000000.0
+    },
+    "isup_static_ua": {
+      "spice": ".meas dc isup_static_ua FIND i(vsupq) AT=0",
+      "scale": 1000000.0
+    }
+  },
+  "checks": {
+    "tt_dp_d00_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d00_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d00_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d00_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d00_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d00_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d00_e11_v": {
+      "max": 0.05,
+      "per_supply": true
+    },
+    "tt_dm_d00_e11_v": {
+      "max": 0.05,
+      "per_supply": true
+    },
+    "tt_dp_d01_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d01_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d01_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d01_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d01_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d01_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d01_e11_v": {
+      "max": 0.05,
+      "per_supply": true
+    },
+    "tt_dm_d01_e11_v": {
+      "min": 0.95,
+      "per_supply": true
+    },
+    "tt_dp_d10_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d10_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d10_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d10_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d10_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d10_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d10_e11_v": {
+      "min": 0.95,
+      "per_supply": true
+    },
+    "tt_dm_d10_e11_v": {
+      "max": 0.05,
+      "per_supply": true
+    },
+    "tt_dp_d11_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d11_e00_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d11_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d11_e01_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d11_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dm_d11_e10_v": {
+      "min": 0.48,
+      "max": 0.52,
+      "per_supply": true
+    },
+    "tt_dp_d11_e11_v": {
+      "min": 0.95,
+      "per_supply": true
+    },
+    "tt_dm_d11_e11_v": {
+      "min": 0.95,
+      "per_supply": true
+    },
+    "voh_dp_v": {
+      "min": 2.8,
+      "max": 3.6
+    },
+    "voh15_dp_v": {
+      "min": 2.8,
+      "max": 3.6
+    },
+    "vol_dp_v": {
+      "min": 0.0,
+      "max": 0.3
+    },
+    "rout_high_dp_ohm": {
+      "min": 28.0,
+      "max": 44.0
+    },
+    "rout_low_dp_ohm": {
+      "min": 28.0,
+      "max": 44.0
+    },
+    "voh_dm_v": {
+      "min": 2.8,
+      "max": 3.6
+    },
+    "voh15_dm_v": {
+      "min": 2.8,
+      "max": 3.6
+    },
+    "vol_dm_v": {
+      "min": 0.0,
+      "max": 0.3
+    },
+    "rout_high_dm_ohm": {
+      "min": 28.0,
+      "max": 44.0
+    },
+    "rout_low_dm_ohm": {
+      "min": 28.0,
+      "max": 44.0
+    }
+  },
+  "record": {
+    "netlist_provenance": "schematic-derived netlist: xschem export of design/differential_driver.sch (design/netlist/differential_driver.spice, byte-identical to the deck frozen in the snapshot below) plus the testbench deck; no layout, no parasitic extraction",
+    "statistical_convention": "deterministic PVT corners only (5 process x 3 temperature x 3 supply). Mismatch / Monte Carlo was NOT run. The five sky130 process sections tt/ff/ss/fs/sf all load the typical resistor and capacitor parameters (r+c/res_typical__cap_typical), so poly-resistor sheet and MIM-capacitor process spread are NOT covered by this record; resistor temperature coefficients are (+ resistor and MOS temperature behaviour at -40/27/100 C).",
+    "bounds": "the ratified limits and engineering criteria in the Method section (tb.json checks)",
+    "footer": "Scope: schematic-level electrical evidence for one block against ratified spec/usb2-phy.md section 6 rows. It does not claim layout, DRC/LVS, mismatch, passive-process spread, level shifting or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance.",
+    "detailed": true,
+    "method": [
+      "Supply = swept I/O rail vsup (3.0 / 3.3 / 3.6 V). Inputs are VDD-domain logic: logic 1 wired to the supply node, logic 0 to ground. One DC sweep of the forcing source vf (0-3.65 V, 50 mV step; the sweep runs one step past 3.6 V so that the 3.6 V point is interior; max/min are taken over 0-3.6 V only) is the only analysis; every quantity other than the leakage sweep is sweep-independent and read at the first point (AT=0). Each test uses its own copy of the driver.",
+      "VOH/VOL load conditions, from the USB 2.0 specification section 7.1.1.1 (full-speed driver characteristics): the static output must be below VOL(max) 0.3 V with a 1.5 kohm load to 3.6 V and above VOH(min) 2.8 V with a 15 kohm load to ground. `voh_*_v`: driven high (TXDx=1, DRVEN=OE=1) into 15 kohm to ground; `vol_*_v`: driven low into 1.5 kohm to 3.6 V. The ratified row's parenthetical '(1.5 kohm pull-up to 3.6 V)' sits on the VOH/VOL cell as a whole; the literal reading for VOH is measured too (`voh15_*_v`: driven high into 1.5 kohm to 3.6 V) and checked against the same 2.8-3.6 V. The reading of the parenthetical is raised in spec/decision-records/0004-fs-driver-voh-vol-load-conditions.md (proposed); no ratified value is changed.",
+      "Driver output resistance (total, enabled, static): the pad is forced by an ideal source 0.3 V away from the rail the driver is pulling to (VDD - 0.3 V when driving high, 0.3 V when driving low); R = 0.3 V / |I(pad)|. This is a large-signal resistance at the static drive point, includes the output FET on-resistance (P for high, N for low) and the series poly resistor RSER, and is checked for each line and each polarity against 28-44 ohm.",
+      "Enable truth table: all four TXDP/TXDM data combinations (including SE0 = 00 and 11) x all four DRVEN/OE combinations, each pad loaded by 10 kohm to VDD/2, so a driven 1, a driven 0 and a released pad are distinct. Functional bounds (fractions of the corner supply, engineering criteria, not USB limits): driven 1 >= 0.95, driven 0 <= 0.05, released (DRVEN=0 or OE=0) within 0.48-0.52. Names `tt_<line>_d<TXDP><TXDM>_e<DRVEN><OE>_v`.",
+      "Disabled-pad leakage (engineering data, no ratified limit, none applied): instance lka disabled by OE=0 (DRVEN=1, TXDP=1), D+ forced by vf from 0 to 3.6 V while D- is held at VDD/2; instance lkb disabled by DRVEN=0 (OE=1, TXDM=1), D- forced by vf while D+ is held at VDD/2. Current positive out of the pad into the forcing source; reported at 0 / 1.5 / 3.0 / 3.6 V and its max/min over the sweep; `leak_*_mid_na` is the held line's current. Forcing above the corner supply (up to 3.6 V at a 3.0 V rail) forward-biases the output PMOS drain junction; that current is part of the data.",
+      "`isup_static_ua`: supply current of one extra driver instance enabled and driving J (TXDP=1, TXDM=0) into open pads: bias plus leakage; data only.",
+      "A missing or non-finite value of any measurement fails the corner (harness rule)."
+    ]
+  }
+}

@@ -1,0 +1,313 @@
+{
+  "name": "driver-signal-quality",
+  "description": "sky130 FS line driver (design/differential_driver.sch) into the 50 pF test load across the 45-point PVT matrix: rise/fall time, rise/fall matching, crossover voltage, monotonic edges and single crossing, per line and per edge direction; plus enable/disable transition pad current.",
+  "claim": "Full-speed signal quality of the sky130 FS line driver into the 50 pF test load over the 45-point PVT matrix against spec/usb2-phy.md section 6 rows 'Rise/fall time' (4-20 ns, 10 %-90 %, matched within 10 % rise vs fall) and 'Output signal crossover voltage' (1.3-2.0 V), with monotonic single-crossing transitions, each for D+ and D- and both edge directions; enable/disable transition currents as engineering data (no ratified limit). Schematic-level, deterministic, no mismatch (no Monte Carlo), no passive-process spread, no layout parasitics; not a signoff claim.",
+  "netlist": "driver_tb.spice",
+  "include": [
+    "../../../design/netlist/differential_driver.spice"
+  ],
+  "analysis": {
+    "kind": "tran",
+    "args": "20p 300n"
+  },
+  "timeout_s": 1500,
+  "measure": {
+    "trise_dp_ns": {
+      "spice": ".meas tran trise_dp_ns TRIG v(dpn) VAL=0.1 RISE=1 TARG v(dpn) VAL=0.9 RISE=1",
+      "scale": 1000000000.0
+    },
+    "tfall_dp_ns": {
+      "spice": ".meas tran tfall_dp_ns TRIG v(dpn) VAL=0.9 FALL=1 TARG v(dpn) VAL=0.1 FALL=1",
+      "scale": 1000000000.0
+    },
+    "trise_dm_ns": {
+      "spice": ".meas tran trise_dm_ns TRIG v(dmn) VAL=0.1 RISE=1 TARG v(dmn) VAL=0.9 RISE=1",
+      "scale": 1000000000.0
+    },
+    "tfall_dm_ns": {
+      "spice": ".meas tran tfall_dm_ns TRIG v(dmn) VAL=0.9 FALL=1 TARG v(dmn) VAL=0.1 FALL=1",
+      "scale": 1000000000.0
+    },
+    "trf_dp_ratio": {
+      "spice": ".meas tran trf_dp_ratio PARAM='trise_dp_ns/tfall_dp_ns'"
+    },
+    "trf_dm_ratio": {
+      "spice": ".meas tran trf_dm_ratio PARAM='trise_dm_ns/tfall_dm_ns'"
+    },
+    "trf_x1_ratio": {
+      "spice": ".meas tran trf_x1_ratio PARAM='trise_dp_ns/tfall_dm_ns'"
+    },
+    "trf_x2_ratio": {
+      "spice": ".meas tran trf_x2_ratio PARAM='trise_dm_ns/tfall_dp_ns'"
+    },
+    "vcross_rise_v": {
+      "spice": ".meas tran vcross_rise_v FIND v(dp) WHEN v(dp)=v(dm) RISE=1"
+    },
+    "vcross_fall_v": {
+      "spice": ".meas tran vcross_fall_v FIND v(dp) WHEN v(dp)=v(dm) FALL=1"
+    },
+    "tx_rise_ns": {
+      "spice": ".meas tran tx_rise_ns WHEN v(dp)=v(dm) RISE=1",
+      "scale": 1000000000.0
+    },
+    "tx_fall_ns": {
+      "spice": ".meas tran tx_fall_ns WHEN v(dp)=v(dm) FALL=1",
+      "scale": 1000000000.0
+    },
+    "tx_first_ns": {
+      "spice": ".meas tran tx_first_ns WHEN v(dp)=v(dm) CROSS=1",
+      "scale": 1000000000.0
+    },
+    "tx_second_ns": {
+      "spice": ".meas tran tx_second_ns WHEN v(dp)=v(dm) CROSS=2",
+      "scale": 1000000000.0
+    },
+    "tx_last_ns": {
+      "spice": ".meas tran tx_last_ns WHEN v(dp)=v(dm) CROSS=LAST",
+      "scale": 1000000000.0
+    },
+    "slope_rise_dp_min_vns": {
+      "spice": ".meas tran slope_rise_dp_min_vns MIN v(srp) FROM=100n TO=200n"
+    },
+    "slope_fall_dp_max_vns": {
+      "spice": ".meas tran slope_fall_dp_max_vns MAX v(sfp) FROM=200n TO=300n"
+    },
+    "slope_fall_dm_max_vns": {
+      "spice": ".meas tran slope_fall_dm_max_vns MAX v(sfm) FROM=100n TO=200n"
+    },
+    "slope_rise_dm_min_vns": {
+      "spice": ".meas tran slope_rise_dm_min_vns MIN v(srm) FROM=200n TO=300n"
+    },
+    "over_dp_mv": {
+      "spice": ".meas tran over_dp_mv MAX v(ovp)",
+      "scale": 1000.0
+    },
+    "under_dp_mv": {
+      "spice": ".meas tran under_dp_mv MAX v(unp)",
+      "scale": 1000.0
+    },
+    "over_dm_mv": {
+      "spice": ".meas tran over_dm_mv MAX v(ovm)",
+      "scale": 1000.0
+    },
+    "under_dm_mv": {
+      "spice": ".meas tran under_dm_mv MAX v(unm)",
+      "scale": 1000.0
+    },
+    "tpd_rise_dp_ns": {
+      "spice": ".meas tran tpd_rise_dp_ns TRIG v(ctl) VAL=0.5 RISE=1 TARG v(dpn) VAL=0.5 RISE=1",
+      "scale": 1000000000.0
+    },
+    "tpd_fall_dp_ns": {
+      "spice": ".meas tran tpd_fall_dp_ns TRIG v(ctl) VAL=0.5 FALL=1 TARG v(dpn) VAL=0.5 FALL=1",
+      "scale": 1000000000.0
+    },
+    "tpd_fall_dm_ns": {
+      "spice": ".meas tran tpd_fall_dm_ns TRIG v(ctl) VAL=0.5 RISE=1 TARG v(dmn) VAL=0.5 FALL=1",
+      "scale": 1000000000.0
+    },
+    "tpd_rise_dm_ns": {
+      "spice": ".meas tran tpd_rise_dm_ns TRIG v(ctl) VAL=0.5 FALL=1 TARG v(dmn) VAL=0.5 RISE=1",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dp_off_pre_na": {
+      "spice": ".meas tran oe_xb_dp_off_pre_na MAX v(abp) FROM=20n TO=99n",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dp_enable_at_ns": {
+      "spice": ".meas tran oe_xb_dp_enable_at_ns WHEN v(abp)=10m RISE=1",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dp_on_ma": {
+      "spice": ".meas tran oe_xb_dp_on_ma AVG i(vsbp) FROM=150n TO=199n",
+      "scale": 1000.0
+    },
+    "oe_xb_dp_release_at_ns": {
+      "spice": ".meas tran oe_xb_dp_release_at_ns WHEN v(abp)=1u FALL=LAST",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dp_off_post_na": {
+      "spice": ".meas tran oe_xb_dp_off_post_na MAX v(abp) FROM=250n TO=300n",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dp_wrongpol_pk_ma": {
+      "spice": ".meas tran oe_xb_dp_wrongpol_pk_ma MAX v(wbp) FROM=99n TO=300n",
+      "scale": 1000.0
+    },
+    "oe_xb_dm_off_pre_na": {
+      "spice": ".meas tran oe_xb_dm_off_pre_na MAX v(abm) FROM=20n TO=99n",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dm_enable_at_ns": {
+      "spice": ".meas tran oe_xb_dm_enable_at_ns WHEN v(abm)=10m RISE=1",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dm_on_ma": {
+      "spice": ".meas tran oe_xb_dm_on_ma AVG i(vsbm) FROM=150n TO=199n",
+      "scale": 1000.0
+    },
+    "oe_xb_dm_release_at_ns": {
+      "spice": ".meas tran oe_xb_dm_release_at_ns WHEN v(abm)=1u FALL=LAST",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dm_off_post_na": {
+      "spice": ".meas tran oe_xb_dm_off_post_na MAX v(abm) FROM=250n TO=300n",
+      "scale": 1000000000.0
+    },
+    "oe_xb_dm_wrongpol_pk_ma": {
+      "spice": ".meas tran oe_xb_dm_wrongpol_pk_ma MAX v(wbm) FROM=99n TO=300n",
+      "scale": 1000.0
+    },
+    "oe_xc_dp_off_pre_na": {
+      "spice": ".meas tran oe_xc_dp_off_pre_na MAX v(acp) FROM=20n TO=99n",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dp_enable_at_ns": {
+      "spice": ".meas tran oe_xc_dp_enable_at_ns WHEN v(acp)=10m RISE=1",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dp_on_ma": {
+      "spice": ".meas tran oe_xc_dp_on_ma AVG i(vscp) FROM=150n TO=199n",
+      "scale": 1000.0
+    },
+    "oe_xc_dp_release_at_ns": {
+      "spice": ".meas tran oe_xc_dp_release_at_ns WHEN v(acp)=1u FALL=LAST",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dp_off_post_na": {
+      "spice": ".meas tran oe_xc_dp_off_post_na MAX v(acp) FROM=250n TO=300n",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dp_wrongpol_pk_ma": {
+      "spice": ".meas tran oe_xc_dp_wrongpol_pk_ma MAX v(wcp) FROM=99n TO=300n",
+      "scale": 1000.0
+    },
+    "oe_xc_dm_off_pre_na": {
+      "spice": ".meas tran oe_xc_dm_off_pre_na MAX v(acm) FROM=20n TO=99n",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dm_enable_at_ns": {
+      "spice": ".meas tran oe_xc_dm_enable_at_ns WHEN v(acm)=10m RISE=1",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dm_on_ma": {
+      "spice": ".meas tran oe_xc_dm_on_ma AVG i(vscm) FROM=150n TO=199n",
+      "scale": 1000.0
+    },
+    "oe_xc_dm_release_at_ns": {
+      "spice": ".meas tran oe_xc_dm_release_at_ns WHEN v(acm)=1u FALL=LAST",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dm_off_post_na": {
+      "spice": ".meas tran oe_xc_dm_off_post_na MAX v(acm) FROM=250n TO=300n",
+      "scale": 1000000000.0
+    },
+    "oe_xc_dm_wrongpol_pk_ma": {
+      "spice": ".meas tran oe_xc_dm_wrongpol_pk_ma MAX v(wcm) FROM=99n TO=300n",
+      "scale": 1000.0
+    }
+  },
+  "checks": {
+    "trise_dp_ns": {
+      "min": 4.0,
+      "max": 20.0
+    },
+    "tfall_dp_ns": {
+      "min": 4.0,
+      "max": 20.0
+    },
+    "trise_dm_ns": {
+      "min": 4.0,
+      "max": 20.0
+    },
+    "tfall_dm_ns": {
+      "min": 4.0,
+      "max": 20.0
+    },
+    "trf_dp_ratio": {
+      "min": 0.9,
+      "max": 1.1
+    },
+    "trf_dm_ratio": {
+      "min": 0.9,
+      "max": 1.1
+    },
+    "trf_x1_ratio": {
+      "min": 0.9,
+      "max": 1.1
+    },
+    "trf_x2_ratio": {
+      "min": 0.9,
+      "max": 1.1
+    },
+    "vcross_rise_v": {
+      "min": 1.3,
+      "max": 2.0
+    },
+    "vcross_fall_v": {
+      "min": 1.3,
+      "max": 2.0
+    },
+    "tx_first_ns": {
+      "same_as": {
+        "measure": "tx_rise_ns",
+        "tol": 0.001
+      }
+    },
+    "tx_second_ns": {
+      "same_as": {
+        "measure": "tx_fall_ns",
+        "tol": 0.001
+      }
+    },
+    "tx_last_ns": {
+      "same_as": {
+        "measure": "tx_second_ns",
+        "tol": 0.001
+      }
+    },
+    "slope_rise_dp_min_vns": {
+      "gt": 0.0
+    },
+    "slope_rise_dm_min_vns": {
+      "gt": 0.0
+    },
+    "slope_fall_dp_max_vns": {
+      "lt": 0.0
+    },
+    "slope_fall_dm_max_vns": {
+      "lt": 0.0
+    },
+    "oe_xb_dp_on_ma": {
+      "gt": 0.0
+    },
+    "oe_xb_dm_on_ma": {
+      "lt": 0.0
+    },
+    "oe_xc_dp_on_ma": {
+      "lt": 0.0
+    },
+    "oe_xc_dm_on_ma": {
+      "gt": 0.0
+    }
+  },
+  "record": {
+    "netlist_provenance": "schematic-derived netlist: xschem export of design/differential_driver.sch (design/netlist/differential_driver.spice, byte-identical to the deck frozen in the snapshot below) plus the testbench deck; no layout, no parasitic extraction",
+    "statistical_convention": "deterministic PVT corners only (5 process x 3 temperature x 3 supply). Mismatch / Monte Carlo was NOT run. The five sky130 process sections tt/ff/ss/fs/sf all load the typical resistor and capacitor parameters (r+c/res_typical__cap_typical), so poly-resistor sheet and MIM-capacitor process spread are NOT covered by this record; resistor temperature coefficients are (+ resistor and MOS temperature behaviour at -40/27/100 C).",
+    "bounds": "the ratified limits and engineering criteria in the Method section (tb.json checks)",
+    "footer": "Scope: schematic-level electrical evidence for one block against ratified spec/usb2-phy.md section 6 rows. It does not claim layout, DRC/LVS, mismatch, passive-process spread, level shifting or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance.",
+    "detailed": true,
+    "method": [
+      "Test load (carried from the source testbench): 50 pF from each of D+ and D- to ground, no resistor; the ratified rise/fall row names only a capacitance. Supply = swept I/O rail vsup (3.0 / 3.3 / 3.6 V).",
+      "Inputs: VDD-domain logic built from B sources scaled by v(vdd) (logic 1 = the corner supply). DRVEN = OE = 1 for instance xa; TXDP = ctl, TXDM = not ctl; ctl rises at 100 ns and falls at 200 ns, 0.5 ns input edges. Transition 1 (100 ns): D+ rises, D- falls; transition 2 (200 ns): D+ falls, D- rises. Window 0-300 ns, max step 20 ps.",
+      "Rise/fall time: 10 %-90 % of the corner supply on each line separately (`trise_dp_ns`, `tfall_dp_ns`, `trise_dm_ns`, `tfall_dm_ns`; `.meas TRIG v(dXn) VAL=0.1 ... TARG v(dXn) VAL=0.9`, dXn = v(dX)/v(vdd)), each checked against 4-20 ns.",
+      "Rise/fall matching: ratio of rise time to fall time, checked against [0.9, 1.1] for four pairings so that no single pairing hides a failing half: per line (`trf_dp_ratio` = trise_dp/tfall_dp, `trf_dm_ratio` = trise_dm/tfall_dm) and per transition across the pair (`trf_x1_ratio` = trise_dp/tfall_dm at transition 1, `trf_x2_ratio` = trise_dm/tfall_dp at transition 2). 'Within 10 %' is read as 0.9 <= tr/tf <= 1.1 (inclusive, symmetric in the ratio).",
+      "Crossover voltage: v(dp) at the instant v(dp) = v(dm), at the rising (`vcross_rise_v`, transition 1) and the falling (`vcross_fall_v`, transition 2) crossing, each checked against 1.3-2.0 V.",
+      "Single crossing: the first and second D+/D- crossings over the whole window (`tx_first_ns`, `tx_second_ns`, CROSS=1/2) must coincide within 1 ps with the rising and falling crossings, and the last crossing (`tx_last_ns`, CROSS=LAST) with the second one, so any extra crossing (ringing, a non-monotonic edge) fails the corner.",
+      "Monotonic edges: dV/dt of each line (B source ddt, V/ns) masked to the 10 %-90 % band of its own edge; outside the band the mask is +1 for a rising and -1 for a falling window. `slope_rise_*_min_vns` (MIN over the rising window) must be > 0 and `slope_fall_*_max_vns` (MAX over the falling window) < 0, for both lines and both directions. Windows: 100-200 ns for transition 1, 200-300 ns for transition 2.",
+      "Engineering data, no ratified limit and no check: overshoot above VDD and undershoot below VSS over the whole window (`over_*_mv`, `under_*_mv`; source of any pre-edge dip is gate-to-output Miller-cap coupling, see design/README.md), data-to-pad delay at 50 % (`tpd_*_ns`).",
+      "Enable/disable transitions (instances xb: TXDP=1, TXDM=0; xc: TXDP=0, TXDM=1; DRVEN = 1, OE rises at 100 ns and falls at 200 ns): each pad forced to VDD/2 by an ideal source; current positive out of the driver. Reported per line: disabled current before enable (`*_off_pre_na`, max |I|, 20-99 ns); the time |I| first rises through 10 mA (above the capacitive coupling current, below the drive current) (`*_enable_at_ns`, absolute; OE rises at 100.0-100.5 ns); enabled current (`*_on_ma`, mean over 150-199 ns; only its sign is checked: a pad driven high must source, one driven low must sink); the time |I| last falls through 1 uA (`*_release_at_ns`, absolute; OE falls at 200.0-200.5 ns); disabled current after release (`*_off_post_na`, max |I|, 250-300 ns); and the peak wrong-polarity current over 99-300 ns (`*_wrongpol_pk_ma`: sinking on a line commanded high or sourcing on one commanded low, i.e. a glitch toward the wrong rail). These are engineering data; no leakage or glitch limit exists and none is applied.",
+      "A missing or non-finite value of any measurement fails the corner (harness rule)."
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 # design
 
-Analog schematics (xschem). One block per port issue (so far: `differential_receiver`, `se_receiver_dp` / `se_receiver_dm` and `dplus_pullup`, below): the analog blocks are ported here from `gf180-usb2-phy` (operator ruling 2026-10-08, #40) — see [`docs/porting-plan.md`](../docs/porting-plan.md).
+Analog schematics (xschem). One block per port issue (so far: `differential_receiver`, `se_receiver_dp` / `se_receiver_dm`, `dplus_pullup` and `differential_driver`, below): the analog blocks are ported here from `gf180-usb2-phy` (operator ruling 2026-10-08, #40) — see [`docs/porting-plan.md`](../docs/porting-plan.md).
 
 `design/netlist/` holds synthesized gate-level netlists of the digital partition.
 `netlist/usb_utmi_top.v` is the Yosys/`sky130_fd_sc_hd` mapping of the real UTMI top
@@ -496,3 +496,209 @@ below the sanity criterion of 0.8 V (the ratified single-ended VIL; an
 engineering criterion, not a leakage limit). **No leakage limit is ratified
 and none is claimed**: the currents are engineering data at schematic level
 (model leakage; no ESD structures, no pad, no layout).
+
+## `differential_driver.sch` (issue #112)
+
+Sky130 port of the `gf180-usb2-phy` full-speed line driver (source pinned at
+`0aab24943aa1379026ccebb8e5746580f1eb7947`: `design/differential_driver.sch`,
+its netlist, `design/README.md` section "`differential_driver.sch`" and
+`sim/driver-signal-quality/testbench/`, all read and stamped in
+`reuse.lock.json`). Carried: the voltage-mode structure (complementary output
+stage per line, series resistor to the pad), the 50 pF per line test load, the
+stimulus and the measurement definitions. **Not carried: the gate-slew
+mechanism and every size.** The source's poly gate resistor was replaced (item
+3 below), an output-enable path was added (the source has none), and every
+device was re-derived for sky130. Nothing from the gf180 evidence (record
+`20260817-203552-a408cb6`, four FAIL rows) is a sky130 claim; the four rows
+were re-measured.
+
+**Status: schematic level only** (no layout, no parasitics, no mismatch, no
+passive-process spread, no level shifter). Evidence: "What the grids show"
+below. Regenerate the netlist with `design/export_netlist.sh
+differential_driver`; two consecutive exports are byte-identical to the
+committed `design/netlist/differential_driver.spice` (xschem 3.4.4, installed
+open_pdks `sky130A` symbols), and only `sky130_fd_pr__*` devices appear.
+
+### Pin contract
+
+`differential_driver VDD VSS TXDP TXDM DRVEN OE DP DM` (the source's
+`VDD VSS TXDP TXDM DP DM` plus `DRVEN` and `OE`).
+
+| Pin | Dir | Domain / meaning |
+|---|---|---|
+| `VDD` | inout (power) | 3.3 V I/O rail, 3.0-3.6 V (`spec/usb2-phy.md` section 5, DR-0001 Decision 5); supply and bulk of every PMOS. An input, not generated here |
+| `VSS` | inout (ground) | ground; all NMOS bulks |
+| `TXDP`, `TXDM` | in | **`VDD`-domain CMOS logic** (0 = `VSS`, 1 = `VDD`). `TXDx` = 1 drives `Dx` high, 0 drives it low; `TXDP` = `TXDM` = 0 is SE0, `TXDP` = `TXDM` = 1 drives both lines high |
+| `DRVEN` | in | differential drive enable, `VDD` domain, active high (`usb_utmi_top.v` `tx_drive_en`) |
+| `OE` | in | output enable, `VDD` domain, active high (`tx_oe`) |
+| `DP`, `DM` | inout (analog) | the USB D+ / D- lines at the pad. Driven while enabled; high impedance while disabled |
+
+**Enable truth table.** `EN` = `DRVEN` AND `OE` (a NAND, `ENB`, then an
+inverter). `EN` = 1: each line is driven by its `TXDx`. `EN` = 0 (either
+control low): the pull-up gate is held at `VDD` and the pull-down gate at
+`VSS` through dedicated off switches, so **both the pull-up and the pull-down
+output FETs of both lines are off** and `DP` / `DM` are high impedance
+whatever `TXDP` / `TXDM` are. All 16 combinations of
+`TXDP`/`TXDM`/`DRVEN`/`OE` (including both SE0 and both-high) are in the
+`driver-static` experiment.
+
+**Input domain.** The eventual controls come from 1.8 V core logic
+(`rtl/usb_utmi_top.v`). A thick-oxide gate at `VDD` needs a `VDD`-swing input
+(a 1.8 V "1" is not above the 3.3 V inverter trip point with margin, and would
+leave the PMOS conducting), so the standalone cell takes **`VDD`-domain
+inputs** and the 1.8 V to `VDD` level shifter is an integration item outside
+this cell, exactly as for the receivers' outputs (#110, #111). The testbenches
+drive the cell at the documented cell-side levels (logic 1 = the corner
+supply); no level shifter is designed or modelled. The pad is not
+current-limited or ESD-protected here.
+
+### Sky130 device choices and reasons
+
+| Part | Device | Size |
+|---|---|---|
+| Output stage, per line (`MP_OUT` / `MN_OUT`) | `sky130_fd_pr__pfet_g5v0d10v5` / `nfet_g5v0d10v5` | P 20 um x 40, N 20 um x 13, L 0.5 um (P:N = 800:260 um) |
+| Series resistor (`RSER`) | `sky130_fd_pr__res_generic_po` | W 20 / L 10.8 um (about 26 ohm nominal) |
+| Edge-rate control | switched current sources into the output-device gates plus MIM Miller capacitors | `cap_mim_m3_1` 42x42 um (P gate) and 24x24 um (N gate) to the internal output node `OUTI`; mirrored currents from one `res_xhigh_po_1p41` bias |
+| Enable / predriver / bias logic | `pfet_g5v0d10v5` / `nfet_g5v0d10v5` | L 0.5 um logic, L 1 um mirrors |
+
+1. **MOS flavour: `pfet_g5v0d10v5` / `nfet_g5v0d10v5` throughout.** The pad
+   swings 0-3.6 V, above what the core `*_01v8*` devices tolerate, so those are
+   excluded. The native `nfet_03v3_nvt` has no complementary PMOS and a
+   near-zero threshold (leakage in the disabled state, no clean off switch),
+   so it was considered and not used. The thick-oxide pair is the same choice
+   as the receivers and pull-up (#110, #111, #113), keeps one oxide on the
+   cell, and its model bins start at L = 0.5 um, so every device is L >= 0.5
+   um (gf180 was 0.28 um). **P:N is not 2:1.** It was re-derived from the
+   sky130 models so that the pull-up and pull-down on-resistance match: about
+   3:1 in width (P 800 um : N 260 um), because sky130 thick-oxide hole mobility
+   is lower than electron mobility. The measured result is a high-side output
+   resistance of 29.8-40.2 ohm and a low-side one of 29.4-42.2 ohm over the 45
+   corners (record below).
+2. **Series resistor: `res_generic_po`, W = 20 um.** The 28-44 ohm row is the
+   total including FET on-resistance (FET Ron is about 8 ohm at `tt`/27 C, so
+   RSER is sized at 26 ohm). `res_generic_po` was chosen over `res_generic_m1`
+   (0.125 ohm/sq, so about 208 squares, i.e. a 1 um wide track hundreds of um
+   long or a very large meander, for a resistor whose only job is area-cheap
+   ohms) and over `res_generic_l1` (li1, 12.2 ohm/sq, about 2 squares: smallest
+   area but the widest stated spread, 9.5-14.8 ohm/sq, and a thin film in a
+   path that carries the full drive current). Poly in a wide 20 um strip keeps
+   the current density low. The resistor's temperature behaviour is in the
+   grid (the -40/27/100 C axis); **its process sheet-resistance spread is not**:
+   the five sky130 process sections all load the typical resistor parameters
+   (the same limit as the pull-up, #113). The 28-44 ohm margin (1.4 ohm on the
+   low side) would be consumed by a wider `rp1` spread; that is not claimed
+   either way.
+3. **Edge-rate control: not the source's poly gate resistor.** The source
+   slows the gates with a poly RC and into a fixed ~36 ohm metal resistor; the
+   source evidence shows that this gives a corner-dependent edge (22.3 ns at
+   its weakest corner) and a pull-up weaker than pull-down. Here the output
+   gates are driven by **switched, mirrored constant currents** (`MN_PSRC` for
+   the P gate, `MP_NSRC` for the N gate; bias `RB` into diode `MNB`, with
+   `MNB2`/`MPB` deriving the PMOS bias) with a **MIM Miller capacitor from each
+   output-device gate to `OUTI`**, so while the output slews the gate current
+   sets dV/dt = I/C largely independent of the output FET's strength. A fast
+   gate-kick (`MN_KICK1/2`, `MP_KICK1N/2N`, shut off by replica devices
+   `MP_KREP` / `MN_KREPN`) brings the gate to threshold quickly. The off
+   switches (`MP_POFF`, `MN_NOFF`) are separate and fast. A known artefact of
+   a Miller-coupled gate is a pre-edge dip; the testbench reports it
+   (`over_*` / `under_*`, 15-24 mV over, 64-107 mV under, no limit).
+4. **Input domain:** `VDD`-domain logic at the cell boundary, level shifter
+   outside (pin contract above).
+
+### Measurement definitions
+
+(Full formulas and windows are in each experiment's `tb.json` `record.method`
+and are repeated in every record.)
+
+- **Rise/fall time:** 10 %-90 % of the corner supply, per line (`D+`, `D-`)
+  and per edge direction, 50 pF to ground on each line, no resistor.
+- **Matching:** `t_rise / t_fall`, within [0.9, 1.1], four pairings (D+ own,
+  D- own, D+ rise vs D- fall, D- rise vs D+ fall), so no single pairing hides
+  a failing half.
+- **Crossover:** `v(DP)` at `v(DP)` = `v(DM)`, separately at the rising and
+  the falling crossing.
+- **Monotonic single crossing:** the first, second and last D+/D- crossings
+  must coincide with the rising/falling crossings (no extra crossing), and the
+  slope (V/ns, masked to the 10-90 % band of each line's edge) must keep its
+  sign, for both lines and both directions.
+- **VOH / VOL:** driven high (VOH) / low (VOL) statically. Loads: VOL into
+  1.5 kohm to 3.6 V and VOH into 15 kohm to ground, taken from the USB 2.0
+  Chapter 7 DC characteristics for the full-speed driver (**not re-verified
+  against the specification text in this environment**; see DR-0004); VOH into
+  1.5 kohm to 3.6 V is measured too, as the ratified row's parenthetical reads
+  literally. The record states both. A conflict between the two readings is
+  for [DR-0004](../spec/decision-records/0004-fs-driver-voh-vol-load-conditions.md)
+  (proposed); no threshold is changed.
+- **Output resistance (total, enabled):** the pad is forced by an ideal source
+  0.3 V from the rail the driver pulls to; `R = 0.3 V / |I(pad)|`, current out
+  of the pad when high, into it when low; includes FET Ron and `RSER`.
+- **Disabled-pad leakage (engineering data, no ratified limit, none applied):**
+  disabled by `OE` = 0 (D+) and by `DRVEN` = 0 (D-), the pad forced 0-3.6 V by
+  an independent source while the other line is held at `VDD`/2; and, at an
+  enable/disable transition, the pad forced to `VDD`/2 with the pad current
+  reported before, during and after (enable time, release time, wrong-polarity
+  peak). Pad current is reported separately from the enabled output
+  resistance.
+
+### What the grids show
+
+45-corner runs, `klt sim` on the Spot batch fleet (tt/ff/ss/fs/sf x -40/27/100
+C x 3.0/3.3/3.6 V; deterministic, no mismatch, no resistor/capacitor spread).
+Fleet runner klt 0.5.0 against client 0.7.0 (`runner_compatibility:
+mismatch`, version check `warn`; the same skew as #111). Each record's
+`report.json` shows 45 results, all finite.
+
+**Signal quality**, record `20261009-182102-e232b2f` (batch job
+`klt-sim-cfe0e1417464`), 50 pF per line: PASS 45/45.
+
+| Row (spec section 6) | Bound | Sky130 result (min / max, corner) | Verdict |
+|---|---|---|---|
+| Rise time, D+ and D- | 4-20 ns | 8.69 (`ff_100c_3.60v`) / 11.23 (`ss_-40c_3.00v`) | PASS 45/45 |
+| Fall time, D+ and D- | 4-20 ns | 8.43 (`ff_100c_3.60v`) / 11.70 (`ss_-40c_3.00v`) | PASS 45/45 |
+| Rise/fall matching, all four pairings | 0.9-1.1 | 0.9279 (`fs_100c_3.00v`) / 1.0772 (`sf_-40c_3.60v`) | PASS 45/45 |
+| Crossover, rising and falling | 1.3-2.0 V | 1.4844 (`sf_-40c_3.00v`) / **1.9933** (`fs_100c_3.60v`) | PASS 45/45 |
+| Monotonic single crossing | first = second = last | all slopes of the right sign; 1 rising and 1 falling crossing | PASS 45/45 |
+| Aggregate FS signal quality | all of the above | derived from the rows above | PASS 45/45 |
+
+Margins are thin in two places: crossover 6.7 mV below 2.0 V at the
+fast-P/slow-N, hot, high-supply corner, and matching 0.9279 at `fs_100c_3.00v`
+(bound 0.9). Mismatch and passive spread, which are not in the grid, could
+move both; the PASS is for the deterministic grid only. The four rows that
+failed in gf180 pass here; that is a sky130 measurement, not an inference from
+gf180.
+
+**Static**, record `20261009-185058-e232b2f` (batch job
+`klt-sim-d7588a09de82`): PASS 45/45.
+
+| Row | Bound | Sky130 result (min / max, corner) | Verdict |
+|---|---|---|---|
+| VOH, 15 kohm to ground | 2.8-3.6 V | 2.992 (`sf_100c_3.00v`) / 3.593 (`fs_-40c_3.60v`) | PASS 45/45 |
+| VOH, 1.5 kohm to 3.6 V (literal reading) | 2.8-3.6 V | 3.012 (`fs_-40c_3.00v`) / 3.600 (`tt_27c_3.60v`) | PASS 45/45 (reaches the 3.6 V bound as the driver is pulled toward the 3.6 V load) |
+| VOL, 1.5 kohm to 3.6 V | 0.0-0.3 V | 0.069 (`sf_-40c_3.60v`) / 0.097 (`fs_100c_3.00v`) | PASS 45/45 |
+| Output resistance, driving high | 28-44 ohm | 29.8 (`fs_-40c_3.60v`) / 40.2 (`sf_100c_3.00v`) | PASS 45/45 |
+| Output resistance, driving low | 28-44 ohm | 29.4 (`sf_-40c_3.60v`) / 42.2 (`fs_100c_3.00v`) | PASS 45/45 |
+| Enable truth table (16 combinations, both lines) | driven 1 >= 0.95 VDD, driven 0 <= 0.05 VDD, released 0.48-0.52 VDD (engineering criteria) | driven high 2.994-3.595 V, driven low 4.5-7.2 mV, released 1.4999-1.8 V (VDD/2) | PASS 45/45 |
+
+**Disabled-pad leakage (engineering data; no ratified limit exists and none is
+applied):** pad forced 0-3.6 V while disabled, current out of the pad: -22.7
+nA to +6.3 nA at 0, 1.5 and 3.0 V across the grid; the held line at VDD/2
+carries -14.2 nA to +0.05 nA. **Forcing the pad to 3.6 V on a 3.0 V rail
+forward-biases the output PMOS drain junction: -259 uA at `fs_100c_3.00v`** (-3
+nA at `tt` 27 C 3.3 V). This is real behaviour of the schematic when the pad
+can sit above `VDD` while the driver is disabled; no limit exists, so it is
+reported, not judged, and is tracked as a follow-up (#130). Enable/disable
+transitions into a pad forced to `VDD`/2: disabled current up to 14.2 nA
+(`sf_100c_3.60v`), enable at 102.6-106.0 ns after the `OE` edge at 100 ns,
+release at 209.9-226.4 ns after the 200 ns edge, enabled current 33-59 mA
+(sign correct on all four pad-and-data cases), and a wrong-polarity peak of up
+to 3.0 mA (`ff_-40c_3.60v`) during the transition; static supply current
+150.8-254.7 uA (bias network).
+
+**Limits of these PASSes.** (1) Schematic level: no mismatch / Monte Carlo, no
+extracted parasitics, no layout, no pad or ESD. (2) The grid does not
+exercise resistor or MIM capacitor process spread (item 2 above); both are in
+the edge rate and the output resistance. (3) The load for VOH/VOL awaits DR-0004
+ratification. (4) The harness job ran on a fleet runner older than the client.
+(5) Two earlier attempts per experiment that the fleet refused for capacity
+(`BATCH_MAX_CONCURRENT_INSTANCES`, then `batch_no_capacity`) are kept as FAIL
+records; no local fallback was run.

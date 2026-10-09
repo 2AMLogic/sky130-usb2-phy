@@ -9,7 +9,7 @@ This directory is the harness plus one experiment directory per block port (see
 [`docs/porting-plan.md`](../docs/porting-plan.md)): `smoke-inverter` (harness
 acceptance only), `diff-receiver-sensitivity` (#111, first block) and
 `se-receiver-dp-thresholds` / `se-receiver-dm-thresholds` (#110) and
-`dplus-pullup-tolerance` (#113).
+`dplus-pullup-tolerance` (#113) and `driver-signal-quality` / `driver-static` (#112).
 
 ## Provenance and master
 
@@ -248,6 +248,45 @@ temperature coefficient but not the resistor sheet-resistance spread; see
 `reuse.lock.json` stamps the gf180 source files read (schematic, netlist, design
 notes, testbench, record); the sky130 deck and evaluator are new code, not
 byte-copies, and the existential selection is this port's own addition.
+
+## driver-signal-quality, driver-static
+
+The sky130 FS line driver (`design/differential_driver.sch`, pins `VDD VSS TXDP
+TXDM DRVEN OE DP DM`, inputs in the `VDD` domain). Two experiments, one deck each,
+one `klt sim` request per 45-corner grid; no new harness code (`gt`/`lt`/`same_as`
+and `per_supply` checks from earlier experiments are reused).
+
+- `driver-signal-quality` (transient, 300 ns): 50 pF per line, no resistor.
+  Rise/fall time per line and direction, four matching pairings, rising and
+  falling crossover, single-crossing, masked-slope monotonicity; plus
+  enable/disable transitions into a pad forced to VDD/2 (engineering data).
+- `driver-static` (one DC sweep of the leakage-forcing source): VOH (15 kohm to
+  ground and, as the literal reading of the ratified row, 1.5 kohm to 3.6 V), VOL
+  (1.5 kohm to 3.6 V), total output resistance high and low, the 16-combination
+  enable truth table (both lines), disabled-pad leakage over 0-3.6 V forcing.
+  VOH/VOL load readings: `spec/decision-records/0004-fs-driver-voh-vol-load-conditions.md`
+  (proposed).
+
+```bash
+python3 sim/run_corners.py driver-signal-quality --klt-runner-version-check warn
+python3 sim/run_corners.py driver-static --klt-runner-version-check warn
+# single-corner local debug, never recorded:
+python3 sim/run_corners.py driver-static --backend local \
+    --corner tt --temp 27 --supply 3.3 --no-write
+```
+
+Records: `driver-signal-quality/records/` (`20261009-182102-e232b2f` PASS 45/45, batch
+job `klt-sim-cfe0e1417464`; `20261009-181037-e232b2f` and `20261009-181100-e232b2f`
+are FAIL attempts the fleet refused: `BATCH_MAX_CONCURRENT_INSTANCES` then
+`batch_no_capacity`) and `driver-static/records/` (`20261009-185058-e232b2f` PASS
+45/45, job `klt-sim-d7588a09de82`; `20261009-181043-e232b2f` FAIL, fleet at its
+instance limit). FAIL attempts are kept and are not coverage; no local grid was run.
+No Monte Carlo; resistor and MIM-capacitor process spread is not in the grid
+(typical parameter set in all five sections). Provenance: `reuse.lock.json` stamps
+the gf180 driver schematic, netlist, testbench and record that were read; the sky130
+decks are new except for the carried 50 pF load, stimulus and measurement
+definitions named in `driver_tb.spice`. Results and device reasons:
+`design/README.md`.
 
 ## Known limits
 
