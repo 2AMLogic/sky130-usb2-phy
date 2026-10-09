@@ -5,6 +5,10 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-09
 
+- **PR #125**: feat: sky130 trimmed D+ pull-up schematic and 45-corner tolerance record (#113)
+- **Issue #113** (closed): analog port: trimmed D+ pull-up and termination to sky130 - schematic and 45-corner tolerance testbench
+- **PR #124**: analog port: single-ended D+/D- receivers to sky130 with 45-corner threshold evidence (#110)
+- **Issue #110** (closed): analog port: single-ended receivers (D+ and D-) to sky130 - schematics and 45-corner threshold testbenches
 - **PR #122**: analog port: differential receiver to sky130 with 45-corner x 3 CM evidence (#111)
 - **Issue #111** (closed): analog port: differential receiver to sky130 - schematic and 45-corner sensitivity testbench at three common-mode points
 - **PR #120**: feat: sky130 analog sim harness and 45-corner PVT matrix (#109)

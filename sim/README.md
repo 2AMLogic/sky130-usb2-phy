@@ -8,7 +8,8 @@ corrects a mistake, mints a new record id and leaves the old one byte-identical.
 This directory is the harness plus one experiment directory per block port (see
 [`docs/porting-plan.md`](../docs/porting-plan.md)): `smoke-inverter` (harness
 acceptance only), `diff-receiver-sensitivity` (#111, first block) and
-`se-receiver-dp-thresholds` / `se-receiver-dm-thresholds` (#110).
+`se-receiver-dp-thresholds` / `se-receiver-dm-thresholds` (#110) and
+`dplus-pullup-tolerance` (#113) and `driver-signal-quality` / `driver-static` (#112).
 
 ## Provenance and master
 
@@ -201,6 +202,91 @@ minimum over 2.0-3.0 V, the 0.8 V / 2.0 V boundary probes, the internal
 Records: `se-receiver-dp-thresholds/records/`, `se-receiver-dm-thresholds/records/`.
 No Monte Carlo is run; each record says so. Both ran on fleet runner klt
 0.5.0 against client 0.7.0 with the version check in `warn` mode, as above.
+
+## dplus-pullup-tolerance
+
+The sky130 trimmed D+ pull-up (`design/dplus_pullup.sch`) with the host's 15 kohm
+on D+, at every one of its 16 trim codes, across the 45 PVT corners; plus the
+disabled state. One deck holds 16 enabled instances (one hard-wired trim code
+each) and four disabled ones, so a single `klt sim` request returns all raw
+`V(DP)` values (`vdp_cNN_v`) and the disabled-state voltages and currents per
+corner (`.meas dc` over the two-point dummy sweep, as in the other experiments).
+
+Reproduce (the grid is submitted to the batch fleet, never run locally):
+
+```bash
+python3 sim/run_corners.py dplus-pullup-tolerance --klt-runner-version-check warn
+# single-corner local debug, never recorded:
+python3 sim/run_corners.py dplus-pullup-tolerance --backend local \
+    --corner ss --temp 100 --supply 3.0 --no-write
+```
+
+Existential best-trim evaluation: `tb.json` gained one optional block, `trim`
+(`codes`, `measure_prefix`, `load_ohm`, `target_ohm`, `lo_ohm`, `hi_ohm`), handled
+by `harness/trim.py` and called from `results.evaluate`, so the runner and the
+record lint apply the same rule. Per corner: `R_eff = (VPU - V(DP)) /
+(V(DP)/R_load)` for every code; a code with a non-finite, non-positive-current
+or `V(DP) >= VPU` measurement has no resistance and fails the corner; the corner
+passes only if all 16 codes are valid **and at least one** lies in the inclusive
+`[lo_ohm, hi_ohm]` window (the bound is not applied to every code). The best
+code minimises `|R_eff - target_ohm|` with ties to the lowest code. Derived data
+(`r_cNN_ohm`, `best_code`, `best_r_ohm`, `best_err_ohm`, `n_in_window`,
+`step_cNN_ohm`, `step_min_ohm`, `step_max_ohm`, `range_ohm`, `n_nonmonotonic`) are
+stored in `evidence.json` next to the preserved raw measurements in `report.json`.
+Another optional `record` key, `corner_table`, prints a per-corner table of chosen
+derived columns in the record.
+
+Records: `dplus-pullup-tolerance/records/`. The first two attempts
+(`20261009-172121-d85f0dc`, `20261009-172711-d85f0dc`) are FAIL records: the batch
+fleet refused the job (`batch_no_capacity`, no capacity in any of the 30 pools)
+before any simulation; they are kept and are not coverage. The third
+(`20261009-172948-d85f0dc`) is the PASS 45/45 record. No Monte Carlo is run, and
+**the pinned PDK's process sections all use the typical resistor parameter set**
+(`res_typical__cap_typical`), so this grid covers MOS corners and the resistor
+temperature coefficient but not the resistor sheet-resistance spread; see
+`design/README.md` for the separate, unrecorded design-basis check. Provenance:
+`reuse.lock.json` stamps the gf180 source files read (schematic, netlist, design
+notes, testbench, record); the sky130 deck and evaluator are new code, not
+byte-copies, and the existential selection is this port's own addition.
+
+## driver-signal-quality, driver-static
+
+The sky130 FS line driver (`design/differential_driver.sch`, pins `VDD VSS TXDP
+TXDM DRVEN OE DP DM`, inputs in the `VDD` domain). Two experiments, one deck each,
+one `klt sim` request per 45-corner grid; no new harness code (`gt`/`lt`/`same_as`
+and `per_supply` checks from earlier experiments are reused).
+
+- `driver-signal-quality` (transient, 300 ns): 50 pF per line, no resistor.
+  Rise/fall time per line and direction, four matching pairings, rising and
+  falling crossover, single-crossing, masked-slope monotonicity; plus
+  enable/disable transitions into a pad forced to VDD/2 (engineering data).
+- `driver-static` (one DC sweep of the leakage-forcing source): VOH (15 kohm to
+  ground and, as the literal reading of the ratified row, 1.5 kohm to 3.6 V), VOL
+  (1.5 kohm to 3.6 V), total output resistance high and low, the 16-combination
+  enable truth table (both lines), disabled-pad leakage over 0-3.6 V forcing.
+  VOH/VOL load readings: `spec/decision-records/0004-fs-driver-voh-vol-load-conditions.md`
+  (proposed).
+
+```bash
+python3 sim/run_corners.py driver-signal-quality --klt-runner-version-check warn
+python3 sim/run_corners.py driver-static --klt-runner-version-check warn
+# single-corner local debug, never recorded:
+python3 sim/run_corners.py driver-static --backend local \
+    --corner tt --temp 27 --supply 3.3 --no-write
+```
+
+Records: `driver-signal-quality/records/` (`20261009-182102-e232b2f` PASS 45/45, batch
+job `klt-sim-cfe0e1417464`; `20261009-181037-e232b2f` and `20261009-181100-e232b2f`
+are FAIL attempts the fleet refused: `BATCH_MAX_CONCURRENT_INSTANCES` then
+`batch_no_capacity`) and `driver-static/records/` (`20261009-185058-e232b2f` PASS
+45/45, job `klt-sim-d7588a09de82`; `20261009-181043-e232b2f` FAIL, fleet at its
+instance limit). FAIL attempts are kept and are not coverage; no local grid was run.
+No Monte Carlo; resistor and MIM-capacitor process spread is not in the grid
+(typical parameter set in all five sections). Provenance: `reuse.lock.json` stamps
+the gf180 driver schematic, netlist, testbench and record that were read; the sky130
+decks are new except for the carried 50 pF load, stimulus and measurement
+definitions named in `driver_tb.spice`. Results and device reasons:
+`design/README.md`.
 
 ## Known limits
 
