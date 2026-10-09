@@ -1,0 +1,20 @@
+{
+  "name": "smoke-inverter",
+  "description": "Harness acceptance test: thick-oxide (g5v0d10v5) CMOS inverter in three static states at the I/O rail. Not a PHY sub-block.",
+  "claim": "None -- harness self-verification, not a spec claim. Proves the 45-point sky130 PVT plumbing (klt sim request, .lib corner sections, .temp, supply re-targeting, batch submission, per-corner logs) takes effect end to end. Bounds below are harness-only plausibility bounds and say nothing about USB electrical compliance.",
+  "netlist": "smoke_inverter.spice",
+  "analysis": {"kind": "op", "args": ""},
+  "timeout_s": 300,
+  "measure": {
+    "voh_ratio": "v(voh)/v(vdd)",
+    "vol_ratio": "v(vol)/v(vdd)",
+    "vm_ratio": "v(vm)/v(vdd)",
+    "isup_ua": "-i(vsup)*1e6"
+  },
+  "checks": {
+    "voh_ratio": {"min": 0.95, "max": 1.0001},
+    "vol_ratio": {"min": -0.0001, "max": 0.05},
+    "vm_ratio": {"min": 0.3, "max": 0.7, "min_spread_pct": 3.0},
+    "isup_ua": {"min": 0.001, "max": 5000.0}
+  }
+}

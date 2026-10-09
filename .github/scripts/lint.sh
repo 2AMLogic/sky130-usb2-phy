@@ -7,6 +7,11 @@
 # no klt, no PDK, no OpenROAD, no simulator -- so it runs on every PR in
 # seconds, whether or not the heavy `check:ci` suite's toolchain provisioned.
 #
+# The analog (sim/) evidence lint rides along: sim/check_records.py enforces
+# the append-only analog evidence under sim/ against the same base ref, and
+# sim/tests/ are its (and the harness') toolchain-free self-tests. Neither
+# submits a simulation job.
+#
 # It is NOT a substitute for `npm run check:ci` (the real functional
 # verification suite, scripts/check-ci.sh), and it does not re-run the physical
 # flow. Re-running the flow is `flow/run_flow.py`, which needs the full
@@ -27,13 +32,19 @@ if ! python3 flow/check_records.py --base-ref "$BASE_REF"; then
 fi
 
 echo
-echo "== Evidence-record lint self-tests: flow/tests/ =="
+echo "== Analog evidence lint: sim/check_records.py =="
+if ! python3 sim/check_records.py --base-ref "$BASE_REF"; then
+  STATUS=1
+fi
+
+echo
+echo "== Evidence-record lint self-tests: flow/tests/ + sim/tests/ =="
 if ! command -v python3 >/dev/null 2>&1; then
   echo "ERROR: python3 not found" >&2
   exit 1
 fi
 if python3 -c "import pytest" >/dev/null 2>&1; then
-  if ! python3 -m pytest flow/tests -q; then
+  if ! python3 -m pytest flow/tests sim/tests -q -p no:cacheprovider; then
     STATUS=1
   fi
 else

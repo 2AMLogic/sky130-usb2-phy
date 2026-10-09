@@ -1,0 +1,415 @@
+{
+  "author": "ubuntu (agent)",
+  "axes": {
+    "process": [
+      "tt",
+      "ff",
+      "ss",
+      "fs",
+      "sf"
+    ],
+    "supply_v": [
+      3.0,
+      3.3,
+      3.6
+    ],
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "backend": "batch",
+  "engine_version": null,
+  "experiment": "smoke-inverter",
+  "files": {
+    "corners.json": "ceff629b10bf7f288ab287f88245f21d85c680120bcddcd0b3a5db310c431542",
+    "klt-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "report.json": "6fc377214fbe771c06bafaca3e605c3e57b43e05b2ec20930f0ba4123e010428",
+    "request.json": "d49386071d8ca8a715c1145bea5abce54650133a7111f8d4d260cf803b0624e1",
+    "tb.json": "7f0b17d813327512c3cf3d53c0e50debfcfe2137fba0cff936682a43371d1f8d"
+  },
+  "git": {
+    "dirty": true,
+    "head": "47b5f797a900ce8064ddee84d213aa91f8b721d0"
+  },
+  "harness_version": "0.1.0",
+  "job_id": "klt-sim-40e7d77251b1",
+  "klt_exit_code": 4,
+  "klt_version": "klt 0.7.0+g4cbdfa769875",
+  "pdk": {
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "name": "sky130A",
+    "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+  },
+  "problems": [
+    "tt_-40c_3.00v: simulation status 'error'",
+    "tt_-40c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_-40c_3.30v: simulation status 'error'",
+    "tt_-40c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_-40c_3.60v: simulation status 'error'",
+    "tt_-40c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_27c_3.00v: simulation status 'error'",
+    "tt_27c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_27c_3.30v: simulation status 'error'",
+    "tt_27c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_27c_3.60v: simulation status 'error'",
+    "tt_27c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_100c_3.00v: simulation status 'error'",
+    "tt_100c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_100c_3.30v: simulation status 'error'",
+    "tt_100c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_100c_3.60v: simulation status 'error'",
+    "tt_100c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_-40c_3.00v: simulation status 'error'",
+    "ff_-40c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_-40c_3.30v: simulation status 'error'",
+    "ff_-40c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_-40c_3.60v: simulation status 'error'",
+    "ff_-40c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_27c_3.00v: simulation status 'error'",
+    "ff_27c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_27c_3.30v: simulation status 'error'",
+    "ff_27c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_27c_3.60v: simulation status 'error'",
+    "ff_27c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_100c_3.00v: simulation status 'error'",
+    "ff_100c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_100c_3.30v: simulation status 'error'",
+    "ff_100c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ff_100c_3.60v: simulation status 'error'",
+    "ff_100c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_-40c_3.00v: simulation status 'error'",
+    "ss_-40c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_-40c_3.30v: simulation status 'error'",
+    "ss_-40c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_-40c_3.60v: simulation status 'error'",
+    "ss_-40c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_27c_3.00v: simulation status 'error'",
+    "ss_27c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_27c_3.30v: simulation status 'error'",
+    "ss_27c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_27c_3.60v: simulation status 'error'",
+    "ss_27c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_100c_3.00v: simulation status 'error'",
+    "ss_100c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_100c_3.30v: simulation status 'error'",
+    "ss_100c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "ss_100c_3.60v: simulation status 'error'",
+    "ss_100c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_-40c_3.00v: simulation status 'error'",
+    "fs_-40c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_-40c_3.30v: simulation status 'error'",
+    "fs_-40c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_-40c_3.60v: simulation status 'error'",
+    "fs_-40c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_27c_3.00v: simulation status 'error'",
+    "fs_27c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_27c_3.30v: simulation status 'error'",
+    "fs_27c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_27c_3.60v: simulation status 'error'",
+    "fs_27c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_100c_3.00v: simulation status 'error'",
+    "fs_100c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_100c_3.30v: simulation status 'error'",
+    "fs_100c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "fs_100c_3.60v: simulation status 'error'",
+    "fs_100c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_-40c_3.00v: simulation status 'error'",
+    "sf_-40c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_-40c_3.30v: simulation status 'error'",
+    "sf_-40c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_-40c_3.60v: simulation status 'error'",
+    "sf_-40c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_27c_3.00v: simulation status 'error'",
+    "sf_27c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_27c_3.30v: simulation status 'error'",
+    "sf_27c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_27c_3.60v: simulation status 'error'",
+    "sf_27c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_100c_3.00v: simulation status 'error'",
+    "sf_100c_3.00v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_100c_3.30v: simulation status 'error'",
+    "sf_100c_3.30v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "sf_100c_3.60v: simulation status 'error'",
+    "sf_100c_3.60v: missing or non-finite measurement(s) ['voh_ratio', 'vol_ratio', 'vm_ratio', 'isup_ua']",
+    "tt_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "tt_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "tt_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "tt_27c_3.00v: raw ngspice log not retrievable (None)",
+    "tt_27c_3.30v: raw ngspice log not retrievable (None)",
+    "tt_27c_3.60v: raw ngspice log not retrievable (None)",
+    "tt_100c_3.00v: raw ngspice log not retrievable (None)",
+    "tt_100c_3.30v: raw ngspice log not retrievable (None)",
+    "tt_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_100c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_27c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_27c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_27c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_100c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_100c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_100c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_27c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_27c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_27c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_100c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_100c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_100c_3.60v: raw ngspice log not retrievable (None)"
+  ],
+  "record_id": "20261009-092814-47b5f79",
+  "results": [
+    {
+      "corner_id": "tt_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    }
+  ],
+  "schema": "sky130-usb2-phy.sim.evidence/1",
+  "snapshot_sha256": "5bdb466296c9f48e27ba73802181f98cdd9d1eb840dfc57db1b10a50648b47ef",
+  "started_utc": "2026-10-09T09:28:14+00:00",
+  "status": "FAIL"
+}

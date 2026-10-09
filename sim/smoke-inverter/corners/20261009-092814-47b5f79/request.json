@@ -1,0 +1,56 @@
+{
+  "netlist": "body.spice",
+  "engine": "ngspice",
+  "backend": "batch",
+  "models": {
+    "pdk": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice"
+  },
+  "corners": {
+    "process": [
+      "tt",
+      "ff",
+      "ss",
+      "fs",
+      "sf"
+    ],
+    "supply_v": {
+      "vsup": [
+        3.0,
+        3.3,
+        3.6
+      ]
+    },
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "analysis": {
+    "kind": "op",
+    "args": ""
+  },
+  "measurements": [
+    {
+      "name": "voh_ratio",
+      "expr": "v(voh)/v(vdd)"
+    },
+    {
+      "name": "vol_ratio",
+      "expr": "v(vol)/v(vdd)"
+    },
+    {
+      "name": "vm_ratio",
+      "expr": "v(vm)/v(vdd)"
+    },
+    {
+      "name": "isup_ua",
+      "expr": "-i(vsup)*1e6"
+    }
+  ],
+  "options": {
+    "timeout_s": 300,
+    "keep_artifacts": true
+  }
+}

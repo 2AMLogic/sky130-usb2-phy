@@ -1,0 +1,549 @@
+{
+  "author": "ubuntu (agent)",
+  "axes": {
+    "process": [
+      "tt",
+      "ff",
+      "ss",
+      "fs",
+      "sf"
+    ],
+    "supply_v": [
+      3.0,
+      3.3,
+      3.6
+    ],
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "backend": "batch",
+  "engine_version": "46",
+  "experiment": "smoke-inverter",
+  "files": {
+    "corners.json": "ceff629b10bf7f288ab287f88245f21d85c680120bcddcd0b3a5db310c431542",
+    "ff_-40c_3.00v.log": "0ed5784adc12f44222b4c3b63efa430c7e1c2dda33f967382456c81a0276607e",
+    "ff_-40c_3.30v.log": "659f6fa56a807496f45d8ebb2b343f34d208e4743ff3cc12b9f22b33208373ba",
+    "ff_-40c_3.60v.log": "8b964968dd62fe8ea4344bdce71d12b320678cfc3dbad282102f7622a7c180b3",
+    "ff_100c_3.00v.log": "00377dbe5120cd5647775c126a20ded6c4ffec65956f4576999b74f1a67ad8e4",
+    "ff_100c_3.30v.log": "0d6f69afe9311172d62bbab6618d635f3d0a05c1377dae9905eb618ad12b71ec",
+    "ff_100c_3.60v.log": "f56600a1e7923d3f8322916ce04b6ebbcea407564cae0b4a59c8b20193360f0f",
+    "ff_27c_3.00v.log": "2b662e53d2447e8003fc456b5b352851731e74d3782ec9b17b2ba6a1dc159dee",
+    "ff_27c_3.30v.log": "9ac3ee7cfa29895e7bd20d58e444175cd4b0d7de8d3de4cae3df320ad04b48e3",
+    "ff_27c_3.60v.log": "c0b342187b0e20f3159be75bbec7748bc46aacd72dbb67c234609f968f821dcc",
+    "fs_-40c_3.00v.log": "6f8d010ff21c0a12247e6c982a7a017133500e8c49b7101516b13b9bb3db4552",
+    "fs_-40c_3.30v.log": "ea9f612687207794b6012bca9b10f86cebcc8d4fd1d8474c28cec5315da467ce",
+    "fs_-40c_3.60v.log": "fbfc258cc81b7ae306154ab4bf6c61e88bd9ec157564138a326edf6fc0dcf6b1",
+    "fs_100c_3.00v.log": "111a46e50fd38c3e3a9e883ceb160d508442a3ab9a461c16027211d33995dc96",
+    "fs_100c_3.30v.log": "8258b65ed4bc31f0304547011e646b1af4b73e8188782f1579752f75186b191a",
+    "fs_100c_3.60v.log": "b0a6046c58f11ffa0d2ee830880b9f08ff97fc9521fa869a3b6af5f1024ab3fa",
+    "fs_27c_3.00v.log": "ac651c455878d6956f2c80d60d22690a5ee4e9185698a84660c0b4013b8d371f",
+    "fs_27c_3.30v.log": "01416aa7c740016f0d39a30abb9c89b5b6b56bdc9c7a57c03e761ccb98754f21",
+    "fs_27c_3.60v.log": "4913404106cfc1091b0be365158e02c9f5d8eac7de587555bbd0664fd6c6ef22",
+    "klt-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "report.json": "ada9ea2891f4dfe09f6a5687e93ad60923f24b69a22bb25c3aa3c48acb52a5e7",
+    "request.json": "57c3afed7b867c778346f1c67a9f7698fb24a59ffa373adc518e1d4d16a75a59",
+    "sf_-40c_3.00v.log": "b93a84bbd6437618f40bf0760aae604c07ef4a3b0ce872792bb0bd3254259060",
+    "sf_-40c_3.30v.log": "693f83796d735fce65e1c0a3276bffc63d92bd15bde646f5490adaa7dc3848ba",
+    "sf_-40c_3.60v.log": "c8400925f0a33f355022f67efb5567525c8beacc3c570d7ca52d9b76ad427c08",
+    "sf_100c_3.00v.log": "901936f9ac8258afc39853634f41a8da3f99711e4acf7afaa32cbba1886fc5fe",
+    "sf_100c_3.30v.log": "931d77c02d50218aa191dc24885d361c55015fe7163decb32ad02c6348265cff",
+    "sf_100c_3.60v.log": "4fe4b5bea3fb480b06fa5368117119d7133082841980e39c5900397d5ebc07a9",
+    "sf_27c_3.00v.log": "542df03a4e062ce38e9b9a922d516433f94d88a707eb8a96c6ae845cdcd783ba",
+    "sf_27c_3.30v.log": "5a458ecf1df2d1e418c5712d58741c2f4f9a2d197e4d32ef2c4f5c0ac6a3b339",
+    "sf_27c_3.60v.log": "0622c9bd85625d2a3ba802219826ed5ad4f2f83b839529424e2a0a21c20f494d",
+    "ss_-40c_3.00v.log": "2405d42d227fe2e2f39c1dcd32355670b722ad40fa79fb8187211f8b4f881057",
+    "ss_-40c_3.30v.log": "bc03895576f83a83088bec7336c52435b03e3cf49ad130660dcec58bb152a198",
+    "ss_-40c_3.60v.log": "c438c4020225457346e6bca9baeffdcaecf25dededa8379d3396cdb3fbb55e23",
+    "ss_100c_3.00v.log": "34cf71af6b4790600c8772c308fdd418c6fc157d6cf54fb1c21205aae800f9e8",
+    "ss_100c_3.30v.log": "88e5bfe35556a771610da60c0fa7140268c9967f143ead1a90a2024e1e2a63d1",
+    "ss_100c_3.60v.log": "9d665532eda70257d37e2c9818d6818bf1c27e9a07504e2ae87afa88f44cd5ff",
+    "ss_27c_3.00v.log": "24fe71dba74943ee6350a63837104634198d0ce171c7b30e1cf1f3e399173a83",
+    "ss_27c_3.30v.log": "74037a02da9d0c379fdc638c24a985cd6ddacb48cfe32d56f4f6400d20613a78",
+    "ss_27c_3.60v.log": "a0e1b999583fe292453af3ff108c879da606806b67fd7f45b6023f4be190feca",
+    "tb.json": "9320084b99851cf727eee8aa2ab00b38c025be92bd89de63736a77fbbfe773dd",
+    "tt_-40c_3.00v.log": "371049892eeadc94c5e86eeb64be5ba6fc76148b6e2aa1864b00449b43b42cd0",
+    "tt_-40c_3.30v.log": "8670a5803574d7d96de578e1d2fb4f4b87c1dd7a723ea4d96e5c29c88011e14f",
+    "tt_-40c_3.60v.log": "bc77dde798a7076e71520312fb96cbce91b901e5eb45c83ec8a862f1253bb687",
+    "tt_100c_3.00v.log": "975bed17197fc3cb090a80ac78a987526496cbc884106dcf6b697eb1db7f3694",
+    "tt_100c_3.30v.log": "5e6835000a3d74bc0f104afe2a7d8b344fb0bff0da0c6557f58e240f96053f3a",
+    "tt_100c_3.60v.log": "2094b734166e6dc306ff09214e954c855dc5a6feb12320b35c122e7db8a7b340",
+    "tt_27c_3.00v.log": "e018dbaaba78d803a6efa0497f4e19141b7c90b0d1ee1ea25126592041d0e413",
+    "tt_27c_3.30v.log": "8fb417d8ed7df8490e3c12083a2a143d9ab6791d65cf07cf3af8bdc856de852d",
+    "tt_27c_3.60v.log": "e1c67d8db3801e5273bfc9dee3df8fd9be47296cdd22c423208848e1aeb2cfe5"
+  },
+  "git": {
+    "dirty": true,
+    "head": "47b5f797a900ce8064ddee84d213aa91f8b721d0"
+  },
+  "harness_version": "0.1.0",
+  "job_id": "klt-sim-4fabfa7d40df",
+  "klt_exit_code": 0,
+  "klt_version": "klt 0.7.0+g4cbdfa769875",
+  "pdk": {
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "name": "sky130A",
+    "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+  },
+  "problems": [],
+  "record_id": "20261009-093012-47b5f79",
+  "results": [
+    {
+      "corner_id": "tt_-40c_3.00v",
+      "measurements": {
+        "isup_ua": 44.404199999999996,
+        "vm_v": 1.35994,
+        "voh_v": 3.0,
+        "vol_v": 5.15026e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_-40c_3.30v",
+      "measurements": {
+        "isup_ua": 65.6392,
+        "vm_v": 1.50065,
+        "voh_v": 3.3,
+        "vol_v": 5.26819e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_-40c_3.60v",
+      "measurements": {
+        "isup_ua": 89.0382,
+        "vm_v": 1.64555,
+        "voh_v": 3.6,
+        "vol_v": 5.41544e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_27c_3.00v",
+      "measurements": {
+        "isup_ua": 45.3677,
+        "vm_v": 1.38081,
+        "voh_v": 3.0,
+        "vol_v": 6.65905e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_27c_3.30v",
+      "measurements": {
+        "isup_ua": 63.7924,
+        "vm_v": 1.52127,
+        "voh_v": 3.3,
+        "vol_v": 6.79153e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_27c_3.60v",
+      "measurements": {
+        "isup_ua": 84.0476,
+        "vm_v": 1.66491,
+        "voh_v": 3.6,
+        "vol_v": 6.96025e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_100c_3.00v",
+      "measurements": {
+        "isup_ua": 46.5572,
+        "vm_v": 1.40956,
+        "voh_v": 3.0,
+        "vol_v": 1.56135e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_100c_3.30v",
+      "measurements": {
+        "isup_ua": 62.691,
+        "vm_v": 1.55172,
+        "voh_v": 3.3,
+        "vol_v": 1.62152e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "tt_100c_3.60v",
+      "measurements": {
+        "isup_ua": 80.31139999999999,
+        "vm_v": 1.69643,
+        "voh_v": 3.6,
+        "vol_v": 1.7111e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_-40c_3.00v",
+      "measurements": {
+        "isup_ua": 62.643299999999996,
+        "vm_v": 1.3451,
+        "voh_v": 3.0,
+        "vol_v": 4.39407e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_-40c_3.30v",
+      "measurements": {
+        "isup_ua": 87.28179999999999,
+        "vm_v": 1.48828,
+        "voh_v": 3.3,
+        "vol_v": 4.52047e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_-40c_3.60v",
+      "measurements": {
+        "isup_ua": 113.74199999999999,
+        "vm_v": 1.6356,
+        "voh_v": 3.6,
+        "vol_v": 4.66685e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_27c_3.00v",
+      "measurements": {
+        "isup_ua": 62.329299999999996,
+        "vm_v": 1.36334,
+        "voh_v": 3.0,
+        "vol_v": 5.76703e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_27c_3.30v",
+      "measurements": {
+        "isup_ua": 83.83319999999999,
+        "vm_v": 1.5052,
+        "voh_v": 3.3,
+        "vol_v": 5.92432e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_27c_3.60v",
+      "measurements": {
+        "isup_ua": 106.981,
+        "vm_v": 1.65037,
+        "voh_v": 3.6,
+        "vol_v": 6.11312e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_100c_3.00v",
+      "measurements": {
+        "isup_ua": 62.4692,
+        "vm_v": 1.39039,
+        "voh_v": 3.0,
+        "vol_v": 5.04168e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_100c_3.30v",
+      "measurements": {
+        "isup_ua": 81.3181,
+        "vm_v": 1.53326,
+        "voh_v": 3.3,
+        "vol_v": 5.37139e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ff_100c_3.60v",
+      "measurements": {
+        "isup_ua": 101.559,
+        "vm_v": 1.67888,
+        "voh_v": 3.6,
+        "vol_v": 5.86477e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_-40c_3.00v",
+      "measurements": {
+        "isup_ua": 29.3196,
+        "vm_v": 1.3775,
+        "voh_v": 3.0,
+        "vol_v": 6.20072e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_-40c_3.30v",
+      "measurements": {
+        "isup_ua": 46.8394,
+        "vm_v": 1.51608,
+        "voh_v": 3.3,
+        "vol_v": 6.29877e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_-40c_3.60v",
+      "measurements": {
+        "isup_ua": 66.8417,
+        "vm_v": 1.65866,
+        "voh_v": 3.6,
+        "vol_v": 6.44069e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_27c_3.00v",
+      "measurements": {
+        "isup_ua": 31.1743,
+        "vm_v": 1.40055,
+        "voh_v": 3.0,
+        "vol_v": 8.10849e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_27c_3.30v",
+      "measurements": {
+        "isup_ua": 46.3498,
+        "vm_v": 1.54008,
+        "voh_v": 3.3,
+        "vol_v": 8.21699e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_27c_3.60v",
+      "measurements": {
+        "isup_ua": 63.4957,
+        "vm_v": 1.68254,
+        "voh_v": 3.6,
+        "vol_v": 8.37904e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_100c_3.00v",
+      "measurements": {
+        "isup_ua": 33.042,
+        "vm_v": 1.43091,
+        "voh_v": 3.0,
+        "vol_v": 1.14193e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_100c_3.30v",
+      "measurements": {
+        "isup_ua": 46.3594,
+        "vm_v": 1.57289,
+        "voh_v": 3.3,
+        "vol_v": 1.16136e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "ss_100c_3.60v",
+      "measurements": {
+        "isup_ua": 61.21370000000001,
+        "vm_v": 1.71715,
+        "voh_v": 3.6,
+        "vol_v": 1.19009e-08
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_-40c_3.00v",
+      "measurements": {
+        "isup_ua": 42.5332,
+        "vm_v": 1.52672,
+        "voh_v": 3.0,
+        "vol_v": 6.37876e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_-40c_3.30v",
+      "measurements": {
+        "isup_ua": 63.209399999999995,
+        "vm_v": 1.67757,
+        "voh_v": 3.3,
+        "vol_v": 6.46225e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_-40c_3.60v",
+      "measurements": {
+        "isup_ua": 86.0683,
+        "vm_v": 1.83173,
+        "voh_v": 3.6,
+        "vol_v": 6.59384e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_27c_3.00v",
+      "measurements": {
+        "isup_ua": 43.2723,
+        "vm_v": 1.55761,
+        "voh_v": 3.0,
+        "vol_v": 9.11322e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_27c_3.30v",
+      "measurements": {
+        "isup_ua": 61.1212,
+        "vm_v": 1.70892,
+        "voh_v": 3.3,
+        "vol_v": 9.26815e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_27c_3.60v",
+      "measurements": {
+        "isup_ua": 80.7918,
+        "vm_v": 1.86262,
+        "voh_v": 3.6,
+        "vol_v": 9.5166e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_100c_3.00v",
+      "measurements": {
+        "isup_ua": 44.1796,
+        "vm_v": 1.59677,
+        "voh_v": 3.0,
+        "vol_v": 1.61887e-07
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_100c_3.30v",
+      "measurements": {
+        "isup_ua": 59.738299999999995,
+        "vm_v": 1.75035,
+        "voh_v": 3.3,
+        "vol_v": 1.71146e-07
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "fs_100c_3.60v",
+      "measurements": {
+        "isup_ua": 76.7535,
+        "vm_v": 1.90567,
+        "voh_v": 3.6,
+        "vol_v": 1.86306e-07
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_-40c_3.00v",
+      "measurements": {
+        "isup_ua": 44.971900000000005,
+        "vm_v": 1.19488,
+        "voh_v": 3.0,
+        "vol_v": 4.29767e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_-40c_3.30v",
+      "measurements": {
+        "isup_ua": 66.3165,
+        "vm_v": 1.32525,
+        "voh_v": 3.3,
+        "vol_v": 4.43032e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_-40c_3.60v",
+      "measurements": {
+        "isup_ua": 89.8513,
+        "vm_v": 1.46053,
+        "voh_v": 3.6,
+        "vol_v": 4.58139e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_27c_3.00v",
+      "measurements": {
+        "isup_ua": 45.976800000000004,
+        "vm_v": 1.20619,
+        "voh_v": 3.0,
+        "vol_v": 5.47369e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_27c_3.30v",
+      "measurements": {
+        "isup_ua": 64.5214,
+        "vm_v": 1.33586,
+        "voh_v": 3.3,
+        "vol_v": 5.6234e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_27c_3.60v",
+      "measurements": {
+        "isup_ua": 84.91900000000001,
+        "vm_v": 1.46933,
+        "voh_v": 3.6,
+        "vol_v": 5.79522e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_100c_3.00v",
+      "measurements": {
+        "isup_ua": 47.2848,
+        "vm_v": 1.22479,
+        "voh_v": 2.99999,
+        "vol_v": 7.14636e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_100c_3.30v",
+      "measurements": {
+        "isup_ua": 63.5587,
+        "vm_v": 1.35587,
+        "voh_v": 3.29999,
+        "vol_v": 7.34465e-09
+      },
+      "status": "ok"
+    },
+    {
+      "corner_id": "sf_100c_3.60v",
+      "measurements": {
+        "isup_ua": 81.3429,
+        "vm_v": 1.49009,
+        "voh_v": 3.59999,
+        "vol_v": 7.57324e-09
+      },
+      "status": "ok"
+    }
+  ],
+  "schema": "sky130-usb2-phy.sim.evidence/1",
+  "snapshot_sha256": "891c1323440eff14b43cadf224d7c641a47961a5837e565166219dc5ddab82ee",
+  "started_utc": "2026-10-09T09:30:12+00:00",
+  "status": "PASS"
+}
