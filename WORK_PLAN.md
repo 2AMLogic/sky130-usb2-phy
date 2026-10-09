@@ -48,6 +48,7 @@ Issues carrying `loom:curated`.
 
 - **#84**: Guard trigger review: worktree-write-confinement DENY on /tmp scratch ERC comparison command (refine or confirm fixed) *(curated)*
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
+- **#111**: analog port: differential receiver to sky130 - schematic and 45-corner sensitivity testbench at three common-mode points *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -56,6 +57,7 @@ _None._
 ## Epics
 
 - **#23**: Track the gap to T1 sim-validated / bronze (klayout-tools design-evidence tiers)
+- **#105**: Digital T1 items 3, 4, 11 (and 5): place and route the real UTMI datapath and commit DRC, LVS, ERC and timing evidence
 
 ## Backlog Balance
 
@@ -67,7 +69,7 @@ _None._
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 2 |
+| Curated | 3 |
 | Architect / Hermit proposals | 0 |
-| Active epics | 1 |
+| Active epics | 2 |
 <!-- guide:plan-body:end -->
