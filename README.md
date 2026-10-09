@@ -29,16 +29,21 @@ everyone using sky130, not just this repo.
 ## Scope, stated up front
 
 A USB 2.0 PHY is an **assembly** — a PLL-based clock/data recovery path,
-current-mode drivers, differential receivers, squelch envelope detection, and
-a digital UTMI layer. Most of those analog pieces are being designed as their
-own canary blocks in sibling repos and do not exist in finished form yet.
+line drivers, differential and single-ended receivers, a switchable D+
+pull-up, and a digital UTMI layer.
 
-So this repo starts with the half that does not depend on them:
-
-- **In scope now** — the target specification, the block-level architecture
-  and partitioning, and the digital UTMI side (RTL, verification, synthesis).
-- **Not in scope yet** — the analog assembly. It waits on the sibling blocks
-  that supply the PLL, drivers, and receivers.
+- **Digital UTMI side** (RTL, verification, synthesis) — designed here; the
+  first slice, and the one with evidence today.
+- **Analog front end** (FS line driver, receivers, D+ pull-up and
+  termination) — **ported into this repo from
+  [`gf180-usb2-phy`](https://github.com/2AMLogic/gf180-usb2-phy)**, one block
+  per issue, per the operator ruling of 2026-10-08 (#40). The plan, with the
+  pinned source commit and the four driver rows that fail in the source, is
+  [`docs/porting-plan.md`](docs/porting-plan.md). No analog block has sky130
+  evidence yet.
+- **PLL** — not designed here: consumed by pinned reference to
+  [`sky130-pll`](https://github.com/2AMLogic/sky130-pll)
+  (see [`reuse.lock.json`](reuse.lock.json)).
 
 Full-speed (12 Mbps) is the first functional target; high-speed (480 Mbps) is
 a stretch goal, not a commitment.
@@ -65,7 +70,8 @@ full specification: signaling/speed target, UTMI interface, reference clock
 and PLL jitter budget, supply architecture, analog sub-block interface
 requirements, verification scope, and the decision log behind each of those.
 [`spec/architecture.md`](spec/architecture.md) has the block diagram and
-build-here/sibling-canary partition table.
+partition table (what is designed here, ported here, or consumed by pinned
+reference).
 
 Maturity ladder: spec ratified → UTMI RTL verified → analog blocks available
 → assembly → DRC/LVS-clean → shuttle seat → measured silicon. **Current
@@ -91,7 +97,7 @@ spec/          ratified spec + decision records
 rtl/           UTMI-side Verilog sources
 verification/  cocotb testbenches
 flow/          synthesis + P&R recipes (Yosys, OpenROAD), driven through klt
-design/        analog schematics (empty until the sibling blocks land)
+design/        analog schematics (empty until the per-block port issues land)
 sim/           analog testbenches + PVT corner results (empty for now)
 layout/        GDS + DRC/LVS reports (klayout-tools driven)
 measurements/  silicon characterization (empty until tape-out)

@@ -56,7 +56,7 @@ the consumer and must be made recorded, not casually.
 ## FS receive path (issue #13)
 
 The FS receive datapath, from the DP/DM line-level inputs (delivered by the
-differential-receiver/squelch sibling canary, out of scope here) up to the
+receivers being ported in-tree, issues #110/#111; not part of this RTL) up to the
 UTMI byte interface. Clocking, CDC discipline, reset scheme, and the UTMI
 port table are all fixed by
 `spec/decision-records/0001-clocking-cdc-jitter-metric-and-pvt-envelope.md`
@@ -79,7 +79,7 @@ margin is derived in `docs/bit-sync-budget.md`.
 
 The real UTMI-side transmit datapath: UTMI TX handshake in, SYNC/EOP packet
 framing, bit stuffing (bypassable), NRZI encoding, and the line-state driver
-interface handed to the current-mode driver sibling canary
+interface handed to the FS line driver (ported in-tree, issue #112)
 (`spec/usb2-phy.md` §6's "Control interface from UTMI layer" row). One
 module per function, so each is independently testable and independently
 synthesizable — see `verification/test_usb_tx.py` for the bit-exact cocotb

@@ -37,14 +37,15 @@ checklist per partition, so the partition boundary is stated explicitly:
   domain), i.e. `rtl/usb_rx_path.v`, `rtl/usb_tx_serializer.v`,
   `rtl/usb_utmi_top.v` and their submodules, verified by the cocotb suites
   in [`verification/`](../verification/README.md).
-- **Analog partition** — the PLL, current-mode drivers, differential
-  receivers, squelch/envelope detector, and pad-ring pull-up/down. These are
-  **explicitly out of scope to design here** (`CLAUDE.md` scope discipline):
-  they come from sibling canary repos that have not landed, and this repo
-  carries no committed analog content for them
-  ([#40](https://github.com/2AMLogic/sky130-usb2-phy/issues/40)) —
-  `design/`, `sim/`, `layout/`, and `measurements/` are placeholder-only by
-  design.
+- **Analog partition** — the FS line driver, differential and single-ended
+  receivers, and D+ pull-up/termination, which are **ported into this repo
+  from `gf180-usb2-phy`** (operator ruling 2026-10-08 on
+  [#40](https://github.com/2AMLogic/sky130-usb2-phy/issues/40); plan in
+  [`docs/porting-plan.md`](../docs/porting-plan.md), port issues #109 to
+  #113), plus the PLL, which is consumed by pinned reference to
+  `sky130-pll` and never designed here. No analog content is committed
+  yet — `design/`, `sim/`, `layout/`, and `measurements/` are still
+  placeholder-only.
 
 `klt 0.5.0` renders **both columns for every T1 item** for a `mixed-signal`
 manifest (even the kind-independent ones render twice, once per partition):
@@ -62,7 +63,7 @@ grader that said otherwise would be lying.
 
 | Item (partition) | Verdict | Why — and what would change it |
 |---|---|---|
-| 1 — Design sources (analog) | `unmet` / `no_evidence` | No analog content exists in this repo (#40); when the sibling canaries land schematics/netlists here, cite them. |
+| 1 — Design sources (analog) | `unmet` / `no_evidence` | No analog content exists in this repo (#40); when the port issues (#110 to #113) land schematics/netlists here, cite them. |
 | 1 — Design sources (digital) | `unmet` / `no_evidence` | The real UTMI RTL is committed (`rtl/usb_*.v`) and has now been **synthesized, and only synthesized**: `design/netlist/usb_utmi_top.v` (943 `sky130_fd_sc_hd` cells, 310 flip-flops) with a synthesis-only record under `flow/utmi-top/records/` (`design.anchors_design_claim: true`; stages 2-6 declared `not_run`) — issue #104. This row **stays uncited on purpose**: the honest citation for item 1 is the artifact-anchored envelope from klayout-tools#2718, which is on klayout-tools `main` but not in a released wheel, and [`toolchain.json`](toolchain.json) pins the grader to a released wheel; the `klt synthesize` envelope and the stub's envelopes are deliberately **not** cited for it. The synthesis also found a combinational loop in `rtl/usb_rx_cdc.v` (`klt synthesize` exits 3; disclosed in the record), and the gate-level re-run of `verification/test_usb_utmi_top.py` passes 25/26 (the failure is a white-box peek at an optimised-away net). What changes this: a release carrying klayout-tools#2718 (re-check the released grader's capabilities first), then cite the netlist per that mechanism. |
 | 2 — Layout (analog) | `unmet` / `no_evidence` | No analog layout exists (#40). |
 | 2 — Layout (digital) | `unmet` / `no_evidence` | `layout/utmi_stub.gds` is the stub's output, not the block's; nothing to cite for the real datapath until it is routed. |
