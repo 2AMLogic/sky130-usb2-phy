@@ -288,3 +288,78 @@ def test_record_discloses_selection_limits_and_resistor_corner_mapping():
     assert "does not prove that a single calibration code" in rec
     assert "No leakage limit is ratified" in rec and "inclusive" in rec
     assert "## Per-corner selection" in rec and rec.count("| `") >= 45
+
+
+# ---- committed evidence and the record lint
+
+RECORDS = sorted((EXP / "records").glob("*.md"))
+PASS_RID = next((p.stem for p in RECORDS if "- **Status**: PASS" in p.read_text()), None)
+
+
+def _sealed_copy(tmp_path):
+    """The committed experiment copied to a scratch sim tree."""
+    sim = tmp_path / "sim"
+    sim.mkdir(parents=True)
+    shutil.copy(SIM / "corners.json", sim / "corners.json")
+    shutil.copytree(EXP, sim / "dplus-pullup-tolerance", ignore=shutil.ignore_patterns("__pycache__"))
+    return sim
+
+
+def _rewrite(sim, rid, mutate_report):
+    """Alter report.json and re-seal every hash, leaving the record claiming PASS."""
+    cdir = sim / "dplus-pullup-tolerance/corners" / rid
+    rep = json.loads((cdir / "report.json").read_text())
+    mutate_report(rep)
+    (cdir / "report.json").write_text(json.dumps(rep, indent=2) + "\n")
+    m = json.loads((cdir / "evidence.json").read_text())
+    m["files"]["report.json"] = lint.sha256_file(cdir / "report.json")
+    (cdir / "evidence.json").write_text(json.dumps(m, indent=2, sort_keys=True) + "\n")
+    recp = sim / "dplus-pullup-tolerance/records" / f"{rid}.md"
+    recp.write_text(re.sub(r"evidence\.json sha256 `[0-9a-f]{64}`",
+                           f"evidence.json sha256 `{lint.sha256_file(cdir / 'evidence.json')}`", recp.read_text()))
+
+
+@pytest.mark.skipif(PASS_RID is None, reason="no PASS record committed yet")
+def test_committed_pass_record_rederives_and_is_complete():
+    cdir = EXP / "corners" / PASS_RID
+    rep = json.loads((cdir / "report.json").read_text())
+    results, problems = rs.evaluate(rep, MATRIX.points(), TB)
+    assert problems == [] and len(results) == 45
+    assert all(r["measurements"]["n_in_window"] >= 1 for r in results)
+    assert rs.job_id(rep) and lint.lint_experiment(EXP) == []
+    # the record's per-corner selection equals the recomputation from the raw envelope
+    m = json.loads((cdir / "evidence.json").read_text())
+    for want, got in zip(m["results"], results):
+        assert want["measurements"]["best_code"] == got["measurements"]["best_code"]
+
+
+@pytest.mark.skipif(PASS_RID is None, reason="no PASS record committed yet")
+def test_lint_rejects_a_falsely_marked_pass(tmp_path):
+    sim = _sealed_copy(tmp_path)
+    assert lint.lint_all(sim) == []
+
+    def break_corner(rep):  # every code at one corner is pushed far outside the window
+        c = rep["corners"][10]
+        vpu = next(iter(c["supply_v"].values()))
+        for k in range(16):
+            next(m for m in c["measurements"] if m["name"] == f"vdp_c{k:02d}_v")["value"] = v_of(2500.0 - 3 * k, vpu)
+
+    _rewrite(sim, PASS_RID, break_corner)
+    probs = lint.lint_all(sim)
+    assert any("no trim code inside [1425, 1575] ohm" in p for p in probs), probs
+
+
+@pytest.mark.skipif(PASS_RID is None, reason="no PASS record committed yet")
+def test_lint_rejects_a_pass_with_a_dropped_or_duplicated_corner(tmp_path):
+    for mutate, needle in ((lambda r: r["corners"].pop(), "missing from report"),
+                           (lambda r: r["corners"].append(json.loads(json.dumps(r["corners"][0]))), "duplicate corner")):
+        sim = _sealed_copy(tmp_path / needle.split()[0])
+        _rewrite(sim, PASS_RID, mutate)
+        assert any(needle in p for p in lint.lint_all(sim)), needle
+
+
+def test_failed_attempts_are_kept_and_never_count_as_coverage():
+    fails = [p for p in RECORDS if "- **Status**: FAIL" in p.read_text()]
+    for p in fails:  # a FAIL record must state its problems and have no passing results
+        m = json.loads((EXP / "corners" / p.stem / "evidence.json").read_text())
+        assert m["status"] == "FAIL" and m["problems"]

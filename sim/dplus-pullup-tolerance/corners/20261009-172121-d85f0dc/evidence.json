@@ -1,0 +1,279 @@
+{
+  "author": "ubuntu (agent)",
+  "axes": {
+    "process": [
+      "tt",
+      "ff",
+      "ss",
+      "fs",
+      "sf"
+    ],
+    "supply_v": [
+      3.0,
+      3.3,
+      3.6
+    ],
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "backend": "batch",
+  "engine_version": null,
+  "experiment": "dplus-pullup-tolerance",
+  "files": {
+    "corners.json": "ceff629b10bf7f288ab287f88245f21d85c680120bcddcd0b3a5db310c431542",
+    "klt-stderr.txt": "b119017c818a8402258ca9c4b30289deb9698cd6cc669c95d6ff9b488f24f3f8",
+    "request.json": "0040212009b257f37b4c26115e74c87a287e93f4635d8a533e204b6d660023d2",
+    "tb.json": "7931a22948818e9cc2dd73bed5853a0326c6766e1b796ba109bc4b0cdd2ae30d"
+  },
+  "git": {
+    "dirty": false,
+    "head": "d85f0dcf62eeaca3a0072ce59cff5f3a9c719f61"
+  },
+  "harness_version": "0.1.0",
+  "job_id": null,
+  "klt_version": "klt 0.7.0+gb82427b30c96",
+  "pdk": {
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "name": "sky130A",
+    "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+  },
+  "problems": [
+    "backend error: klt sim (batch) produced no JSON report (exit 1); stderr tail:"
+  ],
+  "record_id": "20261009-172121-d85f0dc",
+  "results": [
+    {
+      "corner_id": "tt_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    }
+  ],
+  "schema": "sky130-usb2-phy.sim.evidence/1",
+  "snapshot_sha256": "37910a13760838517c95975d3b02dbc032c1e2b1efb05baf97ca7e500a9266c2",
+  "started_utc": "2026-10-09T17:21:21+00:00",
+  "status": "FAIL"
+}
