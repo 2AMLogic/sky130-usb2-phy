@@ -261,6 +261,14 @@ EXPERIMENT_REQUEST_REQUIREMENTS: dict[str, dict[str, tuple[str, ...]]] = {
             "pdk.corner",
             "constraints.clock_period_ns",
         ),
+        # Stage 2-6 templates for the real top (issue #116): same field
+        # requirements as the stub's, so the PDN and LVS power gate cannot be
+        # silently dropped from them.
+        **{
+            name.replace("utmi_stub", "usb_utmi_top"): fields
+            for name, fields in REQUEST_REQUIREMENTS.items()
+            if not name.startswith("request-synth-")
+        },
     },
 }
 

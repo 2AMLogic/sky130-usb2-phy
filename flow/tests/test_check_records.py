@@ -874,6 +874,9 @@ def synth_sandbox(sandbox: Path) -> Path:
     shutil.copy2(
         FLOW_DIR / "request-synth-usb_utmi_top.json", sandbox / "request-synth-usb_utmi_top.json"
     )
+    for stage in ("par", "sta", "extract", "lvs", "drc"):
+        name = f"request-{stage}-usb_utmi_top.json"
+        shutil.copy2(FLOW_DIR / name, sandbox / name)
     shutil.copytree(FLOW_DIR / "utmi-top" / "records", sandbox / "utmi-top" / "records")
     return sandbox
 

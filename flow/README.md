@@ -551,6 +551,32 @@ six-corner timing claim, and no timing claim at all.
 `python3 flow/check_records.py` with no `--experiment` lints every experiment
 directory that has a `records/` directory; `--experiment` (repeatable) narrows it.
 
+## Real-top physical driver (`flow/run_physical_utmi_top.py`, issue #116)
+
+Plumbing for stages 2-6 (PAR, STA, extract, LVS, DRC) of the real `usb_utmi_top`,
+a sibling of `run_synth_utmi_top.py`; `run_flow.py` and the stub requests are
+unchanged. It consumes the committed `design/netlist/usb_utmi_top.v` and the
+templates `flow/request-{par,sta,extract,lvs,drc}-usb_utmi_top.json`, which are
+copies of the stub templates with the top/clock changed (the PDN `power` block,
+floorplan, IO layers and the LVS `power_connectivity` gate are identical to the
+stub's; the driver checks this on every run).
+
+```bash
+python3 flow/run_physical_utmi_top.py --dry-run                       # all six corners
+PDK=sky130A python3 flow/run_physical_utmi_top.py --corners tt_025C_1v80
+```
+
+Resolved requests, raw envelopes and `summary.json` land in the gitignored
+`flow/build/utmi-top-physical/<corner>/`. The driver writes no evidence record
+and its summary's `claims` are always false. A stage failure still writes the
+summary (completed stages kept, failure recorded; exit 2); a gate failure exits 1.
+
+Coverage limitations, restated in every summary: only `clk_144` (144 MHz,
+6.944 ns) is constrained, because `klt place-and-route`/`klt sta` take a single
+clock. `clk_utmi` (30 MHz) is unconstrained and the CDC paths are not timed; no
+I/O delays exist (klayout-tools#1865). An OpenSTA sentinel is classified
+`unconstrained` and is never closure; even a numeric pass covers `clk_144` only.
+
 ## Upstream tool gaps found while building this flow
 
 Per `CLAUDE.md`'s friction protocol, each is filed generically against the
