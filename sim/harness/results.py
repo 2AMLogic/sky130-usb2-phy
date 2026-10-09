@@ -112,6 +112,23 @@ def evaluate(report: dict, expected_points, tb: dict) -> tuple[list[dict], list[
             if "max" in rule and v > rule["max"]:
                 status = "failed"
                 problems.append(f"{cid}: {name}={v:g} above max {rule['max']}")
+            # Strict (exclusive) bounds: an endpoint value is not "strictly inside".
+            if "gt" in rule and not v > rule["gt"]:
+                status = "failed"
+                problems.append(f"{cid}: {name}={v:g} not strictly above {rule['gt']}")
+            if "lt" in rule and not v < rule["lt"]:
+                status = "failed"
+                problems.append(f"{cid}: {name}={v:g} not strictly below {rule['lt']}")
+            # Agreement with another measurement of the same corner (e.g. first and last
+            # threshold crossing coincide only for a single-crossing, monotonic response).
+            same = rule.get("same_as")
+            if same:
+                other = meas.get(same["measure"])
+                if other is None or abs(meas[name] - other) > float(same.get("tol", 0.0)):
+                    status = "failed"
+                    problems.append(f"{cid}: {name}={meas[name]:g} differs from {same['measure']}="
+                                    f"{other if other is None else format(other, 'g')} "
+                                    f"by more than {same.get('tol', 0.0)}")
         results.append({"corner_id": cid, "status": status, "measurements": meas})
 
     for name, rule in (tb.get("checks") or {}).items():

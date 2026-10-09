@@ -1,0 +1,23 @@
+* se-receiver-dp-thresholds -- sky130 single-ended D+ receiver switching threshold and output levels
+*
+* Circuit body for `klt sim`. The design netlist (design/netlist/se_receiver_dp.spice)
+* is appended by the runner (tb.json "include") and frozen into the immutable snapshot.
+* The request supplies the .lib corner section, .temp and the supply sweep (vsup).
+*
+* Row (spec/usb2-phy.md section 6, "Single-ended receiver thresholds"): VIH > 2.0 V,
+* VIL < 0.8 V. Read as: an input at or above 2.0 V must read high and an input at or
+* below 0.8 V must read low, so the switching threshold must sit strictly inside
+* (0.8 V, 2.0 V) and the output must be a valid logic level (not merely past mid-rail)
+* everywhere in [0, 0.8] V and [2.0, 3.0] V. Both halves are measured (tb.json).
+*
+* Stimulus: one DC sweep of the line input DP from 0 V to 3.0 V in 1 mV steps
+* (3001 points). 3.0 V is the lowest supply of the matrix, so the input never exceeds
+* the receiver's own rail. The line source is ideal (zero source impedance).
+* The D- receiver is a separate cell with its own experiment
+* (sim/se-receiver-dm-thresholds/).
+
+vsup vdd 0 dc 3.3
+vi vdd vddr dc 0
+vin in 0 dc 0
+ehalf half 0 vol='v(vdd)/2'
+xrx vddr 0 in rxdp se_receiver_dp

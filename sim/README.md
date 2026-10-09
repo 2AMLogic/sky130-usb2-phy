@@ -7,7 +7,8 @@ corrects a mistake, mints a new record id and leaves the old one byte-identical.
 
 This directory is the harness plus one experiment directory per block port (see
 [`docs/porting-plan.md`](../docs/porting-plan.md)): `smoke-inverter` (harness
-acceptance only) and `diff-receiver-sensitivity` (#111, first block).
+acceptance only), `diff-receiver-sensitivity` (#111, first block) and
+`se-receiver-dp-thresholds` / `se-receiver-dm-thresholds` (#110).
 
 ## Provenance and master
 
@@ -176,6 +177,30 @@ against client 0.7.0 (its provenance line shows the client; `report.json` has
 `runner_compatibility: mismatch`, version check `warn`); all 45 corners
 returned finite `.meas` values in the raw logs, and a re-run is due once the
 runner image is updated (klayout-tools #2851, #2948, #2917, under Known limits).
+
+## se-receiver-dp-thresholds, se-receiver-dm-thresholds
+
+The sky130 single-ended D+ / D- receivers (`design/se_receiver_dp.sch`,
+`design/se_receiver_dm.sch`), one experiment per line: the line input swept
+0-3.0 V in 1 mV steps at each of the 45 PVT corners. Measured: the first
+rising crossing of the output through VDD/2 (`vth_v`) and the last crossing
+in either direction (`vth_last_v`), the output maximum over 0-0.8 V and
+minimum over 2.0-3.0 V, the 0.8 V / 2.0 V boundary probes, the internal
+`VREF` and the supply current. Two check keys were added to `tb.json`
+`checks` for this row (both optional, used nowhere else):
+
+- `gt` / `lt`: exclusive bounds. The ratified row needs the threshold
+  *strictly* inside (0.8, 2.0) V, and `min` / `max` are inclusive, so an
+  endpoint value would otherwise pass.
+- `same_as: {"measure": <name>, "tol": <abs>}`: the measurement must equal
+  another measurement of the same corner within `tol`. Used to require
+  `vth_last_v == vth_v` within one sweep step, so a response that crosses
+  more than once (non-monotonic) fails, as does an inverted one (no rising
+  crossing at all).
+
+Records: `se-receiver-dp-thresholds/records/`, `se-receiver-dm-thresholds/records/`.
+No Monte Carlo is run; each record says so. Both ran on fleet runner klt
+0.5.0 against client 0.7.0 with the version check in `warn` mode, as above.
 
 ## Known limits
 
