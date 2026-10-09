@@ -14,12 +14,18 @@ Section/table references are to that document's Chapter 7 ("Electrical").
 ## 1. Scope
 
 This spec covers the **digital UTMI-side PHY** built in this repo and the
-**interface requirements** it hands to the analog sibling canary blocks
-(PLL, current-mode drivers, differential receivers, squelch/envelope
-detector, pull-up/pull-down). It does not specify how any sibling block is
-built internally — see CLAUDE.md's scope-discipline rule and
-`spec/architecture.md`'s partition table for the build-here / sibling-canary
-boundary.
+**interface requirements** across its analog/digital boundary and to the
+PLL. Since the operator ruling of 2026-10-08 (#40;
+[DR-0003](decision-records/0003-analog-port-scope-and-squelch-disposition.md)
+Decision 1), the analog front end (drivers, receivers, pull-up and
+termination) is **ported into this repo from `gf180-usb2-phy`**, and the PLL
+is consumed by pinned reference to `sky130-pll`. This spec still does not
+specify how any analog block is built internally — that is each port
+issue's job, per [`docs/porting-plan.md`](../docs/porting-plan.md); see
+CLAUDE.md's scope-discipline rule and `spec/architecture.md`'s partition
+table for the ownership of each piece. (Ownership changed in this section
+and in §6's introduction and first-column heading only; every target value
+is as ratified on 2026-08-05.)
 
 ## 2. Signaling and speed target
 
@@ -101,13 +107,25 @@ Decision Log §8.4.
 
 ## 6. Analog sub-block interface requirements
 
-These are **interface requirements**, not designs — what this block needs
-from each sibling canary block, stated as numbers with units. How each is
-built is out of scope here (CLAUDE.md scope-discipline rule). This table is
-the ratified, authoritative version of the same table drafted in
+These are **interface requirements**, not designs — what this block's
+digital side needs from each analog block and from the PLL, stated as
+numbers with units. How each is built is out of scope for this spec. This
+table is the ratified, authoritative version of the same table drafted in
 `spec/architecture.md` (issue #2); the two are now cross-checked and agree.
 
-| Sibling block | Interface requirement | Target value | USB 2.0 basis |
+**Where each block comes from** (ownership revised 2026-10-09 by
+[DR-0003](decision-records/0003-analog-port-scope-and-squelch-disposition.md)
+Decision 1, operator ruling of 2026-10-08; no target value below changed):
+
+| Block | Source |
+|---|---|
+| PLL | pinned reference to `2AMLogic/sky130-pll` (full commit in `reuse.lock.json`); never designed here |
+| Current-mode drivers (the FS line driver) | ported in-tree from `gf180-usb2-phy` (#112) |
+| Differential receivers (differential and single-ended) | ported in-tree from `gf180-usb2-phy` (#111 differential, #110 single-ended) |
+| Squelch / envelope detector | no source block exists; DR-0003 Decision 2 **proposes** moving these rows to HS stretch scope, pending ratification — the rows below stand as ratified until then |
+| Pull-up/pull-down and termination | D+ pull-up ported in-tree from `gf180-usb2-phy` (#113); DR-0003 Decision 3 **proposes** reading the 15 kΩ row as a host-side verification load, pending ratification |
+
+| Block | Interface requirement | Target value | USB 2.0 basis |
 |---|---|---|---|
 | PLL | Reference input | 12 MHz ±0.25% (2500 ppm) crystal/resonator | §7.1.11, FS clock tolerance, unsynchronized |
 | PLL | Output jitter (cycle-to-cycle, feeding oversampling clock) | < 5% of one bit period (< 4.17 ns at 144 MHz, 12× oversampling of 12 Mbps) | Derived — see §4 |

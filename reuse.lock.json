@@ -1,0 +1,142 @@
+{
+  "schema": 1,
+  "imports": [
+    {
+      "from": "2AMLogic/gf180-usb2-phy",
+      "commit": "0aab24943aa1379026ccebb8e5746580f1eb7947",
+      "mode": "fetched",
+      "files": [
+        {
+          "upstream": "spec/usb2-device-phy.md",
+          "sha256": "dbe8aac42457097138c4d11d7d6ef21f2f7488d205525a1f021cb738e533e6fd"
+        },
+        {
+          "upstream": "sim/spec-coverage.md",
+          "sha256": "23df4b6ce51b524291bf1edb3df7c678b6be4aadd062a6ba8f2de0b3602e304a"
+        },
+        {
+          "upstream": "design/README.md",
+          "sha256": "586a156c740c71eb6a69bdffcf62d01d1c9bc36478405407a9d504e8d0b8fa1e"
+        },
+        {
+          "upstream": "design/differential_driver.sch",
+          "sha256": "50a179b25ee1c686c4b1cfd08d04f8a2c4f16046299576c92d9a8435363cd8bb"
+        },
+        {
+          "upstream": "design/differential_receiver.sch",
+          "sha256": "d093a05b3b05dc7dda628f3b9bdf30f912d40492b3186a2e7eeefb8eee171f72"
+        },
+        {
+          "upstream": "design/se_receiver_dp.sch",
+          "sha256": "b011cc08aeb156e70366ade44d49ed50e7921bd03d0f2a168c642761d9d89ca6"
+        },
+        {
+          "upstream": "design/se_receiver_dm.sch",
+          "sha256": "e7ce0c0a4efcaa6d0a2c1bb2679348b2deb97a51c92c88504eb3c2874fc9ff90"
+        },
+        {
+          "upstream": "design/dplus_pullup.sch",
+          "sha256": "81eaf5101b343bc5773f7d2800ea3dec40f8d7a5388240b8d22fd13a0b7684e6"
+        },
+        {
+          "upstream": "design/netlist/differential_driver.spice",
+          "sha256": "bd4b2608c986fd1e305be7b1522e94f578cf36206fe30c13325f48a55f46afa5"
+        },
+        {
+          "upstream": "design/netlist/differential_receiver.spice",
+          "sha256": "76a1e6f9263a115f9103461a03d1f796ec92644e15398a463659c25cce78b13d"
+        },
+        {
+          "upstream": "design/netlist/se_receiver_dp.spice",
+          "sha256": "1f854210680331a1df73b96b317479cad4af325192fec68b0b61fb1421fac0b3"
+        },
+        {
+          "upstream": "design/netlist/se_receiver_dm.spice",
+          "sha256": "ebfc91ac1306060dfa0ffce7d91e048b4fc8b50cfebbd5804c3aaf9b58a20554"
+        },
+        {
+          "upstream": "design/netlist/dplus_pullup.spice",
+          "sha256": "9c645ecf0da6d80fb05d85c33d2941cc48bc328a00cd427f0c11bdf980b2cceb"
+        },
+        {
+          "upstream": "sim/driver-signal-quality/testbench/driver_tb.spice",
+          "sha256": "19ed8ac619b40f5bd235105ef83212f78a4b911893a27204af0c3b574e02f658"
+        },
+        {
+          "upstream": "sim/driver-signal-quality/testbench/tb.json",
+          "sha256": "4a2887e51394239a834690b685f4756db62b2b138979f3f053f0386837b5adbf"
+        },
+        {
+          "upstream": "sim/driver-signal-quality/records/20260817-203552-a408cb6.md",
+          "sha256": "dbbbb0ee7ba61358b6fdc96549d774e3ff8dc841eddf4571e29dc92ed6528165"
+        },
+        {
+          "upstream": "sim/diff-receiver-sensitivity/testbench/diff_rx_tb.spice",
+          "sha256": "1b68ebfc89d5c81ab1ff3cb5c15f9827207b52ed0ddb6b76f64f69c49b2d4a49"
+        },
+        {
+          "upstream": "sim/diff-receiver-sensitivity/testbench/tb.json",
+          "sha256": "d39da52c24b6b430e2c3f674b0f2ee6a581cd0b063fee5621b10e6e9d9642596"
+        },
+        {
+          "upstream": "sim/diff-receiver-sensitivity/records/20261008-193113-2e9f63e.md",
+          "sha256": "b1d7de06ff99c70ff434f4b0ef023932ac5a253a4527118f81757abc03b41a34"
+        },
+        {
+          "upstream": "sim/se-receiver-dp-thresholds/testbench/se_rx_dp_tb.spice",
+          "sha256": "bcacba3cc4a12b6335896577c12c2380c0acaa9e060f30e58f0288c94a244347"
+        },
+        {
+          "upstream": "sim/se-receiver-dp-thresholds/testbench/tb.json",
+          "sha256": "6d03782586098d4c3276fe92bac7e83e6dc93f20dce911bdbd5043c046634600"
+        },
+        {
+          "upstream": "sim/se-receiver-dp-thresholds/records/20260817-203631-a408cb6.md",
+          "sha256": "96235a7ef9181bc4e92af9bee7fa65877594ee712936c3d7399c6874f710f99e"
+        },
+        {
+          "upstream": "sim/se-receiver-dm-thresholds/testbench/se_rx_dm_tb.spice",
+          "sha256": "ee49ea5fd004fa16a594af9d26c8feafbbebf5e4ebe6ef18ad42bcbf8e9e91f4"
+        },
+        {
+          "upstream": "sim/se-receiver-dm-thresholds/testbench/tb.json",
+          "sha256": "5035cd54fcee6c34c07c9a8bd2a5d4963843a71444da1c127145bf0bc114ce51"
+        },
+        {
+          "upstream": "sim/se-receiver-dm-thresholds/records/20260817-203654-a408cb6.md",
+          "sha256": "6f6a7eb2ceacac6249a743c67401f720ad800620a55e223abb011026a88f7b29"
+        },
+        {
+          "upstream": "sim/dplus-pullup-tolerance/testbench/pullup_tb.spice",
+          "sha256": "0028edf13f12c9b423df0488368feb66b148ee822d271e767ff04f30e37cea5f"
+        },
+        {
+          "upstream": "sim/dplus-pullup-tolerance/testbench/tb.json",
+          "sha256": "fea97b33bbfa2239af5cc53fa692b17d5ae710f12a73faa2b9a52c88ecbada58"
+        },
+        {
+          "upstream": "sim/dplus-pullup-tolerance/records/20260905-185112-6bfe679.md",
+          "sha256": "8d9fcf72dc357bfbd94acef0e78ebfae284bc691d71b556992bee4a9e274a223"
+        }
+      ]
+    },
+    {
+      "from": "2AMLogic/sky130-pll",
+      "commit": "a0af4e4368e72dca764c4a87e292cd6f5aed15f4",
+      "mode": "fetched",
+      "files": [
+        {
+          "upstream": "spec/target-spec.md",
+          "sha256": "471cc273b0bdf5151c65038a1b6071304bb77a8ca3614e02b11110c6af356999"
+        }
+      ]
+    }
+  ],
+  "in_tree": [
+    {
+      "block": "dplus-pullup-supply-regulator",
+      "sibling": "2AMLogic/sky130-ldo",
+      "status": "evaluate"
+    }
+  ]
+}

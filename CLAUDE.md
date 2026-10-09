@@ -8,12 +8,19 @@ plus an analog front end — so both flows apply.
   Yosys for synthesis, OpenROAD for place-and-route. Analog: xschem +
   ngspice. Layout, DRC, and LVS go through klayout-tools (`klt`) in both
   cases.
-- **Scope discipline — the thing most likely to go wrong here.** This block
-  is an assembly of analog pieces that are still being designed in sibling
-  canary repos. Do not design a PLL, a driver, or a receiver here. If a
-  needed sibling block is not ready, the correct move is to specify the
-  interface to it and stop, not to build a throwaway. Work in scope today:
-  the spec, the architecture and partitioning, and the digital UTMI side.
+- **Scope discipline — the thing most likely to go wrong here.** Operator
+  ruling 2026-10-08 (#40, recorded in
+  `spec/decision-records/0003-analog-port-scope-and-squelch-disposition.md`):
+  the analog blocks (FS line driver, differential receiver, single-ended
+  receivers, D+ pull-up and termination) are **ported from
+  `2AMLogic/gf180-usb2-phy` into this repo**, one block per issue, following
+  `docs/porting-plan.md`. No new sibling repos. The **PLL is never designed
+  here**: it is consumed by pinned reference to `2AMLogic/sky130-pll`; if it
+  is not ready, specify the interface and stop. A port re-derives every
+  device for sky130 and re-measures every row: a gf180 result is source
+  evidence, never a sky130 claim. Do not add blocks the plan does not list
+  (no squelch detector, no regulator) without a ratified decision record.
+  Pins to sibling repos live in `reuse.lock.json` at full commit SHAs.
 - **Friction protocol (the canary's job)**: every time klayout-tools is
   awkward, missing a capability, or wrong for what you need, file an issue at
   `2AMLogic/klayout-tools` describing the tool gap generically — that tracker
