@@ -33,6 +33,9 @@ def fake_runner(overrides=None, fail_at=None, calls=None):
         if stage == "sta":
             return {"worst_slack_ns": 0.5, "total_negative_slack_ns": 0.0}
         if stage == "extract":
+            out = Path(args[args.index("-o") + 1])
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text("* mocked extracted netlist\n")
             return {"status": "ok"}
         if stage == "lvs":
             return {"status": "match", "error_count": 0,
@@ -75,6 +78,9 @@ def test_dry_run_all_corners(capsys):
     assert "design/netlist/usb_utmi_top.v" in out
     assert "TEMPLATE PROBLEMS" not in out and "nothing executed" in out
     assert "clk_utmi" in out
+    for c in CORNERS:
+        assert f"par.pdk.corner={c}  sta.pdk.corner={c}" in out
+    assert out.count("identical to utmi_stub") == len(CORNERS)
 
 
 def test_unknown_corner_rejected():
@@ -129,6 +135,22 @@ def test_missing_stage_output(tmp_path):
     assert s["failed_stage"] == "place_and_route"
     assert "gds_path" in s["stage_error"]
     assert s["stage_status"]["sta"] == "not_run"
+
+
+def test_missing_extract_netlist_fails_before_lvs(tmp_path):
+    # extract "succeeds" but writes no -o file and reports no netlist_path
+    r = fake_runner({"extract": {"status": "ok"}})
+    s = rp.run_corner("tt_025C_1v80", tmp_path / "w", {}, r)
+    assert s["failed_stage"] == "extract"
+    assert "netlist_path" in s["stage_error"]
+    assert s["stage_status"]["lvs"] == "not_run"
+    assert (tmp_path / "w" / "extract-report.json").is_file()  # raw envelope kept
+
+
+def test_sta_without_numeric_slack_is_not_pass(tmp_path):
+    s = rp.run_corner("tt_025C_1v80", tmp_path / "w", {}, fake_runner({"sta": {}}))
+    assert s["timing"]["verdict"] == "fail"
+    assert any("not a constrained pass" in f for f in s["gate_findings"])
 
 
 def test_power_and_lvs_gates(tmp_path):

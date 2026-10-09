@@ -295,8 +295,14 @@ def run_corner(corner: str, work: Path, env: dict, runner: Runner = run_flow.run
         argv = extract_argv(paths["gds"], str(out))
         _save(work, "invocation-extract.json", {"argv": ["klt", *argv]})
         record(current, runner(argv, work, env), "invocation-extract.json")
-        if not out.is_file() and results[current].get("netlist_path"):
+        if not out.is_file():
+            # Fall back to the envelope's own path; a missing field raises here
+            # rather than handing LVS a netlist that does not exist.
             out = Path(need(results[current], "netlist_path", current))
+            if not out.is_file():
+                raise run_flow.StageError(
+                    f"extract reported netlist {out} but no such file exists"
+                )
 
         current = "lvs"
         _save(work, "request-lvs.json", resolve_lvs(str(out), paths["verilog"]))
@@ -358,8 +364,16 @@ def main(argv: list[str] | None = None) -> int:
         for corner in corners:
             bad = static_gate_problems(corner)
             print(f"\n== corner {corner} ==" + (f"  TEMPLATE PROBLEMS: {bad}" if bad else ""))
-            for step in plan(corner, BUILD_ROOT / corner):
+            steps = {s["stage"]: s for s in plan(corner, BUILD_ROOT / corner)}
+            for step in steps.values():
                 print(f"  {step['stage']:<16} klt {' '.join(step['cmd'])}")
+            par, sta, lvs = (steps[k]["request"] for k in ("place_and_route", "sta", "lvs"))
+            print(f"    par.pdk.corner={par['pdk']['corner']}  sta.pdk.corner={sta['pdk']['corner']}"
+                  f"  par.netlist={run_flow.rel_to_repo(par['netlist'])}")
+            print(f"    chain: sta.def <- {sta['def']}; extract/drc gds <- <PAR gds_path>;"
+                  f" lvs.layout <- extract -o; lvs.reference <- {lvs['reference']['netlist']}")
+            gates = "MISMATCH (see TEMPLATE PROBLEMS)" if bad else "identical to utmi_stub"
+            print(f"    gates: PDN `power` block and LVS `power_connectivity` {gates}")
         print("\n  dry run -- nothing executed")
         return 0
 
