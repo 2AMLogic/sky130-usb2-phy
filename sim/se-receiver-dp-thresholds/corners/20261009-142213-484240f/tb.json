@@ -1,0 +1,97 @@
+{
+  "name": "se-receiver-dp-thresholds",
+  "description": "sky130 single-ended D+ receiver (design/se_receiver_dp.sch) with the line input DP swept 0...3.0 V, across the 45-point PVT matrix.",
+  "claim": "Switching threshold and output logic levels of the sky130 single-ended D+ receiver over the 45-point PVT matrix (spec/usb2-phy.md section 6 row 'Single-ended receiver thresholds': VIH > 2.0 V, VIL < 0.8 V). Schematic-level, deterministic, no mismatch (no Monte Carlo), no layout parasitics; not a signoff or catalog-tier claim.",
+  "netlist": "se_rx_dp_tb.spice",
+  "include": [
+    "../../../design/netlist/se_receiver_dp.spice"
+  ],
+  "analysis": {
+    "kind": "dc",
+    "args": "vin 0 3.0 0.001"
+  },
+  "timeout_s": 900,
+  "measure": {
+    "vth_v": {
+      "spice": ".meas dc vth_v WHEN v(rxdp)=v(half) RISE=1"
+    },
+    "vth_last_v": {
+      "spice": ".meas dc vth_last_v WHEN v(rxdp)=v(half) CROSS=LAST"
+    },
+    "rxd_low_max_v": {
+      "spice": ".meas dc rxd_low_max_v MAX v(rxdp) FROM=0 TO=0.8"
+    },
+    "rxd_high_min_v": {
+      "spice": ".meas dc rxd_high_min_v MIN v(rxdp) FROM=2.0 TO=3.0"
+    },
+    "rxd_at_vil_v": {
+      "spice": ".meas dc rxd_at_vil_v FIND v(rxdp) AT=0.8"
+    },
+    "rxd_at_vih_v": {
+      "spice": ".meas dc rxd_at_vih_v FIND v(rxdp) AT=2.0"
+    },
+    "vref_v": {
+      "spice": ".meas dc vref_v FIND v(xrx.vref) AT=0"
+    },
+    "isup_ua": {
+      "spice": ".meas dc isup_ua FIND i(vi) AT=1.4",
+      "scale": 1000000.0
+    }
+  },
+  "checks": {
+    "vth_v": {
+      "gt": 0.8,
+      "lt": 2.0
+    },
+    "vth_last_v": {
+      "gt": 0.8,
+      "lt": 2.0,
+      "same_as": {
+        "measure": "vth_v",
+        "tol": 0.001
+      }
+    },
+    "rxd_low_max_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "rxd_high_min_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "rxd_at_vil_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "rxd_at_vih_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "vref_v": {
+      "min": 0.35,
+      "max": 0.5,
+      "per_supply": true
+    },
+    "isup_ua": {
+      "min": 1.0,
+      "max": 500.0
+    }
+  },
+  "record": {
+    "netlist_provenance": "schematic-derived netlist: xschem export of design/se_receiver_dp.sch (design/netlist/se_receiver_dp.spice, byte-identical to the deck frozen in the snapshot below) plus the testbench deck; no layout, no parasitic extraction",
+    "statistical_convention": "deterministic PVT corners only (5 process x 3 temperature x 3 supply); mismatch / Monte Carlo was NOT run, so comparator offset and VREF divider mismatch are not covered by this record",
+    "bounds": "the engineering criteria in the Method section (tb.json checks)",
+    "footer": "Scope: schematic-level electrical evidence for one block against the ratified single-ended receiver threshold row. It does not claim layout, DRC/LVS, mismatch, level shifting or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance.",
+    "detailed": true,
+    "method": [
+      "Stimulus: the line input DP swept 0 V to 3.0 V, 1 mV step (3001 points), ideal source; supply = swept I/O rail vsup (3.0 / 3.3 / 3.6 V). 3.0 V is the lowest matrix supply, so the input never exceeds the rail.",
+      "Output polarity: non-inverting, RXDP=1 (high) when DP is above the internal VREF threshold. Output decision level: RXDP crosses VDD/2 of the corner supply (node `half`).",
+      "Switching threshold `vth_v`: the first rising crossing of RXDP through VDD/2 (`.meas dc ... WHEN v(rxdp)=v(half) RISE=1`), resolved by interpolation between 1 mV points. Ratified row VIH > 2.0 V, VIL < 0.8 V: read as 'an input at or above 2.0 V reads high and an input at or below 0.8 V reads low', so the crossing must lie strictly inside (0.8 V, 2.0 V); checked with exclusive bounds (`gt` 0.8 / `lt` 2.0), so an endpoint value fails. A missing or non-finite crossing fails the corner; an inverted receiver has no rising crossing and fails.",
+      "Single crossing / monotonic: `vth_last_v` is the last crossing in either direction (`CROSS=LAST`); it must equal `vth_v` within one sweep step (1 mV, check `same_as`). A response that crosses more than once (non-monotonic, or rising then falling) fails.",
+      "Valid levels beyond the window (correct polarity throughout, not a single crossing): `rxd_low_max_v` = maximum of RXDP over DP in [0, 0.8] V must be <= 0.1 x VDD; `rxd_high_min_v` = minimum of RXDP over DP in [2.0, 3.0] V must be >= 0.9 x VDD. `rxd_at_vil_v` / `rxd_at_vih_v` are the boundary probes at exactly 0.8 V and 2.0 V, checked with the same bounds.",
+      "Output bounds (engineering criteria for the 3.3 V-domain RXDP, not USB driver VOH/VOL limits): high >= 0.9 x VDD and low <= 0.1 x VDD of the corner supply.",
+      "`vref_v`: the internal divider reference (node `xrx.vref`) at input 0 V, checked as a fraction of the corner supply against a 0.35-0.50 sanity bound (design value about 0.425); not a spec row.",
+      "`isup_ua`: receiver supply current (bias + divider) at input 1.4 V; sanity bound 1-500 uA, not a spec row."
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "netlist": "body.spice",
+  "engine": "ngspice",
+  "backend": "batch",
+  "models": {
+    "pdk": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice"
+  },
+  "corners": {
+    "process": [
+      "tt",
+      "ff",
+      "ss",
+      "fs",
+      "sf"
+    ],
+    "supply_v": {
+      "vsup": [
+        3.0,
+        3.3,
+        3.6
+      ]
+    },
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "analysis": {
+    "kind": "dc",
+    "args": "vin 0 3.0 0.001"
+  },
+  "measurements": [
+    {
+      "name": "vth_v",
+      "spice": ".meas dc vth_v WHEN v(rxdm)=v(half) RISE=1"
+    },
+    {
+      "name": "vth_last_v",
+      "spice": ".meas dc vth_last_v WHEN v(rxdm)=v(half) CROSS=LAST"
+    },
+    {
+      "name": "rxd_low_max_v",
+      "spice": ".meas dc rxd_low_max_v MAX v(rxdm) FROM=0 TO=0.8"
+    },
+    {
+      "name": "rxd_high_min_v",
+      "spice": ".meas dc rxd_high_min_v MIN v(rxdm) FROM=2.0 TO=3.0"
+    },
+    {
+      "name": "rxd_at_vil_v",
+      "spice": ".meas dc rxd_at_vil_v FIND v(rxdm) AT=0.8"
+    },
+    {
+      "name": "rxd_at_vih_v",
+      "spice": ".meas dc rxd_at_vih_v FIND v(rxdm) AT=2.0"
+    },
+    {
+      "name": "vref_v",
+      "spice": ".meas dc vref_v FIND v(xrx.vref) AT=0"
+    },
+    {
+      "name": "isup_ua",
+      "spice": ".meas dc isup_ua FIND i(vi) AT=1.4"
+    }
+  ],
+  "options": {
+    "timeout_s": 900,
+    "keep_artifacts": true
+  },
+  "batch": {
+    "runner_version_check": "warn"
+  }
+}

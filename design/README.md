@@ -1,6 +1,6 @@
 # design
 
-Analog schematics (xschem). One block per port issue (so far: `differential_receiver`, below): the analog blocks are ported here from `gf180-usb2-phy` (operator ruling 2026-10-08, #40) — see [`docs/porting-plan.md`](../docs/porting-plan.md).
+Analog schematics (xschem). One block per port issue (so far: `differential_receiver` and `se_receiver_dp` / `se_receiver_dm`, below): the analog blocks are ported here from `gf180-usb2-phy` (operator ruling 2026-10-08, #40) — see [`docs/porting-plan.md`](../docs/porting-plan.md).
 
 `design/netlist/` holds synthesized gate-level netlists of the digital partition.
 `netlist/usb_utmi_top.v` is the Yosys/`sky130_fd_sc_hd` mapping of the real UTMI top
@@ -141,3 +141,146 @@ failing at the buffer, although the recorded output passed.
 Not covered here: mismatch offset, supply/common-mode transients, input
 capacitance and pad loading, dynamic behaviour (propagation delay, rise and
 fall at the USB data rate), layout parasitics.
+
+## `se_receiver_dp.sch`, `se_receiver_dm.sch` (issue #110)
+
+Sky130 port of the `gf180-usb2-phy` single-ended D+ and D- receivers (source
+pinned at `0aab24943aa1379026ccebb8e5746580f1eb7947`, `design/se_receiver_dp.sch`,
+`design/se_receiver_dm.sch`, their netlists and the two
+`sim/se-receiver-d{p,m}-thresholds/testbench/` files; all stamped `fetched`
+with SHA-256 in `reuse.lock.json`, and the fetched bytes re-hashed equal to
+the stamps for this port). The topology is carried; every device was
+re-chosen for sky130 and every number re-measured. Nothing from the gf180
+evidence (records `20260817-203631-a408cb6` / `20260817-203654-a408cb6`) is a
+sky130 claim. The two cells are the same circuit and differ only in the
+names of the line input and the output pin.
+
+**Status: measured at schematic level only** (no layout, no parasitics, no
+mismatch). Evidence:
+`sim/se-receiver-dp-thresholds/records/20261009-142213-484240f.md` (D+, PASS
+45/45, batch job `klt-sim-a011a5f8e3fc`) and
+`sim/se-receiver-dm-thresholds/records/20261009-142853-484240f.md` (D-, PASS
+45/45, batch job `klt-sim-00d222e79282`). **Mismatch / Monte Carlo was not
+run**: comparator offset from device mismatch and divider-resistor mismatch
+are not covered; the measured threshold contains the systematic offset only.
+
+Regenerate the netlists with `design/export_netlist.sh se_receiver_dp` and
+`design/export_netlist.sh se_receiver_dm` (run here with xschem 3.4.4 and the
+installed open_pdks `sky130A` symbols). Two consecutive exports produced
+byte-identical files, and the same host re-exported
+`differential_receiver.spice` byte-identically, so the helper is reproducible
+across this xschem version.
+
+### Pin contract
+
+`se_receiver_dp VDD VSS DP RXDP` and `se_receiver_dm VDD VSS DM RXDM` (same
+order and names as the source).
+
+| Pin | Dir | Domain / meaning |
+|---|---|---|
+| `VDD` | inout (power) | 3.3 V I/O rail, 3.0-3.6 V (DR-0001 Decision 5, `spec/usb2-phy.md` section 5); also the top of the `VREF` divider |
+| `VSS` | inout (ground) | ground; all NMOS bulks and the resistor bodies |
+| `DP` / `DM` | in (analog) | the USB D+ / D- line after the pad, 0 V..`VDD`; gate of one input transistor only |
+| `RXDP` / `RXDM` | out | 3.3 V-domain logic, rail-to-rail `VSS`..`VDD`; non-inverting: `1` when the line is above the internal threshold (about 0.42 x `VDD`), `0` below it |
+
+No enable / power-down pin (as in the source). The output pin is declared
+`iopin` in the schematic, matching `differential_receiver`; electrically it is
+an output.
+
+### Output domain
+
+`RXDP` / `RXDM` are on the 3.3 V I/O rail. `rtl/usb_utmi_top.v` takes
+`dp`/`dm` as 1.8 V core inputs. **No level shifter is designed and no RTL is
+changed here**; the 3.3 V to 1.8 V crossing belongs to the integration issue.
+
+### Sky130 device choices and reasons
+
+Topology: the differential receiver's core (self-biased NMOS-input 5T OTA,
+PMOS diode/mirror load, tail mirrored 2x from a resistor-fed diode NMOS, two
+inverters with the first P-heavy) with the line on the diode-side input
+(`MN_INA`) and `VREF` on the mirror-side input (`MN_INB`); `VREF` is a
+ratiometric `R1`/`R2` divider off `VDD`.
+
+| Instance | Device | W (um) x m / L (um) |
+|---|---|---|
+| `MN_INA` (line), `MN_INB` (`VREF`) | `sky130_fd_pr__nfet_g5v0d10v5` | 10 x 2 / 0.5 |
+| `MP_LOADA`, `MP_LOADB` | `sky130_fd_pr__pfet_g5v0d10v5` | 10 x 4 / 0.5 |
+| `MNBIAS` / `MTAIL` | `nfet_g5v0d10v5` | 4 x 1 / 4 x 2, L 0.5 |
+| `MP_B1` / `MN_B1` (first inverter, 10:1) | `pfet_g5v0d10v5` / `nfet_g5v0d10v5` | 20 / 2, L 0.5 |
+| `MP_B2` / `MN_B2` (second inverter) | `pfet_g5v0d10v5` / `nfet_g5v0d10v5` | 10 / 5, L 0.5 |
+| `R1` (`VDD`-`VREF`) / `R2` (`VREF`-`VSS`) | `sky130_fd_pr__res_xhigh_po_1p41` | fixed 1.41 wide; L 19 / 14 |
+| `RBIAS` | `sky130_fd_pr__res_xhigh_po_1p41` | fixed 1.41 wide; L 140 |
+
+1. **MOS flavour: `g5v0d10v5` N and P, L = 0.5 um**, for the same reason as
+   the differential receiver: every device sees up to 3.6 V, so `*_01v8*`
+   core devices are excluded, and `g5v0d10v5` is the 5 V-rated family whose
+   model bins start at L = 0.5 um (the source used 0.28 um, and 0.5 um for
+   `MNBIAS`/`MTAIL`). `nfet_03v3_nvt` (native) was not used: the input pair
+   only has to resolve inputs around `VREF` (about 1.27-1.53 V), well above
+   the floor where a low threshold would help. The sizing is the
+   differential receiver's measured sizing reused unchanged, because the
+   single-ended cell is that comparator with one input tied to `VREF`, whose
+   1.27-1.53 V range sits inside the 0.8-2.5 V common mode already measured
+   for it. No sizing sweep was run.
+2. **Resistor flavour: `res_xhigh_po_1p41` for `R1`, `R2` and `RBIAS`.** The
+   divider is ratiometric: the threshold tracks `VREF / VDD`, which depends
+   only on the ratio of two resistors of the same flavour and width, so
+   absolute sheet-resistance spread cancels. The same flavour as `RBIAS`
+   keeps one resistor type in the cell. Lengths 19 / 14 um carry the source's
+   1900 / 1400 ratio; the model's end resistance shifts it slightly, and the
+   measured `VREF` is 0.4250-0.4252 x `VDD` over all 45 corners (1.275 V at
+   3.0 V, 1.403 V at 3.3 V, 1.531 V at 3.6 V). The source divider drew about
+   1 mA from the 3.3 V rail; the sky130 divider (about 47 kohm in total) drew
+   69.8 uA of the cell's 81.9 uA at input 0 V in one local debug probe (`tt`
+   27 C 3.3 V, unrecorded, divider current read through a temporary 0 V
+   source not present in the committed netlist). The recorded supply current
+   at input 1.4 V is 78-156 uA over the grid; it includes buffer crowbar
+   current where 1.4 V is close to that corner's threshold. `RBIAS` sets the
+   bias current, so its absolute spread matters; it is the same resistor as
+   in the differential receiver (L = 140 um), whose bias was shown to work
+   across the grid. `res_high_po` and `res_generic_po` were considered and
+   not simulated: the ratio, not the absolute value, sets the threshold, and
+   `xhigh_po` keeps the divider short at low current.
+3. **Supply pin naming:** `VDD` / `VSS`, unchanged from the source and the
+   same as `differential_receiver`; the 3.3 V domain is stated in the pin
+   contract, not in the names. The testbench connects `VDD` to the swept
+   source `vsup`.
+4. **Output domain:** 3.3 V, see above.
+
+### What the grids show
+
+The two records are identical in every measured value (same circuit, same
+deck apart from names). Over the 45 corners:
+
+| Quantity | min | max | Criterion |
+|---|---|---|---|
+| Switching threshold `vth_v` (first rising crossing of `VDD/2`) | 1.2505 V (`ff_100c_3.00v`) | 1.5136 V (`ss_-40c_3.60v`) | strictly inside (0.8, 2.0) V |
+| Last crossing `vth_last_v` | equal to `vth_v` at every corner (difference 0) | | within 1 mV of `vth_v` |
+| Threshold minus `VREF` (systematic offset) | -29.1 mV (`sf_100c_3.60v`) | -12.6 mV (`ss_-40c_3.00v`) | not a criterion |
+| Output max over input 0-0.8 V | | 48 nV (`fs_100c_3.60v`) | <= 0.1 x `VDD` |
+| Output min over input 2.0-3.0 V | = `VDD` at every corner (to printed digits) | | >= 0.9 x `VDD` |
+
+The worst margin to the ratified window is 450.5 mV above 0.8 V (at
+`ff_100c_3.00v`) and 486.4 mV below 2.0 V (at `ss_-40c_3.60v`). The threshold
+follows the supply (about 0.42 x `VDD`), so the low-supply corners sit
+nearest 0.8 V and the high-supply corners nearest 2.0 V. One rising crossing
+and nothing else at every corner: the response is monotonic over the swept
+0-3.0 V.
+
+Runner skew: as for the differential receiver, the fleet runner was klt
+0.5.0 against client 0.7.0 (`report.json` `runner_compatibility: mismatch`,
+version check `warn`); all 45 corners per line returned finite `.meas`
+values in the raw ngspice-46 logs. The execution-host PDK identity is
+client-reported (see `sim/README.md` Known limits). The D- record shows
+`dirty=True` because the D+ evidence was still uncommitted when it ran; both
+ran on commit `484240f`.
+
+Single-corner local debug (unrecorded, `--backend local --no-write`,
+`tt` 27 C 3.3 V, ngspice-42): threshold 1.383 V, `VREF` 1.403 V for both
+lines, matching the fleet result at that corner.
+
+Not covered here: mismatch offset (the 0.45 V margin each side is the budget
+for it, but no Monte Carlo was run), input hysteresis (the source has none
+and neither does this port), supply and line transients, input capacitance
+and pad loading, dynamic behaviour (propagation delay at the USB data rate),
+layout parasitics.
