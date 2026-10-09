@@ -1,0 +1,23 @@
+* smoke-inverter -- sky130 analog harness acceptance testbench (NOT a PHY block)
+*
+* Circuit body for `klt sim`. The harness prepends the title/params and the
+* request supplies the .lib corner section, .temp and the supply sweep.
+*
+* One thick-oxide (g5v0d10v5) CMOS inverter in three static states, driven
+* from the I/O rail (vsup) that `klt sim` re-targets per corner:
+*   1. gate = 0     -> output pulled to the rail through the PMOS   (VOH)
+*   2. gate = rail  -> output pulled to ground through the NMOS     (VOL)
+*   3. gate = drain -> self-biased inverter switching threshold     (VM)
+* No USB claim: these are plumbing probes. VM tracks the NMOS/PMOS strength
+* ratio, so a flat VM across the grid would mean .lib / .temp never applied.
+
+vsup vdd 0 dc 3.3
+vg1 g1 0 dc 0
+vg2 g2 vdd dc 0
+
+XN1 voh g1 0   0   sky130_fd_pr__nfet_g5v0d10v5 w=1 l=0.5
+XP1 voh g1 vdd vdd sky130_fd_pr__pfet_g5v0d10v5 w=2 l=0.5
+XN2 vol g2 0   0   sky130_fd_pr__nfet_g5v0d10v5 w=1 l=0.5
+XP2 vol g2 vdd vdd sky130_fd_pr__pfet_g5v0d10v5 w=2 l=0.5
+XN3 vm  vm 0   0   sky130_fd_pr__nfet_g5v0d10v5 w=1 l=0.5
+XP3 vm  vm vdd vdd sky130_fd_pr__pfet_g5v0d10v5 w=2 l=0.5

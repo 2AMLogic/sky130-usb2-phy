@@ -102,3 +102,4 @@ verification/.klt/
 # throwaway space for worktree-resident comparison/intermediate files —
 # see docs/environment-setup.md "Agent-session scratch"
 .loom/tmp/
+sim/.work/
