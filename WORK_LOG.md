@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-09
 
+- **PR #120**: feat: sky130 analog sim harness and 45-corner PVT matrix (#109)
+- **Issue #109** (closed): analog port: bootstrap the sky130 analog sim harness and 45-corner PVT matrix (prerequisite for the #106 block ports)
 - **PR #114**: docs: plan the gf180-usb2-phy analog port; lift the no-analog scope rule (#106)
 - **Issue #106** (closed): scope: port the analog blocks from gf180-usb2-phy into this repo (operator ruling 2026-10-08); lift the no-analog rule and write the porting plan
 
