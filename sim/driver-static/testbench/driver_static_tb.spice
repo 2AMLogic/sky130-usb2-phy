@@ -1,0 +1,117 @@
+* driver-static -- sky130 FS line driver (design/differential_driver.sch): static levels, output
+* resistance, enable truth table and disabled-pad leakage (issue #112)
+*
+* Circuit body for `klt sim`. The design netlist (design/netlist/differential_driver.spice) is
+* appended by the runner (tb.json "include") and frozen into the immutable snapshot. The request
+* supplies the .lib corner section, .temp and the supply value of `vsup` (3.0 / 3.3 / 3.6 V).
+*
+* Standalone input-domain contract (design/README.md): TXDP, TXDM, DRVEN and OE are VDD-domain
+* CMOS logic (logic 1 = VDD, logic 0 = VSS). Here logic 1 is wired to the supply node `vdd` and
+* logic 0 to ground, so the inputs track the corner supply exactly. The 1.8 V core -> VDD level
+* shifter is outside the cell and is not modelled.
+*
+* Instances (each an independent copy of the driver; only the pad loads differ):
+*   tt_*      enable truth table: all four TXDP/TXDM data combinations x all four DRVEN/OE
+*             combinations, each pad loaded by 10 kohm to VDD/2 (node `mid`), so a driven 1, a
+*             driven 0 and a released (high-impedance) pad are three distinct voltages.
+*   voh_*     VOH: driven high into 15 kohm to ground (USB 2.0 section 7.1.1.1 VOH load).
+*   voh15_*   VOH: driven high into 1.5 kohm to 3.6 V (the ratified row's parenthetical read
+*             literally for VOH; reported separately, see the record Method and DR-0004).
+*   vol_*     VOL: driven low into 1.5 kohm to 3.6 V (USB 2.0 section 7.1.1.1 VOL load).
+*   rh_*/rl_* total enabled output resistance: pad forced 0.3 V away from the rail the driver
+*             pulls to; R = 0.3 V / |pad current|; includes FET on-resistance and RSER.
+*   lka/lkb   disabled-driver pad leakage: pad forced by the swept source vf (0 to 3.6 V).
+*             lka: disabled by OE=0 (DRVEN=1, TXDP=1), D+ swept, D- held at VDD/2.
+*             lkb: disabled by DRVEN=0 (OE=1, TXDM=1), D- swept, D+ held at VDD/2.
+*   xq        enabled, driving J (TXDP=1, TXDM=0) into open pads, on its own supply branch
+*             (vsupq) so its static supply current is read separately.
+*
+* Analysis: one DC sweep of vf (the leakage forcing source, 0-3.65 V); all other quantities are
+* sweep-independent and are read at the first sweep point (AT=0).
+
+vsup vdd 0 dc 3.3
+ehalf mid 0 vol='v(vdd)/2'
+vpu pu 0 dc 3.6
+vf f 0 dc 0
+
+xtt_d00_e00 vdd 0 0 0 0 0 tt_dp_d00_e00 tt_dm_d00_e00 differential_driver
+rttp_d00_e00 tt_dp_d00_e00 mid 10k
+rttm_d00_e00 tt_dm_d00_e00 mid 10k
+xtt_d00_e01 vdd 0 0 0 0 vdd tt_dp_d00_e01 tt_dm_d00_e01 differential_driver
+rttp_d00_e01 tt_dp_d00_e01 mid 10k
+rttm_d00_e01 tt_dm_d00_e01 mid 10k
+xtt_d00_e10 vdd 0 0 0 vdd 0 tt_dp_d00_e10 tt_dm_d00_e10 differential_driver
+rttp_d00_e10 tt_dp_d00_e10 mid 10k
+rttm_d00_e10 tt_dm_d00_e10 mid 10k
+xtt_d00_e11 vdd 0 0 0 vdd vdd tt_dp_d00_e11 tt_dm_d00_e11 differential_driver
+rttp_d00_e11 tt_dp_d00_e11 mid 10k
+rttm_d00_e11 tt_dm_d00_e11 mid 10k
+xtt_d01_e00 vdd 0 0 vdd 0 0 tt_dp_d01_e00 tt_dm_d01_e00 differential_driver
+rttp_d01_e00 tt_dp_d01_e00 mid 10k
+rttm_d01_e00 tt_dm_d01_e00 mid 10k
+xtt_d01_e01 vdd 0 0 vdd 0 vdd tt_dp_d01_e01 tt_dm_d01_e01 differential_driver
+rttp_d01_e01 tt_dp_d01_e01 mid 10k
+rttm_d01_e01 tt_dm_d01_e01 mid 10k
+xtt_d01_e10 vdd 0 0 vdd vdd 0 tt_dp_d01_e10 tt_dm_d01_e10 differential_driver
+rttp_d01_e10 tt_dp_d01_e10 mid 10k
+rttm_d01_e10 tt_dm_d01_e10 mid 10k
+xtt_d01_e11 vdd 0 0 vdd vdd vdd tt_dp_d01_e11 tt_dm_d01_e11 differential_driver
+rttp_d01_e11 tt_dp_d01_e11 mid 10k
+rttm_d01_e11 tt_dm_d01_e11 mid 10k
+xtt_d10_e00 vdd 0 vdd 0 0 0 tt_dp_d10_e00 tt_dm_d10_e00 differential_driver
+rttp_d10_e00 tt_dp_d10_e00 mid 10k
+rttm_d10_e00 tt_dm_d10_e00 mid 10k
+xtt_d10_e01 vdd 0 vdd 0 0 vdd tt_dp_d10_e01 tt_dm_d10_e01 differential_driver
+rttp_d10_e01 tt_dp_d10_e01 mid 10k
+rttm_d10_e01 tt_dm_d10_e01 mid 10k
+xtt_d10_e10 vdd 0 vdd 0 vdd 0 tt_dp_d10_e10 tt_dm_d10_e10 differential_driver
+rttp_d10_e10 tt_dp_d10_e10 mid 10k
+rttm_d10_e10 tt_dm_d10_e10 mid 10k
+xtt_d10_e11 vdd 0 vdd 0 vdd vdd tt_dp_d10_e11 tt_dm_d10_e11 differential_driver
+rttp_d10_e11 tt_dp_d10_e11 mid 10k
+rttm_d10_e11 tt_dm_d10_e11 mid 10k
+xtt_d11_e00 vdd 0 vdd vdd 0 0 tt_dp_d11_e00 tt_dm_d11_e00 differential_driver
+rttp_d11_e00 tt_dp_d11_e00 mid 10k
+rttm_d11_e00 tt_dm_d11_e00 mid 10k
+xtt_d11_e01 vdd 0 vdd vdd 0 vdd tt_dp_d11_e01 tt_dm_d11_e01 differential_driver
+rttp_d11_e01 tt_dp_d11_e01 mid 10k
+rttm_d11_e01 tt_dm_d11_e01 mid 10k
+xtt_d11_e10 vdd 0 vdd vdd vdd 0 tt_dp_d11_e10 tt_dm_d11_e10 differential_driver
+rttp_d11_e10 tt_dp_d11_e10 mid 10k
+rttm_d11_e10 tt_dm_d11_e10 mid 10k
+xtt_d11_e11 vdd 0 vdd vdd vdd vdd tt_dp_d11_e11 tt_dm_d11_e11 differential_driver
+rttp_d11_e11 tt_dp_d11_e11 mid 10k
+rttm_d11_e11 tt_dm_d11_e11 mid 10k
+
+xvoh vdd 0 vdd vdd vdd vdd voh_dp voh_dm differential_driver
+rvohp voh_dp 0 15k
+rvohm voh_dm 0 15k
+xvoh15 vdd 0 vdd vdd vdd vdd voh15_dp voh15_dm differential_driver
+rvoh15p voh15_dp pu 1.5k
+rvoh15m voh15_dm pu 1.5k
+xvol vdd 0 0 0 vdd vdd vol_dp vol_dm differential_driver
+rvolp vol_dp pu 1.5k
+rvolm vol_dm pu 1.5k
+
+xrh vdd 0 vdd vdd vdd vdd rh_dp rh_dm differential_driver
+ehf hf 0 vol='v(vdd)-0.3'
+vsrhp hf rh_dp 0
+vsrhm hf rh_dm 0
+brhp rhv_dp 0 v='0.3/max(-i(vsrhp),1e-12)'
+brhm rhv_dm 0 v='0.3/max(-i(vsrhm),1e-12)'
+xrl vdd 0 0 0 vdd vdd rl_dp rl_dm differential_driver
+vlf lf 0 dc 0.3
+vsrlp lf rl_dp 0
+vsrlm lf rl_dm 0
+brlp rlv_dp 0 v='0.3/max(i(vsrlp),1e-12)'
+brlm rlv_dm 0 v='0.3/max(i(vsrlm),1e-12)'
+
+xlka vdd 0 vdd 0 vdd 0 lka_dp lka_dm differential_driver
+vsap lka_dp f 0
+vsam lka_dm mid 0
+xlkb vdd 0 0 vdd 0 vdd lkb_dp lkb_dm differential_driver
+vsbm lkb_dm f 0
+vsbp lkb_dp mid 0
+
+vsupq vdd vddq 0
+xq vddq 0 vdd 0 vdd vdd q_dp q_dm differential_driver
