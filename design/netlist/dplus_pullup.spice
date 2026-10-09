@@ -1,0 +1,48 @@
+* dplus_pullup -- exported by design/export_netlist.sh from design/dplus_pullup.sch (xschem, sky130 symbols)
+* Do not edit: edit the schematic and re-run the export.
+** sch_path: design/dplus_pullup.sch
+.subckt dplus_pullup DP VPU VSS PU_EN TRIM0 TRIM1 TRIM2 TRIM3
+*.iopin DP
+*.iopin VPU
+*.iopin VSS
+*.ipin PU_EN
+*.ipin TRIM0
+*.ipin TRIM1
+*.ipin TRIM2
+*.ipin TRIM3
+XMP_EN PU_ENB PU_EN VPU VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_EN PU_ENB PU_EN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_T0 TRIM0B TRIM0 VPU VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_T0 TRIM0B TRIM0 VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_T1 TRIM1B TRIM1 VPU VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_T1 TRIM1B TRIM1 VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_T2 TRIM2B TRIM2 VPU VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_T2 TRIM2B TRIM2 VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_T3 TRIM3B TRIM3 VPU VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_T3 TRIM3B TRIM3 VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_ENSW N0 PU_ENB VPU VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=100 nf=1 ad=29 as=29 pd=200.58
++ ps=200.58 nrd=0.0029 nrs=0.0029 sa=0 sb=0 sd=0 mult=10 m=10
+XRBASE N1 N0 sky130_fd_pr__res_generic_po W=2 L=40.3 m=1
+XR0 N2 N1 sky130_fd_pr__res_generic_po W=2 L=2.4 m=1
+XMP_B0 N1 TRIM0B N2 VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=100 nf=1 ad=29 as=29 pd=200.58
++ ps=200.58 nrd=0.0029 nrs=0.0029 sa=0 sb=0 sd=0 mult=8 m=8
+XR1 N3 N2 sky130_fd_pr__res_generic_po W=2 L=4.8 m=1
+XMP_B1 N2 TRIM1B N3 VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=100 nf=1 ad=29 as=29 pd=200.58
++ ps=200.58 nrd=0.0029 nrs=0.0029 sa=0 sb=0 sd=0 mult=4 m=4
+XR2 N4 N3 sky130_fd_pr__res_generic_po W=2 L=9.6 m=1
+XMP_B2 N3 TRIM2B N4 VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=100 nf=1 ad=29 as=29 pd=200.58
++ ps=200.58 nrd=0.0029 nrs=0.0029 sa=0 sb=0 sd=0 mult=2 m=2
+XR3 DP N4 sky130_fd_pr__res_generic_po W=2 L=19.2 m=1
+XMP_B3 N4 TRIM3B DP VPU sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=100 nf=1 ad=29 as=29 pd=200.58
++ ps=200.58 nrd=0.0029 nrs=0.0029 sa=0 sb=0 sd=0 mult=1 m=1
+.ends

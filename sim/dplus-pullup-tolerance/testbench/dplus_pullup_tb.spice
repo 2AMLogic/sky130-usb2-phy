@@ -1,0 +1,86 @@
+* dplus-pullup-tolerance -- sky130 trimmed D+ pull-up: effective resistance at every trim code, plus the disabled state
+*
+* Circuit body for `klt sim`. The design netlist (design/netlist/dplus_pullup.spice) is appended by the
+* runner (tb.json "include") and frozen into the immutable snapshot. The request supplies the .lib corner
+* section, .temp and the supply sweep (vsup, which is the pull-up supply VPU).
+*
+* Row (spec/usb2-phy.md section 6, "FS device D+ pull-up"): 1.5 kohm +/-5 % (1.425-1.575 kohm) to 3.0-3.6 V,
+* with the trim code selected at test. The host's 15 kohm downstream-port pull-down (section 6) is a
+* testbench LOAD on D+; no on-die pull-down is modelled (DR-0003).
+*
+* Enabled state: one pull-up instance per trim code (16 instances), TRIM bits and PU_EN tied hard to
+* the VPU rail or ground (0 / VPU is the documented control-input domain; no control pin is driven
+* above VPU), D+ loaded by 15 kohm to ground. V(DP) is measured raw for every code; the evaluator
+* (sim/harness/trim.py) forms
+*     I_load = V(DP)/15000  [A, from DP into the load]   R_eff = (VPU - V(DP))/I_load  [ohm]
+* so R_eff includes the enable switch, the ladder and the bypass switches.
+*
+* Disabled state (PU_EN = 0), four conditions, each with its own instance whose supply pin is fed
+* through a 0 V ammeter:
+*   d1  all-bypass trim (TRIM=1111, minimum resistance), D+ loaded by 15 kohm to ground
+*   d0  all-zero trim (TRIM=0000, maximum resistance),   D+ loaded by 15 kohm to ground
+*   dz  TRIM=1111, D+ forced to 0 V by a 0 V source    (worst forward leakage VPU -> DP)
+*   dh  TRIM=1111, D+ forced to VPU                    (no voltage across the open switch)
+* Currents: ioff_* = current delivered into the D+ node by the pull-up (positive = out of the pull-up
+* into the line), isup_* = current drawn from the VPU supply by that instance. No leakage limit is
+* ratified; these are engineering data.
+
+vsup vdd 0 dc 3.3
+
+* ---- enabled: 16 instances, one per trim code (TRIM3..TRIM0 = bits of the code)
+xpu00 dp00 vdd 0 vdd 0 0 0 0 dplus_pullup
+rld00 dp00 0 15k
+xpu01 dp01 vdd 0 vdd vdd 0 0 0 dplus_pullup
+rld01 dp01 0 15k
+xpu02 dp02 vdd 0 vdd 0 vdd 0 0 dplus_pullup
+rld02 dp02 0 15k
+xpu03 dp03 vdd 0 vdd vdd vdd 0 0 dplus_pullup
+rld03 dp03 0 15k
+xpu04 dp04 vdd 0 vdd 0 0 vdd 0 dplus_pullup
+rld04 dp04 0 15k
+xpu05 dp05 vdd 0 vdd vdd 0 vdd 0 dplus_pullup
+rld05 dp05 0 15k
+xpu06 dp06 vdd 0 vdd 0 vdd vdd 0 dplus_pullup
+rld06 dp06 0 15k
+xpu07 dp07 vdd 0 vdd vdd vdd vdd 0 dplus_pullup
+rld07 dp07 0 15k
+xpu08 dp08 vdd 0 vdd 0 0 0 vdd dplus_pullup
+rld08 dp08 0 15k
+xpu09 dp09 vdd 0 vdd vdd 0 0 vdd dplus_pullup
+rld09 dp09 0 15k
+xpu10 dp10 vdd 0 vdd 0 vdd 0 vdd dplus_pullup
+rld10 dp10 0 15k
+xpu11 dp11 vdd 0 vdd vdd vdd 0 vdd dplus_pullup
+rld11 dp11 0 15k
+xpu12 dp12 vdd 0 vdd 0 0 vdd vdd dplus_pullup
+rld12 dp12 0 15k
+xpu13 dp13 vdd 0 vdd vdd 0 vdd vdd dplus_pullup
+rld13 dp13 0 15k
+xpu14 dp14 vdd 0 vdd 0 vdd vdd vdd dplus_pullup
+rld14 dp14 0 15k
+xpu15 dp15 vdd 0 vdd vdd vdd vdd vdd dplus_pullup
+rld15 dp15 0 15k
+
+* ---- disabled (PU_EN = 0)
+* d1 / d0: loaded by the host 15 kohm; ammeter vm* in series with the load
+vid1 vdd vpd1 dc 0
+xpud1 dpd1 vpd1 0 0 vdd vdd vdd vdd dplus_pullup
+rldd1 dpd1 dmd1 15k
+vmd1 dmd1 0 dc 0
+vid0 vdd vpd0 dc 0
+xpud0 dpd0 vpd0 0 0 0 0 0 0 dplus_pullup
+rldd0 dpd0 dmd0 15k
+vmd0 dmd0 0 dc 0
+* dz: D+ forced to 0 V (vfzdz measures the current into the forcing source)
+vidz vdd vpdz dc 0
+xpudz dpdz vpdz 0 0 vdd vdd vdd vdd dplus_pullup
+vfzdz dpdz 0 dc 0
+* dh: D+ forced to VPU (current from the forcing source into D+)
+vidh vdd vpdh dc 0
+xpudh dpdh vpdh 0 0 vdd vdd vdd vdd dplus_pullup
+vfzdh vdd dpdh dc 0
+
+* Dummy source the two-point DC sweep (`dc vdum 0 1 1`) runs over: it gives `.meas ... AT=0` an interval while
+* keeping `.meas dc` available on fleet runners that predate expression measurements (see sim/README.md).
+vdum dum 0 dc 0
+rdum dum 0 1k
