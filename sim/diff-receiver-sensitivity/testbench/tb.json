@@ -1,0 +1,163 @@
+{
+  "name": "diff-receiver-sensitivity",
+  "description": "sky130 differential receiver (design/differential_receiver.sch) swept over VDIFF = DP - DM = -400...+400 mV at common-mode 0.8, 1.65 and 2.5 V, across the 45-point PVT matrix.",
+  "claim": "Input-referred threshold and output logic level of the sky130 differential receiver at common-mode 0.8, 1.65 and 2.5 V over the 45-point PVT matrix (spec/usb2-phy.md section 6 rows 'Differential input sensitivity' > 200 mV and 'Common-mode input range' 0.8-2.5 V). Schematic-level, deterministic, no mismatch (no Monte Carlo), no layout parasitics; not a signoff or catalog-tier claim.",
+  "netlist": "diff_receiver_tb.spice",
+  "include": [
+    "../../../design/netlist/differential_receiver.spice"
+  ],
+  "analysis": {
+    "kind": "dc",
+    "args": "vd -0.4 0.4 0.001"
+  },
+  "timeout_s": 900,
+  "measure": {
+    "vth_cm0p80_v": {
+      "spice": ".meas dc vth_cm0p80_v WHEN v(rxd08)=v(half) CROSS=1"
+    },
+    "rxd_pos_min_cm0p80_v": {
+      "spice": ".meas dc rxd_pos_min_cm0p80_v MIN v(rxd08) FROM=0.2005 TO=0.4"
+    },
+    "rxd_neg_max_cm0p80_v": {
+      "spice": ".meas dc rxd_neg_max_cm0p80_v MAX v(rxd08) FROM=-0.4 TO=-0.2005"
+    },
+    "rxd_p200_cm0p80_v": {
+      "spice": ".meas dc rxd_p200_cm0p80_v FIND v(rxd08) AT=0.2"
+    },
+    "rxd_m200_cm0p80_v": {
+      "spice": ".meas dc rxd_m200_cm0p80_v FIND v(rxd08) AT=-0.2"
+    },
+    "isup_ua_cm0p80": {
+      "spice": ".meas dc isup_ua_cm0p80 FIND i(vi08) AT=0",
+      "scale": 1000000.0
+    },
+    "vth_cm1p65_v": {
+      "spice": ".meas dc vth_cm1p65_v WHEN v(rxd165)=v(half) CROSS=1"
+    },
+    "rxd_pos_min_cm1p65_v": {
+      "spice": ".meas dc rxd_pos_min_cm1p65_v MIN v(rxd165) FROM=0.2005 TO=0.4"
+    },
+    "rxd_neg_max_cm1p65_v": {
+      "spice": ".meas dc rxd_neg_max_cm1p65_v MAX v(rxd165) FROM=-0.4 TO=-0.2005"
+    },
+    "rxd_p200_cm1p65_v": {
+      "spice": ".meas dc rxd_p200_cm1p65_v FIND v(rxd165) AT=0.2"
+    },
+    "rxd_m200_cm1p65_v": {
+      "spice": ".meas dc rxd_m200_cm1p65_v FIND v(rxd165) AT=-0.2"
+    },
+    "isup_ua_cm1p65": {
+      "spice": ".meas dc isup_ua_cm1p65 FIND i(vi165) AT=0",
+      "scale": 1000000.0
+    },
+    "vth_cm2p50_v": {
+      "spice": ".meas dc vth_cm2p50_v WHEN v(rxd25)=v(half) CROSS=1"
+    },
+    "rxd_pos_min_cm2p50_v": {
+      "spice": ".meas dc rxd_pos_min_cm2p50_v MIN v(rxd25) FROM=0.2005 TO=0.4"
+    },
+    "rxd_neg_max_cm2p50_v": {
+      "spice": ".meas dc rxd_neg_max_cm2p50_v MAX v(rxd25) FROM=-0.4 TO=-0.2005"
+    },
+    "rxd_p200_cm2p50_v": {
+      "spice": ".meas dc rxd_p200_cm2p50_v FIND v(rxd25) AT=0.2"
+    },
+    "rxd_m200_cm2p50_v": {
+      "spice": ".meas dc rxd_m200_cm2p50_v FIND v(rxd25) AT=-0.2"
+    },
+    "isup_ua_cm2p50": {
+      "spice": ".meas dc isup_ua_cm2p50 FIND i(vi25) AT=0",
+      "scale": 1000000.0
+    }
+  },
+  "checks": {
+    "vth_cm0p80_v": {
+      "min": -0.2,
+      "max": 0.2
+    },
+    "rxd_pos_min_cm0p80_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "rxd_neg_max_cm0p80_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "rxd_p200_cm0p80_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "rxd_m200_cm0p80_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "isup_ua_cm0p80": {
+      "min": 1.0,
+      "max": 500.0
+    },
+    "vth_cm1p65_v": {
+      "min": -0.2,
+      "max": 0.2
+    },
+    "rxd_pos_min_cm1p65_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "rxd_neg_max_cm1p65_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "rxd_p200_cm1p65_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "rxd_m200_cm1p65_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "isup_ua_cm1p65": {
+      "min": 1.0,
+      "max": 500.0
+    },
+    "vth_cm2p50_v": {
+      "min": -0.2,
+      "max": 0.2
+    },
+    "rxd_pos_min_cm2p50_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "rxd_neg_max_cm2p50_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "rxd_p200_cm2p50_v": {
+      "min": 0.9,
+      "per_supply": true
+    },
+    "rxd_m200_cm2p50_v": {
+      "max": 0.1,
+      "per_supply": true
+    },
+    "isup_ua_cm2p50": {
+      "min": 1.0,
+      "max": 500.0
+    }
+  },
+  "record": {
+    "netlist_provenance": "schematic-derived netlist: xschem export of design/differential_receiver.sch (design/netlist/differential_receiver.spice, byte-identical to the deck frozen in the snapshot below) plus the testbench deck; no layout, no parasitic extraction",
+    "statistical_convention": "deterministic PVT corners only (5 process x 3 temperature x 3 supply); mismatch / Monte Carlo was NOT run, so input offset from device mismatch is not covered by this record",
+    "bounds": "the engineering criteria in the Method section (tb.json checks)",
+    "footer": "Scope: schematic-level electrical evidence for one block against the ratified differential-sensitivity and common-mode rows. It does not claim layout, DRC/LVS, mismatch, level shifting or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance.",
+    "detailed": true,
+    "method": [
+      "Stimulus: DP = VCM + VDIFF/2, DM = VCM - VDIFF/2, VCM in {0.8, 1.65, 2.5} V (one receiver instance per VCM, suffix cm0p80 / cm1p65 / cm2p50 in measurement names); VDIFF swept -400 mV to +400 mV, 1 mV step, both polarities; supply = swept I/O rail vsup.",
+      "Output decision threshold: RXD crosses VDD/2 (node `half`); RXD=1 means DP more positive than DM (J).",
+      "Input-referred threshold `vth_*`: the first VDIFF (rising sweep from -400 mV) at which RXD = VDD/2, from `.meas dc ... WHEN v(rxd)=v(half) CROSS=1`; checked to lie strictly inside (-200 mV, +200 mV). A non-finite or absent crossing fails the corner.",
+      "Strict >200 mV wording preserved: correct polarity is checked over the whole range beyond the boundary, `rxd_pos_min_*` = minimum of RXD over VDIFF in [+200.5, +400] mV and `rxd_neg_max_*` = maximum of RXD over VDIFF in [-400, -200.5] mV (an inverted or non-monotonic receiver fails). `rxd_p200_*` / `rxd_m200_*` are the +/-200 mV boundary probes, checked with the same bounds.",
+      "Output bounds (engineering criteria for the 3.3 V-domain RXD, not USB driver VOH/VOL limits): high >= 0.9 x VDD and low <= 0.1 x VDD of the corner supply.",
+      "`isup_ua_*`: supply current of that receiver at VDIFF = 0 (bias behaviour); sanity bound 1-500 uA, not a spec row.",
+      "Sweep resolution: 1 mV, so `vth_*` is resolved to the interpolated crossing between 1 mV points; the 0.5 mV guard (200.5 mV) keeps the +/-200 mV points out of the beyond-boundary windows."
+    ]
+  }
+}

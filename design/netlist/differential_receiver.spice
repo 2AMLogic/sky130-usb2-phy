@@ -1,0 +1,31 @@
+* differential_receiver -- exported by design/export_netlist.sh from design/differential_receiver.sch (xschem, sky130 symbols)
+* Do not edit: edit the schematic and re-run the export.
+** sch_path: design/differential_receiver.sch
+.subckt differential_receiver VDD VSS DP DM RXD
+*.iopin VDD
+*.iopin VSS
+*.ipin DP
+*.ipin DM
+*.iopin RXD
+XRBIAS IBIASN VDD VSS sky130_fd_pr__res_xhigh_po_1p41 L=140 mult=1 m=1
+XMNBIAS IBIASN IBIASN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMTAIL TAIL IBIASN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=2 m=2
+XMN_INA LOADDIODE DP TAIL VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9 pd=20.58
++ ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=2 m=2
+XMN_INB AMPOUT DM TAIL VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9 pd=20.58
++ ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=2 m=2
+XMP_LOADA LOADDIODE LOADDIODE VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9
++ pd=20.58 ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=4 m=4
+XMP_LOADB AMPOUT LOADDIODE VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9
++ pd=20.58 ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=4 m=4
+XMP_B1 BUF1 AMPOUT VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_B1 BUF1 AMPOUT VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_B2 RXD BUF1 VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9 pd=20.58 ps=20.58
++ nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_B2 RXD BUF1 VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=5 nf=1 ad=1.45 as=1.45 pd=10.58
++ ps=10.58 nrd=0.058 nrs=0.058 sa=0 sb=0 sd=0 mult=1 m=1
+.ends

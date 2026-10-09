@@ -5,9 +5,9 @@ produced from them (ngspice, run through `klt sim`). Results are **append-only
 evidence**: a record is never edited or deleted; a re-run, even one that
 corrects a mistake, mints a new record id and leaves the old one byte-identical.
 
-This is harness infrastructure only. No USB analog block lives here yet; the
-block ports (see [`docs/porting-plan.md`](../docs/porting-plan.md)) add one
-experiment directory each.
+This directory is the harness plus one experiment directory per block port (see
+[`docs/porting-plan.md`](../docs/porting-plan.md)): `smoke-inverter` (harness
+acceptance only) and `diff-receiver-sensitivity` (#111, first block).
 
 ## Provenance and master
 
@@ -151,6 +151,31 @@ the fleet runner image is older than the client (below).
 Records: see `sim/smoke-inverter/records/`. The first attempt
 (`20261009-092814-47b5f79`) is kept as failed evidence: the fleet runner
 (klt 0.5.0) refused a 0.7.0 client request, so all 45 corners errored.
+
+## diff-receiver-sensitivity
+
+The sky130 differential receiver (`design/differential_receiver.sch`) at
+common-mode 0.8 / 1.65 / 2.5 V, one receiver instance per common-mode point in
+one deck, so the single 45-corner `klt sim` request yields 135 individually
+named PVT x common-mode results (`*_cm0p80_*`, `*_cm1p65_*`, `*_cm2p50_*`).
+The method, thresholds and output bounds are declared in
+`testbench/tb.json` (`record.method`, `checks`) and repeated in every record.
+`tb.json` extensions used here (all optional; smoke omits them):
+
+- `include`: design netlists appended to the deck body, so the immutable
+  snapshot contains the exact circuit simulated.
+- `record`: prose for the record (`netlist_provenance`,
+  `statistical_convention`, `bounds`, `footer`, `method`, `detailed`).
+  Defaults are the smoke wording, so smoke records render exactly as before;
+  `detailed` adds per-measurement ranges and lists every failure with its
+  corner id.
+
+Records: `diff-receiver-sensitivity/records/`. No Monte Carlo is run; each
+record says so. Record `20261009-121939-0555da1` ran on fleet runner klt 0.5.0
+against client 0.7.0 (its provenance line shows the client; `report.json` has
+`runner_compatibility: mismatch`, version check `warn`); all 45 corners
+returned finite `.meas` values in the raw logs, and a re-run is due once the
+runner image is updated (klayout-tools #2851, #2948, #2917, under Known limits).
 
 ## Known limits
 
