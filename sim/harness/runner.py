@@ -173,7 +173,14 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
     ok = sum(1 for r in m["results"] if r["status"] == "ok")
     meta = {**SMOKE_RECORD_DEFAULTS, **(parts.get("record_meta") or {})}
     detailed = bool(meta.get("detailed"))
-    shown = m["problems"] if detailed else m["problems"][:5]
+    if not m["problems"]:
+        problem_note = ""
+    elif detailed:
+        # Detailed records list every failure in their own section; only the count goes here.
+        problem_note = f"; {len(m['problems'])} problem(s)"
+    else:
+        # Smoke wording, byte-identical to records minted before `detailed` existed.
+        problem_note = f"; problems: {'; '.join(m['problems'][:5])}"
     lines = [
         f"# {m['experiment']} -- {rid}", "",
         f"- **Record ID**: {rid}",
@@ -185,8 +192,7 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
         f"{{{', '.join(f'{v:g}' for v in m['axes']['supply_v'])}}} V (sim/corners.json); full matrix, no subset",
         f"- **Statistical convention**: {meta['statistical_convention']}",
         f"- **Result**: {m['status']} -- {ok}/{len(m['results'])} corners simulated with finite measurements inside "
-        f"{meta['bounds']}" + (f"; {len(m['problems'])} problem(s)" + ("" if detailed else f": {'; '.join(shown)}")
-                              if m["problems"] else ""),
+        f"{meta['bounds']}{problem_note}",
         f"- **Links**: {rel}/testbench/, {rel}/netlist-snapshots/{rid}.spice, {rel}/corners/{rid}/ "
         f"(evidence.json sha256 `{manifest_sha}`)",
         f"- **Timestamp / author**: {m['started_utc']} / {m['author']}",

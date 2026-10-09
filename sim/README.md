@@ -171,7 +171,11 @@ The method, thresholds and output bounds are declared in
   corner id.
 
 Records: `diff-receiver-sensitivity/records/`. No Monte Carlo is run; each
-record says so.
+record says so. Record `20261009-121939-0555da1` ran on fleet runner klt 0.5.0
+against client 0.7.0 (its provenance line shows the client; `report.json` has
+`runner_compatibility: mismatch`, version check `warn`); all 45 corners
+returned finite `.meas` values in the raw logs, and a re-run is due once the
+runner image is updated (klayout-tools #2851, #2948, #2917, under Known limits).
 
 ## Known limits
 

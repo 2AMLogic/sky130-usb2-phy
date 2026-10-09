@@ -112,14 +112,24 @@ sweep, 1 mV step), over all 45 corners:
 All inside the +/-200 mV bound; the worst-case margin to -200 mV is 124 mV and
 to +200 mV is 212 mV (the systematic offset is negative: the receiver
 switches to J when DP is still slightly below DM). Output beyond the boundary:
-RXD >= 1.0 x VDD (to the printed digits) for every VDIFF in [+200.5, +400] mV
-and <= 3.9 uV for every VDIFF in [-400, -200.5] mV, at all 135 PVT x
-common-mode combinations; the +/-200 mV probes agree. The 2.5 V common-mode
+RXD >= 1.0 x VDD (to the printed digits) for every VDIFF in [+200, +400] mV
+(the +200.5..+400 mV window and the +200 mV probe agree), and the low output
+peaks at 3.85 uV over [-400, -200.5] mV and at 4.13 uV at the -200 mV probe
+(both at 2.5 V common mode, `sf_100c_3.00v`), at all 135 PVT x
+common-mode combinations. The 2.5 V common-mode
 ceiling is the weakest point (largest threshold shift and largest low-level
 leakage, both at `sf` 100 C 3.0 V): this is the gf180 failure mechanism's
 sky130 counterpart. It does not fail here, with the P-heavy first inverter.
 
-Single-corner debug probes run locally before the grid (not recorded; tail
+Runner skew: this record's provenance line shows the client (klt 0.7.0), but
+the fleet runner that executed it was klt 0.5.0 (`report.json`
+`runner_compatibility: mismatch`, requested with the version check in `warn`
+mode); all 45 corners still returned finite `.meas` values in the raw ngspice
+logs, and a re-run is due once the runner image is updated (tracked at
+`2AMLogic/klayout-tools` #2851, #2948, #2917; see `sim/README.md` Known limits).
+
+Single-corner debug probes run locally before the grid (unrecorded
+observations, no evidence file; do not cite as measured evidence; tail
 node and OTA output at `VDIFF = +/-200 mV`): at 0.8 V common mode the tail
 current mirror sits in triode (tail node 1-130 mV, supply current is 35-60 % of its 1.65 V value
 in the probed corners) yet the pair still steers; at 2.5 V the

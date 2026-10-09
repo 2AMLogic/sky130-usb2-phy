@@ -174,5 +174,26 @@ def test_smoke_record_prose_is_unchanged_by_default():
         assert line in old
 
 
+SMOKE_RECORDS = sorted(p.stem for p in (SIM / "smoke-inverter/records").glob("*.md"))
+
+
+def test_both_smoke_outcomes_are_committed():
+    statuses = {json.loads((SIM / f"smoke-inverter/corners/{rid}/evidence.json").read_text())["status"]
+                for rid in SMOKE_RECORDS}
+    assert {"PASS", "FAIL"} <= statuses
+
+
+@pytest.mark.parametrize("rid", SMOKE_RECORDS)
+def test_committed_smoke_record_rerenders_byte_identical(rid):
+    """Re-render each committed smoke record from its own evidence; the default prose must not drift."""
+    cdir = SIM / "smoke-inverter/corners" / rid
+    mbytes = (cdir / "evidence.json").read_bytes()
+    tb = json.loads((cdir / "tb.json").read_text())
+    assert "record" not in tb
+    parts = {"claim": tb["claim"], "supersedes": "", "record_meta": tb.get("record") or {}}
+    rec = runner.render_record(rid, json.loads(mbytes), runner.sha256_bytes(mbytes), parts)
+    assert rec.encode() == (SIM / "smoke-inverter/records" / f"{rid}.md").read_bytes()
+
+
 def test_smoke_testbench_declares_no_record_overrides():
     assert "record" not in SMOKE_TB and "include" not in SMOKE_TB
