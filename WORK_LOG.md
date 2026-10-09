@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-08
+
+- **Issue #104** (closed): Digital T1 item 1: synthesize the real UTMI datapath (usb_utmi_top) and commit its gate-level netlist
+- **PR #107**: Digital T1 item 1: synthesize usb_utmi_top and commit its gate-level netlist
+
 ### 2026-10-03
 
 - **Issue #89** (closed): Guard telemetry: bare rm -rf / (filesystem-root wipe) DENY confirmed correct

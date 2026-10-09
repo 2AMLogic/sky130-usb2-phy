@@ -8,11 +8,13 @@ PDK, designed by AI agents driving
 open-source flow — cocotb + Icarus and Yosys/OpenROAD on the digital side,
 xschem + ngspice on the analog side.
 
-**Status: digital UTMI-side RTL in progress.** The full-speed receive and
-transmit paths (bit sync, NRZI encode/decode, (de)stuffing, framing, UTMI CDC)
-are implemented and verified under cocotb; the analog front end and layout do
-not exist yet. See the scope note below for what is deliberately *not* being
-built yet.
+**Status: digital UTMI-side RTL implemented; physical implementation pending.**
+The full-speed receive and transmit paths (bit sync, NRZI encode/decode,
+(de)stuffing, framing, UTMI CDC) are implemented and verified under cocotb. A
+design-anchored synthesis experiment and gate-level netlist now exist for the
+real `usb_utmi_top`, with the disclosed combinational-loop and gate-level-test
+limitations recorded in the characterization report; place-and-route and the
+analog front end do not exist yet. See the scope note below for what remains.
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -68,17 +70,19 @@ build-here/sibling-canary partition table.
 Maturity ladder: spec ratified → UTMI RTL verified → analog blocks available
 → assembly → DRC/LVS-clean → shuttle seat → measured silicon. **Current
 position: spec ratified, FS receive/transmit RTL implemented and
-cocotb-verified; the physical flow (synthesis/P&R/STA/LVS/DRC) has been run
-only for the toolchain-plumbing stub, never for the real UTMI RTL.**
+cocotb-verified, and the real `usb_utmi_top` has a design-anchored
+synthesis-only record and committed gate-level netlist. P&R/STA/LVS/DRC have
+still been run only for the toolchain-plumbing stub, not the real UTMI RTL.**
 
 ## Characterization
 
 [`docs/characterization.md`](docs/characterization.md) is the authoritative
 characterization summary: every row of `spec/usb2-phy.md` §6 indexed against
 the evidence records that exist, per PVT corner, with the record id behind
-each entry. Its headline today is that **zero spec rows have design-anchored
-evidence** — the committed records are the `smoke-utmi_stub` toolchain
-experiment (`design.anchors_design_claim: false`), not the real datapath.
+each entry. The real datapath now has one design-anchored, nominal-corner
+synthesis record, but it does not establish a spec-row result; the complete
+physical-flow records remain the `smoke-utmi_stub` toolchain experiment
+(`design.anchors_design_claim: false`).
 
 ## Repo layout
 
