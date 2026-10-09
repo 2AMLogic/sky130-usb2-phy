@@ -1,0 +1,76 @@
+* driver-signal-quality -- sky130 FS line driver (design/differential_driver.sch) into the 50 pF test load
+*
+* Circuit body for `klt sim`. The design netlist (design/netlist/differential_driver.spice) is
+* appended by the runner (tb.json "include") and frozen into the immutable snapshot. The request
+* supplies the .lib corner section, .temp and the supply value of `vsup` (3.0 / 3.3 / 3.6 V).
+*
+* Standalone input-domain contract (design/README.md): TXDP, TXDM, DRVEN and OE are VDD-domain
+* CMOS logic (0 = VSS, 1 = VDD). The stimulus is built from B sources scaled by v(vdd), so logic 1
+* tracks the corner supply. The 1.8 V core -> VDD level shifter is outside the cell and not modelled.
+*
+* Carried from gf180-usb2-phy @ 0aab249 sim/driver-signal-quality/testbench/driver_tb.spice
+* (stamped in reuse.lock.json): the 50 pF load per line with no resistor, the complementary
+* TXDP/TXDM stimulus rising at 100 ns and falling at 200 ns with 0.5 ns input edges, 10 %/90 %
+* levels that follow the corner supply, the crossover as v(dp) at v(dp) = v(dm), and the
+* last-crossing single-crossing test. Everything else (enable path, monotonic-edge masks,
+* enable/disable transitions) is new here.
+*
+* Instance xa (rise/fall, matching, crossover, monotonic, single crossing): DRVEN = OE = 1;
+*   TXDP = ctl, TXDM = not ctl; ctl rises at 100 ns, falls at 200 ns. D+ rises and D- falls in the
+*   first transition, the reverse in the second. 50 pF to ground on D+ and on D- (the test load of
+*   the ratified row; no termination resistor). The 100 ns half period is longer than the 83.33 ns
+*   FS bit on purpose: settling, not bit-rate fidelity, is what an edge measurement needs.
+* Instances xb, xc (enable / disable transitions): each pad is forced to VDD/2 by an ideal source
+*   whose current is the measurement (positive = current out of the driver into the source).
+*   DRVEN = 1; OE rises at 100 ns and falls at 200 ns (0.5 ns edges). xb: TXDP = 1, TXDM = 0
+*   (D+ sources, D- sinks); xc: TXDP = 0, TXDM = 1, so each line is seen driving high and low.
+*   Engineering data only: no ratified limit exists.
+
+vsup vdd 0 dc 3.3
+ehalf mid 0 vol='v(vdd)/2'
+
+* ---- xa: signal quality ----
+vctl ctl 0 pulse(0 1 100n 0.5n 0.5n 100n 400n)
+btxdp txdp 0 v='v(vdd)*v(ctl)'
+btxdm txdm 0 v='v(vdd)*(1-v(ctl))'
+xa vdd 0 txdp txdm vdd vdd dp dm differential_driver
+cdp dp 0 50p
+cdm dm 0 50p
+* line voltages as a fraction of the corner supply (10 % / 90 % thresholds follow the supply)
+bdpn dpn 0 v='v(dp)/v(vdd)'
+bdmn dmn 0 v='v(dm)/v(vdd)'
+* overshoot above VDD and undershoot below VSS (engineering data)
+bovp ovp 0 v='v(dp)-v(vdd)'
+bovm ovm 0 v='v(dm)-v(vdd)'
+bunp unp 0 v='-v(dp)'
+bunm unm 0 v='-v(dm)'
+* slope in V/ns (ddt in its own B source; a ddt() inside a conditional expression evaluates to 0),
+* masked to the 10 %..90 % band of the line's own edge: outside the band the mask is +1 for the
+* rising and -1 for the falling window, so MIN/MAX over an edge window sees only in-band slope
+bddp ddp 0 v='ddt(v(dp))*1e-9'
+bddm ddm 0 v='ddt(v(dm))*1e-9'
+bsrp srp 0 v='(v(dpn) > 0.1 && v(dpn) < 0.9) ? v(ddp) : 1'
+bsfp sfp 0 v='(v(dpn) > 0.1 && v(dpn) < 0.9) ? v(ddp) : -1'
+bsrm srm 0 v='(v(dmn) > 0.1 && v(dmn) < 0.9) ? v(ddm) : 1'
+bsfm sfm 0 v='(v(dmn) > 0.1 && v(dmn) < 0.9) ? v(ddm) : -1'
+
+* ---- xb, xc: enable / disable transitions into a pad forced to VDD/2 ----
+voet oet 0 pulse(0 1 100n 0.5n 0.5n 100n 400n)
+boe oe 0 v='v(vdd)*v(oet)'
+bhi hi 0 v='v(vdd)'
+xb vdd 0 hi 0 vdd oe xb_dp xb_dm differential_driver
+vsbp xb_dp mid 0
+vsbm xb_dm mid 0
+xc vdd 0 0 hi vdd oe xc_dp xc_dm differential_driver
+vscp xc_dp mid 0
+vscm xc_dm mid 0
+* absolute pad current, and the wrong-polarity part of it (a pad driven high should only source,
+* one driven low only sink; positive current = out of the driver)
+babp abp 0 v='abs(i(vsbp))'
+babm abm 0 v='abs(i(vsbm))'
+bacp acp 0 v='abs(i(vscp))'
+bacm acm 0 v='abs(i(vscm))'
+bwbp wbp 0 v='max(-i(vsbp),0)'
+bwbm wbm 0 v='max(i(vsbm),0)'
+bwcp wcp 0 v='max(i(vscp),0)'
+bwcm wcm 0 v='max(-i(vscm),0)'

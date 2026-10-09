@@ -1,0 +1,166 @@
+* differential_driver -- exported by design/export_netlist.sh from design/differential_driver.sch (xschem, sky130 symbols)
+* Do not edit: edit the schematic and re-run the export.
+** sch_path: design/differential_driver.sch
+.subckt differential_driver VDD VSS TXDP TXDM DRVEN OE DP DM
+*.iopin VDD
+*.iopin VSS
+*.ipin TXDP
+*.ipin TXDM
+*.ipin DRVEN
+*.ipin OE
+*.iopin DP
+*.iopin DM
+XMP_ENA ENB DRVEN VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_ENB ENB OE VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58
++ nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_ENA ENB DRVEN ENX VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_ENB ENX OE VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58
++ nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_ENI EN ENB VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58 ps=8.58
++ nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_ENI EN ENB VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58
++ nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XRB VBN VDD VSS sky130_fd_pr__res_xhigh_po_1p41 L=30 mult=1 m=1
+XMNB VBN VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58 ps=8.58
++ nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMNB2 VBP VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58 ps=8.58
++ nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMPB VBP VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58 ps=16.58
++ nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PA1_DP PA_DP TXDP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PA2_DP PA_DP EN VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA1_DP PA_DP TXDP PAX_DP VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA2_DP PAX_DP EN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PINV_DP PON_DP PA_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PINV_DP PON_DP PA_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB1_DP NBX_DP TXDP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB2_DP NB_DP ENB NBX_DP VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB1_DP NB_DP TXDP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB2_DP NB_DP ENB VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NINV_DP NONB_DP NB_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NINV_DP NONB_DP NB_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_POFF_DP PG_DP PON_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSW_DP PG_DP PON_DP XP_DP VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=16 nf=1 ad=4.64 as=4.64
++ pd=32.58 ps=32.58 nrd=0.0181 nrs=0.0181 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSRC_DP XP_DP VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=25 m=25
+XMN_NOFF_DP NG_DP NONB_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8
++ pd=40.58 ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSW_DP NG_DP NONB_DP XN_DP VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSRC_DP XN_DP VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=8 m=8
+XMP_KREP_DP KSP_DP PG_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9 pd=20.58
++ ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KBIAS_DP KSP_DP VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINV_DP KSPB_DP KSP_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINV_DP KSPB_DP KSP_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK1_DP PG_DP PON_DP KPX_DP VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK2_DP KPX_DP KSPB_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KREPN_DP KSN_DP NG_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KBIASN_DP KSN_DP VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINVN_DP KSNB_DP KSN_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINVN_DP KSNB_DP KSN_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK1N_DP NG_DP NONB_DP KNX_DP VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK2N_DP KNX_DP KSNB_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XCP_DP PG_DP OUTI_DP sky130_fd_pr__cap_mim_m3_1 W=42 L=42 MF=1 m=1
+XCN_DP NG_DP OUTI_DP sky130_fd_pr__cap_mim_m3_1 W=24 L=24 MF=1 m=1
+XMP_OUT_DP OUTI_DP PG_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=40 m=40
+XMN_OUT_DP OUTI_DP NG_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=13 m=13
+XRSER_DP DP OUTI_DP sky130_fd_pr__res_generic_po W=20 L=10.8 m=1
+XMP_PA1_DM PA_DM TXDM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PA2_DM PA_DM EN VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA1_DM PA_DM TXDM PAX_DM VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA2_DM PAX_DM EN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PINV_DM PON_DM PA_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PINV_DM PON_DM PA_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB1_DM NBX_DM TXDM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB2_DM NB_DM ENB NBX_DM VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB1_DM NB_DM TXDM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB2_DM NB_DM ENB VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NINV_DM NONB_DM NB_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NINV_DM NONB_DM NB_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_POFF_DM PG_DM PON_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSW_DM PG_DM PON_DM XP_DM VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=16 nf=1 ad=4.64 as=4.64
++ pd=32.58 ps=32.58 nrd=0.0181 nrs=0.0181 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSRC_DM XP_DM VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=25 m=25
+XMN_NOFF_DM NG_DM NONB_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8
++ pd=40.58 ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSW_DM NG_DM NONB_DM XN_DM VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSRC_DM XN_DM VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=8 m=8
+XMP_KREP_DM KSP_DM PG_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9 pd=20.58
++ ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KBIAS_DM KSP_DM VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINV_DM KSPB_DM KSP_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINV_DM KSPB_DM KSP_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK1_DM PG_DM PON_DM KPX_DM VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK2_DM KPX_DM KSPB_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KREPN_DM KSN_DM NG_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KBIASN_DM KSN_DM VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINVN_DM KSNB_DM KSN_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINVN_DM KSNB_DM KSN_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK1N_DM NG_DM NONB_DM KNX_DM VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK2N_DM KNX_DM KSNB_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XCP_DM PG_DM OUTI_DM sky130_fd_pr__cap_mim_m3_1 W=42 L=42 MF=1 m=1
+XCN_DM NG_DM OUTI_DM sky130_fd_pr__cap_mim_m3_1 W=24 L=24 MF=1 m=1
+XMP_OUT_DM OUTI_DM PG_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=40 m=40
+XMN_OUT_DM OUTI_DM NG_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=13 m=13
+XRSER_DM DM OUTI_DM sky130_fd_pr__res_generic_po W=20 L=10.8 m=1
+.ends
