@@ -290,9 +290,9 @@ def _reseal(sim, rid, edit):
 
 
 def _variant_rid(sim):
-    for p in (sim / EXP.name / "corners").iterdir():
+    for p in sorted((sim / EXP.name / "corners").iterdir()):
         m = json.loads((p / "evidence.json").read_text())
-        if m.get("variant") == "resistor-sets":
+        if m.get("variant") == "resistor-sets" and m["status"] == "PASS":
             return p.name
 
 
@@ -352,3 +352,26 @@ def test_full_225_grid_cannot_run_locally_or_be_a_recorded_subset(sandbox):
         runner.run("dplus-pullup-tolerance", "batch", True, {"process": ["hh"]}, variant="resistor-sets")
     with pytest.raises(runner.RunError):
         runner.run("dplus-pullup-tolerance", "batch", True, {}, variant="nope")
+
+
+def test_committed_225_point_record_rederives_independently():
+    """The committed batch record, recomputed here from the raw V(DP) with its own formula."""
+    pass_recs = []
+    for p in sorted((EXP / "corners").iterdir()):
+        m = json.loads((p / "evidence.json").read_text())
+        if m.get("variant") == "resistor-sets" and m["status"] == "PASS":
+            pass_recs.append((p, m))
+    if not pass_recs:
+        pytest.skip("no PASS resistor-sets record committed yet")
+    cdir, m = pass_recs[-1]
+    rep = json.loads((cdir / "report.json").read_text())
+    assert len(rep["corners"]) == 225 and m["job_id"] and len(m["sections"]) == 25
+    assert m["pdk"]["lib_sha256"] == RES.pdk["lib_sha256"]
+    seen = set()
+    for c in rep["corners"]:
+        vpu = c["supply_v"]["vsup"]
+        v = {x["name"]: x["value"] for x in c["measurements"]}
+        r = [(vpu - v[f"vdp_c{k:02d}_v"]) / (v[f"vdp_c{k:02d}_v"] / RL) for k in range(16)]
+        assert any(1425 <= x <= 1575 for x in r), (c["process"], c["temperature_c"], vpu)
+        seen.add(mx.key(c["process"], c["temperature_c"], vpu))
+    assert seen == {mx.key(*p) for p in RES.points()}

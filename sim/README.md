@@ -325,7 +325,13 @@ differ from the approved mapping, and `evidence.json` stores the mapping and inc
     python3 sim/run_corners.py dplus-pullup-tolerance --variant resistor-sets   # batch only, recorded
 
 An experiment opts in with a `variants` entry in its `tb.json` (it may override only `matrix_id`,
-`claim` and `record` prose). Only `dplus-pullup-tolerance` has one. Not yet swept over the resistor
+`claim` and `record` prose). Only `dplus-pullup-tolerance` has one: record `20261010-014615-8ebfb55` is PASS 225/225 on the
+batch backend (job `klt-sim-10dfd5d87262`; fleet runner klt 0.5.0 vs client 0.7.0, run with
+`--klt-runner-version-check warn`; the default `enforce` attempt `20261010-014506-8adcaaf` was
+refused for the skew with all 225 corners `error`). The earlier records
+`20261010-011518-cf49e32`, `-011907-cb1d9ce`, `-012518-9f1c2dd`, `-013051-9f1c2dd` and
+`-013733-8adcaaf` are FAIL attempts the fleet refused for capacity (batch_no_capacity); they are kept
+and are not coverage. Not yet swept over the resistor
 sets (each needs its own variant and record): `diff-receiver-sensitivity`,
 `se-receiver-dp-thresholds`, `se-receiver-dm-thresholds`, `driver-static`,
 `driver-signal-quality`; their records stay 45-point, typical-resistor evidence.

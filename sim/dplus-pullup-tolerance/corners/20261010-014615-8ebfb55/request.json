@@ -1,0 +1,167 @@
+{
+  "netlist": "body.spice",
+  "engine": "ngspice",
+  "backend": "batch",
+  "models": {
+    "pdk": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice"
+  },
+  "corners": {
+    "process": [
+      "tt",
+      "sf",
+      "ff",
+      "ss",
+      "fs",
+      "ll",
+      "sf_ll",
+      "ff_ll",
+      "ss_ll",
+      "fs_ll",
+      "hh",
+      "sf_hh",
+      "ff_hh",
+      "ss_hh",
+      "fs_hh",
+      "hl",
+      "sf_hl",
+      "ff_hl",
+      "ss_hl",
+      "fs_hl",
+      "lh",
+      "sf_lh",
+      "ff_lh",
+      "ss_lh",
+      "fs_lh"
+    ],
+    "supply_v": {
+      "vsup": [
+        3.0,
+        3.3,
+        3.6
+      ]
+    },
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "analysis": {
+    "kind": "dc",
+    "args": "vdum 0 1 1"
+  },
+  "measurements": [
+    {
+      "name": "vdp_c00_v",
+      "spice": ".meas dc vdp_c00_v FIND v(dp00) AT=0"
+    },
+    {
+      "name": "vdp_c01_v",
+      "spice": ".meas dc vdp_c01_v FIND v(dp01) AT=0"
+    },
+    {
+      "name": "vdp_c02_v",
+      "spice": ".meas dc vdp_c02_v FIND v(dp02) AT=0"
+    },
+    {
+      "name": "vdp_c03_v",
+      "spice": ".meas dc vdp_c03_v FIND v(dp03) AT=0"
+    },
+    {
+      "name": "vdp_c04_v",
+      "spice": ".meas dc vdp_c04_v FIND v(dp04) AT=0"
+    },
+    {
+      "name": "vdp_c05_v",
+      "spice": ".meas dc vdp_c05_v FIND v(dp05) AT=0"
+    },
+    {
+      "name": "vdp_c06_v",
+      "spice": ".meas dc vdp_c06_v FIND v(dp06) AT=0"
+    },
+    {
+      "name": "vdp_c07_v",
+      "spice": ".meas dc vdp_c07_v FIND v(dp07) AT=0"
+    },
+    {
+      "name": "vdp_c08_v",
+      "spice": ".meas dc vdp_c08_v FIND v(dp08) AT=0"
+    },
+    {
+      "name": "vdp_c09_v",
+      "spice": ".meas dc vdp_c09_v FIND v(dp09) AT=0"
+    },
+    {
+      "name": "vdp_c10_v",
+      "spice": ".meas dc vdp_c10_v FIND v(dp10) AT=0"
+    },
+    {
+      "name": "vdp_c11_v",
+      "spice": ".meas dc vdp_c11_v FIND v(dp11) AT=0"
+    },
+    {
+      "name": "vdp_c12_v",
+      "spice": ".meas dc vdp_c12_v FIND v(dp12) AT=0"
+    },
+    {
+      "name": "vdp_c13_v",
+      "spice": ".meas dc vdp_c13_v FIND v(dp13) AT=0"
+    },
+    {
+      "name": "vdp_c14_v",
+      "spice": ".meas dc vdp_c14_v FIND v(dp14) AT=0"
+    },
+    {
+      "name": "vdp_c15_v",
+      "spice": ".meas dc vdp_c15_v FIND v(dp15) AT=0"
+    },
+    {
+      "name": "voff_d1_v",
+      "spice": ".meas dc voff_d1_v FIND v(dpd1) AT=0"
+    },
+    {
+      "name": "voff_d0_v",
+      "spice": ".meas dc voff_d0_v FIND v(dpd0) AT=0"
+    },
+    {
+      "name": "ioff_d1_na",
+      "spice": ".meas dc ioff_d1_na FIND i(vmd1) AT=0"
+    },
+    {
+      "name": "ioff_d0_na",
+      "spice": ".meas dc ioff_d0_na FIND i(vmd0) AT=0"
+    },
+    {
+      "name": "ioff_dz_na",
+      "spice": ".meas dc ioff_dz_na FIND i(vfzdz) AT=0"
+    },
+    {
+      "name": "ioff_dh_na",
+      "spice": ".meas dc ioff_dh_na FIND i(vfzdh) AT=0"
+    },
+    {
+      "name": "isup_d1_na",
+      "spice": ".meas dc isup_d1_na FIND i(vid1) AT=0"
+    },
+    {
+      "name": "isup_d0_na",
+      "spice": ".meas dc isup_d0_na FIND i(vid0) AT=0"
+    },
+    {
+      "name": "isup_dz_na",
+      "spice": ".meas dc isup_dz_na FIND i(vidz) AT=0"
+    },
+    {
+      "name": "isup_dh_na",
+      "spice": ".meas dc isup_dh_na FIND i(vidh) AT=0"
+    }
+  ],
+  "options": {
+    "timeout_s": 900,
+    "keep_artifacts": true
+  },
+  "batch": {
+    "runner_version_check": "warn"
+  }
+}

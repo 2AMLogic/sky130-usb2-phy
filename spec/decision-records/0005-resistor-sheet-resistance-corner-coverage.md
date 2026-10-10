@@ -117,3 +117,16 @@ through their own `var_mult` terms in the same files.
 - Every number here is a design target or an observation from the library
   text until the recorded run verifies it; this record asserts no electrical
   PASS.
+
+## Result of the recorded run (observation, not a ratified claim)
+
+`sim/dplus-pullup-tolerance/records/20261010-014615-8ebfb55.md`: batch job
+`klt-sim-10dfd5d87262`, PASS 225/225 (every point has at least two codes in
+1425 to 1575 ohm; best code 1 to 14), independently recomputed from the raw
+V(DP) in the envelope. Extremes: the highest code-15 resistance is 1443.9 ohm
+(`sf_hl`, 100 C, 3.0 V) and the lowest code-0 resistance is 1531.7 ohm
+(`fs_lh`, -40 C, 3.6 V), so the code range brackets the window with 19 ohm of
+margin at the high-resistance end. Six earlier attempts are kept as FAIL
+records (five `batch_no_capacity`, one fleet-runner/client klt version skew
+refused under the default `enforce`; the PASS run used
+`--klt-runner-version-check warn` as the other batch records do).

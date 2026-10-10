@@ -381,27 +381,33 @@ DR-0003 are unchanged.
    MOS corners and the resistor temperature coefficient (`tc1r` 8.916e-4,
    `tc2r` 8.443e-7, `tnom` 30 C: factor 0.942 at -40 C, 1.067 at 100 C) but not
    the resistor sheet-resistance spread. That spread is what the trim range
-   exists for, so it is covered here by a separate **design-basis check, not
-   a recorded result**: two single-corner local `ngspice` runs of this netlist
-   (code 0000 and 1111) with the extreme resistor sets applied together with
-   the slowest / fastest MOS and the temperature that moves the resistor the
-   same way:
+   exists for. It is now covered by a **recorded** supplemental sweep (#126,
+   `spec/decision-records/0005-resistor-sheet-resistance-corner-coverage.md`,
+   `sim/dplus-pullup-tolerance/records/20261010-014615-8ebfb55.md`): all 16
+   codes at 225 points = 5 MOS corners x {typical, `ll`, `hh`, `hl`, `lh`} x
+   3 temperatures x 3 supplies, batch job `klt-sim-10dfd5d87262`. The suffixed
+   sections also change the capacitor set and the `tol_*` width tolerances, and
+   they are the PDK's global corners, not per-device spread. The two
+   single-corner local runs that this item used to carry as an unrecorded
+   check are reproduced exactly by that record:
 
    | Condition | R(code 0) | R(code 15) |
    |---|---|---|
-   | `ss`, 100 C, 3.0 V, `res_high` | 2283 ohm | 1380 ohm |
-   | `ff`, -40 C, 3.6 V, `res_low` | 1607 ohm | 926 ohm |
+   | `ss_hh`, 100 C, 3.0 V (was "`ss` + `res_high`") | 2283 ohm | 1380 ohm |
+   | `ff_ll`, -40 C, 3.6 V (was "`ff` + `res_low`") | 1607 ohm | 926 ohm |
 
-   At both extremes the code range still brackets 1.5 kohm: at the
-   hottest, slowest, highest-resistance condition even code 15 is 1380 ohm
-   (below 1425), and at the coldest, fastest, lowest-resistance condition
-   code 0 is 1607 ohm (above 1575). With about 52 ohm per step, a code then
-   lands inside the 150 ohm wide window at any point of the range. Only the
-   two end codes were run at these extremes; all codes at every resistor
-   set, and a recorded sweep over `res_low` / `res_high`, were **not** run
-   and no claim is made for them (adding resistor sets to the harness
-   matrix would be a change to `sim/corners.json`, owned by #109, not made
-   here).
+   Over the 225 points the extremes are set by the mixed `hl` / `lh` sets, not
+   `hh` / `ll`: the highest code-15 resistance is 1443.9 ohm (`sf_hl`, 100 C,
+   3.0 V) and the lowest code-0 resistance is 1531.7 ohm (`fs_lh`, -40 C,
+   3.6 V). Both are inside the 1425 to 1575 ohm window, by 19 ohm and 43 ohm:
+   the code range brackets the target at every point but the margin at the
+   high-resistance end is thin, so a wider sheet spread than the PDK's global
+   corners would break it. At every point at least two codes are in the
+   window (minimum `n_in_window` = 2, e.g. `tt` 27 C 3.6 V) and the best code
+   is between 1 and 14 (never an end code), and the per-point best resistance
+   is 1467 to 1531 ohm (computed from the stored raw V(DP)). Per-device
+   resistor spread, mismatch and Monte Carlo remain unrun, and the best code is
+   still chosen per point, not as one calibration code.
 3. **Base value, LSB and bit count re-derived** (not the source's 1000 ohm +
    5 bits). Required covering range: the resistors alone move roughly -19 %
    to +21 % over the sheet spread (0.875 to 1.11) and temperature (0.942 to
@@ -475,7 +481,8 @@ in the window across voltage and temperature after trimming at a single
 condition (codes 6 to 10 are best at different corners; the grid does not
 show the spread of a single fixed code, although `R_eff` per code is in the
 record for anyone who wants to compute it). (2) The grid does not exercise
-the resistor sheet-resistance spread (item 2 above). (3) Schematic level:
+the resistor sheet-resistance spread (item 2 above; the supplemental 225-point
+record covers the PDK's global resistor sets). (3) Schematic level:
 no mismatch / Monte Carlo, no extracted parasitics, no layout. (4) `VPU` is an
 input, there is no regulator and no trim storage; nothing here is an
 integrated-PHY claim.
