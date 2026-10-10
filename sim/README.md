@@ -333,5 +333,15 @@ refused for the skew with all 225 corners `error`). The earlier records
 `-013733-8adcaaf` are FAIL attempts the fleet refused for capacity (batch_no_capacity); they are kept
 and are not coverage. Not yet swept over the resistor
 sets (each needs its own variant and record): `diff-receiver-sensitivity`,
-`se-receiver-dp-thresholds`, `se-receiver-dm-thresholds`, `driver-static`,
-`driver-signal-quality`; their records stay 45-point, typical-resistor evidence.
+`se-receiver-dp-thresholds`, `se-receiver-dm-thresholds`; their records stay 45-point,
+typical-resistor evidence.
+
+`driver-static` and `driver-signal-quality` (#135) now declare a `resistor-sets` variant (bounds and
+checks unchanged). `driver-static`: record `20261010-070333-23e660b` is a complete 225-point FAIL
+(198/225 points pass, 68 problems; the inclusive 28-44 ohm output-resistance row is violated low at
+some low-resistor-set corners; batch job `klt-sim-32c9b2c0c856`). `driver-signal-quality`: no result
+yet. The 225-point transient grid exceeds the fleet's 3600 s whole-job cap (the 45-point run took
+1568 s at concurrency 2): record `20261010-090542-23e660b` (job `klt-sim-8c8caa90c6b3`) is an
+infrastructure failure (`batch_job_timeout`, all 225 points `error`, no measurements) and
+`20261010-084706-23e660b` a capacity refusal (`batch_no_capacity`); both are kept and are not
+coverage.

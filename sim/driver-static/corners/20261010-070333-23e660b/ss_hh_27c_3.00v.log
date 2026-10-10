@@ -1,0 +1,73 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * klt sim -- generated corner deck, do not edit
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 74
+
+  Measurements for DC Analysis
+
+tt_dp_d00_e00_v     =  1.50000e+00
+tt_dm_d00_e00_v     =  1.50000e+00
+tt_dp_d00_e01_v     =  1.50000e+00
+tt_dm_d00_e01_v     =  1.50000e+00
+tt_dp_d00_e10_v     =  1.50000e+00
+tt_dm_d00_e10_v     =  1.50000e+00
+tt_dp_d00_e11_v     =  5.90116e-03
+tt_dm_d00_e11_v     =  5.90116e-03
+tt_dp_d01_e00_v     =  1.50000e+00
+tt_dm_d01_e00_v     =  1.50000e+00
+tt_dp_d01_e01_v     =  1.50000e+00
+tt_dm_d01_e01_v     =  1.50000e+00
+tt_dp_d01_e10_v     =  1.50000e+00
+tt_dm_d01_e10_v     =  1.50000e+00
+tt_dp_d01_e11_v     =  5.90116e-03
+tt_dm_d01_e11_v     =  2.99421e+00
+tt_dp_d10_e00_v     =  1.50000e+00
+tt_dm_d10_e00_v     =  1.50000e+00
+tt_dp_d10_e01_v     =  1.50000e+00
+tt_dm_d10_e01_v     =  1.50000e+00
+tt_dp_d10_e10_v     =  1.50000e+00
+tt_dm_d10_e10_v     =  1.50000e+00
+tt_dp_d10_e11_v     =  2.99421e+00
+tt_dm_d10_e11_v     =  5.90116e-03
+tt_dp_d11_e00_v     =  1.50000e+00
+tt_dm_d11_e00_v     =  1.50000e+00
+tt_dp_d11_e01_v     =  1.50000e+00
+tt_dm_d11_e01_v     =  1.50000e+00
+tt_dp_d11_e10_v     =  1.50000e+00
+tt_dm_d11_e10_v     =  1.50000e+00
+tt_dp_d11_e11_v     =  2.99421e+00
+tt_dm_d11_e11_v     =  2.99421e+00
+voh_dp_v            =  2.99227e+00
+voh15_dp_v          =  3.01511e+00
+vol_dp_v            =  9.26260e-02
+rout_high_dp_ohm    =  3.90612e+01
+rout_low_dp_ohm     =  3.99076e+01
+voh_dm_v            =  2.99227e+00
+voh15_dm_v          =  3.01511e+00
+vol_dm_v            =  9.26260e-02
+rout_high_dm_ohm    =  3.90612e+01
+rout_low_dm_ohm     =  3.99076e+01
+leak_dp_0v_na       =  1.20052e-10
+leak_dp_1p5v_na     =  -1.75266e-11
+leak_dp_3p0v_na     =  -1.43485e-10
+leak_dp_3p6v_na     =  -5.91634e-06
+leak_dp_max_na      =  1.20052e-10 at=  0.00000e+00
+leak_dp_min_na      =  -5.91634e-06 at=  3.60000e+00
+leak_dm_0v_na       =  1.20052e-10
+leak_dm_1p5v_na     =  -1.75266e-11
+leak_dm_3p0v_na     =  -1.43485e-10
+leak_dm_3p6v_na     =  -5.91634e-06
+leak_dm_max_na      =  1.20052e-10 at=  0.00000e+00
+leak_dm_min_na      =  -5.91634e-06 at=  3.60000e+00
+leak_dm_mid_na      =  -1.76455e-11
+leak_dp_mid_na      =  -1.75266e-11
+isup_static_ua      =  1.63635e-04
+
+ngspice-46 done

@@ -1,0 +1,267 @@
+{
+  "netlist": "body.spice",
+  "engine": "ngspice",
+  "backend": "batch",
+  "models": {
+    "pdk": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice"
+  },
+  "corners": {
+    "process": [
+      "tt",
+      "sf",
+      "ff",
+      "ss",
+      "fs",
+      "ll",
+      "sf_ll",
+      "ff_ll",
+      "ss_ll",
+      "fs_ll",
+      "hh",
+      "sf_hh",
+      "ff_hh",
+      "ss_hh",
+      "fs_hh",
+      "hl",
+      "sf_hl",
+      "ff_hl",
+      "ss_hl",
+      "fs_hl",
+      "lh",
+      "sf_lh",
+      "ff_lh",
+      "ss_lh",
+      "fs_lh"
+    ],
+    "supply_v": {
+      "vsup": [
+        3.0,
+        3.3,
+        3.6
+      ]
+    },
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "analysis": {
+    "kind": "tran",
+    "args": "20p 300n"
+  },
+  "measurements": [
+    {
+      "name": "trise_dp_ns",
+      "spice": ".meas tran trise_dp_ns TRIG v(dpn) VAL=0.1 RISE=1 TARG v(dpn) VAL=0.9 RISE=1"
+    },
+    {
+      "name": "tfall_dp_ns",
+      "spice": ".meas tran tfall_dp_ns TRIG v(dpn) VAL=0.9 FALL=1 TARG v(dpn) VAL=0.1 FALL=1"
+    },
+    {
+      "name": "trise_dm_ns",
+      "spice": ".meas tran trise_dm_ns TRIG v(dmn) VAL=0.1 RISE=1 TARG v(dmn) VAL=0.9 RISE=1"
+    },
+    {
+      "name": "tfall_dm_ns",
+      "spice": ".meas tran tfall_dm_ns TRIG v(dmn) VAL=0.9 FALL=1 TARG v(dmn) VAL=0.1 FALL=1"
+    },
+    {
+      "name": "trf_dp_ratio",
+      "spice": ".meas tran trf_dp_ratio PARAM='trise_dp_ns/tfall_dp_ns'"
+    },
+    {
+      "name": "trf_dm_ratio",
+      "spice": ".meas tran trf_dm_ratio PARAM='trise_dm_ns/tfall_dm_ns'"
+    },
+    {
+      "name": "trf_x1_ratio",
+      "spice": ".meas tran trf_x1_ratio PARAM='trise_dp_ns/tfall_dm_ns'"
+    },
+    {
+      "name": "trf_x2_ratio",
+      "spice": ".meas tran trf_x2_ratio PARAM='trise_dm_ns/tfall_dp_ns'"
+    },
+    {
+      "name": "vcross_rise_v",
+      "spice": ".meas tran vcross_rise_v FIND v(dp) WHEN v(dp)=v(dm) RISE=1"
+    },
+    {
+      "name": "vcross_fall_v",
+      "spice": ".meas tran vcross_fall_v FIND v(dp) WHEN v(dp)=v(dm) FALL=1"
+    },
+    {
+      "name": "tx_rise_ns",
+      "spice": ".meas tran tx_rise_ns WHEN v(dp)=v(dm) RISE=1"
+    },
+    {
+      "name": "tx_fall_ns",
+      "spice": ".meas tran tx_fall_ns WHEN v(dp)=v(dm) FALL=1"
+    },
+    {
+      "name": "tx_first_ns",
+      "spice": ".meas tran tx_first_ns WHEN v(dp)=v(dm) CROSS=1"
+    },
+    {
+      "name": "tx_second_ns",
+      "spice": ".meas tran tx_second_ns WHEN v(dp)=v(dm) CROSS=2"
+    },
+    {
+      "name": "tx_last_ns",
+      "spice": ".meas tran tx_last_ns WHEN v(dp)=v(dm) CROSS=LAST"
+    },
+    {
+      "name": "slope_rise_dp_min_vns",
+      "spice": ".meas tran slope_rise_dp_min_vns MIN v(srp) FROM=100n TO=200n"
+    },
+    {
+      "name": "slope_fall_dp_max_vns",
+      "spice": ".meas tran slope_fall_dp_max_vns MAX v(sfp) FROM=200n TO=300n"
+    },
+    {
+      "name": "slope_fall_dm_max_vns",
+      "spice": ".meas tran slope_fall_dm_max_vns MAX v(sfm) FROM=100n TO=200n"
+    },
+    {
+      "name": "slope_rise_dm_min_vns",
+      "spice": ".meas tran slope_rise_dm_min_vns MIN v(srm) FROM=200n TO=300n"
+    },
+    {
+      "name": "over_dp_mv",
+      "spice": ".meas tran over_dp_mv MAX v(ovp)"
+    },
+    {
+      "name": "under_dp_mv",
+      "spice": ".meas tran under_dp_mv MAX v(unp)"
+    },
+    {
+      "name": "over_dm_mv",
+      "spice": ".meas tran over_dm_mv MAX v(ovm)"
+    },
+    {
+      "name": "under_dm_mv",
+      "spice": ".meas tran under_dm_mv MAX v(unm)"
+    },
+    {
+      "name": "tpd_rise_dp_ns",
+      "spice": ".meas tran tpd_rise_dp_ns TRIG v(ctl) VAL=0.5 RISE=1 TARG v(dpn) VAL=0.5 RISE=1"
+    },
+    {
+      "name": "tpd_fall_dp_ns",
+      "spice": ".meas tran tpd_fall_dp_ns TRIG v(ctl) VAL=0.5 FALL=1 TARG v(dpn) VAL=0.5 FALL=1"
+    },
+    {
+      "name": "tpd_fall_dm_ns",
+      "spice": ".meas tran tpd_fall_dm_ns TRIG v(ctl) VAL=0.5 RISE=1 TARG v(dmn) VAL=0.5 FALL=1"
+    },
+    {
+      "name": "tpd_rise_dm_ns",
+      "spice": ".meas tran tpd_rise_dm_ns TRIG v(ctl) VAL=0.5 FALL=1 TARG v(dmn) VAL=0.5 RISE=1"
+    },
+    {
+      "name": "oe_xb_dp_off_pre_na",
+      "spice": ".meas tran oe_xb_dp_off_pre_na MAX v(abp) FROM=20n TO=99n"
+    },
+    {
+      "name": "oe_xb_dp_enable_at_ns",
+      "spice": ".meas tran oe_xb_dp_enable_at_ns WHEN v(abp)=10m RISE=1"
+    },
+    {
+      "name": "oe_xb_dp_on_ma",
+      "spice": ".meas tran oe_xb_dp_on_ma AVG i(vsbp) FROM=150n TO=199n"
+    },
+    {
+      "name": "oe_xb_dp_release_at_ns",
+      "spice": ".meas tran oe_xb_dp_release_at_ns WHEN v(abp)=1u FALL=LAST"
+    },
+    {
+      "name": "oe_xb_dp_off_post_na",
+      "spice": ".meas tran oe_xb_dp_off_post_na MAX v(abp) FROM=250n TO=300n"
+    },
+    {
+      "name": "oe_xb_dp_wrongpol_pk_ma",
+      "spice": ".meas tran oe_xb_dp_wrongpol_pk_ma MAX v(wbp) FROM=99n TO=300n"
+    },
+    {
+      "name": "oe_xb_dm_off_pre_na",
+      "spice": ".meas tran oe_xb_dm_off_pre_na MAX v(abm) FROM=20n TO=99n"
+    },
+    {
+      "name": "oe_xb_dm_enable_at_ns",
+      "spice": ".meas tran oe_xb_dm_enable_at_ns WHEN v(abm)=10m RISE=1"
+    },
+    {
+      "name": "oe_xb_dm_on_ma",
+      "spice": ".meas tran oe_xb_dm_on_ma AVG i(vsbm) FROM=150n TO=199n"
+    },
+    {
+      "name": "oe_xb_dm_release_at_ns",
+      "spice": ".meas tran oe_xb_dm_release_at_ns WHEN v(abm)=1u FALL=LAST"
+    },
+    {
+      "name": "oe_xb_dm_off_post_na",
+      "spice": ".meas tran oe_xb_dm_off_post_na MAX v(abm) FROM=250n TO=300n"
+    },
+    {
+      "name": "oe_xb_dm_wrongpol_pk_ma",
+      "spice": ".meas tran oe_xb_dm_wrongpol_pk_ma MAX v(wbm) FROM=99n TO=300n"
+    },
+    {
+      "name": "oe_xc_dp_off_pre_na",
+      "spice": ".meas tran oe_xc_dp_off_pre_na MAX v(acp) FROM=20n TO=99n"
+    },
+    {
+      "name": "oe_xc_dp_enable_at_ns",
+      "spice": ".meas tran oe_xc_dp_enable_at_ns WHEN v(acp)=10m RISE=1"
+    },
+    {
+      "name": "oe_xc_dp_on_ma",
+      "spice": ".meas tran oe_xc_dp_on_ma AVG i(vscp) FROM=150n TO=199n"
+    },
+    {
+      "name": "oe_xc_dp_release_at_ns",
+      "spice": ".meas tran oe_xc_dp_release_at_ns WHEN v(acp)=1u FALL=LAST"
+    },
+    {
+      "name": "oe_xc_dp_off_post_na",
+      "spice": ".meas tran oe_xc_dp_off_post_na MAX v(acp) FROM=250n TO=300n"
+    },
+    {
+      "name": "oe_xc_dp_wrongpol_pk_ma",
+      "spice": ".meas tran oe_xc_dp_wrongpol_pk_ma MAX v(wcp) FROM=99n TO=300n"
+    },
+    {
+      "name": "oe_xc_dm_off_pre_na",
+      "spice": ".meas tran oe_xc_dm_off_pre_na MAX v(acm) FROM=20n TO=99n"
+    },
+    {
+      "name": "oe_xc_dm_enable_at_ns",
+      "spice": ".meas tran oe_xc_dm_enable_at_ns WHEN v(acm)=10m RISE=1"
+    },
+    {
+      "name": "oe_xc_dm_on_ma",
+      "spice": ".meas tran oe_xc_dm_on_ma AVG i(vscm) FROM=150n TO=199n"
+    },
+    {
+      "name": "oe_xc_dm_release_at_ns",
+      "spice": ".meas tran oe_xc_dm_release_at_ns WHEN v(acm)=1u FALL=LAST"
+    },
+    {
+      "name": "oe_xc_dm_off_post_na",
+      "spice": ".meas tran oe_xc_dm_off_post_na MAX v(acm) FROM=250n TO=300n"
+    },
+    {
+      "name": "oe_xc_dm_wrongpol_pk_ma",
+      "spice": ".meas tran oe_xc_dm_wrongpol_pk_ma MAX v(wcm) FROM=99n TO=300n"
+    }
+  ],
+  "options": {
+    "timeout_s": 1500,
+    "keep_artifacts": true
+  },
+  "batch": {
+    "runner_version_check": "warn"
+  }
+}
