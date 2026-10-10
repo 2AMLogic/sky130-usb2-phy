@@ -1,0 +1,135 @@
+{
+  "netlist": "body.spice",
+  "engine": "ngspice",
+  "backend": "batch",
+  "models": {
+    "pdk": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice"
+  },
+  "corners": {
+    "process": [
+      "tt",
+      "sf",
+      "ff",
+      "ss",
+      "fs",
+      "ll",
+      "sf_ll",
+      "ff_ll",
+      "ss_ll",
+      "fs_ll",
+      "hh",
+      "sf_hh",
+      "ff_hh",
+      "ss_hh",
+      "fs_hh",
+      "hl",
+      "sf_hl",
+      "ff_hl",
+      "ss_hl",
+      "fs_hl",
+      "lh",
+      "sf_lh",
+      "ff_lh",
+      "ss_lh",
+      "fs_lh"
+    ],
+    "supply_v": {
+      "vsup": [
+        3.0,
+        3.3,
+        3.6
+      ]
+    },
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "analysis": {
+    "kind": "dc",
+    "args": "vd -0.4 0.4 0.001"
+  },
+  "measurements": [
+    {
+      "name": "vth_cm0p80_v",
+      "spice": ".meas dc vth_cm0p80_v WHEN v(rxd08)=v(half) CROSS=1"
+    },
+    {
+      "name": "rxd_pos_min_cm0p80_v",
+      "spice": ".meas dc rxd_pos_min_cm0p80_v MIN v(rxd08) FROM=0.2005 TO=0.4"
+    },
+    {
+      "name": "rxd_neg_max_cm0p80_v",
+      "spice": ".meas dc rxd_neg_max_cm0p80_v MAX v(rxd08) FROM=-0.4 TO=-0.2005"
+    },
+    {
+      "name": "rxd_p200_cm0p80_v",
+      "spice": ".meas dc rxd_p200_cm0p80_v FIND v(rxd08) AT=0.2"
+    },
+    {
+      "name": "rxd_m200_cm0p80_v",
+      "spice": ".meas dc rxd_m200_cm0p80_v FIND v(rxd08) AT=-0.2"
+    },
+    {
+      "name": "isup_ua_cm0p80",
+      "spice": ".meas dc isup_ua_cm0p80 FIND i(vi08) AT=0"
+    },
+    {
+      "name": "vth_cm1p65_v",
+      "spice": ".meas dc vth_cm1p65_v WHEN v(rxd165)=v(half) CROSS=1"
+    },
+    {
+      "name": "rxd_pos_min_cm1p65_v",
+      "spice": ".meas dc rxd_pos_min_cm1p65_v MIN v(rxd165) FROM=0.2005 TO=0.4"
+    },
+    {
+      "name": "rxd_neg_max_cm1p65_v",
+      "spice": ".meas dc rxd_neg_max_cm1p65_v MAX v(rxd165) FROM=-0.4 TO=-0.2005"
+    },
+    {
+      "name": "rxd_p200_cm1p65_v",
+      "spice": ".meas dc rxd_p200_cm1p65_v FIND v(rxd165) AT=0.2"
+    },
+    {
+      "name": "rxd_m200_cm1p65_v",
+      "spice": ".meas dc rxd_m200_cm1p65_v FIND v(rxd165) AT=-0.2"
+    },
+    {
+      "name": "isup_ua_cm1p65",
+      "spice": ".meas dc isup_ua_cm1p65 FIND i(vi165) AT=0"
+    },
+    {
+      "name": "vth_cm2p50_v",
+      "spice": ".meas dc vth_cm2p50_v WHEN v(rxd25)=v(half) CROSS=1"
+    },
+    {
+      "name": "rxd_pos_min_cm2p50_v",
+      "spice": ".meas dc rxd_pos_min_cm2p50_v MIN v(rxd25) FROM=0.2005 TO=0.4"
+    },
+    {
+      "name": "rxd_neg_max_cm2p50_v",
+      "spice": ".meas dc rxd_neg_max_cm2p50_v MAX v(rxd25) FROM=-0.4 TO=-0.2005"
+    },
+    {
+      "name": "rxd_p200_cm2p50_v",
+      "spice": ".meas dc rxd_p200_cm2p50_v FIND v(rxd25) AT=0.2"
+    },
+    {
+      "name": "rxd_m200_cm2p50_v",
+      "spice": ".meas dc rxd_m200_cm2p50_v FIND v(rxd25) AT=-0.2"
+    },
+    {
+      "name": "isup_ua_cm2p50",
+      "spice": ".meas dc isup_ua_cm2p50 FIND i(vi25) AT=0"
+    }
+  ],
+  "options": {
+    "timeout_s": 900,
+    "keep_artifacts": true
+  },
+  "batch": {
+    "runner_version_check": "warn"
+  }
+}

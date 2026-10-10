@@ -197,3 +197,68 @@ def test_committed_smoke_record_rerenders_byte_identical(rid):
 
 def test_smoke_testbench_declares_no_record_overrides():
     assert "record" not in SMOKE_TB and "include" not in SMOKE_TB
+
+
+# ---- resistor-sets variant (#136): 225 points x 3 common modes = 675 combinations
+
+RES = mx.load_by_id(mx.RESISTOR_SETS_ID)
+VTB = rs.resolve_tb(TB, "resistor-sets")
+
+
+def rreport(tamper=None):
+    rep = report()
+    rep["corners"] = []
+    for p, t, v in RES.points():
+        c = json.loads(json.dumps(report()["corners"][0]))
+        c.update(corner_id=mx.corner_id(p, t, v), process=p, supply_v={"vsup": v}, temperature_c=float(t))
+        for m in c["measurements"]:
+            if m["name"].startswith(("rxd_pos", "rxd_p200")):
+                m["value"] = v
+        rep["corners"].append(c)
+    if tamper:
+        tamper(rep)
+    return rep
+
+
+def rproblems(tamper=None):
+    return rs.evaluate(rreport(tamper), RES.points(), VTB)[1]
+
+
+def test_variant_keeps_checks_stimulus_and_selects_225_matrix():
+    assert rs.tb_matrix_id(TB, "resistor-sets") == mx.RESISTOR_SETS_ID and rs.tb_matrix_id(TB) == mx.LEGACY_ID
+    for k in ("checks", "measure", "analysis", "netlist", "include", "timeout_s"):
+        assert VTB[k] == TB[k]
+    assert VTB["checks"]["vth_cm0p80_v"] == {"min": -0.2, "max": 0.2}
+    assert "225" in VTB["claim"] and "675" in VTB["claim"] and "45-point" not in VTB["claim"]
+    rec = VTB["record"]
+    assert "5 resistor/capacitor parameter sets" in rec["statistical_convention"]
+    assert "NOT run" in rec["statistical_convention"] and "not resistor-only" in rec["statistical_convention"]
+    assert "5 process x 3" not in rec["statistical_convention"]
+    assert rec["method"][:7] == TB["record"]["method"]
+    assert any("675" in m for m in rec["method"])
+    assert "layout parasitics" in rec["footer"] and "mismatch" in rec["footer"]
+
+
+def test_good_225_grid_passes_all_675_combinations():
+    results, probs = rs.evaluate(rreport(), RES.points(), VTB)
+    assert probs == [] and len(results) == 225
+    assert 225 * len(CMS) == 675
+
+
+@pytest.mark.parametrize("tamper,needle", [
+    (lambda r: r["corners"].pop(), "missing from report"),
+    (lambda r: r["corners"].__setitem__(1, r["corners"][0]), "dup"),
+    (lambda r: meas(r, 150, "vth_cm2p50_v").update(value=float("nan")), "vth_cm2p50_v"),
+    (lambda r: r["corners"][200]["measurements"].remove(meas(r, 200, "rxd_m200_cm1p65_v")), "rxd_m200_cm1p65_v"),
+    (lambda r: meas(r, 120, "vth_cm0p80_v").update(value=0.25), "above max"),
+    (lambda r: meas(r, 120, "rxd_pos_min_cm1p65_v").update(value=0.0), "rxd_pos_min_cm1p65_v"),
+    (lambda r: meas(r, 224, "rxd_neg_max_cm2p50_v").update(value=r["corners"][224]["supply_v"]["vsup"]), "rxd_neg_max_cm2p50_v"),
+])
+def test_variant_grid_rejects_bad_receivers(tamper, needle):
+    probs = rproblems(tamper)
+    assert any(needle in p for p in probs), probs
+
+
+def test_legacy_45_report_is_not_a_225_variant_record():
+    probs = rs.evaluate(report(), RES.points(), VTB)[1]
+    assert any("missing from report" in p for p in probs)

@@ -145,3 +145,75 @@ def test_record_discloses_method_and_no_monte_carlo():
     assert "Monte Carlo was NOT run" in rec and "harness smoke deck" not in rec
     assert "strictly inside (0.8 V, 2.0 V)" in rec and "VIH > 2.0 V, VIL < 0.8 V" in rec
     assert "xschem export of design/se_receiver_dp.sch" in rec
+
+
+# ---- resistor-sets variant (#136)
+
+RES = mx.load_by_id(mx.RESISTOR_SETS_ID)
+
+
+def rreport(tamper=None):
+    rep = report()
+    base = rep["corners"][0]
+    rep["corners"] = []
+    for p, t, v in RES.points():
+        c = json.loads(json.dumps(base))
+        c.update(corner_id=mx.corner_id(p, t, v), process=p, supply_v={"vsup": v}, temperature_c=float(t))
+        for m in c["measurements"]:
+            if m["name"] in ("rxd_high_min_v", "rxd_at_vih_v"):
+                m["value"] = v
+            elif m["name"] == "vref_v":
+                m["value"] = 0.425 * v
+        rep["corners"].append(c)
+    if tamper:
+        tamper(rep)
+    return rep
+
+
+@pytest.mark.parametrize("lbl", LINES)
+def test_variant_resolution_preserves_policy_and_selects_225(lbl):
+    tb = tb_of(lbl)
+    v = rs.resolve_tb(tb, "resistor-sets")
+    assert rs.tb_matrix_id(tb, "resistor-sets") == mx.RESISTOR_SETS_ID and rs.tb_matrix_id(tb) == mx.LEGACY_ID
+    for k in ("checks", "measure", "analysis", "netlist", "include", "timeout_s"):
+        assert v[k] == tb[k]
+    assert v["checks"]["vth_v"] == {"gt": 0.8, "lt": 2.0}
+    assert "225" in v["claim"] and "45-point" not in v["claim"]
+    conv = v["record"]["statistical_convention"]
+    assert "NOT run" in conv and "not resistor-only" in conv and "R1 and R2" in conv
+    assert v["record"]["method"][:len(tb["record"]["method"])] == tb["record"]["method"]
+    assert "layout parasitics" in v["record"]["footer"]
+    bad = json.loads(json.dumps(tb))
+    bad["variants"]["resistor-sets"]["checks"] = {}
+    with pytest.raises(rs.VariantError, match="may not override"):
+        rs.resolve_tb(bad, "resistor-sets")
+
+
+@pytest.mark.parametrize("lbl", LINES)
+def test_variant_good_225_grid_passes(lbl):
+    results, probs = rs.evaluate(rreport(), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))
+    assert probs == [] and len(results) == 225
+
+
+@pytest.mark.parametrize("lbl", LINES)
+@pytest.mark.parametrize("tamper,needle", [
+    (set_both(200, 0.8), "not strictly above 0.8"),
+    (set_both(200, 2.0), "not strictly below 2.0"),
+    (lambda r: r["corners"][150]["measurements"].remove(meas(r, 150, "vth_v")), "vth_v"),
+    (lambda r: meas(r, 150, "vth_last_v").update(value=float("nan")), "vth_last_v"),
+    (lambda r: meas(r, 100, "vth_last_v").update(value=1.6), "differs from vth_v"),
+    (lambda r: meas(r, 100, "rxd_low_max_v").update(value=r["corners"][100]["supply_v"]["vsup"]), "rxd_low_max_v"),
+    (lambda r: meas(r, 224, "vref_v").update(value=0.2), "vref_v"),
+    (lambda r: meas(r, 224, "isup_ua").update(value=0.0), "isup_ua"),
+    (lambda r: r["corners"].pop(), "missing from report"),
+    (lambda r: r["corners"].__setitem__(1, r["corners"][0]), "dup"),
+])
+def test_variant_grid_rejects_bad_receivers(lbl, tamper, needle):
+    probs = rs.evaluate(rreport(tamper), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))[1]
+    assert any(needle in p for p in probs), probs
+
+
+@pytest.mark.parametrize("lbl", LINES)
+def test_legacy_45_report_is_not_a_225_variant_record(lbl):
+    probs = rs.evaluate(report(), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))[1]
+    assert any("missing from report" in p for p in probs)

@@ -89,8 +89,11 @@ of the chosen devices.
    short run; `res_high_po` was not tried. The device is the model's
    resistor model, but the five bare sections `tt ff ss fs sf` all load the
    typical resistor set, so the 45-corner grid does **not** cover its
-   sheet-resistance spread (#126, `sim/README.md` "Resistor-set coverage");
-   no resistor-set sweep of this receiver has been run. Measured supply current for the whole receiver at
+   sheet-resistance spread (#126, `sim/README.md` "Resistor-set coverage").
+   The supplemental 225-point resistor-set sweep (#136, record `20261010-094000-0d51889`,
+   675 point x common-mode combinations) passes with the same bounds: threshold
+   -76.5 to -12.5 mV. It covers the PDK's global resistor/capacitor sets (with their drawn-width
+   tolerances), not per-device mismatch, Monte Carlo or layout parasitics. Measured supply current for the whole receiver at
    VDIFF = 0 is 9.7-48.7 uA at 0.8 V common mode, 29.4-66.7 uA at 1.65 V and
    37.1-80.3 uA at 2.5 V over the 45 corners, so the bias scheme keeps working
    at every corner. A different bias scheme was not tried. The nominal
@@ -240,7 +243,12 @@ ratiometric `R1`/`R2` divider off `VDD`.
    current where 1.4 V is close to that corner's threshold. `RBIAS` sets the
    bias current, so its absolute spread matters; it is the same resistor as
    in the differential receiver (L = 140 um), whose bias was shown to work
-   across the grid. `res_high_po` and `res_generic_po` were considered and
+   across the grid. The supplemental 225-point resistor-set records (#136: D+
+   `20261010-074010-0d51889`, D- `20261010-090217-0d51889`) keep the threshold at
+   1.250-1.514 V and `VREF` at 0.4249-0.4254 x `VDD` (1.275-1.531 V) with the PDK's
+   global resistor/capacitor sets, all bounds unchanged and passing; the global sets
+   move R1, R2 and `RBIAS` together, so independent R1/R2 mismatch is not covered.
+   `res_high_po` and `res_generic_po` were considered and
    not simulated: the ratio, not the absolute value, sets the threshold, and
    `xhigh_po` keeps the divider short at low current.
 3. **Supply pin naming:** `VDD` / `VSS`, unchanged from the source and the

@@ -323,18 +323,35 @@ differ from the approved mapping, and `evidence.json` stores the mapping and inc
     python3 sim/run_corners.py --list --matrix pvt225-mos-rc
     python3 sim/run_corners.py --check-env --matrix pvt225-mos-rc
     python3 sim/run_corners.py dplus-pullup-tolerance --variant resistor-sets   # batch only, recorded
+    python3 sim/run_corners.py diff-receiver-sensitivity --variant resistor-sets   # 225 points x 3 common modes = 675
+    python3 sim/run_corners.py se-receiver-dp-thresholds --variant resistor-sets
+    python3 sim/run_corners.py se-receiver-dm-thresholds --variant resistor-sets
 
 An experiment opts in with a `variants` entry in its `tb.json` (it may override only `matrix_id`,
-`claim` and `record` prose). Only `dplus-pullup-tolerance` has one: record `20261010-014615-8ebfb55` is PASS 225/225 on the
+`claim` and `record` prose). `dplus-pullup-tolerance`, `diff-receiver-sensitivity`, `se-receiver-dp-thresholds` and `se-receiver-dm-thresholds` have one. Pull-up: record `20261010-014615-8ebfb55` is PASS 225/225 on the
 batch backend (job `klt-sim-10dfd5d87262`; fleet runner klt 0.5.0 vs client 0.7.0, run with
 `--klt-runner-version-check warn`; the default `enforce` attempt `20261010-014506-8adcaaf` was
 refused for the skew with all 225 corners `error`). The earlier records
 `20261010-011518-cf49e32`, `-011907-cb1d9ce`, `-012518-9f1c2dd`, `-013051-9f1c2dd` and
 `-013733-8adcaaf` are FAIL attempts the fleet refused for capacity (batch_no_capacity); they are kept
-and are not coverage. Not yet swept over the resistor
-sets (each needs its own variant and record): `diff-receiver-sensitivity`,
-`se-receiver-dp-thresholds`, `se-receiver-dm-thresholds`; their records stay 45-point,
-typical-resistor evidence.
+and are not coverage.
+
+Receivers (#136), all with `--klt-runner-version-check warn` (same fleet-runner klt 0.5.0 vs client 0.7.0 skew; the default `enforce`
+attempts `20261010-073830-0d51889` (D+) errored all 225 corners for it). Checks, stimulus, analysis and netlist are the
+base experiment's; only matrix, claim and record prose differ, and every bound is unchanged. Each record is
+the complete 225 unique PVT/section points (differential: 3 common modes each = 675 combinations), PASS, batch:
+
+| experiment | record | job | measured worst case over the 225 points |
+|---|---|---|---|
+| `diff-receiver-sensitivity` | `20261010-094000-0d51889` | `klt-sim-457636169781` | vth -76.5 mV (sf_hh 3.0 V 100 C, cm 2.5 V) to -12.5 mV; limit (-200, +200) mV; supply current 9.5-81.7 uA |
+| `se-receiver-dp-thresholds` | `20261010-074010-0d51889` | `klt-sim-4640313c847e` | vth 1.250 V (ff_lh 3.0 V 100 C) to 1.514 V (ss_hl 3.6 V -40 C); limit exclusive (0.8, 2.0) V; single crossing at all points; supply current 76-159 uA |
+| `se-receiver-dm-thresholds` | `20261010-090217-0d51889` | `klt-sim-b6118d9c04c7` | identical to D+ (same corners, same values) |
+
+Output levels met the unchanged 0.1/0.9 x VDD bounds everywhere. Failed attempts (`batch_no_capacity`, fleet concurrency cap, and the
+version-skew runs above) are kept as FAIL records and are not coverage. This is deterministic schematic evidence over the PDK's
+global resistor/capacitor corner sets plus drawn-width tolerances (they are not resistor-only sections); per-device resistor
+mismatch (including independent R1/R2 divider mismatch), Monte Carlo, layout parasitics and signoff are not covered.
+The legacy 45-point receiver records are unchanged.
 
 `driver-static` and `driver-signal-quality` (#135) now declare a `resistor-sets` variant (bounds and
 checks unchanged). `driver-static`: record `20261010-070333-23e660b` is a complete 225-point FAIL
