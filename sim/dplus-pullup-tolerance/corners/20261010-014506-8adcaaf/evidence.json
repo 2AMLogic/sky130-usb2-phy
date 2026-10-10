@@ -1,0 +1,2154 @@
+{
+  "author": "ubuntu (agent)",
+  "axes": {
+    "process": [
+      "tt",
+      "sf",
+      "ff",
+      "ss",
+      "fs",
+      "ll",
+      "sf_ll",
+      "ff_ll",
+      "ss_ll",
+      "fs_ll",
+      "hh",
+      "sf_hh",
+      "ff_hh",
+      "ss_hh",
+      "fs_hh",
+      "hl",
+      "sf_hl",
+      "ff_hl",
+      "ss_hl",
+      "fs_hl",
+      "lh",
+      "sf_lh",
+      "ff_lh",
+      "ss_lh",
+      "fs_lh"
+    ],
+    "supply_v": [
+      3.0,
+      3.3,
+      3.6
+    ],
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "backend": "batch",
+  "engine_version": null,
+  "experiment": "dplus-pullup-tolerance",
+  "files": {
+    "corners.json": "15c6ae1138eeeac8b79450729b876aee842dca17fc06cb9874b35c9a7a739ca1",
+    "klt-stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "report.json": "da6837fc0a168448346735ab3d4d43c3c8d1fa99e38b92124b79b7624d4b8c21",
+    "request.json": "f78469003eaab4a55257ff196c068818e17dacf933e739c2bb5355849f82d037",
+    "tb.json": "d9762815b9bf1fa8f2ae848f280e6a64cf6d849d0d638555dff84635bbae6ef8"
+  },
+  "git": {
+    "dirty": true,
+    "head": "8adcaafd94409d98af7ffbd64beb56add1a3482e"
+  },
+  "harness_version": "0.1.0",
+  "job_id": "klt-sim-9627eaf5c730",
+  "klt_exit_code": 4,
+  "klt_version": "klt 0.7.0+g5e5b55992a7f",
+  "matrix_id": "pvt225-mos-rc",
+  "pdk": {
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "name": "sky130A",
+    "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+  },
+  "problems": [
+    "tt_-40c_3.00v: simulation status 'error'",
+    "tt_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_-40c_3.30v: simulation status 'error'",
+    "tt_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_-40c_3.60v: simulation status 'error'",
+    "tt_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_27c_3.00v: simulation status 'error'",
+    "tt_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_27c_3.30v: simulation status 'error'",
+    "tt_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_27c_3.60v: simulation status 'error'",
+    "tt_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_100c_3.00v: simulation status 'error'",
+    "tt_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_100c_3.30v: simulation status 'error'",
+    "tt_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_100c_3.60v: simulation status 'error'",
+    "tt_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_-40c_3.00v: simulation status 'error'",
+    "sf_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_-40c_3.30v: simulation status 'error'",
+    "sf_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_-40c_3.60v: simulation status 'error'",
+    "sf_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_27c_3.00v: simulation status 'error'",
+    "sf_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_27c_3.30v: simulation status 'error'",
+    "sf_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_27c_3.60v: simulation status 'error'",
+    "sf_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_100c_3.00v: simulation status 'error'",
+    "sf_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_100c_3.30v: simulation status 'error'",
+    "sf_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_100c_3.60v: simulation status 'error'",
+    "sf_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_-40c_3.00v: simulation status 'error'",
+    "ff_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_-40c_3.30v: simulation status 'error'",
+    "ff_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_-40c_3.60v: simulation status 'error'",
+    "ff_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_27c_3.00v: simulation status 'error'",
+    "ff_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_27c_3.30v: simulation status 'error'",
+    "ff_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_27c_3.60v: simulation status 'error'",
+    "ff_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_100c_3.00v: simulation status 'error'",
+    "ff_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_100c_3.30v: simulation status 'error'",
+    "ff_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_100c_3.60v: simulation status 'error'",
+    "ff_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_-40c_3.00v: simulation status 'error'",
+    "ss_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_-40c_3.30v: simulation status 'error'",
+    "ss_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_-40c_3.60v: simulation status 'error'",
+    "ss_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_27c_3.00v: simulation status 'error'",
+    "ss_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_27c_3.30v: simulation status 'error'",
+    "ss_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_27c_3.60v: simulation status 'error'",
+    "ss_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_100c_3.00v: simulation status 'error'",
+    "ss_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_100c_3.30v: simulation status 'error'",
+    "ss_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_100c_3.60v: simulation status 'error'",
+    "ss_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_-40c_3.00v: simulation status 'error'",
+    "fs_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_-40c_3.30v: simulation status 'error'",
+    "fs_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_-40c_3.60v: simulation status 'error'",
+    "fs_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_27c_3.00v: simulation status 'error'",
+    "fs_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_27c_3.30v: simulation status 'error'",
+    "fs_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_27c_3.60v: simulation status 'error'",
+    "fs_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_100c_3.00v: simulation status 'error'",
+    "fs_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_100c_3.30v: simulation status 'error'",
+    "fs_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_100c_3.60v: simulation status 'error'",
+    "fs_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_-40c_3.00v: simulation status 'error'",
+    "ll_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_-40c_3.30v: simulation status 'error'",
+    "ll_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_-40c_3.60v: simulation status 'error'",
+    "ll_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_27c_3.00v: simulation status 'error'",
+    "ll_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_27c_3.30v: simulation status 'error'",
+    "ll_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_27c_3.60v: simulation status 'error'",
+    "ll_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_100c_3.00v: simulation status 'error'",
+    "ll_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_100c_3.30v: simulation status 'error'",
+    "ll_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ll_100c_3.60v: simulation status 'error'",
+    "ll_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_-40c_3.00v: simulation status 'error'",
+    "sf_ll_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_-40c_3.30v: simulation status 'error'",
+    "sf_ll_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_-40c_3.60v: simulation status 'error'",
+    "sf_ll_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_27c_3.00v: simulation status 'error'",
+    "sf_ll_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_27c_3.30v: simulation status 'error'",
+    "sf_ll_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_27c_3.60v: simulation status 'error'",
+    "sf_ll_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_100c_3.00v: simulation status 'error'",
+    "sf_ll_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_100c_3.30v: simulation status 'error'",
+    "sf_ll_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_ll_100c_3.60v: simulation status 'error'",
+    "sf_ll_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_-40c_3.00v: simulation status 'error'",
+    "ff_ll_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_-40c_3.30v: simulation status 'error'",
+    "ff_ll_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_-40c_3.60v: simulation status 'error'",
+    "ff_ll_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_27c_3.00v: simulation status 'error'",
+    "ff_ll_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_27c_3.30v: simulation status 'error'",
+    "ff_ll_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_27c_3.60v: simulation status 'error'",
+    "ff_ll_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_100c_3.00v: simulation status 'error'",
+    "ff_ll_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_100c_3.30v: simulation status 'error'",
+    "ff_ll_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_ll_100c_3.60v: simulation status 'error'",
+    "ff_ll_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_-40c_3.00v: simulation status 'error'",
+    "ss_ll_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_-40c_3.30v: simulation status 'error'",
+    "ss_ll_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_-40c_3.60v: simulation status 'error'",
+    "ss_ll_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_27c_3.00v: simulation status 'error'",
+    "ss_ll_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_27c_3.30v: simulation status 'error'",
+    "ss_ll_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_27c_3.60v: simulation status 'error'",
+    "ss_ll_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_100c_3.00v: simulation status 'error'",
+    "ss_ll_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_100c_3.30v: simulation status 'error'",
+    "ss_ll_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_ll_100c_3.60v: simulation status 'error'",
+    "ss_ll_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_-40c_3.00v: simulation status 'error'",
+    "fs_ll_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_-40c_3.30v: simulation status 'error'",
+    "fs_ll_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_-40c_3.60v: simulation status 'error'",
+    "fs_ll_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_27c_3.00v: simulation status 'error'",
+    "fs_ll_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_27c_3.30v: simulation status 'error'",
+    "fs_ll_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_27c_3.60v: simulation status 'error'",
+    "fs_ll_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_100c_3.00v: simulation status 'error'",
+    "fs_ll_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_100c_3.30v: simulation status 'error'",
+    "fs_ll_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_ll_100c_3.60v: simulation status 'error'",
+    "fs_ll_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_-40c_3.00v: simulation status 'error'",
+    "hh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_-40c_3.30v: simulation status 'error'",
+    "hh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_-40c_3.60v: simulation status 'error'",
+    "hh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_27c_3.00v: simulation status 'error'",
+    "hh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_27c_3.30v: simulation status 'error'",
+    "hh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_27c_3.60v: simulation status 'error'",
+    "hh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_100c_3.00v: simulation status 'error'",
+    "hh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_100c_3.30v: simulation status 'error'",
+    "hh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hh_100c_3.60v: simulation status 'error'",
+    "hh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_-40c_3.00v: simulation status 'error'",
+    "sf_hh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_-40c_3.30v: simulation status 'error'",
+    "sf_hh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_-40c_3.60v: simulation status 'error'",
+    "sf_hh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_27c_3.00v: simulation status 'error'",
+    "sf_hh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_27c_3.30v: simulation status 'error'",
+    "sf_hh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_27c_3.60v: simulation status 'error'",
+    "sf_hh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_100c_3.00v: simulation status 'error'",
+    "sf_hh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_100c_3.30v: simulation status 'error'",
+    "sf_hh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hh_100c_3.60v: simulation status 'error'",
+    "sf_hh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_-40c_3.00v: simulation status 'error'",
+    "ff_hh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_-40c_3.30v: simulation status 'error'",
+    "ff_hh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_-40c_3.60v: simulation status 'error'",
+    "ff_hh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_27c_3.00v: simulation status 'error'",
+    "ff_hh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_27c_3.30v: simulation status 'error'",
+    "ff_hh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_27c_3.60v: simulation status 'error'",
+    "ff_hh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_100c_3.00v: simulation status 'error'",
+    "ff_hh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_100c_3.30v: simulation status 'error'",
+    "ff_hh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hh_100c_3.60v: simulation status 'error'",
+    "ff_hh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_-40c_3.00v: simulation status 'error'",
+    "ss_hh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_-40c_3.30v: simulation status 'error'",
+    "ss_hh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_-40c_3.60v: simulation status 'error'",
+    "ss_hh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_27c_3.00v: simulation status 'error'",
+    "ss_hh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_27c_3.30v: simulation status 'error'",
+    "ss_hh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_27c_3.60v: simulation status 'error'",
+    "ss_hh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_100c_3.00v: simulation status 'error'",
+    "ss_hh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_100c_3.30v: simulation status 'error'",
+    "ss_hh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hh_100c_3.60v: simulation status 'error'",
+    "ss_hh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_-40c_3.00v: simulation status 'error'",
+    "fs_hh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_-40c_3.30v: simulation status 'error'",
+    "fs_hh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_-40c_3.60v: simulation status 'error'",
+    "fs_hh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_27c_3.00v: simulation status 'error'",
+    "fs_hh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_27c_3.30v: simulation status 'error'",
+    "fs_hh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_27c_3.60v: simulation status 'error'",
+    "fs_hh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_100c_3.00v: simulation status 'error'",
+    "fs_hh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_100c_3.30v: simulation status 'error'",
+    "fs_hh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hh_100c_3.60v: simulation status 'error'",
+    "fs_hh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_-40c_3.00v: simulation status 'error'",
+    "hl_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_-40c_3.30v: simulation status 'error'",
+    "hl_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_-40c_3.60v: simulation status 'error'",
+    "hl_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_27c_3.00v: simulation status 'error'",
+    "hl_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_27c_3.30v: simulation status 'error'",
+    "hl_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_27c_3.60v: simulation status 'error'",
+    "hl_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_100c_3.00v: simulation status 'error'",
+    "hl_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_100c_3.30v: simulation status 'error'",
+    "hl_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "hl_100c_3.60v: simulation status 'error'",
+    "hl_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_-40c_3.00v: simulation status 'error'",
+    "sf_hl_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_-40c_3.30v: simulation status 'error'",
+    "sf_hl_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_-40c_3.60v: simulation status 'error'",
+    "sf_hl_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_27c_3.00v: simulation status 'error'",
+    "sf_hl_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_27c_3.30v: simulation status 'error'",
+    "sf_hl_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_27c_3.60v: simulation status 'error'",
+    "sf_hl_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_100c_3.00v: simulation status 'error'",
+    "sf_hl_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_100c_3.30v: simulation status 'error'",
+    "sf_hl_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_hl_100c_3.60v: simulation status 'error'",
+    "sf_hl_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_-40c_3.00v: simulation status 'error'",
+    "ff_hl_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_-40c_3.30v: simulation status 'error'",
+    "ff_hl_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_-40c_3.60v: simulation status 'error'",
+    "ff_hl_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_27c_3.00v: simulation status 'error'",
+    "ff_hl_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_27c_3.30v: simulation status 'error'",
+    "ff_hl_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_27c_3.60v: simulation status 'error'",
+    "ff_hl_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_100c_3.00v: simulation status 'error'",
+    "ff_hl_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_100c_3.30v: simulation status 'error'",
+    "ff_hl_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_hl_100c_3.60v: simulation status 'error'",
+    "ff_hl_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_-40c_3.00v: simulation status 'error'",
+    "ss_hl_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_-40c_3.30v: simulation status 'error'",
+    "ss_hl_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_-40c_3.60v: simulation status 'error'",
+    "ss_hl_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_27c_3.00v: simulation status 'error'",
+    "ss_hl_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_27c_3.30v: simulation status 'error'",
+    "ss_hl_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_27c_3.60v: simulation status 'error'",
+    "ss_hl_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_100c_3.00v: simulation status 'error'",
+    "ss_hl_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_100c_3.30v: simulation status 'error'",
+    "ss_hl_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_hl_100c_3.60v: simulation status 'error'",
+    "ss_hl_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_-40c_3.00v: simulation status 'error'",
+    "fs_hl_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_-40c_3.30v: simulation status 'error'",
+    "fs_hl_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_-40c_3.60v: simulation status 'error'",
+    "fs_hl_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_27c_3.00v: simulation status 'error'",
+    "fs_hl_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_27c_3.30v: simulation status 'error'",
+    "fs_hl_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_27c_3.60v: simulation status 'error'",
+    "fs_hl_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_100c_3.00v: simulation status 'error'",
+    "fs_hl_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_100c_3.30v: simulation status 'error'",
+    "fs_hl_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_hl_100c_3.60v: simulation status 'error'",
+    "fs_hl_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_-40c_3.00v: simulation status 'error'",
+    "lh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_-40c_3.30v: simulation status 'error'",
+    "lh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_-40c_3.60v: simulation status 'error'",
+    "lh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_27c_3.00v: simulation status 'error'",
+    "lh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_27c_3.30v: simulation status 'error'",
+    "lh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_27c_3.60v: simulation status 'error'",
+    "lh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_100c_3.00v: simulation status 'error'",
+    "lh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_100c_3.30v: simulation status 'error'",
+    "lh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "lh_100c_3.60v: simulation status 'error'",
+    "lh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_-40c_3.00v: simulation status 'error'",
+    "sf_lh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_-40c_3.30v: simulation status 'error'",
+    "sf_lh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_-40c_3.60v: simulation status 'error'",
+    "sf_lh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_27c_3.00v: simulation status 'error'",
+    "sf_lh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_27c_3.30v: simulation status 'error'",
+    "sf_lh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_27c_3.60v: simulation status 'error'",
+    "sf_lh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_100c_3.00v: simulation status 'error'",
+    "sf_lh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_100c_3.30v: simulation status 'error'",
+    "sf_lh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "sf_lh_100c_3.60v: simulation status 'error'",
+    "sf_lh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_-40c_3.00v: simulation status 'error'",
+    "ff_lh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_-40c_3.30v: simulation status 'error'",
+    "ff_lh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_-40c_3.60v: simulation status 'error'",
+    "ff_lh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_27c_3.00v: simulation status 'error'",
+    "ff_lh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_27c_3.30v: simulation status 'error'",
+    "ff_lh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_27c_3.60v: simulation status 'error'",
+    "ff_lh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_100c_3.00v: simulation status 'error'",
+    "ff_lh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_100c_3.30v: simulation status 'error'",
+    "ff_lh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ff_lh_100c_3.60v: simulation status 'error'",
+    "ff_lh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_-40c_3.00v: simulation status 'error'",
+    "ss_lh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_-40c_3.30v: simulation status 'error'",
+    "ss_lh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_-40c_3.60v: simulation status 'error'",
+    "ss_lh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_27c_3.00v: simulation status 'error'",
+    "ss_lh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_27c_3.30v: simulation status 'error'",
+    "ss_lh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_27c_3.60v: simulation status 'error'",
+    "ss_lh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_100c_3.00v: simulation status 'error'",
+    "ss_lh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_100c_3.30v: simulation status 'error'",
+    "ss_lh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "ss_lh_100c_3.60v: simulation status 'error'",
+    "ss_lh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_-40c_3.00v: simulation status 'error'",
+    "fs_lh_-40c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_-40c_3.30v: simulation status 'error'",
+    "fs_lh_-40c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_-40c_3.60v: simulation status 'error'",
+    "fs_lh_-40c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_27c_3.00v: simulation status 'error'",
+    "fs_lh_27c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_27c_3.30v: simulation status 'error'",
+    "fs_lh_27c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_27c_3.60v: simulation status 'error'",
+    "fs_lh_27c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_100c_3.00v: simulation status 'error'",
+    "fs_lh_100c_3.00v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_100c_3.30v: simulation status 'error'",
+    "fs_lh_100c_3.30v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "fs_lh_100c_3.60v: simulation status 'error'",
+    "fs_lh_100c_3.60v: missing or non-finite measurement(s) ['vdp_c00_v', 'vdp_c01_v', 'vdp_c02_v', 'vdp_c03_v', 'vdp_c04_v', 'vdp_c05_v', 'vdp_c06_v', 'vdp_c07_v', 'vdp_c08_v', 'vdp_c09_v', 'vdp_c10_v', 'vdp_c11_v', 'vdp_c12_v', 'vdp_c13_v', 'vdp_c14_v', 'vdp_c15_v', 'voff_d1_v', 'voff_d0_v', 'ioff_d1_na', 'ioff_d0_na', 'ioff_dz_na', 'ioff_dh_na', 'isup_d1_na', 'isup_d0_na', 'isup_dz_na', 'isup_dh_na']",
+    "tt_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "tt_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "tt_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "tt_27c_3.00v: raw ngspice log not retrievable (None)",
+    "tt_27c_3.30v: raw ngspice log not retrievable (None)",
+    "tt_27c_3.60v: raw ngspice log not retrievable (None)",
+    "tt_100c_3.00v: raw ngspice log not retrievable (None)",
+    "tt_100c_3.30v: raw ngspice log not retrievable (None)",
+    "tt_100c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_27c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_27c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_27c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_100c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_100c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_100c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_27c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_27c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_27c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_100c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_100c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ll_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ll_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ll_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ll_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ll_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ll_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ll_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ll_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ll_100c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_ll_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_ll_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_ll_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_ll_27c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_ll_27c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_ll_27c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_ll_100c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_ll_100c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_ll_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_ll_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_ll_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_ll_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_ll_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_ll_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_ll_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_ll_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_ll_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_ll_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_ll_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_ll_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_ll_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_ll_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_ll_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_ll_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_ll_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_ll_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_ll_100c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_ll_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_ll_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_ll_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_ll_27c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_ll_27c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_ll_27c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_ll_100c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_ll_100c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_ll_100c_3.60v: raw ngspice log not retrievable (None)",
+    "hh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "hh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "hh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "hh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "hh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "hh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "hh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "hh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "hh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_hh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_hh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_hh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_hh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_hh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_hh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_hh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_hh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_hh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_hh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_hh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_hh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_hh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_hh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_hh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_hh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_hh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_hh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_hh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_hh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_hh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_hh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_hh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_hh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_hh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_hh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_hh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_hh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_hh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_hh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_hh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_hh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_hh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_hh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_hh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_hh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "hl_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "hl_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "hl_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "hl_27c_3.00v: raw ngspice log not retrievable (None)",
+    "hl_27c_3.30v: raw ngspice log not retrievable (None)",
+    "hl_27c_3.60v: raw ngspice log not retrievable (None)",
+    "hl_100c_3.00v: raw ngspice log not retrievable (None)",
+    "hl_100c_3.30v: raw ngspice log not retrievable (None)",
+    "hl_100c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_hl_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_hl_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_hl_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_hl_27c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_hl_27c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_hl_27c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_hl_100c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_hl_100c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_hl_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_hl_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_hl_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_hl_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_hl_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_hl_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_hl_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_hl_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_hl_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_hl_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_hl_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_hl_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_hl_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_hl_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_hl_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_hl_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_hl_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_hl_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_hl_100c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_hl_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_hl_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_hl_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_hl_27c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_hl_27c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_hl_27c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_hl_100c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_hl_100c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_hl_100c_3.60v: raw ngspice log not retrievable (None)",
+    "lh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "lh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "lh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "lh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "lh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "lh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "lh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "lh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "lh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_lh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_lh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_lh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_lh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_lh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_lh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "sf_lh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "sf_lh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "sf_lh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_lh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_lh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_lh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_lh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_lh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_lh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ff_lh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ff_lh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ff_lh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_lh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_lh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_lh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_lh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_lh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_lh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "ss_lh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "ss_lh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "ss_lh_100c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_lh_-40c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_lh_-40c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_lh_-40c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_lh_27c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_lh_27c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_lh_27c_3.60v: raw ngspice log not retrievable (None)",
+    "fs_lh_100c_3.00v: raw ngspice log not retrievable (None)",
+    "fs_lh_100c_3.30v: raw ngspice log not retrievable (None)",
+    "fs_lh_100c_3.60v: raw ngspice log not retrievable (None)"
+  ],
+  "record_id": "20261010-014506-8adcaaf",
+  "results": [
+    {
+      "corner_id": "tt_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "tt_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ll_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_ll_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_ll_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_ll_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_ll_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "hl_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_hl_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_hl_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_hl_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_hl_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "lh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "sf_lh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ff_lh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "ss_lh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_27c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_27c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_27c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_100c_3.00v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_100c_3.30v",
+      "measurements": {},
+      "status": "failed"
+    },
+    {
+      "corner_id": "fs_lh_100c_3.60v",
+      "measurements": {},
+      "status": "failed"
+    }
+  ],
+  "schema": "sky130-usb2-phy.sim.evidence/1",
+  "sections": {
+    "ff": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "typical"
+    },
+    "ff_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "high"
+    },
+    "ff_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "high"
+    },
+    "ff_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "low"
+    },
+    "ff_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "low"
+    },
+    "fs": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "typical"
+    },
+    "fs_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "high"
+    },
+    "fs_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "high"
+    },
+    "fs_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "low"
+    },
+    "fs_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "low"
+    },
+    "hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "high"
+    },
+    "hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "high"
+    },
+    "lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "low"
+    },
+    "ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "low"
+    },
+    "sf": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "typical"
+    },
+    "sf_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "high"
+    },
+    "sf_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "high"
+    },
+    "sf_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "low"
+    },
+    "sf_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "low"
+    },
+    "ss": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "typical"
+    },
+    "ss_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "high"
+    },
+    "ss_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "high"
+    },
+    "ss_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "low"
+    },
+    "ss_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "low"
+    },
+    "tt": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "typical"
+    }
+  },
+  "snapshot_sha256": "37910a13760838517c95975d3b02dbc032c1e2b1efb05baf97ca7e500a9266c2",
+  "started_utc": "2026-10-10T01:45:06+00:00",
+  "status": "FAIL",
+  "variant": "resistor-sets"
+}

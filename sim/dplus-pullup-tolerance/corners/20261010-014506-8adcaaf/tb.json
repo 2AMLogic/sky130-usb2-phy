@@ -1,0 +1,168 @@
+{
+  "name": "dplus-pullup-tolerance",
+  "description": "sky130 trimmed D+ pull-up (design/dplus_pullup.sch): effective pull-up resistance at every one of the 16 trim codes with the host 15 kohm load on D+, plus the disabled state, across the 45-point PVT matrix.",
+  "claim": "Effective D+ pull-up resistance of the sky130 trimmed pull-up over the 45-point PVT matrix (spec/usb2-phy.md section 6 row 'FS device D+ pull-up': 1.5 kohm +/-5 %, i.e. 1.425-1.575 kohm, to 3.0-3.6 V), PASS when at least one trim code at each corner is inside the inclusive window (trim selected at test; a different code may be chosen per corner), plus disabled-state D+ voltage and leakage as engineering data. Schematic-level, deterministic, no mismatch (no Monte Carlo), no layout parasitics, no regulator, no trim storage; not a signoff or catalog-tier claim.",
+  "netlist": "dplus_pullup_tb.spice",
+  "include": [
+    "../../../design/netlist/dplus_pullup.spice"
+  ],
+  "analysis": {
+    "kind": "dc",
+    "args": "vdum 0 1 1"
+  },
+  "timeout_s": 900,
+  "measure": {
+    "vdp_c00_v": {
+      "spice": ".meas dc vdp_c00_v FIND v(dp00) AT=0"
+    },
+    "vdp_c01_v": {
+      "spice": ".meas dc vdp_c01_v FIND v(dp01) AT=0"
+    },
+    "vdp_c02_v": {
+      "spice": ".meas dc vdp_c02_v FIND v(dp02) AT=0"
+    },
+    "vdp_c03_v": {
+      "spice": ".meas dc vdp_c03_v FIND v(dp03) AT=0"
+    },
+    "vdp_c04_v": {
+      "spice": ".meas dc vdp_c04_v FIND v(dp04) AT=0"
+    },
+    "vdp_c05_v": {
+      "spice": ".meas dc vdp_c05_v FIND v(dp05) AT=0"
+    },
+    "vdp_c06_v": {
+      "spice": ".meas dc vdp_c06_v FIND v(dp06) AT=0"
+    },
+    "vdp_c07_v": {
+      "spice": ".meas dc vdp_c07_v FIND v(dp07) AT=0"
+    },
+    "vdp_c08_v": {
+      "spice": ".meas dc vdp_c08_v FIND v(dp08) AT=0"
+    },
+    "vdp_c09_v": {
+      "spice": ".meas dc vdp_c09_v FIND v(dp09) AT=0"
+    },
+    "vdp_c10_v": {
+      "spice": ".meas dc vdp_c10_v FIND v(dp10) AT=0"
+    },
+    "vdp_c11_v": {
+      "spice": ".meas dc vdp_c11_v FIND v(dp11) AT=0"
+    },
+    "vdp_c12_v": {
+      "spice": ".meas dc vdp_c12_v FIND v(dp12) AT=0"
+    },
+    "vdp_c13_v": {
+      "spice": ".meas dc vdp_c13_v FIND v(dp13) AT=0"
+    },
+    "vdp_c14_v": {
+      "spice": ".meas dc vdp_c14_v FIND v(dp14) AT=0"
+    },
+    "vdp_c15_v": {
+      "spice": ".meas dc vdp_c15_v FIND v(dp15) AT=0"
+    },
+    "voff_d1_v": {
+      "spice": ".meas dc voff_d1_v FIND v(dpd1) AT=0"
+    },
+    "voff_d0_v": {
+      "spice": ".meas dc voff_d0_v FIND v(dpd0) AT=0"
+    },
+    "ioff_d1_na": {
+      "spice": ".meas dc ioff_d1_na FIND i(vmd1) AT=0",
+      "scale": 1000000000.0
+    },
+    "ioff_d0_na": {
+      "spice": ".meas dc ioff_d0_na FIND i(vmd0) AT=0",
+      "scale": 1000000000.0
+    },
+    "ioff_dz_na": {
+      "spice": ".meas dc ioff_dz_na FIND i(vfzdz) AT=0",
+      "scale": 1000000000.0
+    },
+    "ioff_dh_na": {
+      "spice": ".meas dc ioff_dh_na FIND i(vfzdh) AT=0",
+      "scale": 1000000000.0
+    },
+    "isup_d1_na": {
+      "spice": ".meas dc isup_d1_na FIND i(vid1) AT=0",
+      "scale": 1000000000.0
+    },
+    "isup_d0_na": {
+      "spice": ".meas dc isup_d0_na FIND i(vid0) AT=0",
+      "scale": 1000000000.0
+    },
+    "isup_dz_na": {
+      "spice": ".meas dc isup_dz_na FIND i(vidz) AT=0",
+      "scale": 1000000000.0
+    },
+    "isup_dh_na": {
+      "spice": ".meas dc isup_dh_na FIND i(vidh) AT=0",
+      "scale": 1000000000.0
+    }
+  },
+  "trim": {
+    "codes": 16,
+    "measure_prefix": "vdp_c",
+    "load_ohm": 15000,
+    "target_ohm": 1500,
+    "lo_ohm": 1425,
+    "hi_ohm": 1575
+  },
+  "checks": {
+    "voff_d1_v": {
+      "max": 0.8
+    },
+    "voff_d0_v": {
+      "max": 0.8
+    },
+    "r_c00_ohm": {
+      "min_spread_pct": 5.0
+    }
+  },
+  "record": {
+    "netlist_provenance": "schematic-derived netlist: xschem export of design/dplus_pullup.sch (design/netlist/dplus_pullup.spice, byte-identical to the deck frozen in the snapshot below) plus the testbench deck; no layout, no parasitic extraction",
+    "statistical_convention": "deterministic PVT corners only (5 process x 3 temperature x 3 supply); mismatch / Monte Carlo was NOT run. The process sections of the pinned PDK select the typical resistor parameter set at every process corner (res_typical__cap_typical), so this grid exercises the MOS corners and temperature on the ladder, not the resistor sheet-resistance spread",
+    "bounds": "the engineering criteria in the Method section (tb.json trim and checks)",
+    "footer": "Scope: schematic-level electrical evidence for one block against the ratified D+ pull-up resistance row. PASS means some trim code per corner is inside 1.425-1.575 kohm; it does not show that one calibration code survives voltage and temperature, and does not cover resistor sheet-resistance spread (see design/README.md), mismatch, the pull-up supply (VPU is an input), trim storage, layout, DRC/LVS or integrated-PHY behaviour. It does not relax any target. A FAIL record is evidence of failure, not compliance.",
+    "detailed": true,
+    "corner_table": [
+      "best_code",
+      "best_r_ohm",
+      "n_in_window",
+      "step_min_ohm",
+      "step_max_ohm",
+      "range_ohm",
+      "r_c00_ohm",
+      "r_c15_ohm"
+    ],
+    "method": [
+      "Stimulus: 16 pull-up instances (PU_EN = VPU), one per trim code 0..15, TRIM<i> = bit i of the code (TRIM<i> = 1 shorts ladder segment i, code 0 = maximum resistance), each with the host's 15 kohm from D+ to ground. Control inputs sit at 0 or VPU (the documented control domain, no thick-oxide gate sees more than VPU). VPU = the swept supply `vsup` (3.0 / 3.3 / 3.6 V).",
+      "Raw measurement: V(DP) per code (`vdp_cNN_v`, DC operating point). Derived by sim/harness/trim.py and recomputed by the record lint from the raw envelope: I_load = V(DP)/15000 ohm [A, from D+ into the load, i.e. out of the pull-up]; R_eff = (VPU - V(DP))/I_load [ohm]. R_eff therefore includes the enable switch, the ladder and the bypass switches. A code with V(DP) not finite, not > 0 (zero current) or not < VPU yields no resistance and fails the corner.",
+      "Acceptance (existential over codes, within each corner): at least one code with 1425 <= R_eff <= 1575 ohm, inclusive bounds, at each of the 45 unique corners. The bound is NOT applied to every code. All 16 codes must be present and finite at every corner, even when another code passes. Best code = smallest |R_eff - 1500|, ties to the lowest code. Missing, duplicate or unexpected corners, a failed simulation, missing/non-finite code data or a corner with no passing code make the record FAIL.",
+      "Per-corner derived data: `r_cNN_ohm` (all codes), `best_code`, `best_r_ohm`, `best_err_ohm`, `n_in_window`, `step_cNN_ohm` (R(code-1) - R(code), positive = resistance falls), `step_min_ohm`, `step_max_ohm`, `range_ohm` (R(code 0) - R(code 15)), `n_nonmonotonic` (adjacent pairs where resistance does not fall).",
+      "Limit of the selection: the best code is chosen independently per corner. That proves the trim range and step cover every corner; it does not prove that a single calibration code is valid across voltage and temperature after trim at one condition.",
+      "Disabled state (PU_EN = 0): `voff_d1_v` / `voff_d0_v` = V(DP) with TRIM=1111 / 0000 and the 15 kohm host load; `ioff_*_na` = current delivered into D+ by the pull-up (positive out of the pull-up) for d1 and d0 (through the load), dz (D+ forced to 0 V) and dh (D+ forced to VPU); `isup_*_na` = current drawn from VPU by each disabled instance. Only a sanity criterion is applied: D+ must stay at or below 0.8 V (the ratified single-ended VIL) with the 15 kohm load, i.e. not pulled up. No leakage limit is ratified, none is invented, and these records do not claim leakage compliance.",
+      "`r_c00_ohm` spread >= 5 % across the grid is a harness-integrity bound (temperature and MOS corner sections took effect), not a spec row."
+    ]
+  },
+  "variants": {
+    "resistor-sets": {
+      "matrix_id": "pvt225-mos-rc",
+      "claim": "Effective D+ pull-up resistance of the sky130 trimmed pull-up over the 225-point resistor-set matrix (spec/usb2-phy.md section 6 row 'FS device D+ pull-up': 1.5 kohm +/-5 %, i.e. 1.425-1.575 kohm, to 3.0-3.6 V): the 45 temperature/supply/MOS points of the base experiment repeated for each of the five pinned-library resistor/capacitor parameter sets (typical, ll, hh, hl, lh; sim/corners-resistor-sets.json, spec/decision-records/0005-resistor-sheet-resistance-corner-coverage.md). PASS when at least one trim code at each of the 225 points is inside the inclusive window (trim selected at test; a different code may be chosen per point), plus disabled-state D+ voltage and leakage as engineering data. Schematic-level, deterministic, no mismatch (no Monte Carlo), no layout parasitics, no regulator, no trim storage; not a signoff or catalog-tier claim.",
+      "record": {
+        "statistical_convention": "deterministic corners only (5 MOS corners x 5 resistor/capacitor parameter sets x 3 temperature x 3 supply); mismatch / Monte Carlo was NOT run. The suffixed sections (ll, hh, hl, lh) select the pinned library's res_low/res_high and cap_low/cap_high sets together with the matching drawn-width tolerances (tol_*); the ladder resistor (res_generic_po) responds through rp1 and tol_poly, so these are the PDK's own sheet-resistance corners but they are not resistor-only sections, and the PDK ships them as global corners (all resistors move together), not as per-device spread",
+        "method": [
+          "Stimulus: 16 pull-up instances (PU_EN = VPU), one per trim code 0..15, TRIM<i> = bit i of the code (TRIM<i> = 1 shorts ladder segment i, code 0 = maximum resistance), each with the host's 15 kohm from D+ to ground. Control inputs sit at 0 or VPU (the documented control domain, no thick-oxide gate sees more than VPU). VPU = the swept supply `vsup` (3.0 / 3.3 / 3.6 V).",
+          "Raw measurement: V(DP) per code (`vdp_cNN_v`, DC operating point). Derived by sim/harness/trim.py and recomputed by the record lint from the raw envelope: I_load = V(DP)/15000 ohm [A, from D+ into the load, i.e. out of the pull-up]; R_eff = (VPU - V(DP))/I_load [ohm]. R_eff therefore includes the enable switch, the ladder and the bypass switches. A code with V(DP) not finite, not > 0 (zero current) or not < VPU yields no resistance and fails the corner.",
+          "Acceptance (existential over codes, within each corner): at least one code with 1425 <= R_eff <= 1575 ohm, inclusive bounds, at each unique corner of the selected matrix (45 for the base experiment, 225 for the resistor-sets variant). The bound is NOT applied to every code. All 16 codes must be present and finite at every corner, even when another code passes. Best code = smallest |R_eff - 1500|, ties to the lowest code. Missing, duplicate or unexpected corners, a failed simulation, missing/non-finite code data or a corner with no passing code make the record FAIL.",
+          "Per-corner derived data: `r_cNN_ohm` (all codes), `best_code`, `best_r_ohm`, `best_err_ohm`, `n_in_window`, `step_cNN_ohm` (R(code-1) - R(code), positive = resistance falls), `step_min_ohm`, `step_max_ohm`, `range_ohm` (R(code 0) - R(code 15)), `n_nonmonotonic` (adjacent pairs where resistance does not fall).",
+          "Limit of the selection: the best code is chosen independently per corner. That proves the trim range and step cover every corner; it does not prove that a single calibration code is valid across voltage and temperature after trim at one condition.",
+          "Disabled state (PU_EN = 0): `voff_d1_v` / `voff_d0_v` = V(DP) with TRIM=1111 / 0000 and the 15 kohm host load; `ioff_*_na` = current delivered into D+ by the pull-up (positive out of the pull-up) for d1 and d0 (through the load), dz (D+ forced to 0 V) and dh (D+ forced to VPU); `isup_*_na` = current drawn from VPU by each disabled instance. Only a sanity criterion is applied: D+ must stay at or below 0.8 V (the ratified single-ended VIL) with the 15 kohm load, i.e. not pulled up. No leakage limit is ratified, none is invented, and these records do not claim leakage compliance.",
+          "`r_c00_ohm` spread >= 5 % across the grid is a harness-integrity bound (temperature and MOS corner sections took effect), not a spec row.",
+          "Resistor coverage: each point's process section is one of 25 pinned-library sections = 5 MOS corners x {typical, ll, hh, hl, lh}; the section -> (MOS file, resistor set, capacitor set) mapping and the resolved library includes are recorded in evidence.json (`sections`) and checked by the lint against the approved map. The bare sections `ll`, `hh`, `hl`, `lh` carry the tt MOS corner.",
+          "Compatibility: this record is a supplement to, not a replacement for, the 45-point records (res_typical only); those records are unchanged and keep their own frozen matrix."
+        ],
+        "footer": "Scope: schematic-level electrical evidence for one block against the ratified D+ pull-up resistance row over the PDK's global resistor/capacitor corner sets. PASS means some trim code per point is inside 1.425-1.575 kohm; it does not show that one calibration code survives voltage, temperature and process after trim at one condition, and does not cover per-device resistor spread or mismatch, the pull-up supply (VPU is an input), trim storage, layout, DRC/LVS or integrated-PHY behaviour. It does not relax any target. A FAIL record is evidence of failure, not compliance."
+      }
+    }
+  }
+}
