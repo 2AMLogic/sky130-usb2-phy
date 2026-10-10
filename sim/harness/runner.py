@@ -1,6 +1,6 @@
 """Run one experiment's PVT grid through `klt sim` and mint an evidence record.
 
-The full 45-point grid always goes to the batch backend, requested explicitly
+The full grid (45 or 225 points, per the approved matrix the experiment/variant names) always goes to the batch backend, requested explicitly
 (`--backend batch` on the klt command line *and* `backend` in the request). A
 backend error fails the run: there is no local fallback for a grid. A local
 backend exists only for single-corner debug probes that are never recorded.
@@ -57,6 +57,41 @@ def lib_sections(lib_path: Path) -> set[str]:
     return out
 
 
+def lib_section_includes(lib_path: Path) -> dict[str, list[str]]:
+    """`.lib <section>` -> the `.include` targets between it and its `.endl`."""
+    out: dict[str, list[str]] = {}
+    cur = None
+    for line in lib_path.read_text(errors="replace").splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0].lower() == ".lib":
+            cur = parts[1]
+            out.setdefault(cur, [])
+        elif parts and parts[0].lower() == ".endl":
+            cur = None
+        elif cur is not None and parts and parts[0].lower() == ".include":
+            out[cur].append(line.split(None, 1)[1].strip().strip('"'))
+    return out
+
+
+def expected_includes(section: str) -> list[str]:
+    mos, res, cap = mx.SECTION_MAP[section]
+    rc = f"r+c/res_{res}__cap_{cap}"
+    return [f"corners/{mos}.spice", f"{rc}.spice", f"{rc}__lin.spice", f"corners/{mos}/specialized_cells.spice"]
+
+
+def section_evidence(lib: Path, sections) -> tuple[dict, list[str]]:
+    """Resolved includes per section, and mismatches against the approved section map."""
+    inc = lib_section_includes(lib)
+    ev, bad = {}, []
+    for s in sections:
+        got = inc.get(s)
+        mos, res, cap = mx.SECTION_MAP[s]
+        ev[s] = {"mos": mos, "resistor_set": res, "capacitor_set": cap, "includes": got}
+        if got != expected_includes(s):
+            bad.append(f"{s}: library includes {got}, expected {expected_includes(s)}")
+    return ev, bad
+
+
 def check_env(matrix: mx.Matrix) -> dict:
     """Confirm, on this host, the PDK, model library and corner sections."""
     pdk = find_pdk_dir(matrix.pdk["name"])
@@ -68,6 +103,9 @@ def check_env(matrix: mx.Matrix) -> dict:
     missing = [s for s in matrix.process if s not in lib_sections(lib)]
     if missing:
         raise RunError(f"{lib} has no .lib section(s) {missing}")
+    sections, bad = section_evidence(lib, matrix.process)
+    if bad:
+        raise RunError("pinned library section mapping differs from the approved one: " + "; ".join(bad[:3]))
     sources = pdk / "SOURCES"
     commit = "unknown"
     if sources.is_file():
@@ -76,7 +114,7 @@ def check_env(matrix: mx.Matrix) -> dict:
             if len(parts) >= 2 and parts[0] == "open_pdks":
                 commit = parts[1]
     return {"path": str(pdk), "lib": str(lib), "lib_sha256": sha256_file(lib), "open_pdks_commit": commit,
-            "sections_present": list(matrix.process)}
+            "sections_present": list(matrix.process), "sections": sections}
 
 
 def _git(*args: str) -> str:
@@ -169,6 +207,7 @@ def _measurement_ranges(m: dict) -> list[str]:
 
 
 def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
+    matrix_file = mx.APPROVED_MATRICES[m.get("matrix_id", mx.LEGACY_ID)]["file"]
     rel = f"sim/{m['experiment']}"
     ok = sum(1 for r in m["results"] if r["status"] == "ok")
     meta = {**SMOKE_RECORD_DEFAULTS, **(parts.get("record_meta") or {})}
@@ -189,7 +228,8 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
         f"- **Netlist provenance**: {meta['netlist_provenance']}",
         f"- **Corner matrix run**: {len(m['results'])} points = process {{{', '.join(m['axes']['process'])}}} x "
         f"temperature {{{', '.join(f'{t:g}' for t in m['axes']['temperature_c'])}}} C x supply "
-        f"{{{', '.join(f'{v:g}' for v in m['axes']['supply_v'])}}} V (sim/corners.json); full matrix, no subset",
+        f"{{{', '.join(f'{v:g}' for v in m['axes']['supply_v'])}}} V (sim/{matrix_file}"
+        f"{', matrix ' + m['matrix_id'] if m.get('matrix_id', mx.LEGACY_ID) != mx.LEGACY_ID else ''}); full matrix, no subset",
         f"- **Statistical convention**: {meta['statistical_convention']}",
         f"- **Result**: {m['status']} -- {ok}/{len(m['results'])} corners simulated with finite measurements inside "
         f"{meta['bounds']}{problem_note}",
@@ -223,13 +263,19 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
 
 
 def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: str = "",
-        runner_version_check: str | None = None) -> int:
-    matrix = mx.load()
+        runner_version_check: str | None = None, variant: str | None = None) -> int:
     exp_dir = mx.SIM_DIR / experiment
     tb_path = exp_dir / "testbench" / "tb.json"
     if not tb_path.is_file():
         raise RunError(f"no experiment {experiment!r}: {tb_path} missing")
-    tb = json.loads(tb_path.read_text())
+    tb_raw = json.loads(tb_path.read_text())
+    try:
+        tb = rs.resolve_tb(tb_raw, variant)
+        matrix = mx.load_by_id(rs.tb_matrix_id(tb_raw, variant))
+    except (rs.VariantError, mx.MatrixError) as exc:
+        raise RunError(str(exc)) from exc
+    matrix_path = mx.CORNERS_JSON if matrix.matrix_id == mx.LEGACY_ID else (
+        mx.SIM_DIR / mx.APPROVED_MATRICES[matrix.matrix_id]["file"])
     body = (exp_dir / "testbench" / tb["netlist"]).read_bytes()
     for inc in tb.get("include", []):  # design netlists the deck instantiates, frozen into the snapshot
         body += b"\n* ---- included: " + inc.encode() + b" ----\n" + (exp_dir / "testbench" / inc).read_bytes()
@@ -272,6 +318,7 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
 
     base = {
         "schema": "sky130-usb2-phy.sim.evidence/1", "record_id": rid, "experiment": experiment,
+        "matrix_id": matrix.matrix_id, "variant": variant, "sections": env.get("sections"),
         "harness_version": HARNESS_VERSION, "backend": backend, "axes": {
             "process": list(matrix.process), "temperature_c": list(matrix.temperature_c),
             "supply_v": list(matrix.supply_v)},
@@ -281,7 +328,7 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
                 "lib_sha256": env["lib_sha256"], "lib": matrix.pdk["lib"]},
     }
     parts = {"body": body, "request_bytes": request_bytes, "tb_bytes": tb_path.read_bytes(),
-             "matrix_bytes": mx.CORNERS_JSON.read_bytes(), "claim": tb["claim"], "supersedes": supersedes,
+             "matrix_bytes": matrix_path.read_bytes(), "claim": tb["claim"], "supersedes": supersedes,
              "record_meta": tb.get("record") or {},
              "logs": {}, "stderr": "", "report": None}
 
