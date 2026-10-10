@@ -338,8 +338,10 @@ typical-resistor evidence.
 
 `driver-static` and `driver-signal-quality` (#135) now declare a `resistor-sets` variant (bounds and
 checks unchanged). `driver-static`: record `20261010-070333-23e660b` is a complete 225-point FAIL
-(198/225 points pass, 68 problems; the inclusive 28-44 ohm output-resistance row is violated low at
-some low-resistor-set corners; batch job `klt-sim-32c9b2c0c856`). `driver-signal-quality`: no result
+(198/225 points pass, 68 problems at 27 failing points, batch job `klt-sim-32c9b2c0c856`). The
+inclusive 28-44 ohm output-resistance row is violated on both sides: 46 low-side violations
+(26.33-27.94 ohm, 17 points, all at -40 C on `ll`/`lh` sections) and 22 high-side violations
+(44.38-46.55 ohm, 10 points, on `hh`/`hl` sections with ss/fs/sf MOS at 100 C, mostly 3.0 V). `driver-signal-quality`: no result
 yet. The 225-point transient grid exceeds the fleet's 3600 s whole-job cap (the 45-point run took
 1568 s at concurrency 2): record `20261010-090542-23e660b` (job `klt-sim-8c8caa90c6b3`) is an
 infrastructure failure (`batch_job_timeout`, all 225 points `error`, no measurements) and
