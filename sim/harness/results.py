@@ -112,6 +112,22 @@ def evaluate(report: dict, expected_points, tb: dict) -> tuple[list[dict], list[
     for k in sorted(set(seen) - set(want)):
         problems.append(f"unexpected corner in report: {mx.corner_id(*k)}")
 
+    # Fail closed: every configured trim input must be a declared measurement, else the
+    # existential check could be silently skipped. One problem, not one per input/corner.
+    trim_cfg_missing: list[str] = []
+    if tb.get("trim"):
+        tc = tb["trim"]
+        try:
+            trim_cfg_missing = [n for n in (f"{tc['measure_prefix']}{i:02d}_v" for i in range(int(tc["codes"])))
+                                if n not in tb["measure"]]
+            if int(tc["codes"]) < 1:
+                trim_cfg_missing = ["<no trim codes configured>"]
+        except (KeyError, TypeError, ValueError):
+            trim_cfg_missing = ["<malformed trim block: needs measure_prefix and codes>"]
+        if trim_cfg_missing:
+            problems.append(f"trim block references undeclared measurement(s) {trim_cfg_missing}; "
+                            "best-code analysis cannot run")
+
     results: list[dict] = []
     for k in want:
         cid = mx.corner_id(*k)
@@ -134,7 +150,9 @@ def evaluate(report: dict, expected_points, tb: dict) -> tuple[list[dict], list[
             problems.append(f"{cid}: missing or non-finite measurement(s) {absent}")
         # Optional existential best-trim evaluation (see harness/trim.py): derived per-code
         # resistances, best code, steps; the corner fails unless some code is inside the window.
-        if tb.get("trim"):
+        if trim_cfg_missing:
+            status = "failed"  # reported once above; best_code is not derived
+        elif tb.get("trim"):
             tcfg = tb["trim"]
             raw = [meas.get(f"{tcfg['measure_prefix']}{i:02d}_v") for i in range(int(tcfg["codes"]))]
             # Missing/non-finite code measurements were already reported above; do not repeat.
