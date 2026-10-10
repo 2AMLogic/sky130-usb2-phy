@@ -3,6 +3,13 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-10
+
+- **PR #137**: sim: resistor sheet-resistance corner coverage, 225-point D+ pull-up record (#126)
+- **Issue #126** (closed): sim: resistor sheet-resistance spread is not in the 45-corner matrix (D+ pull-up trim coverage unrecorded)
+- **PR #134**: docs(sim): harness sharing analysis and upstream issue draft (#119)
+- **Issue #119** (closed): sim harness: extract a PDK-neutral core from gf180-usb2-phy so sky130-usb2-phy can vendor it byte-identically
+
 ### 2026-10-09
 
 - **PR #131**: feat: sky130 FS line driver with OE, 45-corner signal-quality and static evidence (#112)

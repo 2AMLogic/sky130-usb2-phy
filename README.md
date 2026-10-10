@@ -45,9 +45,11 @@ pull-up, and a digital UTMI layer.
   merged, with schematic-level evidence over the 45-corner MOS PVT grid;
   differential sensitivity covers three common-mode points (135 combinations).
   Driver signal-quality and static results pass all 45 corners. Layout,
-  mismatch, passive process spread and integrated PHY behavior remain
-  unverified; resistor-spread coverage (#126) and disabled-pad behavior above
-  the I/O supply (#130) remain open. See [`design/README.md`](design/README.md)
+  mismatch and integrated PHY behavior remain unverified. The D+ pull-up
+  additionally passes 225 MOS/resistor/capacitor corner combinations, selecting
+  a trim code per point; passive-process spread for the driver (#135) and
+  receivers (#136), and disabled-pad behavior above the I/O supply (#130),
+  remain open. See [`design/README.md`](design/README.md)
   for the per-block results and limitations.
 - **PLL** — not designed here: consumed by pinned reference to
   [`sky130-pll`](https://github.com/2AMLogic/sky130-pll)
