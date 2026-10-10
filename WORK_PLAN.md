@@ -29,6 +29,7 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps)
+- **#136**: sim: resistor-set (sheet-resistance) sweep for the differential and single-ended receivers
 
 ## PRs Awaiting Review
 
@@ -50,6 +51,7 @@ Issues carrying `loom:curated`.
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
 - **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps) *(curated)*
+- **#136**: sim: resistor-set (sheet-resistance) sweep for the differential and single-ended receivers *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -67,10 +69,10 @@ _None._
 | Operator merge-risk holds | 0 |
 | Operator priority | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 4 |
+| Curated | 5 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
