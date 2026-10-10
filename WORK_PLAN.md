@@ -28,7 +28,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps)
 
 ## PRs Awaiting Review
 
@@ -49,7 +49,7 @@ Issues carrying `loom:curated`.
 - **#84**: Guard trigger review: worktree-write-confinement DENY on /tmp scratch ERC comparison command (refine or confirm fixed) *(curated)*
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#127**: sim harness: tb.json trim block fails open when measure_prefix/codes do not match declared measurements *(curated)*
+- **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps) *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -67,7 +67,7 @@ _None._
 | Operator merge-risk holds | 0 |
 | Operator priority | 0 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 0 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 4 |

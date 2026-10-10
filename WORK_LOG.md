@@ -5,6 +5,9 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-10
 
+- **Issue #127** (closed): sim harness: tb.json trim block fails open when measure_prefix/codes do not match declared measurements
+- **PR #139**: sim harness: fail closed on undeclared trim inputs (#127)
+
 - **PR #137**: sim: resistor sheet-resistance corner coverage, 225-point D+ pull-up record (#126)
 - **Issue #126** (closed): sim: resistor sheet-resistance spread is not in the 45-corner matrix (D+ pull-up trim coverage unrecorded)
 - **PR #134**: docs(sim): harness sharing analysis and upstream issue draft (#119)
