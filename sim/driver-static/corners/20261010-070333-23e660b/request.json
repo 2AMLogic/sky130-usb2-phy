@@ -1,0 +1,291 @@
+{
+  "netlist": "body.spice",
+  "engine": "ngspice",
+  "backend": "batch",
+  "models": {
+    "pdk": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice"
+  },
+  "corners": {
+    "process": [
+      "tt",
+      "sf",
+      "ff",
+      "ss",
+      "fs",
+      "ll",
+      "sf_ll",
+      "ff_ll",
+      "ss_ll",
+      "fs_ll",
+      "hh",
+      "sf_hh",
+      "ff_hh",
+      "ss_hh",
+      "fs_hh",
+      "hl",
+      "sf_hl",
+      "ff_hl",
+      "ss_hl",
+      "fs_hl",
+      "lh",
+      "sf_lh",
+      "ff_lh",
+      "ss_lh",
+      "fs_lh"
+    ],
+    "supply_v": {
+      "vsup": [
+        3.0,
+        3.3,
+        3.6
+      ]
+    },
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "analysis": {
+    "kind": "dc",
+    "args": "vf 0 3.65 0.05"
+  },
+  "measurements": [
+    {
+      "name": "tt_dp_d00_e00_v",
+      "spice": ".meas dc tt_dp_d00_e00_v FIND v(tt_dp_d00_e00) AT=0"
+    },
+    {
+      "name": "tt_dm_d00_e00_v",
+      "spice": ".meas dc tt_dm_d00_e00_v FIND v(tt_dm_d00_e00) AT=0"
+    },
+    {
+      "name": "tt_dp_d00_e01_v",
+      "spice": ".meas dc tt_dp_d00_e01_v FIND v(tt_dp_d00_e01) AT=0"
+    },
+    {
+      "name": "tt_dm_d00_e01_v",
+      "spice": ".meas dc tt_dm_d00_e01_v FIND v(tt_dm_d00_e01) AT=0"
+    },
+    {
+      "name": "tt_dp_d00_e10_v",
+      "spice": ".meas dc tt_dp_d00_e10_v FIND v(tt_dp_d00_e10) AT=0"
+    },
+    {
+      "name": "tt_dm_d00_e10_v",
+      "spice": ".meas dc tt_dm_d00_e10_v FIND v(tt_dm_d00_e10) AT=0"
+    },
+    {
+      "name": "tt_dp_d00_e11_v",
+      "spice": ".meas dc tt_dp_d00_e11_v FIND v(tt_dp_d00_e11) AT=0"
+    },
+    {
+      "name": "tt_dm_d00_e11_v",
+      "spice": ".meas dc tt_dm_d00_e11_v FIND v(tt_dm_d00_e11) AT=0"
+    },
+    {
+      "name": "tt_dp_d01_e00_v",
+      "spice": ".meas dc tt_dp_d01_e00_v FIND v(tt_dp_d01_e00) AT=0"
+    },
+    {
+      "name": "tt_dm_d01_e00_v",
+      "spice": ".meas dc tt_dm_d01_e00_v FIND v(tt_dm_d01_e00) AT=0"
+    },
+    {
+      "name": "tt_dp_d01_e01_v",
+      "spice": ".meas dc tt_dp_d01_e01_v FIND v(tt_dp_d01_e01) AT=0"
+    },
+    {
+      "name": "tt_dm_d01_e01_v",
+      "spice": ".meas dc tt_dm_d01_e01_v FIND v(tt_dm_d01_e01) AT=0"
+    },
+    {
+      "name": "tt_dp_d01_e10_v",
+      "spice": ".meas dc tt_dp_d01_e10_v FIND v(tt_dp_d01_e10) AT=0"
+    },
+    {
+      "name": "tt_dm_d01_e10_v",
+      "spice": ".meas dc tt_dm_d01_e10_v FIND v(tt_dm_d01_e10) AT=0"
+    },
+    {
+      "name": "tt_dp_d01_e11_v",
+      "spice": ".meas dc tt_dp_d01_e11_v FIND v(tt_dp_d01_e11) AT=0"
+    },
+    {
+      "name": "tt_dm_d01_e11_v",
+      "spice": ".meas dc tt_dm_d01_e11_v FIND v(tt_dm_d01_e11) AT=0"
+    },
+    {
+      "name": "tt_dp_d10_e00_v",
+      "spice": ".meas dc tt_dp_d10_e00_v FIND v(tt_dp_d10_e00) AT=0"
+    },
+    {
+      "name": "tt_dm_d10_e00_v",
+      "spice": ".meas dc tt_dm_d10_e00_v FIND v(tt_dm_d10_e00) AT=0"
+    },
+    {
+      "name": "tt_dp_d10_e01_v",
+      "spice": ".meas dc tt_dp_d10_e01_v FIND v(tt_dp_d10_e01) AT=0"
+    },
+    {
+      "name": "tt_dm_d10_e01_v",
+      "spice": ".meas dc tt_dm_d10_e01_v FIND v(tt_dm_d10_e01) AT=0"
+    },
+    {
+      "name": "tt_dp_d10_e10_v",
+      "spice": ".meas dc tt_dp_d10_e10_v FIND v(tt_dp_d10_e10) AT=0"
+    },
+    {
+      "name": "tt_dm_d10_e10_v",
+      "spice": ".meas dc tt_dm_d10_e10_v FIND v(tt_dm_d10_e10) AT=0"
+    },
+    {
+      "name": "tt_dp_d10_e11_v",
+      "spice": ".meas dc tt_dp_d10_e11_v FIND v(tt_dp_d10_e11) AT=0"
+    },
+    {
+      "name": "tt_dm_d10_e11_v",
+      "spice": ".meas dc tt_dm_d10_e11_v FIND v(tt_dm_d10_e11) AT=0"
+    },
+    {
+      "name": "tt_dp_d11_e00_v",
+      "spice": ".meas dc tt_dp_d11_e00_v FIND v(tt_dp_d11_e00) AT=0"
+    },
+    {
+      "name": "tt_dm_d11_e00_v",
+      "spice": ".meas dc tt_dm_d11_e00_v FIND v(tt_dm_d11_e00) AT=0"
+    },
+    {
+      "name": "tt_dp_d11_e01_v",
+      "spice": ".meas dc tt_dp_d11_e01_v FIND v(tt_dp_d11_e01) AT=0"
+    },
+    {
+      "name": "tt_dm_d11_e01_v",
+      "spice": ".meas dc tt_dm_d11_e01_v FIND v(tt_dm_d11_e01) AT=0"
+    },
+    {
+      "name": "tt_dp_d11_e10_v",
+      "spice": ".meas dc tt_dp_d11_e10_v FIND v(tt_dp_d11_e10) AT=0"
+    },
+    {
+      "name": "tt_dm_d11_e10_v",
+      "spice": ".meas dc tt_dm_d11_e10_v FIND v(tt_dm_d11_e10) AT=0"
+    },
+    {
+      "name": "tt_dp_d11_e11_v",
+      "spice": ".meas dc tt_dp_d11_e11_v FIND v(tt_dp_d11_e11) AT=0"
+    },
+    {
+      "name": "tt_dm_d11_e11_v",
+      "spice": ".meas dc tt_dm_d11_e11_v FIND v(tt_dm_d11_e11) AT=0"
+    },
+    {
+      "name": "voh_dp_v",
+      "spice": ".meas dc voh_dp_v FIND v(voh_dp) AT=0"
+    },
+    {
+      "name": "voh15_dp_v",
+      "spice": ".meas dc voh15_dp_v FIND v(voh15_dp) AT=0"
+    },
+    {
+      "name": "vol_dp_v",
+      "spice": ".meas dc vol_dp_v FIND v(vol_dp) AT=0"
+    },
+    {
+      "name": "rout_high_dp_ohm",
+      "spice": ".meas dc rout_high_dp_ohm FIND v(rhv_dp) AT=0"
+    },
+    {
+      "name": "rout_low_dp_ohm",
+      "spice": ".meas dc rout_low_dp_ohm FIND v(rlv_dp) AT=0"
+    },
+    {
+      "name": "voh_dm_v",
+      "spice": ".meas dc voh_dm_v FIND v(voh_dm) AT=0"
+    },
+    {
+      "name": "voh15_dm_v",
+      "spice": ".meas dc voh15_dm_v FIND v(voh15_dm) AT=0"
+    },
+    {
+      "name": "vol_dm_v",
+      "spice": ".meas dc vol_dm_v FIND v(vol_dm) AT=0"
+    },
+    {
+      "name": "rout_high_dm_ohm",
+      "spice": ".meas dc rout_high_dm_ohm FIND v(rhv_dm) AT=0"
+    },
+    {
+      "name": "rout_low_dm_ohm",
+      "spice": ".meas dc rout_low_dm_ohm FIND v(rlv_dm) AT=0"
+    },
+    {
+      "name": "leak_dp_0v_na",
+      "spice": ".meas dc leak_dp_0v_na FIND i(vsap) AT=0"
+    },
+    {
+      "name": "leak_dp_1p5v_na",
+      "spice": ".meas dc leak_dp_1p5v_na FIND i(vsap) AT=1.5"
+    },
+    {
+      "name": "leak_dp_3p0v_na",
+      "spice": ".meas dc leak_dp_3p0v_na FIND i(vsap) AT=3.0"
+    },
+    {
+      "name": "leak_dp_3p6v_na",
+      "spice": ".meas dc leak_dp_3p6v_na FIND i(vsap) AT=3.6"
+    },
+    {
+      "name": "leak_dp_max_na",
+      "spice": ".meas dc leak_dp_max_na MAX i(vsap) FROM=0 TO=3.6"
+    },
+    {
+      "name": "leak_dp_min_na",
+      "spice": ".meas dc leak_dp_min_na MIN i(vsap) FROM=0 TO=3.6"
+    },
+    {
+      "name": "leak_dm_0v_na",
+      "spice": ".meas dc leak_dm_0v_na FIND i(vsbm) AT=0"
+    },
+    {
+      "name": "leak_dm_1p5v_na",
+      "spice": ".meas dc leak_dm_1p5v_na FIND i(vsbm) AT=1.5"
+    },
+    {
+      "name": "leak_dm_3p0v_na",
+      "spice": ".meas dc leak_dm_3p0v_na FIND i(vsbm) AT=3.0"
+    },
+    {
+      "name": "leak_dm_3p6v_na",
+      "spice": ".meas dc leak_dm_3p6v_na FIND i(vsbm) AT=3.6"
+    },
+    {
+      "name": "leak_dm_max_na",
+      "spice": ".meas dc leak_dm_max_na MAX i(vsbm) FROM=0 TO=3.6"
+    },
+    {
+      "name": "leak_dm_min_na",
+      "spice": ".meas dc leak_dm_min_na MIN i(vsbm) FROM=0 TO=3.6"
+    },
+    {
+      "name": "leak_dm_mid_na",
+      "spice": ".meas dc leak_dm_mid_na FIND i(vsam) AT=0"
+    },
+    {
+      "name": "leak_dp_mid_na",
+      "spice": ".meas dc leak_dp_mid_na FIND i(vsbp) AT=0"
+    },
+    {
+      "name": "isup_static_ua",
+      "spice": ".meas dc isup_static_ua FIND i(vsupq) AT=0"
+    }
+  ],
+  "options": {
+    "timeout_s": 900,
+    "keep_artifacts": true
+  },
+  "batch": {
+    "runner_version_check": "warn"
+  }
+}
