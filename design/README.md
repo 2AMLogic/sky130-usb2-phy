@@ -87,8 +87,10 @@ of the chosen devices.
    the tail, so the absolute resistance spread sets the bias; the
    `xhigh` (highest sheet-resistance) poly is chosen to reach ~10^5 ohm in a
    short run; `res_high_po` was not tried. The device is the model's
-   process-corner-aware resistor, so resistor spread rides on the same `tt ff
-   ss fs sf` sections. Measured supply current for the whole receiver at
+   resistor model, but the five bare sections `tt ff ss fs sf` all load the
+   typical resistor set, so the 45-corner grid does **not** cover its
+   sheet-resistance spread (#126, `sim/README.md` "Resistor-set coverage");
+   no resistor-set sweep of this receiver has been run. Measured supply current for the whole receiver at
    VDIFF = 0 is 9.7-48.7 uA at 0.8 V common mode, 29.4-66.7 uA at 1.65 V and
    37.1-80.3 uA at 2.5 V over the 45 corners, so the bias scheme keeps working
    at every corner. A different bias scheme was not tried. The nominal
