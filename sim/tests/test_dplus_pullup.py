@@ -178,6 +178,36 @@ def test_good_grid_passes_and_reports_per_corner_data():
     assert all(f"vdp_c{k:02d}_v" in r for k in range(16))  # raw measurements preserved
 
 
+def _eval_with_trim(**over):
+    import copy
+    tb = copy.deepcopy(TB)
+    tb["trim"].update(over)
+    return rs.evaluate(report(), MATRIX.points(), tb)
+
+
+@pytest.mark.parametrize("over,needle", [
+    ({"measure_prefix": "vdp_x"}, "vdp_x00_v"),
+    ({"codes": 17}, "vdp_c16_v"),
+    ({"codes": 20}, "vdp_c19_v"),
+])
+def test_misconfigured_trim_fails_closed_with_one_problem(over, needle):
+    results, problems = _eval_with_trim(**over)
+    assert problems, "malformed trim config must never yield an empty problem list"
+    assert len(problems) == 1 and needle in problems[0]
+    assert all("best_code" not in r["measurements"] for r in results)
+    assert all(r["status"] == "failed" for r in results)
+
+
+def test_valid_trim_still_derives_best_code_and_declared_missing_still_reported():
+    results, problems = _eval_with_trim()
+    assert problems == [] and "best_code" in results[0]["measurements"]
+    rep = report()
+    c = rep["corners"][0]
+    c["measurements"] = [m for m in c["measurements"] if m["name"] != "vdp_c03_v"]
+    _, probs = evaluate(rep)
+    assert any("missing or non-finite measurement(s)" in x and "vdp_c03_v" in x for x in probs)
+
+
 def test_best_code_may_differ_per_corner():
     results, problems = evaluate(report())
     assert problems == []
