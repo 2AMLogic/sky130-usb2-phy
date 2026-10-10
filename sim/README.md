@@ -68,7 +68,8 @@ klt envelope reporting the same library hash and open_pdks version.
 
 ```
 sim/
-  corners.json                 the one 45-point matrix + PDK identity
+  corners.json                 the 45-point matrix + PDK identity (id pvt45-mos)
+  corners-resistor-sets.json   the supplemental 225-point resistor-set matrix (id pvt225-mos-rc)
   run_corners.py               runner (stdlib only): --list, --check-env, <experiment>
   check_records.py             toolchain-free record lint (also run by `npm run lint`)
   harness/                     matrix.py results.py runner.py evidence_lint.py
@@ -241,10 +242,11 @@ Records: `dplus-pullup-tolerance/records/`. The first two attempts
 fleet refused the job (`batch_no_capacity`, no capacity in any of the 30 pools)
 before any simulation; they are kept and are not coverage. The third
 (`20261009-172948-d85f0dc`) is the PASS 45/45 record. No Monte Carlo is run, and
-**the pinned PDK's process sections all use the typical resistor parameter set**
-(`res_typical__cap_typical`), so this grid covers MOS corners and the resistor
+**the pinned PDK's five bare process sections all use the typical resistor parameter set**
+(`res_typical__cap_typical`), so the 45-point grid covers MOS corners and the resistor
 temperature coefficient but not the resistor sheet-resistance spread; see
-`design/README.md` for the separate, unrecorded design-basis check. Provenance:
+`design/README.md` for the separate, unrecorded design-basis check and "Resistor-set
+coverage" below for the supplemental 225-point matrix. Provenance:
 `reuse.lock.json` stamps the gf180 source files read (schematic, netlist, design
 notes, testbench, record); the sky130 deck and evaluator are new code, not
 byte-copies, and the existential selection is this port's own addition.
@@ -281,8 +283,8 @@ are FAIL attempts the fleet refused: `BATCH_MAX_CONCURRENT_INSTANCES` then
 `batch_no_capacity`) and `driver-static/records/` (`20261009-185058-e232b2f` PASS
 45/45, job `klt-sim-d7588a09de82`; `20261009-181043-e232b2f` FAIL, fleet at its
 instance limit). FAIL attempts are kept and are not coverage; no local grid was run.
-No Monte Carlo; resistor and MIM-capacitor process spread is not in the grid
-(typical parameter set in all five sections). Provenance: `reuse.lock.json` stamps
+No Monte Carlo; resistor and MIM-capacitor process spread is not in the 45-point grid
+(typical parameter set in all five sections; see "Resistor-set coverage"). Provenance: `reuse.lock.json` stamps
 the gf180 driver schematic, netlist, testbench and record that were read; the sky130
 decks are new except for the carried 50 pF load, stimulus and measurement
 definitions named in `driver_tb.spice`. Results and device reasons:
@@ -304,3 +306,32 @@ definitions named in `driver_tb.spice`. Results and device reasons:
 - `git.dirty` in `evidence.json` is true for records minted before commit; the
   frozen netlist, request, tb and matrix copies and their hashes are the
   reproducibility anchor.
+
+## Resistor-set coverage (#126, `spec/decision-records/0005-resistor-sheet-resistance-corner-coverage.md`, proposed)
+
+`corners.json` (45 points) uses `tt ff ss fs sf`, all of which load
+`r+c/res_typical__cap_typical.spice`; it does not cover resistor sheet resistance. The
+pinned library's `ll`, `hh`, `hl`, `lh` (bare, `tt` MOS) and `<mos>_ll|hh|hl|lh` sections
+select the low/high resistor sets; they also change the capacitor set and the `tol_*` drawn-width
+tolerances, so they are not resistor-only, and they are the PDK's global corners (not per-device
+spread or mismatch). `corners-resistor-sets.json` crosses all 25 sections (5 MOS x {typical, ll,
+hh, hl, lh}) with the same 3 temperatures and 3 supplies: **225** points. Only the two approved
+configurations in `harness/matrix.py` (`APPROVED_MATRICES`) load, whether from the repo or from the
+corners file frozen in a historical record; the runner refuses a library whose section includes
+differ from the approved mapping, and `evidence.json` stores the mapping and includes.
+
+    python3 sim/run_corners.py --list --matrix pvt225-mos-rc
+    python3 sim/run_corners.py --check-env --matrix pvt225-mos-rc
+    python3 sim/run_corners.py dplus-pullup-tolerance --variant resistor-sets   # batch only, recorded
+
+An experiment opts in with a `variants` entry in its `tb.json` (it may override only `matrix_id`,
+`claim` and `record` prose). Only `dplus-pullup-tolerance` has one: record `20261010-014615-8ebfb55` is PASS 225/225 on the
+batch backend (job `klt-sim-10dfd5d87262`; fleet runner klt 0.5.0 vs client 0.7.0, run with
+`--klt-runner-version-check warn`; the default `enforce` attempt `20261010-014506-8adcaaf` was
+refused for the skew with all 225 corners `error`). The earlier records
+`20261010-011518-cf49e32`, `-011907-cb1d9ce`, `-012518-9f1c2dd`, `-013051-9f1c2dd` and
+`-013733-8adcaaf` are FAIL attempts the fleet refused for capacity (batch_no_capacity); they are kept
+and are not coverage. Not yet swept over the resistor
+sets (each needs its own variant and record): `diff-receiver-sensitivity`,
+`se-receiver-dp-thresholds`, `se-receiver-dm-thresholds`, `driver-static`,
+`driver-signal-quality`; their records stay 45-point, typical-resistor evidence.

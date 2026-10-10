@@ -16,6 +16,37 @@ from . import trim as trimmod
 DEFAULT_TIMEOUT_S = 300
 
 
+class VariantError(ValueError):
+    pass
+
+
+def tb_matrix_id(tb: dict, variant: str | None = None) -> str:
+    """The approved matrix id an experiment (variant) runs on; the 45-point matrix by default."""
+    return resolve_tb(tb, variant).get("matrix_id", mx.LEGACY_ID)
+
+
+def resolve_tb(tb: dict, variant: str | None = None) -> dict:
+    """The effective testbench configuration for a named variant (None = the base experiment).
+
+    A variant may override only `matrix_id`, `claim` and (key by key) `record`; the netlist,
+    measurements, trim window and checks are shared, so a variant can never relax a bound.
+    The result has no `variants` key.
+    """
+    allowed = {"matrix_id", "claim", "record"}
+    out = {k: v for k, v in tb.items() if k != "variants"}
+    if variant is None:
+        return out
+    var = (tb.get("variants") or {}).get(variant)
+    if not isinstance(var, dict):
+        raise VariantError(f"unknown testbench variant {variant!r}")
+    extra = set(var) - allowed
+    if extra:
+        raise VariantError(f"variant {variant!r} may not override {sorted(extra)}")
+    for k, v in var.items():
+        out[k] = {**(out.get(k) or {}), **v} if k == "record" else v
+    return out
+
+
 def build_request(
     tb: dict,
     matrix: mx.Matrix,

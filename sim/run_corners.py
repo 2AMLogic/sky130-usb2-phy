@@ -4,6 +4,7 @@
     python3 sim/run_corners.py --check-env
     python3 sim/run_corners.py --list
     python3 sim/run_corners.py smoke-inverter                       # 45 corners, batch, recorded
+    python3 sim/run_corners.py dplus-pullup-tolerance --variant resistor-sets   # 225 points, batch
     python3 sim/run_corners.py smoke-inverter --backend local --corner ss --temp -40 --supply 3.6 --no-write
 """
 
@@ -19,7 +20,11 @@ from harness import matrix as mx, runner  # noqa: E402
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("experiment", nargs="?")
-    ap.add_argument("--list", action="store_true", help="print the 45-point matrix")
+    ap.add_argument("--list", action="store_true", help="print the matrix (45 points; see --matrix)")
+    ap.add_argument("--matrix", default=mx.LEGACY_ID, choices=sorted(mx.APPROVED_MATRICES),
+                    help="with --list/--check-env: the approved matrix to expand (default: the 45-point one)")
+    ap.add_argument("--variant", default=None,
+                    help="experiment variant declared in its tb.json `variants` (e.g. resistor-sets)")
     ap.add_argument("--check-env", action="store_true", help="confirm PDK, model library and corner sections here")
     ap.add_argument("--backend", choices=("batch", "local"), default="batch",
                     help="batch (default; required for the full grid) or local (single-corner debug only)")
@@ -32,7 +37,7 @@ def main(argv=None) -> int:
     ap.add_argument("--supersedes", default="", help="record id this run supersedes")
     args = ap.parse_args(argv)
     try:
-        matrix = mx.load()
+        matrix = mx.load_by_id(args.matrix)
         if args.list:
             for i, p in enumerate(matrix.points(), 1):
                 print(f"{i:>2} {mx.corner_id(*p)}")
@@ -47,7 +52,7 @@ def main(argv=None) -> int:
             return 3
         subset = {"process": args.corner, "temperature_c": args.temp, "supply_v": args.supply}
         return runner.run(args.experiment, args.backend, not args.no_write, subset, args.supersedes,
-                          args.klt_runner_version_check)
+                          args.klt_runner_version_check, args.variant)
     except (runner.RunError, mx.MatrixError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 3

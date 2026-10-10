@@ -6,9 +6,10 @@ Per `sim/<slug>/records/<record-id>.md` it checks the record format, the
 immutable netlist snapshot, and the evidence directory `corners/<record-id>/`
 (request, raw klt envelope, testbench and matrix copies, per-corner logs,
 `evidence.json`) -- every file present and matching its recorded SHA-256. A
-PASS record is re-derived from the raw envelope: exactly the matrix's 45
-unique tuples, each simulated successfully with finite measurements inside the
-testbench bounds, a batch job id, and a request that is the sky130 matrix
+PASS record is re-derived from the raw envelope: exactly the frozen matrix's
+unique tuples (45 for the original matrix, 225 for the approved resistor-set matrix; the
+frozen matrix must equal an approved configuration), each simulated successfully with
+finite measurements inside the testbench bounds, a batch job id, and a request that is the sky130 matrix
 (no gf180 path / `typical` / 125 C / +-10 % supply).
 
 Append-only is enforced against an explicit base ref (`--base-ref`, CI passes
@@ -33,7 +34,7 @@ REQUIRED_FIELDS = ("Record ID", "Status", "Claim", "Netlist provenance", "Corner
                    "Statistical convention", "Result", "Links", "Timestamp / author", "Supersedes")
 RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
 FIELD_RE = re.compile(r"^- \*\*(?P<k>[^*]+)\*\*:\s*(?P<v>.*)$")
-CORNER_LOG_RE = re.compile(r"^(?P<p>[a-z]+)_(?P<t>-?\d+(?:\.\d+)?)c_(?P<v>\d+\.\d\d)v\.log$")
+CORNER_LOG_RE = re.compile(r"^(?P<p>[a-z]+(?:_[a-z]+)?)_(?P<t>-?\d+(?:\.\d+)?)c_(?P<v>\d+\.\d\d)v\.log$")
 EVIDENCE_PATH_RE = re.compile(r"^sim/[^/]+/(records|netlist-snapshots|corners)/")
 NO_SUPERSESSION_RE = re.compile(r"^\(?\s*(none|n/?a)\b", re.IGNORECASE)
 
@@ -121,11 +122,38 @@ def check_pass_record(exp_dir: Path, cdir: Path, rid: str, m: dict) -> list[str]
         report = json.loads((cdir / "report.json").read_text())
     except (OSError, ValueError, mx.MatrixError) as exc:
         return [f"{rid}: PASS record lacks readable corners/tb/request/report evidence ({exc})"]
+    # The matrix must be an approved configuration (from_dict above) AND the one this record's
+    # experiment variant, evidence manifest and (for resistor-set matrices) section mapping name.
+    try:
+        tb = rs.resolve_tb(tb, m.get("variant"))
+    except rs.VariantError as exc:
+        return [f"{rid}: {exc}"]
+    if rs.tb_matrix_id(tb) != matrix.matrix_id or m.get("matrix_id", mx.LEGACY_ID) != matrix.matrix_id:
+        problems.append(f"{rid}: testbench/manifest matrix id "
+                        f"{rs.tb_matrix_id(tb)!r}/{m.get('matrix_id', mx.LEGACY_ID)!r} != corners.json {matrix.matrix_id!r}")
+    if matrix.matrix_id != mx.LEGACY_ID:
+        sections = m.get("sections")
+        want = {s: {"mos": mx.SECTION_MAP[s][0], "resistor_set": mx.SECTION_MAP[s][1],
+                    "capacitor_set": mx.SECTION_MAP[s][2]} for s in matrix.process}
+        got = {s: {k: v for k, v in (d or {}).items() if k != "includes"} for s, d in (sections or {}).items()} \
+            if isinstance(sections, dict) else None
+        if got != want:
+            problems.append(f"{rid}: evidence.json section mapping is missing or differs from the approved "
+                            "section -> (MOS, resistor set, capacitor set) map")
+        elif any(d.get("includes") is None for d in sections.values()):
+            problems.append(f"{rid}: evidence.json section mapping lacks the resolved library includes")
+        pin = (m.get("pdk") or {})
+        if pin.get("lib_sha256") != matrix.pdk.get("lib_sha256") or \
+                pin.get("open_pdks_commit") != matrix.pdk.get("open_pdks_commit"):
+            problems.append(f"{rid}: evidence PDK identity differs from the pin in corners.json")
     problems += [f"{rid}: request: {p}" for p in mx.check_request(request, matrix)]
     if request.get("backend") != "batch" or m.get("backend") != "batch":
         problems.append(f"{rid}: a PASS record must come from the batch backend")
     if len(matrix.points()) != matrix.expected_points:
         problems.append(f"{rid}: matrix does not expand to {matrix.expected_points} points")
+    if len(m.get("results", [])) != matrix.expected_points:
+        problems.append(f"{rid}: evidence.json lists {len(m.get('results', []))} results, "
+                        f"expected {matrix.expected_points}")
     results, errs = rs.evaluate(report, matrix.points(), tb)
     problems += [f"{rid}: {e}" for e in errs]
     if not rs.job_id(report) or rs.job_id(report) != m.get("job_id"):
@@ -183,6 +211,11 @@ def lint_experiment(exp_dir: Path) -> list[str]:
             continue
         if m.get("status") != status:
             problems.append(f"{rid}: record Status {status} != evidence.json status {m.get('status')}")
+        if (cdir / "corners.json").is_file():  # any record, PASS or FAIL: the frozen matrix is approved
+            try:
+                mx.from_dict(json.loads((cdir / "corners.json").read_text()))
+            except (OSError, ValueError, mx.MatrixError) as exc:
+                problems.append(f"{rid}: frozen corners.json is not an approved matrix ({exc})")
         if status == "PASS" and not errs:
             problems += check_pass_record(exp_dir, cdir, rid, m)
         if status == "FAIL" and m.get("status") == "FAIL" and not m.get("problems"):
@@ -197,10 +230,15 @@ def lint_experiment(exp_dir: Path) -> list[str]:
 
 def lint_all(sim_dir: Path = mx.SIM_DIR) -> list[str]:
     problems: list[str] = []
-    try:
-        mx.load(sim_dir / "corners.json")
-    except (OSError, ValueError, mx.MatrixError) as exc:
-        problems.append(f"corners.json: {exc}")
+    for matrix_id, cfg in mx.APPROVED_MATRICES.items():
+        path = sim_dir / cfg["file"]
+        if matrix_id != mx.LEGACY_ID and not path.is_file():
+            continue  # optional supplemental matrix
+        try:
+            if mx.load(path).matrix_id != matrix_id:
+                problems.append(f"{cfg['file']}: declares a different matrix id than {matrix_id!r}")
+        except (OSError, ValueError, mx.MatrixError) as exc:
+            problems.append(f"{cfg['file']}: {exc}")
     for exp in sorted(p for p in sim_dir.iterdir() if (p / "testbench" / "tb.json").is_file()):
         problems += [f"{exp.name}: {p}" for p in lint_experiment(exp)]
     return problems

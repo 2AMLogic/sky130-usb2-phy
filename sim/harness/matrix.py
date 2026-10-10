@@ -15,9 +15,62 @@ SIM_DIR = Path(__file__).resolve().parents[1]
 REPO_ROOT = SIM_DIR.parent
 CORNERS_JSON = SIM_DIR / "corners.json"
 SCHEMA = "sky130-usb2-phy.sim.corners/1"
+SCHEMA_V2 = "sky130-usb2-phy.sim.corners/2"
 
-#: The only process sections the matrix may name (open_pdks sky130A MOS corners).
+#: The MOS-only process sections of the original matrix (open_pdks sky130A). Every one of them
+#: loads the typical resistor/capacitor parameter set (`res_typical__cap_typical`).
 SKY130_SECTIONS = ("tt", "ff", "ss", "fs", "sf")
+
+#: MOS corner file selected by each of the five MOS corners.
+MOS_CORNERS = ("tt", "sf", "ff", "ss", "fs")
+
+#: Resistor/capacitor parameter-set suffixes of the pinned sky130.lib.spice, and the
+#: `r+c/res_<R>__cap_<C>.spice` file each loads. The suffixed sections change the resistor
+#: sheet resistance AND the capacitor set AND the drawn-width tolerances (tol_* parameters)
+#: together; they are not resistor-only. `tt` has no `tt_<suffix>` spelling in the library:
+#: its resistor-set sections are the bare `ll`, `hh`, `hl`, `lh`.
+RC_SETS = {
+    "": ("typical", "typical"),
+    "ll": ("low", "low"),
+    "hh": ("high", "high"),
+    "hl": ("high", "low"),
+    "lh": ("low", "high"),
+}
+
+
+def section_name(mos: str, rc: str) -> str:
+    """The sky130.lib.spice `.lib` section for a MOS corner and an r+c set suffix."""
+    if not rc:
+        return mos
+    return rc if mos == "tt" else f"{mos}_{rc}"
+
+
+def _build_section_map() -> dict[str, tuple[str, str, str]]:
+    """section -> (mos corner, resistor set, capacitor set) for every approved section."""
+    return {section_name(m, rc): (m, *RC_SETS[rc]) for m in MOS_CORNERS for rc in RC_SETS}
+
+
+#: Every section a matrix may name, with the parameter sets it must load from the pinned
+#: library (verified against the library text by runner.check_env).
+SECTION_MAP = _build_section_map()
+
+#: The ONLY approved matrix configurations. A corners file (including the copy frozen inside a
+#: historical evidence record) is accepted only if it equals one of these exactly, so a
+#: self-declared matrix cannot narrow or redefine the coverage a record claims.
+LEGACY_ID = "pvt45-mos"
+RESISTOR_SETS_ID = "pvt225-mos-rc"
+APPROVED_MATRICES = {
+    LEGACY_ID: {
+        "schema": SCHEMA, "file": "corners.json",
+        "process": frozenset(SKY130_SECTIONS), "temperature_c": (-40.0, 27.0, 100.0),
+        "supply_v": (3.0, 3.3, 3.6), "expected_points": 45,
+    },
+    RESISTOR_SETS_ID: {
+        "schema": SCHEMA_V2, "file": "corners-resistor-sets.json",
+        "process": frozenset(SECTION_MAP), "temperature_c": (-40.0, 27.0, 100.0),
+        "supply_v": (3.0, 3.3, 3.6), "expected_points": 225,
+    },
+}
 
 
 class MatrixError(ValueError):
@@ -32,6 +85,7 @@ class Matrix:
     supply_v: tuple[float, ...]
     supply_source: str
     expected_points: int
+    matrix_id: str = LEGACY_ID
 
     def points(self) -> list[tuple[str, float, float]]:
         return [
@@ -50,8 +104,16 @@ def key(process: str, temp_c: float, vdd: float) -> tuple[str, float, float]:
 
 
 def from_dict(data: dict) -> Matrix:
-    if data.get("schema") != SCHEMA:
-        raise MatrixError(f"corners.json schema must be {SCHEMA!r}")
+    schema = data.get("schema")
+    if schema == SCHEMA:
+        matrix_id = LEGACY_ID  # schema /1 predates matrix ids; it is exactly the 45-point matrix
+    elif schema == SCHEMA_V2:
+        matrix_id = data.get("matrix_id")
+    else:
+        raise MatrixError(f"corners.json schema must be {SCHEMA!r} or {SCHEMA_V2!r}")
+    approved = APPROVED_MATRICES.get(matrix_id)
+    if approved is None or approved["schema"] != schema:
+        raise MatrixError(f"matrix {matrix_id!r} is not an approved configuration {sorted(APPROVED_MATRICES)}")
     try:
         matrix = Matrix(
             pdk=dict(data["pdk"]),
@@ -60,29 +122,53 @@ def from_dict(data: dict) -> Matrix:
             supply_v=tuple(float(v) for v in data["supply_v"]),
             supply_source=str(data["supply_source"]),
             expected_points=int(data["expected_points"]),
+            matrix_id=matrix_id,
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise MatrixError(f"malformed corners.json: {exc!r}") from exc
+    bad = [p for p in matrix.process if p not in SECTION_MAP]
+    if bad:
+        raise MatrixError(f"not an approved sky130 corner section: {bad}")
     pts = matrix.points()
     if len({key(*p) for p in pts}) != len(pts):
         raise MatrixError("corners.json axes contain duplicate values")
     if len(pts) != matrix.expected_points:
         raise MatrixError(f"corners.json expands to {len(pts)} points, expected {matrix.expected_points}")
-    bad = [p for p in matrix.process if p not in SKY130_SECTIONS]
-    if bad:
-        raise MatrixError(f"not a sky130 MOS corner section: {bad}")
+    if matrix.pdk.get("name") != "sky130A" or matrix.pdk.get("lib") != "libs.tech/ngspice/sky130.lib.spice":
+        raise MatrixError("corners.json must name the sky130A libs.tech/ngspice/sky130.lib.spice model library")
+    # Exact coverage: the declared axes must be the approved ones (no omitted section, no extra).
+    if (set(matrix.process) != approved["process"]
+            or sorted(matrix.temperature_c) != list(approved["temperature_c"])
+            or sorted(matrix.supply_v) != list(approved["supply_v"])
+            or matrix.expected_points != approved["expected_points"]
+            or matrix.supply_source != "vsup"):
+        raise MatrixError(f"corners.json does not equal the approved {matrix_id!r} configuration "
+                          f"(process {sorted(set(matrix.process) ^ approved['process'])} differ)")
     return matrix
 
 
 def load(path: Path = CORNERS_JSON) -> Matrix:
-    return from_dict(json.loads(Path(path).read_text()))
+    """The original 45-point matrix by default; any approved file by path."""
+    data = json.loads(Path(path).read_text())
+    return from_dict(data)
+
+
+def load_by_id(matrix_id: str) -> Matrix:
+    """The approved matrix with this id, from its file next to sim/corners.json."""
+    if matrix_id not in APPROVED_MATRICES:
+        raise MatrixError(f"matrix {matrix_id!r} is not approved {sorted(APPROVED_MATRICES)}")
+    path = CORNERS_JSON if matrix_id == LEGACY_ID else SIM_DIR / APPROVED_MATRICES[matrix_id]["file"]
+    matrix = load(path)
+    if matrix.matrix_id != matrix_id:
+        raise MatrixError(f"{path.name} declares {matrix.matrix_id!r}, expected {matrix_id!r}")
+    return matrix
 
 
 def check_request(request: dict, matrix: Matrix) -> list[str]:
     """Problems with a resolved `klt sim` request relative to the matrix.
 
     Empty list means: sky130A model library, only matrix corner sections, and
-    exactly the matrix's 45 unique (process, temperature, supply) tuples. This
+    exactly the matrix's unique (process, temperature, supply) tuples. This
     is what rejects an inherited gf180 request (sm141064, `typical`, 125 C,
     +/-10 % supply).
     """
