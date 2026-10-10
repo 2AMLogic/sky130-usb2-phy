@@ -5,6 +5,10 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-10
 
+- **PR #143**: sim: resistor-set (225-point) sweep for the differential and single-ended receivers (#136)
+- **Issue #136** (closed): sim: resistor-set (sheet-resistance) sweep for the differential and single-ended receivers
+- **PR #142**: sim: resistor-sets variant for driver experiments (#135)
+
 - **Issue #127** (closed): sim harness: tb.json trim block fails open when measure_prefix/codes do not match declared measurements
 - **PR #139**: sim harness: fail closed on undeclared trim inputs (#127)
 

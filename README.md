@@ -47,9 +47,13 @@ pull-up, and a digital UTMI layer.
   Driver signal-quality and static results pass all 45 corners. Layout,
   mismatch and integrated PHY behavior remain unverified. The D+ pull-up
   additionally passes 225 MOS/resistor/capacitor corner combinations, selecting
-  a trim code per point; passive-process spread for the driver (#135) and
-  receivers (#136), and disabled-pad behavior above the I/O supply (#130),
-  remain open. See [`design/README.md`](design/README.md)
+  a trim code per point. The receivers also pass the supplemental 225-point
+  global resistor/capacitor-set sweep (675 point/common-mode combinations for
+  differential sensitivity). The driver's supplemental static sweep fails the
+  unchanged 28–44 ohm output-resistance bound at 27 of 225 points; its
+  signal-quality sweep remains incomplete because of the batch job time cap
+  (#135). Disabled-pad behavior above the I/O supply (#130) remains open.
+  See [`design/README.md`](design/README.md)
   for the per-block results and limitations.
 - **PLL** — not designed here: consumed by pinned reference to
   [`sky130-pll`](https://github.com/2AMLogic/sky130-pll)
