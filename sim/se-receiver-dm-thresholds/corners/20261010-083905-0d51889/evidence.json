@@ -1,0 +1,1478 @@
+{
+  "author": "ubuntu (agent)",
+  "axes": {
+    "process": [
+      "tt",
+      "sf",
+      "ff",
+      "ss",
+      "fs",
+      "ll",
+      "sf_ll",
+      "ff_ll",
+      "ss_ll",
+      "fs_ll",
+      "hh",
+      "sf_hh",
+      "ff_hh",
+      "ss_hh",
+      "fs_hh",
+      "hl",
+      "sf_hl",
+      "ff_hl",
+      "ss_hl",
+      "fs_hl",
+      "lh",
+      "sf_lh",
+      "ff_lh",
+      "ss_lh",
+      "fs_lh"
+    ],
+    "supply_v": [
+      3.0,
+      3.3,
+      3.6
+    ],
+    "temperature_c": [
+      -40.0,
+      27.0,
+      100.0
+    ]
+  },
+  "backend": "batch",
+  "engine_version": null,
+  "experiment": "se-receiver-dm-thresholds",
+  "files": {
+    "corners.json": "15c6ae1138eeeac8b79450729b876aee842dca17fc06cb9874b35c9a7a739ca1",
+    "klt-stderr.txt": "b119017c818a8402258ca9c4b30289deb9698cd6cc669c95d6ff9b488f24f3f8",
+    "request.json": "1d41fbec09aa462bdbd654b1f0d8f04949d6fde066d49423e794d2cafd97fc29",
+    "tb.json": "985ac00fbe521b660c5549d67a438b3bf00cc23d8d9c1c1bbc63b674ea3aea37"
+  },
+  "git": {
+    "dirty": true,
+    "head": "0d51889e6cb78d0f76ffc272f88a1afee83eeb57"
+  },
+  "harness_version": "0.1.0",
+  "job_id": null,
+  "klt_version": "klt 0.7.0+g8eec069c7576",
+  "matrix_id": "pvt225-mos-rc",
+  "pdk": {
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "name": "sky130A",
+    "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+  },
+  "problems": [
+    "backend error: klt sim (batch) produced no JSON report (exit 1); stderr tail:"
+  ],
+  "record_id": "20261010-083905-0d51889",
+  "results": [
+    {
+      "corner_id": "tt_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "tt_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ll_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_ll_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_ll_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_ll_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_ll_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "hl_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_hl_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_hl_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_hl_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_hl_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "lh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "sf_lh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ff_lh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "ss_lh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_-40c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_-40c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_-40c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_27c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_27c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_27c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_100c_3.00v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_100c_3.30v",
+      "measurements": {},
+      "status": "missing"
+    },
+    {
+      "corner_id": "fs_lh_100c_3.60v",
+      "measurements": {},
+      "status": "missing"
+    }
+  ],
+  "schema": "sky130-usb2-phy.sim.evidence/1",
+  "sections": {
+    "ff": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "typical"
+    },
+    "ff_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "high"
+    },
+    "ff_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "high"
+    },
+    "ff_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "low"
+    },
+    "ff_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ff.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/ff/specialized_cells.spice"
+      ],
+      "mos": "ff",
+      "resistor_set": "low"
+    },
+    "fs": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "typical"
+    },
+    "fs_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "high"
+    },
+    "fs_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "high"
+    },
+    "fs_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "low"
+    },
+    "fs_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/fs.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/fs/specialized_cells.spice"
+      ],
+      "mos": "fs",
+      "resistor_set": "low"
+    },
+    "hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "high"
+    },
+    "hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "high"
+    },
+    "lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "low"
+    },
+    "ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "low"
+    },
+    "sf": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "typical"
+    },
+    "sf_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "high"
+    },
+    "sf_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "high"
+    },
+    "sf_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "low"
+    },
+    "sf_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/sf.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/sf/specialized_cells.spice"
+      ],
+      "mos": "sf",
+      "resistor_set": "low"
+    },
+    "ss": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "typical"
+    },
+    "ss_hh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_high__cap_high.spice",
+        "r+c/res_high__cap_high__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "high"
+    },
+    "ss_hl": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_high__cap_low.spice",
+        "r+c/res_high__cap_low__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "high"
+    },
+    "ss_lh": {
+      "capacitor_set": "high",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_low__cap_high.spice",
+        "r+c/res_low__cap_high__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "low"
+    },
+    "ss_ll": {
+      "capacitor_set": "low",
+      "includes": [
+        "corners/ss.spice",
+        "r+c/res_low__cap_low.spice",
+        "r+c/res_low__cap_low__lin.spice",
+        "corners/ss/specialized_cells.spice"
+      ],
+      "mos": "ss",
+      "resistor_set": "low"
+    },
+    "tt": {
+      "capacitor_set": "typical",
+      "includes": [
+        "corners/tt.spice",
+        "r+c/res_typical__cap_typical.spice",
+        "r+c/res_typical__cap_typical__lin.spice",
+        "corners/tt/specialized_cells.spice"
+      ],
+      "mos": "tt",
+      "resistor_set": "typical"
+    }
+  },
+  "snapshot_sha256": "4ac43d1a8b9d6353802caff0bdf6eead45507d3736de095ee90d16945e8b5be4",
+  "started_utc": "2026-10-10T08:39:05+00:00",
+  "status": "FAIL",
+  "variant": "resistor-sets"
+}
