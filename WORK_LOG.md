@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-13
+
+- **PR #146**: chore(loom): drop onIdle [auditor]; follow the fleet idle-role setting
+- **PR #145**: chore(loom): disable buildGate for now (pre-PR preflight off)
+
 ### 2026-10-10
 
 - **PR #143**: sim: resistor-set (225-point) sweep for the differential and single-ended receivers (#136)
