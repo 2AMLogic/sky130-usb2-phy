@@ -302,7 +302,11 @@ def main(argv: list[str] | None = None) -> int:
 
     env = dict(os.environ)
     env.setdefault("PDK", "sky130A")
-    pdk_root = run_flow.resolve_pdk_root(env)
+    try:
+        pdk_root = run_flow.resolve_pdk_root(env)
+    except run_flow.StageError as exc:
+        print(f"run_synth_utmi_top: {exc}", file=sys.stderr)
+        return 2
     if pdk_root is None:
         print("run_synth_utmi_top: could not resolve a PDK root", file=sys.stderr)
         return 2

@@ -59,7 +59,7 @@ envelope change was made. Corner ids: `<process>_<temp>c_<supply>v`, e.g.
 `ss_-40c_3.00v`, `tt_27c_3.30v`, `ff_100c_3.60v`.
 
 PDK identity pinned in `corners.json`: open_pdks
-`c6d73a35f524070e85faff4a6a9eef49553ebc2b` (from the volare `SOURCES` file),
+`f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7` (from the ciel-installed tree's `SOURCES` file; records made under the previous pin are listed in `sim/pdk-pins.json`),
 model library SHA-256 `17c208a6...e075f64`. The runner refuses to run if the
 submitting host's PDK differs from the pin, and a PASS record must show the
 klt envelope reporting the same library hash and open_pdks version.
