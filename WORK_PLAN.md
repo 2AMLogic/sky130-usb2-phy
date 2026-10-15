@@ -8,15 +8,21 @@ outside the markers is touched by automation.
 <!-- guide:plan-body:start -->
 ## Operator Attention: Merge-Risk-Hold Pileup
 
-Judge-approved PRs stuck under a `loom:operator` merge-risk hold — implementation work is done, only a human merge decision is missing.
+Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
 _None._
 
-## Operator Priority
+## Very Important
 
-Issues the operator starred (`loom:operator-priority`); land these first.
+`loom:very-important` (one counts per workspace); every stage takes these first.
 
 _None._
+
+## Important
+
+`loom:important`; taken before unlabelled work.
+
+- **#132**: Worker klt tool venv still lacks cocotb_tools: pre-PR gate cannot pass on fleet hosts (recurrence of #94)
 
 ## Ready
 
@@ -46,7 +52,6 @@ _None._
 
 Issues carrying `loom:curated`.
 
-- **#84**: Guard trigger review: worktree-write-confinement DENY on /tmp scratch ERC comparison command (refine or confirm fixed) *(curated)*
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
 - **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps) *(curated)*
@@ -62,15 +67,16 @@ _None._
 
 ## Backlog Balance
 
-| Tier | Count |
+| Bucket | Count |
 |------|-------|
 | Operator merge-risk holds | 0 |
-| Operator priority | 0 |
+| Very important | 0 |
+| Important | 1 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 4 |
+| Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
