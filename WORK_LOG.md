@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-15
 
+- **PR #155**: docs: add disabled-pad envelope study and proposed DR-0006
+- **Issue #130** (closed): FS driver: disabled pad forced above VDD forward-biases output PMOS junction (up to -259 uA at 3.6 V pad on 3.0 V rail)
 - **PR #148**: Bump Repo Skills 0.19.5 -> 0.24.1
 
 ### 2026-10-13
