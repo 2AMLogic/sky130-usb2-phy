@@ -237,7 +237,7 @@ def sandbox(tmp_path, monkeypatch):
 
     monkeypatch.setattr(runner, "check_env", env)
 
-    def fake(request_path, outdir, backend, workdir):
+    def fake(request_path, outdir, backend, workdir, pdk_root=None):
         req = json.loads(Path(request_path).read_text())
         mat = RES if len(req["corners"]["process"]) == 25 else LEGACY
         rep = fake_report(mat)

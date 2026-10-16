@@ -34,6 +34,9 @@ def main(argv=None) -> int:
     ap.add_argument("--no-write", action="store_true", help="do not record evidence (debug)")
     ap.add_argument("--klt-runner-version-check", choices=("enforce", "warn"), default=None,
                     help="batch only: how to treat fleet-runner/client klt version skew (default enforce)")
+    ap.add_argument("--hosts", type=int, default=None,
+                    help="batch only: shard the grid across N independent fleet jobs (klt sim remote.hosts), "
+                         "for grids too slow for one job under the fleet's whole-job ceiling")
     ap.add_argument("--supersedes", default="", help="record id this run supersedes")
     args = ap.parse_args(argv)
     try:
@@ -52,7 +55,7 @@ def main(argv=None) -> int:
             return 3
         subset = {"process": args.corner, "temperature_c": args.temp, "supply_v": args.supply}
         return runner.run(args.experiment, args.backend, not args.no_write, subset, args.supersedes,
-                          args.klt_runner_version_check, args.variant)
+                          args.klt_runner_version_check, args.variant, args.hosts)
     except (runner.RunError, mx.MatrixError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 3

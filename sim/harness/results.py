@@ -57,6 +57,7 @@ def build_request(
     supply_v=None,
     netlist: str = "body.spice",
     runner_version_check: str | None = None,
+    hosts: int | None = None,
 ) -> dict:
     """The resolved `klt sim` request. Axes default to the full matrix."""
     request = {
@@ -75,6 +76,8 @@ def build_request(
     }
     if runner_version_check:
         request["batch"] = {"runner_version_check": runner_version_check}
+    if hosts and hosts > 1:
+        request["remote"] = {"hosts": int(hosts)}
     return request
 
 
@@ -215,6 +218,9 @@ def mx_supply(corner_id: str) -> float:
 def job_id(report: dict):
     """The batch job id from the report envelope, or None."""
     remote = (report.get("environment") or {}).get("remote")
+    if isinstance(remote, dict) and isinstance(remote.get("fleet"), list):  # sharded run: one job per host
+        ids = [str(m["job_id"]) for m in remote["fleet"] if isinstance(m, dict) and m.get("job_id")]
+        return ",".join(ids) if ids and len(ids) == len(remote["fleet"]) else None
     if isinstance(remote, dict):
         for k in ("job_id", "jobId", "id", "batch_job_id"):
             if remote.get(k):

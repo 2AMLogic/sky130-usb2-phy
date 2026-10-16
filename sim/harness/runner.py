@@ -12,6 +12,7 @@ import datetime as _dt
 import getpass
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -138,10 +139,15 @@ def allocate_record_id(records_dir: Path, now: _dt.datetime) -> str:
     return rid
 
 
-def invoke_klt(request_path: Path, outdir: Path, backend: str, workdir: Path) -> tuple[dict, str, int]:
+def invoke_klt(request_path: Path, outdir: Path, backend: str, workdir: Path,
+               pdk_root: str | None = None) -> tuple[dict, str, int]:
     cmd = [KLT, "sim", str(request_path), "--format", "json", "-o", str(outdir), "--backend", backend]
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        # pin the submitting host's klt to the checked install (local environment only; a request
+        # field would be shipped to the fleet): with two installs of the PDK variant on the host
+        # klt otherwise takes the first search-root match, which may not be the pinned build
+        proc = subprocess.run(cmd, capture_output=True, text=True,
+                              env={**os.environ, "PDK_ROOT": pdk_root} if pdk_root else None)
     except FileNotFoundError as exc:
         raise RunError("klt not found on PATH") from exc
     try:
@@ -263,7 +269,8 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
 
 
 def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: str = "",
-        runner_version_check: str | None = None, variant: str | None = None) -> int:
+        runner_version_check: str | None = None, variant: str | None = None,
+        hosts: int | None = None) -> int:
     exp_dir = mx.SIM_DIR / experiment
     tb_path = exp_dir / "testbench" / "tb.json"
     if not tb_path.is_file():
@@ -296,7 +303,7 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
 
     request = rs.build_request(tb, matrix, backend=backend, process=subset.get("process"),
                                temperature_c=subset.get("temperature_c"), supply_v=subset.get("supply_v"),
-                               runner_version_check=runner_version_check)
+                               runner_version_check=runner_version_check, hosts=hosts)
     if full:
         problems = mx.check_request(request, matrix)
         if problems:
@@ -333,7 +340,8 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
              "logs": {}, "stderr": "", "report": None}
 
     try:
-        report, stderr, code = invoke_klt(work / "request.json", work / "klt-out", backend, work)
+        report, stderr, code = invoke_klt(work / "request.json", work / "klt-out", backend, work,
+                                         str(Path(env["path"]).parent) if env.get("path") else None)
     except RunError as exc:
         # Backend failure: never fall back to a local grid. Preserve the attempt.
         print(f"BACKEND ERROR: {exc}")

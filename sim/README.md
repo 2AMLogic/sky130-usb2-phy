@@ -358,9 +358,15 @@ checks unchanged). `driver-static`: record `20261010-070333-23e660b` is a comple
 (198/225 points pass, 68 problems at 27 failing points, batch job `klt-sim-32c9b2c0c856`). The
 inclusive 28-44 ohm output-resistance row is violated on both sides: 46 low-side violations
 (26.33-27.94 ohm, 17 points, all at -40 C on `ll`/`lh` sections) and 22 high-side violations
-(44.38-46.55 ohm, 10 points, on `hh`/`hl` sections with ss/fs/sf MOS at 100 C, mostly 3.0 V). `driver-signal-quality`: no result
-yet. The 225-point transient grid exceeds the fleet's 3600 s whole-job cap (the 45-point run took
-1568 s at concurrency 2): record `20261010-090542-23e660b` (job `klt-sim-8c8caa90c6b3`) is an
-infrastructure failure (`batch_job_timeout`, all 225 points `error`, no measurements) and
-`20261010-084706-23e660b` a capacity refusal (`batch_no_capacity`); both are kept and are not
-coverage.
+(44.38-46.55 ohm, 10 points, on `hh`/`hl` sections with ss/fs/sf MOS at 100 C, mostly 3.0 V). `driver-signal-quality`: record `20261016-184100-59ec9c0` is a complete 225-point FAIL
+(223/225 points pass; 4 problems at 2 failing points: crossover voltage above the unchanged 2.0 V
+maximum at `fs_ll` and `fs_hl`, 100 C, 3.6 V, rising and falling; see the record for values). The grid
+exceeds one fleet job's 3600 s whole-job ceiling, so it ran as 8 independent shard jobs
+(`--hosts 8`; the record's job id lists all eight) with the per-corner timeout raised from 1500 s to
+2400 s in `tb.json` (a corner at -40 C needed more than 1500 s; no bound or check changed). The
+earlier attempts `20261010-084706-23e660b` (`batch_no_capacity`), `20261010-090542-23e660b`
+(`batch_job_timeout`), `20261016-175635-59ec9c0` (refused pre-submit, job over the ceiling),
+`20261016-175832-59ec9c0` (3 corners hit the 1500 s timeout; two fleet jobs failed; the submitting host
+read an unpinned PDK install), and `20261016-183930-59ec9c0` (all shards failed on the fleet because a
+PDK path was shipped in the request) are infrastructure failures, kept and not coverage. The runner
+now pins the submitting host's klt to the checked install through `PDK_ROOT` in its own environment.

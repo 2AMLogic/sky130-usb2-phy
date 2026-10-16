@@ -124,7 +124,7 @@ def sandbox(tmp_path, monkeypatch):
 def stub_klt(monkeypatch, tmp_path, report=None, error=None):
     calls = []
 
-    def fake(request_path, outdir, backend, workdir):
+    def fake(request_path, outdir, backend, workdir, pdk_root=None):
         calls.append(backend)
         if error:
             raise runner.RunError(error)
@@ -183,3 +183,9 @@ def test_full_grid_cannot_run_locally_and_subsets_cannot_be_recorded(sandbox, mo
     with pytest.raises(runner.RunError):
         runner.run("smoke-inverter", "batch", True, {"process": ["tt"]})
     assert calls == []
+
+
+def test_job_id_of_a_sharded_report_joins_every_member_and_needs_all():
+    fleet = [{"job_id": "klt-sim-a"}, {"job_id": "klt-sim-b"}]
+    assert rs.job_id({"environment": {"remote": {"fleet": fleet}}}) == "klt-sim-a,klt-sim-b"
+    assert rs.job_id({"environment": {"remote": {"fleet": fleet + [None]}}}) is None
