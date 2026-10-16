@@ -1,0 +1,10 @@
+klt sim (batch) produced no JSON report (exit 1); stderr tail:
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (search root: ~/.ciel), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+{
+  "schema_version": 1,
+  "error": {
+    "command": "sim",
+    "message": "request.batch.max_units_per_job 20 leaves a job of 19 units, over the 2-unit limit the fleet's 3600s whole-job ceiling allows at options.timeout_s 1500s; use at most 2",
+    "code": "batch_max_units_per_job_invalid"
+  }
+}

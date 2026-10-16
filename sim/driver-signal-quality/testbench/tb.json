@@ -10,7 +10,7 @@
     "kind": "tran",
     "args": "20p 300n"
   },
-  "timeout_s": 1500,
+  "timeout_s": 2400,
   "measure": {
     "trise_dp_ns": {
       "spice": ".meas tran trise_dp_ns TRIG v(dpn) VAL=0.1 RISE=1 TARG v(dpn) VAL=0.9 RISE=1",

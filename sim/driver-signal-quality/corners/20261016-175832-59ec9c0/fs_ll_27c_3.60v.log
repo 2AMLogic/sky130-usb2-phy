@@ -1,0 +1,286 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * klt sim -- generated corner deck, do not edit
+
+Doing analysis at TEMP = 27.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+Initial Transient Solution
+--------------------------
+
+Node                                   Voltage
+----                                   -------
+vdd                                        3.6
+mid                                        1.8
+ehalf_int1                                 1.8
+ctl                                          0
+txdp                                         0
+txdm                                       3.6
+xa.enb                             1.80136e-08
+xa.enx                             9.00681e-09
+xa.en                                      3.6
+xa.xrb.xsky130_fd_pr__res_xhigh_po_1p41.ra         1.37769
+xa.vbn                                 1.36982
+xa.vbp                                 2.15064
+xa.pa_dp                                   3.6
+xa.pax_dp                          2.82402e-10
+xa.pon_dp                          2.17664e-09
+xa.nbx_dp                                  3.6
+xa.nb_dp                                   3.6
+xa.nonb_dp                         2.17664e-09
+xa.pg_dp                                   3.6
+xa.xp_dp                           7.86954e-10
+xa.ng_dp                                   3.6
+xa.xn_dp                                   3.6
+xa.ksp_dp                          1.73808e-08
+xa.kspb_dp                                 3.6
+xa.kpx_dp                          3.44604e-10
+xa.ksn_dp                            0.0330191
+xa.ksnb_dp                                 3.6
+xa.knx_dp                                  3.6
+xa.xcp_dp.a                        1.70178e-09
+xa.xcp_dp.b1                       1.70178e-09
+xa.outi_dp                         1.70178e-09
+xa.xcn_dp.a                        1.70178e-09
+xa.xcn_dp.b1                       1.70178e-09
+dp                                 1.70178e-09
+xa.pa_dm                           1.80136e-08
+xa.pax_dm                          9.00681e-09
+xa.pon_dm                                  3.6
+xa.nbx_dm                             0.815485
+xa.nb_dm                           2.19171e-08
+xa.nonb_dm                                 3.6
+xa.pg_dm                           1.36653e-09
+xa.xp_dm                           7.38697e-10
+xa.ng_dm                           9.85461e-10
+xa.xn_dm                                   3.6
+xa.ksp_dm                              3.57063
+xa.kspb_dm                          1.0326e-08
+xa.kpx_dm                          1.36653e-09
+xa.ksn_dm                                  3.6
+xa.ksnb_dm                         9.49518e-09
+xa.knx_dm                                  3.6
+xa.xcp_dm.a                                3.6
+xa.xcp_dm.b1                               3.6
+xa.outi_dm                                 3.6
+xa.xcn_dm.a                                3.6
+xa.xcn_dm.b1                               3.6
+dm                                         3.6
+dpn                                4.72717e-10
+dmn                                          1
+ovp                                       -3.6
+ovm                                -9.4238e-10
+unp                               -1.70178e-09
+unm                                       -3.6
+ddp                                          0
+ddm                                          0
+srp                                          1
+sfp                                         -1
+srm                                          1
+sfm                                         -1
+oet                                          0
+oe                                           0
+hi                                         3.6
+xb.enb                                     3.6
+xb.enx                                 2.73137
+xb.en                              4.14529e-09
+xb.xrb.xsky130_fd_pr__res_xhigh_po_1p41.ra         1.37769
+xb.vbn                                 1.36982
+xb.vbp                                 2.15064
+xb.pa_dp                                   3.6
+xb.pax_dp                              2.73136
+xb.pon_dp                          2.17664e-09
+xb.nbx_dp                              3.58301
+xb.nb_dp                           4.33134e-09
+xb.nonb_dp                                 3.6
+xb.pg_dp                                   3.6
+xb.xp_dp                           7.86954e-10
+xb.ng_dp                           9.85461e-10
+xb.xn_dp                                   3.6
+xb.ksp_dp                          1.73808e-08
+xb.kspb_dp                                 3.6
+xb.kpx_dp                          3.44604e-10
+xb.ksn_dp                                  3.6
+xb.ksnb_dp                         9.49518e-09
+xb.knx_dp                                  3.6
+xb.xcp_dp.a                                1.8
+xb.xcp_dp.b1                               1.8
+xb.outi_dp                                 1.8
+xb.xcn_dp.a                                1.8
+xb.xcn_dp.b1                               1.8
+xb_dp                                      1.8
+xb.pa_dm                                   3.6
+xb.pax_dm                            0.0356594
+xb.pon_dm                          2.17664e-09
+xb.nbx_dm                                  3.6
+xb.nb_dm                           8.74011e-09
+xb.nonb_dm                                 3.6
+xb.pg_dm                                   3.6
+xb.xp_dm                           7.86954e-10
+xb.ng_dm                           9.85461e-10
+xb.xn_dm                                   3.6
+xb.ksp_dm                          1.73808e-08
+xb.kspb_dm                                 3.6
+xb.kpx_dm                          3.44604e-10
+xb.ksn_dm                                  3.6
+xb.ksnb_dm                         9.49518e-09
+xb.knx_dm                                  3.6
+xb.xcp_dm.a                                1.8
+xb.xcp_dm.b1                               1.8
+xb.outi_dm                                 1.8
+xb.xcn_dm.a                                1.8
+xb.xcn_dm.b1                               1.8
+xb_dm                                      1.8
+xc.enb                                     3.6
+xc.enx                                 2.73139
+xc.en                              4.14529e-09
+xc.xrb.xsky130_fd_pr__res_xhigh_po_1p41.ra         1.37769
+xc.vbn                                 1.36982
+xc.vbp                                 2.15064
+xc.pa_dp                                   3.6
+xc.pax_dp                            0.0356594
+xc.pon_dp                          2.17664e-09
+xc.nbx_dp                                  3.6
+xc.nb_dp                           8.74011e-09
+xc.nonb_dp                                 3.6
+xc.pg_dp                                   3.6
+xc.xp_dp                           7.86954e-10
+xc.ng_dp                           9.85461e-10
+xc.xn_dp                                   3.6
+xc.ksp_dp                          1.73808e-08
+xc.kspb_dp                                 3.6
+xc.kpx_dp                          3.44605e-10
+xc.ksn_dp                                  3.6
+xc.ksnb_dp                         9.49518e-09
+xc.knx_dp                                  3.6
+xc.xcp_dp.a                                1.8
+xc.xcp_dp.b1                               1.8
+xc.outi_dp                                 1.8
+xc.xcn_dp.a                                1.8
+xc.xcn_dp.b1                               1.8
+xc_dp                                      1.8
+xc.pa_dm                                   3.6
+xc.pax_dm                              2.73136
+xc.pon_dm                          2.17664e-09
+xc.nbx_dm                              3.58205
+xc.nb_dm                           4.32977e-09
+xc.nonb_dm                                 3.6
+xc.pg_dm                                   3.6
+xc.xp_dm                           7.86954e-10
+xc.ng_dm                           9.85461e-10
+xc.xn_dm                                   3.6
+xc.ksp_dm                          1.73808e-08
+xc.kspb_dm                                 3.6
+xc.kpx_dm                          3.44605e-10
+xc.ksn_dm                                  3.6
+xc.ksnb_dm                         9.49518e-09
+xc.knx_dm                                  3.6
+xc.xcp_dm.a                                1.8
+xc.xcp_dm.b1                               1.8
+xc.outi_dm                                 1.8
+xc.xcn_dm.a                                1.8
+xc.xcn_dm.b1                               1.8
+xc_dm                                      1.8
+abp                                5.12078e-12
+abm                                5.12078e-12
+acp                                5.12078e-12
+acm                                5.12078e-12
+wbp                                          0
+wbm                                5.12078e-12
+wcp                                5.12078e-12
+wcm                                          0
+bwcm#branch                                  0
+vscm#branch                        5.12078e-12
+bwcp#branch                                  0
+vscp#branch                        5.12078e-12
+bwbm#branch                                  0
+vsbm#branch                        5.12078e-12
+bwbp#branch                                  0
+vsbp#branch                        5.12078e-12
+bacm#branch                                  0
+bacp#branch                                  0
+babm#branch                                  0
+babp#branch                                  0
+bhi#branch                                   0
+boe#branch                                   0
+bsfm#branch                                  0
+bsrm#branch                                  0
+bsfp#branch                                  0
+bsrp#branch                                  0
+bddm#branch                                  0
+bddp#branch                                  0
+bunm#branch                                  0
+bunp#branch                                  0
+bovm#branch                                  0
+bovp#branch                                  0
+bdmn#branch                                  0
+bdpn#branch                                  0
+btxdm#branch                                 0
+btxdp#branch                                 0
+behalf#branch                                0
+ehalf#branch                       2.04831e-11
+voet#branch                                  0
+vctl#branch                                  0
+vsup#branch                       -0.000441721
+
+
+No. of Data Rows : 15020
+
+  Measurements for Transient Analysis
+
+trise_dp_ns         =  8.21287e-09 targ=  1.12126e-07 trig=  1.03913e-07
+tfall_dp_ns         =  8.52224e-09 targ=  2.13609e-07 trig=  2.05087e-07
+trise_dm_ns         =  8.21286e-09 targ=  2.12626e-07 trig=  2.04413e-07
+tfall_dm_ns         =  8.52261e-09 targ=  1.13110e-07 trig=  1.04587e-07
+trf_dp_ratio        =  9.63699e-01
+trf_dm_ratio        =  9.63656e-01
+trf_x1_ratio        =  9.63657e-01
+trf_x2_ratio        =  9.63698e-01
+vcross_rise_v       =  1.95269e+00
+vcross_fall_v       =  1.95254e+00
+tx_rise_ns          =   1.08157e-07
+tx_fall_ns          =   2.08657e-07
+tx_first_ns         =   1.08157e-07
+tx_second_ns        =   2.08657e-07
+tx_last_ns          =   2.08657e-07
+slope_rise_dp_min_vns=  1.90411e-01 at=  1.12110e-07
+slope_fall_dp_max_vns=  -1.78648e-01 at=  2.13590e-07
+slope_fall_dm_max_vns=  -1.78712e-01 at=  1.13090e-07
+slope_rise_dm_min_vns=  1.90409e-01 at=  2.12610e-07
+over_dp_mv          =  1.96365e-02 at=  2.02550e-07
+under_dp_mv         =  7.22150e-02 at=  1.01850e-07
+over_dm_mv          =  1.96452e-02 at=  1.02050e-07
+under_dm_mv         =  7.22141e-02 at=  2.02350e-07
+tpd_rise_dp_ns      =  7.51415e-09 targ=  1.07764e-07 trig=  1.00250e-07
+tpd_fall_dp_ns      =  8.30770e-09 targ=  2.09058e-07 trig=  2.00750e-07
+tpd_fall_dm_ns      =  8.30848e-09 targ=  1.08558e-07 trig=  1.00250e-07
+tpd_rise_dm_ns      =  7.51414e-09 targ=  2.08264e-07 trig=  2.00750e-07
+oe_xb_dp_off_pre_na =  5.59829e-12 at=  6.73856e-08
+oe_xb_dp_enable_at_ns=   1.02933e-07
+oe_xb_dp_on_ma      =  5.79789e-02 from=  1.50000e-07 to=  1.99010e-07
+oe_xb_dp_release_at_ns=   2.14238e-07
+oe_xb_dp_off_post_na=  1.72005e-10 at=  2.50030e-07
+oe_xb_dp_wrongpol_pk_ma=  2.60034e-03 at=  1.00870e-07
+oe_xb_dm_off_pre_na =  5.59311e-12 at=  8.43456e-08
+oe_xb_dm_enable_at_ns=   1.03117e-07
+oe_xb_dm_on_ma      =  -4.96777e-02 from=  1.50000e-07 to=  1.99010e-07
+oe_xb_dm_release_at_ns=   2.10329e-07
+oe_xb_dm_off_post_na=  4.20210e-11 at=  2.50010e-07
+oe_xb_dm_wrongpol_pk_ma=  9.01414e-04 at=  1.00830e-07
+oe_xc_dp_off_pre_na =  5.58870e-12 at=  7.13456e-08
+oe_xc_dp_enable_at_ns=   1.03117e-07
+oe_xc_dp_on_ma      =  -4.96777e-02 from=  1.50000e-07 to=  1.99010e-07
+oe_xc_dp_release_at_ns=   2.10329e-07
+oe_xc_dp_off_post_na=  4.20057e-11 at=  2.50010e-07
+oe_xc_dp_wrongpol_pk_ma=  9.01414e-04 at=  1.00830e-07
+oe_xc_dm_off_pre_na =  5.59475e-12 at=  5.90056e-08
+oe_xc_dm_enable_at_ns=   1.02933e-07
+oe_xc_dm_on_ma      =  5.79789e-02 from=  1.50000e-07 to=  1.99010e-07
+oe_xc_dm_release_at_ns=   2.14238e-07
+oe_xc_dm_off_post_na=  1.72018e-10 at=  2.50030e-07
+oe_xc_dm_wrongpol_pk_ma=  2.60034e-03 at=  1.00870e-07
+
+ngspice-46 done

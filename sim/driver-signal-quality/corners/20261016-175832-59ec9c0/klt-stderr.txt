@@ -1,0 +1,51 @@
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (search root: ~/.ciel), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt: batch job klt-sim-009c540cce45 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-009c540cce45
+klt: batch job klt-sim-a09a56b24709 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-a09a56b24709
+klt: batch job klt-sim-61dc60395c7f submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-61dc60395c7f
+klt: batch job klt-sim-027118c29b8a submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-027118c29b8a
+klt sim: batch job klt-sim-a09a56b24709: submitted
+klt sim: batch job klt-sim-009c540cce45: submitted
+klt sim: batch job klt-sim-61dc60395c7f: submitted
+klt sim: batch job klt-sim-027118c29b8a: submitted
+klt sim: batch job klt-sim-027118c29b8a launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-027118c29b8a`
+klt sim: batch job klt-sim-a09a56b24709 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-a09a56b24709`
+klt sim: batch job klt-sim-61dc60395c7f launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-61dc60395c7f`
+klt sim: batch job klt-sim-009c540cce45 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-009c540cce45`
+klt sim: batch job klt-sim-027118c29b8a state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-a09a56b24709 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-009c540cce45 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-61dc60395c7f state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-027118c29b8a: running
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=31s
+klt sim: batch job klt-sim-a09a56b24709: running
+klt sim: batch job klt-sim-a09a56b24709 state=running elapsed=31s
+klt sim: batch job klt-sim-009c540cce45: running
+klt sim: batch job klt-sim-009c540cce45 state=running elapsed=31s
+klt sim: batch job klt-sim-61dc60395c7f: running
+klt sim: batch job klt-sim-61dc60395c7f state=running elapsed=31s
+klt sim: batch job klt-sim-a09a56b24709 state=running elapsed=338s
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=338s
+klt sim: batch job klt-sim-009c540cce45 state=running elapsed=338s
+klt sim: batch job klt-sim-61dc60395c7f state=running elapsed=338s
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=645s
+klt sim: batch job klt-sim-a09a56b24709 state=running elapsed=645s
+klt sim: batch job klt-sim-009c540cce45 state=running elapsed=645s
+klt sim: batch job klt-sim-61dc60395c7f state=running elapsed=645s
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=951s
+klt sim: batch job klt-sim-a09a56b24709 state=running elapsed=951s
+klt sim: batch job klt-sim-61dc60395c7f state=running elapsed=951s
+klt sim: batch job klt-sim-009c540cce45 state=running elapsed=951s
+klt sim: batch job klt-sim-a09a56b24709 state=running elapsed=1258s
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=1258s
+klt sim: batch job klt-sim-61dc60395c7f state=running elapsed=1258s
+klt sim: batch job klt-sim-009c540cce45 state=running elapsed=1258s
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=1564s
+klt sim: batch job klt-sim-a09a56b24709 state=running elapsed=1564s
+klt sim: batch job klt-sim-61dc60395c7f state=running elapsed=1564s
+klt sim: batch job klt-sim-009c540cce45 state=running elapsed=1564s
+klt sim: batch job klt-sim-009c540cce45: done
+klt sim: batch job klt-sim-a09a56b24709: failed
+klt sim: batch job klt-sim-61dc60395c7f: done
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=1871s
+klt sim: batch job klt-sim-027118c29b8a state=running elapsed=2177s
+klt sim: batch job klt-sim-027118c29b8a: failed

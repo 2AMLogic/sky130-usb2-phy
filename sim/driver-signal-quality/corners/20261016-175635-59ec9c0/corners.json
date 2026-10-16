@@ -1,0 +1,50 @@
+{
+  "schema": "sky130-usb2-phy.sim.corners/2",
+  "matrix_id": "pvt225-mos-rc",
+  "source": "spec/decision-records/0005-resistor-sheet-resistance-corner-coverage.md: Decision 0001 Decision 5 envelope (temperature -40...100 C, I/O supply 3.0-3.6 V) x 5 sky130 MOS corners x 5 resistor/capacitor parameter sets (typical, ll, hh, hl, lh) = 25 pinned-library sections; see sim/README.md",
+  "pdk": {
+    "name": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64"
+  },
+  "process": [
+    "tt",
+    "sf",
+    "ff",
+    "ss",
+    "fs",
+    "ll",
+    "sf_ll",
+    "ff_ll",
+    "ss_ll",
+    "fs_ll",
+    "hh",
+    "sf_hh",
+    "ff_hh",
+    "ss_hh",
+    "fs_hh",
+    "hl",
+    "sf_hl",
+    "ff_hl",
+    "ss_hl",
+    "fs_hl",
+    "lh",
+    "sf_lh",
+    "ff_lh",
+    "ss_lh",
+    "fs_lh"
+  ],
+  "temperature_c": [
+    -40,
+    27,
+    100
+  ],
+  "supply_v": [
+    3.0,
+    3.3,
+    3.6
+  ],
+  "supply_source": "vsup",
+  "expected_points": 225
+}
