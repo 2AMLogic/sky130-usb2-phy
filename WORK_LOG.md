@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-16
 
+- **PR #162**: sim: record driver-signal-quality 225-point resistor-sets run via sharded batch jobs
+- **Issue #135** (closed): sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps)
 - **PR #157**: Bump Repo Skills 0.24.1 -> 0.24.3
 
 ### 2026-10-15
