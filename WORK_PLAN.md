@@ -34,7 +34,6 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps)
 - **#151**: Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3
 
 ## PRs Awaiting Review
@@ -55,7 +54,6 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps) *(curated)*
 - **#151**: Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3 *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -75,10 +73,10 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
-| Curated | 4 |
+| Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
