@@ -34,6 +34,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
+- **#135**: sim: resistor-set (sheet-resistance) sweep for the driver (series resistor, bias, MIM caps)
 - **#151**: Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3
 
 ## PRs Awaiting Review
@@ -74,7 +75,7 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
 | Curated | 4 |
