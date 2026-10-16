@@ -11,6 +11,7 @@ outside the markers is touched by automation.
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
 - **#153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
+- **#157**: Bump Repo Skills 0.24.1 -> 0.24.3
 
 ## Very Important
 
@@ -47,6 +48,7 @@ _None._
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
 - **#153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
+- **#157**: Bump Repo Skills 0.24.1 -> 0.24.3
 
 ## Proposed
 
@@ -70,13 +72,13 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 2 |
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
+| Approved PRs awaiting merge | 2 |
 | Curated | 4 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
