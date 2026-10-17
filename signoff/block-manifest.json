@@ -5,6 +5,14 @@
     "8": {
       "file": "signoff/evidence/characterization-report.json",
       "content_hash": "sha256:2940d0c239f2e3671092762783194096f4fa83fa3aa1f3473cc31bf550cd139c"
+    },
+    "9": {
+      "file": "signoff/evidence/item-9-testbenches.json",
+      "content_hash": "sha256:662e385690ad5f4a046ac5b02475b1958b93a5af4d7b4d6ad52229f6f5b98c92"
+    },
+    "10": {
+      "file": "signoff/evidence/item-10-hygiene.json",
+      "content_hash": "sha256:15356e96939612289ac840073780a44812bda455dc895db376a15790a8bd5867"
     }
   }
 }
