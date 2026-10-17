@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-17
+
+- **PR #169**: fix(rtl): register RX FIFO full flag to remove wr_en combinational loop
+- **Issue #164** (closed): Fix the combinational loop in rtl/usb_rx_cdc.v (wr_en depends on itself through full) and re-synthesize usb_utmi_top
+
 ### 2026-10-16
 
 - **PR #162**: sim: record driver-signal-quality 225-point resistor-sets run via sharded batch jobs
