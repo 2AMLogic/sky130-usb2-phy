@@ -86,9 +86,15 @@ module usb_rx_cdc #(
     wire wr_en;
     wire [AW:0] wptr_bin_next  = wptr_bin + (wr_en ? 1'b1 : 1'b0);
     wire [AW:0] wptr_gray_next = (wptr_bin_next >> 1) ^ wptr_bin_next;
-    wire full = (wptr_gray_next ==
-                 {~rptr_gray_wsync[AW:AW-1], rptr_gray_wsync[AW-2:0]});
-    assign wr_en = rx_byte_valid & ~full;
+    // `full` is registered (full_q): computing it combinationally from the
+    // next pointer closed a wr_en -> wptr_*_next -> full -> wr_en loop.
+    // full_q is derived from the NEXT pointer, so it is already 1 in the
+    // cycle after the filling write; it clears one clk_144 cycle late after
+    // a read-side pop (conservative).
+    reg  full_q;
+    wire full_next = (wptr_gray_next ==
+                      {~rptr_gray_wsync[AW:AW-1], rptr_gray_wsync[AW-2:0]});
+    assign wr_en = rx_byte_valid & ~full_q;
 
     reg [7:0] mem [0:(1 << AW) - 1];
 
@@ -96,9 +102,11 @@ module usb_rx_cdc #(
         if (!fifo_rst_n) begin
             wptr_bin  <= {(AW + 1) {1'b0}};
             wptr_gray <= {(AW + 1) {1'b0}};
+            full_q    <= 1'b0;
         end else begin
             wptr_bin  <= wptr_bin_next;
             wptr_gray <= wptr_gray_next;
+            full_q    <= full_next;
             if (wr_en) mem[wptr_bin[AW-1:0]] <= rx_byte;
         end
     end

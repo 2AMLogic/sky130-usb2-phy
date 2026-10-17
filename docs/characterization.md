@@ -321,6 +321,15 @@ says, and no more:
   from `wptr_bin + wr_en`, so the write enable depends combinationally on
   itself. The record discloses it; the RTL was not touched here. This is a
   finding about the design, not a clean synthesis result.
+  **Update (issue #164): this finding is resolved.** The write-side full flag
+  is now registered (`full_q`), so the loop is gone: the superseding record
+  [`flow/utmi-top/records/20261017-193151-1e192d8-tt_025C_1v80.md`](../flow/utmi-top/records/20261017-193151-1e192d8-tt_025C_1v80.md)
+  reports `comb_loops: 0`, `has_critical: false`, `klt synthesize` exit 0, a
+  byte-identical netlist across two runs, 939 cells (311 flip-flops), and
+  gate-level `test_usb_utmi_top.py` at 25/26 (the same disclosed white-box-peek
+  failure). The bullets above describe the 2026-10-08 record as written; the
+  committed `design/netlist/usb_utmi_top.v` is now the regenerated one. No
+  timing, physical, DRC or LVS claim is added.
 - The design has **two clocks** — `clk_144` (144 MHz) and `clk_utmi`
   (30 MHz) — and `klt synthesize`'s single `clock_period_ns` describes
   neither separately. No timing claim is made for either domain.

@@ -897,11 +897,20 @@ def check_power_connectivity(
 # --------------------------------------------------------------------------
 # Rule 8 -- synthesis-only records
 # --------------------------------------------------------------------------
-def check_synthesis_only(meta: dict, path: Path, findings: Findings) -> None:
-    """Hold a `synthesis-only` record to what it claims and to nothing more."""
+def check_synthesis_only(
+    meta: dict, path: Path, findings: Findings, superseded: set[str] | None = None
+) -> None:
+    """Hold a `synthesis-only` record to what it claims and to nothing more.
+
+    The netlist is committed at one fixed path (`design/netlist/`), so only the
+    newest record can be re-hashed against it; a superseded record is frozen
+    evidence of the netlist it reported and its recorded hash is not compared
+    to the current file (same reasoning as `superseded_record_ids`).
+    """
     if meta.get("record_kind") != RECORD_KIND_SYNTH_ONLY:
         return
     name = path.name
+    is_superseded = bool(superseded) and meta.get("record_id") in superseded
     stages = meta.get("stages")
     if not isinstance(stages, dict):
         return  # reported by check_required_fields
@@ -1005,7 +1014,7 @@ def check_synthesis_only(meta: dict, path: Path, findings: Findings) -> None:
                     "synthesis-only",
                     f"{name}: netlist {netlist['path']} does not exist",
                 )
-            elif "sha256:" + str(netlist.get("sha256")) != sha256_file(target):
+            elif not is_superseded and "sha256:" + str(netlist.get("sha256")) != sha256_file(target):
                 findings.add(
                     "synthesis-only",
                     f"{name}: netlist {netlist['path']} no longer matches the recorded sha256",
@@ -1071,6 +1080,9 @@ def check_synthesis_only(meta: dict, path: Path, findings: Findings) -> None:
     # 8e. artifact hashes (the synthesis envelope must be among them).
     artifacts = meta.get("provenance", {}).get("artifacts")
     if isinstance(artifacts, list):
+        synth_block = stages.get("synthesize")
+        netlist_block = synth_block.get("netlist") if isinstance(synth_block, dict) else None
+        netlist_path = netlist_block.get("path") if isinstance(netlist_block, dict) else None
         if not any(
             isinstance(a, dict) and str(a.get("path", "")).endswith("/synthesize-report.json")
             for a in artifacts
@@ -1093,7 +1105,10 @@ def check_synthesis_only(meta: dict, path: Path, findings: Findings) -> None:
                 findings.add(
                     "synthesis-only", f"{name}: artifact {entry['path']} does not exist"
                 )
-            elif sha256_file(target) != entry["content_hash"]:
+            elif (
+                sha256_file(target) != entry["content_hash"]
+                and not (is_superseded and entry["path"] == netlist_path)
+            ):
                 findings.add(
                     "synthesis-only",
                     f"{name}: artifact {entry['path']} does not match its recorded hash",
@@ -1310,7 +1325,7 @@ def lint_experiment(
         check_timing_gate(meta, path, findings)
         check_power_connectivity(meta, path, findings, superseded)
         check_drc_deck(meta, path, coverage, findings)
-        check_synthesis_only(meta, path, findings)
+        check_synthesis_only(meta, path, findings, superseded)
     return len(record_paths)
 
 

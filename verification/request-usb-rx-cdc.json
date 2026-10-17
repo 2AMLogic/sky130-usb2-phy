@@ -1,0 +1,20 @@
+{
+  "schema": "klt.functional_verification.request/1",
+  "engine": "icarus",
+  "sources": [
+    "../rtl/usb_rx_cdc.v"
+  ],
+  "hdl_toplevel": "usb_rx_cdc",
+  "testbench": {
+    "module": "test_usb_rx_cdc",
+    "testcase": null
+  },
+  "options": {
+    "coverage": false,
+    "timescale": [
+      "1ns",
+      "1ps"
+    ],
+    "random_seed": 1
+  }
+}
