@@ -14,6 +14,7 @@ from pathlib import Path
 SIM_DIR = Path(__file__).resolve().parents[1]
 REPO_ROOT = SIM_DIR.parent
 CORNERS_JSON = SIM_DIR / "corners.json"
+PDK_PINS_JSON = SIM_DIR / "pdk-pins.json"
 SCHEMA = "sky130-usb2-phy.sim.corners/1"
 SCHEMA_V2 = "sky130-usb2-phy.sim.corners/2"
 
@@ -207,3 +208,23 @@ def check_request(request: dict, matrix: Matrix) -> list[str]:
             f" extra {sorted(set(got) - set(want))[:3]}"
         )
     return problems
+
+
+def pin_problem(pdk: dict, record_id: str) -> str | None:
+    """Why a record's PDK identity is not acceptable, or None.
+
+    Records are append-only evidence, so each is judged against the pin it ran under: it must
+    equal the current pin or a retired one (sim/pdk-pins.json). A retired pin is accepted only
+    for records whose id date is within its `records_through`, so a new record cannot carry it.
+    """
+    pins = json.loads(PDK_PINS_JSON.read_text())
+    ident = (pdk.get("open_pdks_commit"), pdk.get("lib_sha256"))
+    if ident == (pins["current"]["open_pdks_commit"], pins["current"]["lib_sha256"]):
+        return None
+    for old in pins["retired"]:
+        if ident == (old["open_pdks_commit"], old["lib_sha256"]):
+            if record_id[:8] <= old["records_through"]:
+                return None
+            return (f"PDK identity open_pdks {ident[0]} was retired; records made after "
+                    f"{old['records_through']} must carry the current pin")
+    return f"PDK identity open_pdks {ident[0]} / lib sha {ident[1]} matches no pin in sim/pdk-pins.json"

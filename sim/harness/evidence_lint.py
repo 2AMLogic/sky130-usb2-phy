@@ -213,9 +213,13 @@ def lint_experiment(exp_dir: Path) -> list[str]:
             problems.append(f"{rid}: record Status {status} != evidence.json status {m.get('status')}")
         if (cdir / "corners.json").is_file():  # any record, PASS or FAIL: the frozen matrix is approved
             try:
-                mx.from_dict(json.loads((cdir / "corners.json").read_text()))
+                frozen = mx.from_dict(json.loads((cdir / "corners.json").read_text()))
             except (OSError, ValueError, mx.MatrixError) as exc:
                 problems.append(f"{rid}: frozen corners.json is not an approved matrix ({exc})")
+            else:
+                bad_pin = mx.pin_problem(frozen.pdk, rid)
+                if bad_pin:
+                    problems.append(f"{rid}: frozen corners.json: {bad_pin}")
         if status == "PASS" and not errs:
             problems += check_pass_record(exp_dir, cdir, rid, m)
         if status == "FAIL" and m.get("status") == "FAIL" and not m.get("problems"):

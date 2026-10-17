@@ -3,7 +3,7 @@
 Bootstrap steps for the open-source digital flow described in
 [`CLAUDE.md`](../CLAUDE.md): cocotb (verification) + Icarus Verilog
 (simulation) + Yosys (synthesis) against the `sky130_fd_sc_hd` standard-cell
-library, fetched via [volare](https://github.com/efabless/volare), all
+library, fetched via [ciel](https://github.com/fossi-foundation/ciel), all
 driven through [`klt`](https://github.com/2AMLogic/klayout-tools).
 
 This doc is intended to be followed **verbatim, from a clean shell**, on any
@@ -29,11 +29,11 @@ rest (klt invocations, PDK fetch, environment variables) is unchanged.
 | Icarus Verilog | **12.0** (stable) | `apt install iverilog` (Ubuntu noble universe) |
 | cocotb | 2.0.1 *(not a pin — see note below)* | `uv pip install --python <klt's tool venv> cocotb` (see §3 — **not** a plain distro `pip install`, see the note there) |
 | Yosys | **0.67** (git sha1 `2d1509d1b`) | [`yowasp-yosys`](https://pypi.org/project/yowasp-yosys/) `0.67.0.0.post1190` (pip) — **not** the distro `apt install yosys` package; see §4's friction note for why |
-| volare | 0.20.6 | already present on this machine (`/tmp/volare-venv/bin/volare`) |
-| sky130A PDK | open_pdks commit **`c6d73a35f524070e85faff4a6a9eef49553ebc2b`** | `volare fetch`, already present at `~/.volare/sky130A` on this machine |
+| ciel | **2.6.1** | `pip install ciel==2.6.1` (or `uvx --from ciel==2.6.1 ciel ...`) |
+| sky130A PDK | open_pdks commit **`f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7`** | `ciel enable` (§5), installed under `~/.ciel/sky130A` |
 
 The sky130A hash above is the one recorded here for reproducibility; re-check
-`volare output --pdk sky130` if a later session shows a different hash and
+`ciel output --pdk-family sky130` (or `cat ~/.ciel/sky130A/SOURCES`) if a later session shows a different hash and
 update this doc rather than silently treating a drifted PDK as equivalent.
 
 **The cocotb version is *not* a pin.** `2.0.1` is simply what the
@@ -238,27 +238,33 @@ Spelled-out literal `/tmp` targets also remain allowed as before —
 Cleanup is optional and local: `rm -rf .loom/tmp/` from the owning worktree
 (its contents are untracked and never enter diffs or commits).
 
-## 5. Fetch the sky130 PDK via volare
+## 5. Fetch the sky130 PDK via ciel
 
 ```bash
-volare --version                        # expect 0.20.6 (or record whatever is installed)
-volare fetch  --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b
-volare enable --pdk sky130 c6d73a35f524070e85faff4a6a9eef49553ebc2b
-volare output --pdk sky130              # confirm: c6d73a35f524070e85faff4a6a9eef49553ebc2b
+pip install ciel==2.6.1
+ciel --version                          # expect 2.6.1
+ciel enable --pdk-family sky130 -l sky130_fd_pr f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7
+ciel output --pdk-family sky130         # confirm: f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7
+cat ~/.ciel/sky130A/SOURCES             # confirm: open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7
 ```
 
-This creates `~/.volare/sky130A` / `sky130B` (symlinks into
-`~/.volare/volare/sky130/versions/<hash>/...`) — one directory per sky130
+This creates `~/.ciel/sky130A` / `sky130B` (symlinks into
+`~/.ciel/ciel/sky130/versions/<hash>/...`) — one directory per sky130
 variant. This repo's digital flow uses **`sky130A`** (the standard
 open-source variant carrying `sky130_fd_sc_hd`).
+
+The PDK root is `~/.ciel`. Do not leave a second tree from the retired
+installer around: the harness and flow search `$PDK_ROOT`, then `~/.ciel`, and
+refuse any tree whose `SOURCES` revision differs from the pin in
+`sim/corners.json`, so a stale tree fails loudly instead of being used.
 
 ## 6. `PDK` / `PDK_ROOT` environment convention
 
 `klt pdk find` (and `klt synthesize`) resolve the PDK via `$PDK`/`$PDK_ROOT`
-first, falling back to the volare/ciel stores:
+first, falling back to the ciel store:
 
 ```bash
-export PDK_ROOT="$(volare path)"   # -> ~/.volare
+export PDK_ROOT="$(ciel path)"     # -> ~/.ciel
 export PDK="sky130A"
 klt pdk find --format json         # confirm "variant": "sky130A"
 ```

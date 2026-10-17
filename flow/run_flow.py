@@ -122,34 +122,69 @@ def run_klt(args: list[str], cwd: Path, env: dict[str, str]) -> dict:
     return envelope
 
 
+PDK_PIN_FILE = REPO_ROOT / "sim" / "corners.json"
+
+
+def pinned_open_pdks_commit() -> str:
+    """The open_pdks revision this repo pins (single source: sim/corners.json)."""
+    return json.loads(PDK_PIN_FILE.read_text())["pdk"]["open_pdks_commit"]
+
+
+def tree_open_pdks_commit(root: str, pdk: str) -> str:
+    """The open_pdks revision in `<root>/<pdk>/SOURCES`, or "unknown" (never matches the pin)."""
+    sources = Path(root) / pdk / "SOURCES"
+    if sources.is_file():
+        for line in sources.read_text().splitlines():
+            parts = line.split()
+            if len(parts) >= 2 and parts[0] == "open_pdks":
+                return parts[1]
+    return "unknown"
+
+
 def resolve_pdk_root(env: dict[str, str]) -> str | None:
-    """Resolve the PDK root klt will actually use, and pin it into the env.
+    """Resolve the PDK root klt will actually use, pin it into the env, and check its revision.
+
+    An explicit `$PDK_ROOT` wins; otherwise `~/.ciel` is preferred when it holds the PDK, and only
+    then is `klt pdk find` asked. The resolved tree's open_pdks revision (its `SOURCES` file) must
+    equal the pin in sim/corners.json; a mismatch raises `StageError` naming both revisions rather
+    than silently running under whichever tree was found first.
 
     Workaround for klayout-tools#1868: `klt place-and-route` can resolve a PDK
-    through its own search order (e.g. ~/.volare) with `$PDK_ROOT` unset, but
+    through its own search order with `$PDK_ROOT` unset, but
     the documented container wrapper for `openroad` only bind-mounts
     `$PDK_ROOT`. The stage then dies on an opaque `cannot read file <liberty>`
-    from inside the container. Asking `klt pdk find` which root won and
-    exporting it makes the two agree. Remove once #1868 is fixed.
+    from inside the container. Asking for the root and exporting it makes the
+    two agree. Remove the klt fallback once #1868 is fixed.
     """
-    if env.get("PDK_ROOT"):
-        return env["PDK_ROOT"]
-    if shutil.which("klt") is None:
+    pdk = env.get("PDK") or "sky130A"
+    root = env.get("PDK_ROOT")
+    if not root:
+        ciel = Path("~/.ciel").expanduser()
+        if (ciel / pdk).is_dir():
+            root = str(ciel)
+        elif shutil.which("klt") is not None:
+            cmd = ["klt", "pdk", "find", "--format", "json"]
+            if env.get("PDK"):
+                cmd = ["klt", "pdk", "find", "--pdk", env["PDK"], "--format", "json"]
+            result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+            if result.returncode == 0:
+                try:
+                    root = json.loads(result.stdout).get("root")
+                except json.JSONDecodeError:
+                    root = None
+        if root:
+            env["PDK_ROOT"] = root
+            log(f"  PDK_ROOT was unset; pinned to the resolved root: {root}")
+            log("    (workaround for klayout-tools#1868 -- see flow/README.md)")
+    if not root:
         return None
-    cmd = ["klt", "pdk", "find", "--format", "json"]
-    if env.get("PDK"):
-        cmd = ["klt", "pdk", "find", "--pdk", env["PDK"], "--format", "json"]
-    result = subprocess.run(cmd, capture_output=True, text=True, env=env)
-    if result.returncode != 0:
-        return None
-    try:
-        root = json.loads(result.stdout).get("root")
-    except json.JSONDecodeError:
-        return None
-    if root:
-        env["PDK_ROOT"] = root
-        log(f"  PDK_ROOT was unset; pinned to klt's own resolved root: {root}")
-        log("    (workaround for klayout-tools#1868 -- see flow/README.md)")
+    pin, found = pinned_open_pdks_commit(), tree_open_pdks_commit(root, pdk)
+    if found != pin:
+        raise StageError(
+            f"PDK {pdk} under {root} is open_pdks {found}, but this repo pins open_pdks {pin} "
+            "(sim/corners.json); install the pinned revision with ciel under ~/.ciel or point "
+            "PDK_ROOT at it -- see docs/environment-setup.md"
+        )
     return root
 
 
@@ -994,9 +1029,14 @@ def main(argv: list[str] | None = None) -> int:
 
     env = dict(os.environ)
     env.setdefault("PDK", "sky130A")
-    if resolve_pdk_root(env) is None:
+    try:
+        pdk_root = resolve_pdk_root(env)
+    except StageError as exc:
+        print(f"run_flow: {exc}", file=sys.stderr)
+        return 2
+    if pdk_root is None:
         print(
-            "run_flow: could not resolve a PDK root (klt pdk find failed). "
+            "run_flow: could not resolve a PDK root (not under ~/.ciel and klt pdk find failed). "
             "Set PDK_ROOT explicitly -- see docs/environment-setup.md",
             file=sys.stderr,
         )
