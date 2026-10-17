@@ -61,6 +61,25 @@
       ]
     },
     {
+      "id": "test_usb_rx_cdc",
+      "partition": "digital",
+      "engine": "cocotb + Icarus",
+      "cold_start": "klt functional-verification verification/request-usb-rx-cdc.json --format json",
+      "cold_start_doc": "verification/README.md",
+      "members": [
+        {
+          "path": "verification/test_usb_rx_cdc.py",
+          "sha256": "sha256:cbe26b27b3163372d66ba450ba596afcbc6e1f5e156ec239b9a2412381083ef5",
+          "role": "testbench"
+        },
+        {
+          "path": "verification/request-usb-rx-cdc.json",
+          "sha256": "sha256:bb0deffb03428bdf17f69c3b7cf381a59f77fa16b33acf8a2dc397fa1f1c7065",
+          "role": "klt functional-verification request"
+        }
+      ]
+    },
+    {
       "id": "test_usb_rx",
       "partition": "digital",
       "engine": "cocotb + Icarus",

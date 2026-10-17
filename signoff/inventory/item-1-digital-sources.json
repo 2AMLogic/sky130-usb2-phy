@@ -2,7 +2,7 @@
   "schema": "sky130-usb2-phy.signoff.inventory/1",
   "t1_item": 1,
   "partition": "digital",
-  "note": "Digital design sources: rtl/usb_*.v, the synthesized gate-level netlist, and the synthesis request and record. NOT YET CITED by signoff/block-manifest.json: the netlist carries a combinational loop in rtl/usb_rx_cdc.v (klt synthesize exits 3) until #164 lands. Plain versioned file kept ready for a later citation.",
+  "note": "Digital design sources: rtl/usb_*.v, the synthesized gate-level netlist, and the synthesis request and record. NOT YET CITED by signoff/block-manifest.json: the combinational loop in rtl/usb_rx_cdc.v is fixed (#164 landed; the current synthesis record reports 0 combinational loops), but citing this item is a separate step that has not been taken. Plain versioned file kept ready for that citation.",
   "rtl": [
     {
       "path": "rtl/usb_bit_destuffer.v",

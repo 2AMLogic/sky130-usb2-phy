@@ -84,7 +84,8 @@ CHARACTERIZATION_ENVELOPE = "signoff/evidence/characterization-report.json"
 # envelope, what the envelope attests). The inventory is the single audited
 # artifact the envelope pins; its members are re-hashed by
 # check_inventory_members. Item 1 (digital) has an inventory but no citation
-# yet (#164); it is only kept fresh.
+# yet (the #164 loop fix has landed; citing it is a separate step); it is only
+# kept fresh.
 ANCHORED = {
     "9": (
         "signoff/inventory/item-9-testbenches.json",
@@ -308,6 +309,39 @@ def check_inventory_members() -> bool:
         else:
             print(f"ok   {name}: {len(members)} inventoried files re-hash")
     return ok
+
+
+def expected_item9_files(root: Path) -> set[str]:
+    """Every testbench file the item 9 claim says the inventory lists."""
+    found = set()
+    for pattern in ("verification/test_*.py", "verification/request-*.json"):
+        found.update(str(p.relative_to(root)) for p in root.glob(pattern))
+    for path in root.glob("sim/*/testbench/*"):
+        if path.is_file():
+            found.add(str(path.relative_to(root)))
+    return found
+
+
+def check_item9_complete(root: Path | None = None) -> bool:
+    """Item 9 claims *every* suite is inventoried: a new one must fail the gate."""
+    root = root or REPO_ROOT
+    name = ANCHORED["9"][0]
+    try:
+        inventory = json.loads((root / name).read_text())
+    except (OSError, ValueError) as exc:
+        fail(f"{name}: unreadable ({exc})")
+        return False
+    listed = {member["path"] for member in _members(inventory)}
+    missing = sorted(expected_item9_files(root) - listed)
+    for path in missing:
+        fail(
+            f"{name}: {path} is a testbench file but is not inventoried.\n"
+            "     Add it to the inventory (with its cold-start invocation), then "
+            "refresh the pins (python3 signoff/check.py --regen)."
+        )
+    if not missing:
+        print(f"ok   {name}: every verification/ and sim/*/testbench/ file is inventoried")
+    return not missing
 
 
 def check_anchored_envelopes(manifest: dict) -> bool:
@@ -602,6 +636,7 @@ def main(argv: list[str] | None = None) -> int:
 
     ok = check_generic_envelopes(manifest) and ok
     ok = check_inventory_members() and ok
+    ok = check_item9_complete() and ok
     ok = check_anchored_envelopes(manifest) and ok
 
     stdout, report, ran = run_grader()

@@ -79,6 +79,27 @@ def test_mutating_an_inventoried_file_fails_the_gate(tree, mutated, capsys):
     assert mutated in capsys.readouterr().err
 
 
+def test_item9_inventory_is_complete_for_the_real_tree():
+    check = _load_check()
+    assert check.check_item9_complete(REAL_ROOT)
+
+
+@pytest.mark.parametrize(
+    "added",
+    [
+        "verification/test_new_suite.py",  # a new cocotb suite
+        "verification/request-new-suite.json",  # its klt request
+        "sim/new-block/testbench/tb.json",  # a new analog testbench
+    ],
+)
+def test_an_uninventoried_testbench_fails_the_gate(tree, added, capsys):
+    check, root = tree
+    assert check.check_item9_complete(root)
+    _mk(root / added).write_text("{}\n")
+    assert not check.check_item9_complete(root)
+    assert added in capsys.readouterr().err
+
+
 @pytest.mark.skipif(shutil.which("klt") is None, reason="klt not on PATH")
 @pytest.mark.parametrize("item", ["9", "10"])
 def test_grader_renders_stale_when_the_bound_inventory_moves(tree, item):
