@@ -251,7 +251,7 @@ this is the real datapath, not the toolchain-smoke stub.
 - Reproduction: {s['reproduction']['note']}
 - Structural verdict: `{json.dumps(s['structural'])}`
 
-### Finding: a combinational loop in the RTL
+### Structural finding
 
 {s['comb_loop_finding']}
 
@@ -375,17 +375,24 @@ def main(argv: list[str] | None = None) -> int:
         w for w in (env_a.get("warnings") or {}).get("representatives", []) if w.get("category") == "logic_loop"
     ]
     comb_loops = (env_a.get("structural") or {}).get("comb_loops")
-    comb_loop_finding = (
-        f"`klt synthesize` exited 3 (structural verdict: {comb_loops} combinational loop(s), "
-        f"critical). Yosys reports `found logic loop in module usb_rx_cdc` "
-        f"({sum(w['count'] for w in loop_warn)} warning(s)): in rtl/usb_rx_cdc.v, "
-        "`wr_en = rx_byte_valid & ~full`, `full` is computed from `wptr_gray_next`, which is "
-        "computed from `wptr_bin_next = wptr_bin + wr_en`. The write enable therefore depends "
-        "combinationally on itself. This is an RTL property, not a synthesis artefact; the RTL "
-        "was not modified by this record (out of scope, and the committed pre-layout evidence "
-        "describes this RTL). The netlist was still emitted and is committed as-is so the defect "
-        "is visible; it is not a clean netlist and must not be read as one."
-    )
+    if (env_a.get("structural") or {}).get("has_critical") or comb_loops:
+        comb_loop_finding = (
+            f"`klt synthesize` exited 3 (structural verdict: {comb_loops} combinational loop(s), "
+            f"critical). Yosys reports `found logic loop in module usb_rx_cdc` "
+            f"({sum(w['count'] for w in loop_warn)} warning(s)): in rtl/usb_rx_cdc.v, "
+            "`wr_en = rx_byte_valid & ~full`, `full` is computed from `wptr_gray_next`, which is "
+            "computed from `wptr_bin_next = wptr_bin + wr_en`. The write enable therefore depends "
+            "combinationally on itself. This is an RTL property, not a synthesis artefact. The "
+            "netlist was still emitted and is committed as-is so the defect is visible; it is "
+            "not a clean netlist and must not be read as one."
+        )
+    else:
+        comb_loop_finding = (
+            f"No structural finding: `klt synthesize` exited 0 with {comb_loops} combinational "
+            "loop(s) and no critical finding. The write-side full flag in rtl/usb_rx_cdc.v is "
+            "registered (`full_q`), which removed the `wr_en -> wptr_*_next -> full -> wr_en` "
+            "loop reported by the superseded record."
+        )
     inputs = [
         {"path": p, "content_hash": sha256_file(REPO_ROOT / p)} for p in sources_in_request()
     ] + [

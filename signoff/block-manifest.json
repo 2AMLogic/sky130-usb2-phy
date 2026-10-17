@@ -4,7 +4,7 @@
   "evidence": {
     "8": {
       "file": "signoff/evidence/characterization-report.json",
-      "content_hash": "sha256:2940d0c239f2e3671092762783194096f4fa83fa3aa1f3473cc31bf550cd139c"
+      "content_hash": "sha256:2ed4a092a80df6168b8a00f4a9193d532a6223bbd14748df765103178f6564ff"
     },
     "9": {
       "file": "signoff/evidence/item-9-testbenches.json",
@@ -12,7 +12,7 @@
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:15356e96939612289ac840073780a44812bda455dc895db376a15790a8bd5867"
+      "content_hash": "sha256:6aeaf0adfb1673087fa0007d96eb3b3faa616a7521c0b28ea7252f3c026d5b1f"
     }
   }
 }

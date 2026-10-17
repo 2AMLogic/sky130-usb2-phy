@@ -157,6 +157,20 @@ driving and monitoring DP/DM in the same test (round-tripping the
 stuff-bit-before-EOP scenario through the loopback), and the timing knobs
 exercised at a non-zero setting against a live simulator.
 
+## `test_usb_rx_cdc.py`: directed RX FIFO-full checks (issue #164)
+
+Drives `rtl/usb_rx_cdc.v` directly so the write side can run back to back
+while `clk_utmi` is stopped (the full receive path never presents that).
+
+```bash
+klt functional-verification verification/request-usb-rx-cdc.json --format json
+```
+
+It covers the registered `full_q` flag that replaced the combinational
+`wr_en -> full -> wr_en` loop: fill to capacity with no overwrite (first 8
+bytes survive, later offers are dropped), reset mid-fill clears `full_q`, and
+the write side accepts bytes again after a full FIFO is drained.
+
 ## `test_usb_rx.py`: the FS receive-path RTL suite (issue #13)
 
 `rtl/usb_bit_sync.v` .. `rtl/usb_rx_cdc.v` (see `rtl/README.md`'s module

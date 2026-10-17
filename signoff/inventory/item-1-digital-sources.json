@@ -36,7 +36,7 @@
     },
     {
       "path": "rtl/usb_rx_cdc.v",
-      "sha256": "sha256:215cf4620894de0fe36df0b6fe92d1a012528de19a340a2bf2d6565907407d66",
+      "sha256": "sha256:51f44bff8c98a706bdeab1107d29c96a85946adc11b4004d4d3f0aef534bdaa3",
       "role": "RTL source"
     },
     {
@@ -68,7 +68,7 @@
   "netlist": [
     {
       "path": "design/netlist/usb_utmi_top.v",
-      "sha256": "sha256:36d12cc101033f0bbf25f6b2c5db79fe42500d45178d8fc37ee4359f9e20744b",
+      "sha256": "sha256:44441f5ae2fbda739aa783f0e60352c1cb8f86b75d9f64839b02ac12e2867edd",
       "role": "synthesized gate-level netlist (sky130_fd_sc_hd)"
     }
   ],
