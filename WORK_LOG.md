@@ -6,6 +6,8 @@ by the Guide triage agent. Newest entries first.
 ### 2026-10-17
 
 - **PR #169**: fix(rtl): register RX FIFO full flag to remove wr_en combinational loop
+- **PR #168**: build(signoff): re-pin grader to klayout-tools 0.7.0 and cite T1 items 9 and 10
+- **Issue #165** (closed): Re-pin the signoff grader to klayout-tools 0.7.0 and cite T1 items 1 (digital), 9 and 10 with artifact-anchored envelopes
 - **Issue #164** (closed): Fix the combinational loop in rtl/usb_rx_cdc.v (wr_en depends on itself through full) and re-synthesize usb_utmi_top
 
 ### 2026-10-16
