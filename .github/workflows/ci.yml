@@ -183,10 +183,18 @@ jobs:
       # committed from (same-version git snapshots have been observed to
       # grade differently -- klayout-tools#2216).
       - name: Install the pinned grading klt (klayout-tools)
-        run: python3 -m pip install klayout-tools==0.5.0
+        run: python3 -m pip install klayout-tools==0.7.0
 
       - name: Confirm the grading build is the pinned release
         run: klt version --format json
 
       - name: Re-grade the block manifest; require the committed report to match
         run: python3 signoff/check.py
+
+      # Negative controls: mutating a file an items-9/10 inventory lists must
+      # fail the gate, and moving the bound inventory must grade stale.
+      - name: Install pytest (signoff negative controls)
+        run: python3 -m pip install pytest
+
+      - name: Signoff negative controls
+        run: python3 -m pytest signoff/tests -v

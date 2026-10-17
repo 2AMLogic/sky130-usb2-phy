@@ -27,16 +27,19 @@ alone cannot cover all of them:
    envelope's own recorded hash* -- it never opens the underlying artifact,
    so two hand-written hashes agreeing with each other proves nothing. This
    re-hashes the file the envelope's `source` names and requires it to match.
-3. **The vendored tiers doc is present and row-counted.** T1 item 11
-   ("Power delivery (structural)", klayout-tools#2025) exists in no released
-   `klt` bundle yet: the pinned 0.5.0 wheel's bundled checklist stops at item
-   10. `signoff/design-evidence-tiers.md` is the vendored upstream copy the
-   grader is pointed at via `--tiers-doc` so every item -- item 11 included --
-   gets its row. Grading without it would silently render a 20-row report
-   instead of the 22 mixed-signal rows `signoff/README.md` describes.
+3. **Artifact-anchored inventories are fresh.** Items 9 and 10 are cited
+   through an artifact-anchored generic envelope (klayout-tools#2718): the
+   envelope declares `"t1_item"` and pins ONE audited artifact
+   (`provenance.input`), here a committed inventory under
+   `signoff/inventory/`. The grader re-hashes that inventory, but not the
+   files the inventory lists, so this check re-hashes every listed member
+   too. Mutating an inventoried file fails the gate until the inventory is
+   refreshed (`--regen`), which moves the inventory hash and with it the
+   envelope and manifest pins. The item-1 (digital) inventory is kept fresh
+   the same way even while uncited.
 4. **The grader itself runs clean.** Exit 0 (`tier: "T1"`) or 3 (`tier: null`,
    at least one item unmet) are both fine -- an all-`unmet` report is a
-   correct result. Exit 1/2 mean the manifest or the tiers doc is malformed,
+   correct result. Exit 1/2 mean the manifest is malformed,
    which is a real failure.
 5. **The committed report still matches the rendered one.** Compared on a
    normalized projection (per-item `status`/`reason`, counts, tier, source
@@ -68,8 +71,8 @@ SIGNOFF_DIR = REPO_ROOT / "signoff"
 MANIFEST = SIGNOFF_DIR / "block-manifest.json"
 REPORT = SIGNOFF_DIR / "signoff-report.json"
 TOOLCHAIN = SIGNOFF_DIR / "toolchain.json"
-TIERS_DOC = SIGNOFF_DIR / "design-evidence-tiers.md"
 EVIDENCE_DIR = SIGNOFF_DIR / "evidence"
+INVENTORY_DIR = SIGNOFF_DIR / "inventory"
 
 # The single artifact the item-8 generic envelope wraps today. Keep in one
 # place: --regen re-derives both pins (the envelope's and the manifest's)
@@ -77,15 +80,38 @@ EVIDENCE_DIR = SIGNOFF_DIR / "evidence"
 CHARACTERIZATION_SOURCE = "docs/characterization.md"
 CHARACTERIZATION_ENVELOPE = "signoff/evidence/characterization-report.json"
 
+# Artifact-anchored citations (klayout-tools#2718): T1 item -> (inventory,
+# envelope, what the envelope attests). The inventory is the single audited
+# artifact the envelope pins; its members are re-hashed by
+# check_inventory_members. Item 1 (digital) has an inventory but no citation
+# yet (the #164 loop fix has landed; citing it is a separate step); it is only
+# kept fresh.
+ANCHORED = {
+    "9": (
+        "signoff/inventory/item-9-testbenches.json",
+        "signoff/evidence/item-9-testbenches.json",
+        "every cocotb suite in verification/ and every analog testbench under "
+        "sim/*/testbench/ is committed, with its cold-start invocation and the "
+        "pinned PDK revision",
+    ),
+    "10": (
+        "signoff/inventory/item-10-hygiene.json",
+        "signoff/evidence/item-10-hygiene.json",
+        "README.md, LICENSE and the CI workflow are committed, and the CI "
+        "commands that keep the harness and evidence formats valid are named",
+    ),
+}
+UNCITED_INVENTORIES = ("signoff/inventory/item-1-digital-sources.json",)
+
 # `klt signoff --manifest` exit codes that mean "the grader ran": 0 is
 # tier T1, 3 is "ran fine, at least one item unmet". Anything else is a
-# malformed manifest / unparsable tiers doc / usage error.
+# malformed manifest / usage error.
 RAN_CLEAN = (0, 3)
 
 # The grading build identity, asserted two ways (see check 1 above). Keep in
 # sync with signoff/toolchain.json and the `signoff` CI job's pip pin.
-GRADER_PACKAGE_VERSION = "0.5.0"
-GRADER_GIT_TAG = "v0.5.0"
+GRADER_PACKAGE_VERSION = "0.7.0"
+GRADER_GIT_TAG = "v0.7.0"
 
 
 def fail(msg: str) -> None:
@@ -238,31 +264,108 @@ def check_generic_envelopes(manifest: dict) -> bool:
     return ok
 
 
-def check_tiers_doc() -> bool:
-    """The vendored checklist must be present and carry item 11."""
-    if not TIERS_DOC.is_file():
-        fail(
-            f"{TIERS_DOC.relative_to(REPO_ROOT)} is missing. The pinned "
-            f"klt {GRADER_PACKAGE_VERSION} bundle's checklist stops at item "
-            "10; the vendored upstream copy is what makes item 11 render a "
-            "row (klayout-tools#2025). Re-copy it from klayout-tools main "
-            "and record its provenance in signoff/README.md"
-        )
+def _members(node):
+    """Every {"path", "sha256"} member recorded anywhere in an inventory."""
+    if isinstance(node, dict):
+        if "path" in node and "sha256" in node:
+            yield node
+        for value in node.values():
+            yield from _members(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _members(value)
+
+
+def check_inventory_members() -> bool:
+    """Every file an inventory lists still hashes to what it recorded."""
+    ok = True
+    names = [v[0] for v in ANCHORED.values()] + list(UNCITED_INVENTORIES)
+    for name in names:
+        path = REPO_ROOT / name
+        try:
+            inventory = json.loads(path.read_text())
+        except (OSError, ValueError) as exc:
+            fail(f"{name}: unreadable ({exc})")
+            ok = False
+            continue
+        members = list(_members(inventory))
+        bad = False
+        for member in members:
+            member_path = REPO_ROOT / member["path"]
+            if not member_path.is_file():
+                fail(f"{name}: inventoried file {member['path']} does not exist")
+                bad = True
+            elif sha256_file(member_path) != member["sha256"]:
+                fail(
+                    f"{name}: inventoried file {member['path']} changed since "
+                    "the inventory was taken (stale).\n"
+                    "     Re-read the change, then refresh the pins "
+                    "(python3 signoff/check.py --regen) and update "
+                    "signoff/README.md if a claim moved."
+                )
+                bad = True
+        if bad:
+            ok = False
+        else:
+            print(f"ok   {name}: {len(members)} inventoried files re-hash")
+    return ok
+
+
+def expected_item9_files(root: Path) -> set[str]:
+    """Every testbench file the item 9 claim says the inventory lists."""
+    found = set()
+    for pattern in ("verification/test_*.py", "verification/request-*.json"):
+        found.update(str(p.relative_to(root)) for p in root.glob(pattern))
+    for path in root.glob("sim/*/testbench/*"):
+        if path.is_file():
+            found.add(str(path.relative_to(root)))
+    return found
+
+
+def check_item9_complete(root: Path | None = None) -> bool:
+    """Item 9 claims *every* suite is inventoried: a new one must fail the gate."""
+    root = root or REPO_ROOT
+    name = ANCHORED["9"][0]
+    try:
+        inventory = json.loads((root / name).read_text())
+    except (OSError, ValueError) as exc:
+        fail(f"{name}: unreadable ({exc})")
         return False
-    text = TIERS_DOC.read_text()
-    for needle in ("11. **Power delivery (structural)**",):
-        if needle not in text:
+    listed = {member["path"] for member in _members(inventory)}
+    missing = sorted(expected_item9_files(root) - listed)
+    for path in missing:
+        fail(
+            f"{name}: {path} is a testbench file but is not inventoried.\n"
+            "     Add it to the inventory (with its cold-start invocation), then "
+            "refresh the pins (python3 signoff/check.py --regen)."
+        )
+    if not missing:
+        print(f"ok   {name}: every verification/ and sim/*/testbench/ file is inventoried")
+    return not missing
+
+
+def check_anchored_envelopes(manifest: dict) -> bool:
+    """Items 9/10 envelopes declare their item and bind their inventory."""
+    ok = True
+    for item_id, (inventory, envelope_rel, _claim) in ANCHORED.items():
+        try:
+            envelope = json.loads((REPO_ROOT / envelope_rel).read_text())
+        except (OSError, ValueError) as exc:
+            fail(f"{envelope_rel}: unreadable ({exc})")
+            ok = False
+            continue
+        bound = ((envelope.get("provenance") or {}).get("input") or {}).get("path")
+        bound = bound.get("path") if isinstance(bound, dict) else bound
+        if envelope.get("t1_item") != int(item_id) or bound != inventory:
             fail(
-                f"{TIERS_DOC.relative_to(REPO_ROOT)} does not contain "
-                f"{needle!r} -- a stale vendored copy would silently drop "
-                "item 11's rows from the report"
+                f"{envelope_rel}: must declare t1_item {item_id} and bind "
+                f"provenance.input.path {inventory!r}"
             )
-            return False
-    print(
-        f"ok   {TIERS_DOC.relative_to(REPO_ROOT)} vendored copy carries the "
-        "11-item checklist"
-    )
-    return True
+            ok = False
+        if str((manifest["evidence"].get(item_id) or {}).get("file")) != envelope_rel:
+            fail(f"signoff/block-manifest.json: item {item_id} must cite {envelope_rel}")
+            ok = False
+    return ok
 
 
 def run_grader() -> tuple[str, dict, bool]:
@@ -271,8 +374,6 @@ def run_grader() -> tuple[str, dict, bool]:
         "signoff",
         "--manifest",
         str(MANIFEST.relative_to(REPO_ROOT)),
-        "--tiers-doc",
-        str(TIERS_DOC.relative_to(REPO_ROOT)),
         "--format",
         "json",
     ]
@@ -280,7 +381,7 @@ def run_grader() -> tuple[str, dict, bool]:
     if proc.returncode not in RAN_CLEAN:
         fail(
             f"klt signoff --manifest exited {proc.returncode} (expected 0 or 3). "
-            "The manifest or the tiers doc is malformed:"
+            "The manifest is malformed:"
         )
         sys.stderr.write(proc.stderr)
         return "", {}, False
@@ -443,6 +544,60 @@ def refresh_item8_source_hash() -> str | None:
     return new_hash
 
 
+def refresh_anchored() -> None:
+    """--regen: re-hash inventory members, re-bind envelopes and the manifest.
+
+    Same honesty price as refresh_item8_source_hash: a refreshed hash is an
+    observation, not an audit -- re-read what changed first.
+    """
+    for name in [v[0] for v in ANCHORED.values()] + list(UNCITED_INVENTORIES):
+        path = REPO_ROOT / name
+        inventory = json.loads(path.read_text())
+        moved = []
+        for member in _members(inventory):
+            new = sha256_file(REPO_ROOT / member["path"])
+            if new != member["sha256"]:
+                moved.append(member["path"])
+                member["sha256"] = new
+        if moved:
+            print(
+                f"note {name}: re-hashed {', '.join(moved)}.\n"
+                "     Re-read what changed and update signoff/README.md if a "
+                "claim moved.",
+                file=sys.stderr,
+            )
+            path.write_text(json.dumps(inventory, indent=2) + "\n")
+    manifest = json.loads(MANIFEST.read_text())
+    for item_id, (inventory, envelope_rel, claim) in ANCHORED.items():
+        pin = sha256_file(REPO_ROOT / inventory)
+        envelope = {
+            "schema_version": 1,
+            "kind": "generic",
+            "t1_item": int(item_id),
+            "status": "pass",
+            "summary": (
+                f"T1 item {item_id}: {claim}. The audited artifact is {inventory}; "
+                "check.py additionally re-hashes every file it lists. This "
+                "asserts the inventory is complete and current; it does not "
+                "assert that any test passes or any spec row is met."
+            ),
+            "source": inventory,
+            "provenance": {
+                "klt_version": None,
+                "klayout_version": None,
+                "pdk": None,
+                "deck": None,
+                "input": {
+                    "path": {"path": inventory, "scope": "repo"},
+                    "content_hash": pin,
+                },
+            },
+        }
+        (REPO_ROOT / envelope_rel).write_text(json.dumps(envelope, indent=2) + "\n")
+        manifest["evidence"][item_id] = {"file": envelope_rel, "content_hash": pin}
+    MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
@@ -471,6 +626,7 @@ def main(argv: list[str] | None = None) -> int:
         refreshed = refresh_item8_source_hash()
         if refreshed is None:
             return 1
+        refresh_anchored()
         manifest = load_manifest()
         if manifest is None:
             return 1
@@ -479,7 +635,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     ok = check_generic_envelopes(manifest) and ok
-    ok = check_tiers_doc() and ok
+    ok = check_inventory_members() and ok
+    ok = check_item9_complete() and ok
+    ok = check_anchored_envelopes(manifest) and ok
 
     stdout, report, ran = run_grader()
     if not ran:

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "t1_item": 10,
+  "status": "pass",
+  "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
+  "source": "signoff/inventory/item-10-hygiene.json",
+  "provenance": {
+    "klt_version": null,
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/inventory/item-10-hygiene.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:764ab07e9249f437fff37ea69257d7eff61e0bf78d4f3cf341c499604886f5a6"
+    }
+  }
+}

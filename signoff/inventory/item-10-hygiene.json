@@ -1,0 +1,86 @@
+{
+  "schema": "sky130-usb2-phy.signoff.inventory/1",
+  "t1_item": 10,
+  "note": "Repo-hygiene artifacts and the CI commands that keep the harness and evidence formats valid. Plain versioned file: the bound artifact of signoff/evidence/item-10-hygiene.json.",
+  "artifacts": [
+    {
+      "id": "readme",
+      "what": "README.md: block statement, spec table, reproduction",
+      "members": [
+        {
+          "path": "README.md",
+          "sha256": "sha256:97f815cec72acfc43fc5088044f9498f4380fac4a5b2d2353e69afebe47ae035"
+        }
+      ]
+    },
+    {
+      "id": "license",
+      "what": "LICENSE (Apache-2.0)",
+      "members": [
+        {
+          "path": "LICENSE",
+          "sha256": "sha256:cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    },
+    {
+      "id": "ci-workflow",
+      "what": "CI workflow: verification suite, evidence lint, signoff freshness gate",
+      "members": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "sha256": "sha256:ab354190fe83656c48b2d8f38012e790ad0a0da5fbfc8bc05287874905cd41b1"
+        }
+      ]
+    },
+    {
+      "id": "ci-verification",
+      "what": "CI command: npm run check:ci -> scripts/check-ci.sh (pytest layer + every klt functional-verification request)",
+      "command": "npm run check:ci",
+      "members": [
+        {
+          "path": "scripts/check-ci.sh",
+          "sha256": "sha256:e29527404d3bd79e82a667d18586a627d367719d5bf45ddfe560e8b70db133f3"
+        },
+        {
+          "path": "package.json",
+          "sha256": "sha256:ec533fdc9cf541668a0da29c138323d9967b5008bf37f3965d0f80dd0dbe0455"
+        }
+      ]
+    },
+    {
+      "id": "ci-evidence-lint",
+      "what": "CI command: npm run lint -> flow/check_records.py + sim/check_records.py (append-only, well-formed evidence formats)",
+      "command": "npm run lint",
+      "members": [
+        {
+          "path": ".github/scripts/lint.sh",
+          "sha256": "sha256:690f19911b1b6fc2f11314bc0a039ca64bdd249be2d727f117e2f43f2cd8ebe0"
+        },
+        {
+          "path": "flow/check_records.py",
+          "sha256": "sha256:ad41efb84001ceeadb33394c19090f8e255bb5e710b72e6acfbadd4e9bcb5644"
+        },
+        {
+          "path": "sim/check_records.py",
+          "sha256": "sha256:fe364e30f10a679567ae5a8a24ede67a6ecdb7f946993ff0cbb9ad9f5d5c0983"
+        }
+      ]
+    },
+    {
+      "id": "ci-signoff",
+      "what": "CI command: python3 signoff/check.py (grader freshness gate)",
+      "command": "python3 signoff/check.py",
+      "members": [
+        {
+          "path": "signoff/check.py",
+          "sha256": "sha256:984c92b1865e22222b23a56eb5bebd5dffa328602aa7d71e57b04a4045b68a5e"
+        },
+        {
+          "path": "signoff/toolchain.json",
+          "sha256": "sha256:2ea758d0529ded0f00be89ce005578d25aadfdd57428c90a47679d82dcccb387"
+        }
+      ]
+    }
+  ]
+}
