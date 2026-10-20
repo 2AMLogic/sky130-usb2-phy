@@ -25,6 +25,10 @@ ambiguous about which rule it broke):
      carry that enumeration.
   7. Request validity -- every committed `flow/request-*.json` must parse and
      carry the fields its stage actually needs.
+  8. Analog layout records (`record_kind: "analog-layout"`, issue #167) -- a
+     clean layout record must say what its DRC deck did not look at, LVS must
+     be a match with nothing but warnings, the supply nets must each be one
+     island with their ties actually checked, and the PDK must be the pinned one.
 
 Pure standard library, no `klt` and no PDK required, so CI can run it on
 every PR without provisioning an EDA toolchain. `--klt-check` opts into the
@@ -123,7 +127,8 @@ VALID_TIMING_VERDICTS = {"pass", "fail", "waived", "unconstrained"}
 # imply, a place-and-route / timing / LVS / DRC result that was never produced.
 # --------------------------------------------------------------------------
 RECORD_KIND_SYNTH_ONLY = "synthesis-only"
-VALID_RECORD_KINDS = {RECORD_KIND_SYNTH_ONLY}
+RECORD_KIND_ANALOG_LAYOUT = "analog-layout"
+VALID_RECORD_KINDS = {RECORD_KIND_SYNTH_ONLY, RECORD_KIND_ANALOG_LAYOUT}
 
 SYNTH_ONLY_REQUIRED_FIELDS: tuple[tuple[str, bool], ...] = (
     ("schema", False),
@@ -158,6 +163,65 @@ SYNTH_ONLY_REQUIRED_FIELDS: tuple[tuple[str, bool], ...] = (
     ("stages.gate_level_functional_verification.failing_tests", False),
     ("provenance.klt_version", False),
     ("provenance.pdk", False),
+    ("provenance.inputs", False),
+    ("provenance.artifacts", False),
+    ("tool_gaps", False),
+)
+
+# --------------------------------------------------------------------------
+# Analog layout records (experiment `analog-layout-<block>`, issue #167)
+#
+# One record per physical-check run of one analog leaf's layout. There is no
+# corner and no timing: the record is addressed by its block name (the last
+# field of the record id) and is held to what DRC, LVS and ERC each report.
+# --------------------------------------------------------------------------
+ANALOG_LAYOUT_REQUIRED_FIELDS: tuple[tuple[str, bool], ...] = (
+    ("schema", False),
+    ("record_kind", False),
+    ("record_id", False),
+    ("experiment", False),
+    ("block", False),
+    ("created_utc", False),
+    ("git_revision", False),
+    ("supersedes", True),
+    ("design.block", False),
+    ("design.netlist", False),
+    ("design.gds", False),
+    ("design.generator", False),
+    ("design.anchors_design_claim", False),
+    ("design.claim_note", False),
+    ("reproducibility.generator", False),
+    ("reproducibility.gds_sha256", False),
+    ("reproducibility.regenerated_identical", False),
+    ("stages.drc_curated.status", False),
+    ("stages.drc_curated.violation_count", False),
+    ("stages.drc_curated.deck.name", False),
+    ("stages.drc_curated.deck.content_hash", False),
+    ("stages.drc_curated.coverage.layers_in_stream_without_rules", False),
+    ("stages.drc_curated.coverage.rules_skipped", False),
+    ("stages.drc_curated.coverage.deck_scope", False),
+    ("stages.drc_curated.coverage.voltage_domain_warnings", False),
+    ("stages.drc_native.status", False),
+    ("stages.drc_native.violation_count", False),
+    ("stages.drc_native.deck_sha256", False),
+    ("stages.drc_native.expected_rule_categories", False),
+    ("stages.drc_native.declared_rule_categories", False),
+    ("stages.lvs.status", False),
+    ("stages.lvs.engine", False),
+    ("stages.lvs.counts", False),
+    ("stages.lvs.warnings_only_mismatches", False),
+    ("stages.lvs.mismatch_count", False),
+    ("stages.lvs.body_verification", True),
+    ("stages.lvs.body_verification_note", False),
+    ("stages.lvs.power_connectivity.status", False),
+    ("stages.erc.status", False),
+    ("stages.erc.erc_finding_count", False),
+    ("stages.erc.supply_islands", False),
+    ("stages.erc.ties_checked", False),
+    ("stages.erc.ties_skipped", False),
+    ("provenance.klt_version", False),
+    ("provenance.klayout_version", False),
+    ("provenance.pdk.open_pdks_commit", False),
     ("provenance.inputs", False),
     ("provenance.artifacts", False),
     ("tool_gaps", False),
@@ -341,9 +405,12 @@ def check_required_fields(meta: dict, path: Path, findings: Findings) -> None:
             f"{path.name}: record_kind {meta['record_kind']!r} is not one of "
             f"{sorted(VALID_RECORD_KINDS)} (omit it for a full-flow record)",
         )
+    kind = meta.get("record_kind")
     required = (
         SYNTH_ONLY_REQUIRED_FIELDS
-        if meta.get("record_kind") == RECORD_KIND_SYNTH_ONLY
+        if kind == RECORD_KIND_SYNTH_ONLY
+        else ANALOG_LAYOUT_REQUIRED_FIELDS
+        if kind == RECORD_KIND_ANALOG_LAYOUT
         else REQUIRED_FIELDS
     )
     for dotted, may_be_null in required:
@@ -382,6 +449,14 @@ def check_required_fields(meta: dict, path: Path, findings: Findings) -> None:
                 f"{path.name}: record_id {record_id!r} does not match "
                 "<YYYYMMDD>-<HHMMSS>-<short-sha>-<corner-id>",
             )
+        elif kind == RECORD_KIND_ANALOG_LAYOUT:
+            # No corner for a layout record: the last field names the block.
+            if match.group("corner") != meta.get("block"):
+                findings.add(
+                    "record-id",
+                    f"{path.name}: record_id block field {match.group('corner')!r} "
+                    f"does not match `block` ({meta.get('block')!r})",
+                )
         elif match.group("corner") != meta.get("corner"):
             findings.add(
                 "record-id",
@@ -806,8 +881,8 @@ def check_power_connectivity(
     """
     if superseded and meta.get("record_id") in superseded:
         return
-    if meta.get("record_kind") == RECORD_KIND_SYNTH_ONLY:
-        return  # no place-and-route ran; check_synthesis_only owns this case
+    if meta.get("record_kind") in (RECORD_KIND_SYNTH_ONLY, RECORD_KIND_ANALOG_LAYOUT):
+        return  # no place-and-route ran; the kind's own check owns this case
 
     try:
         par = dotted_get(meta, "stages.place_and_route")
@@ -1116,6 +1191,216 @@ def check_synthesis_only(
 
 
 # --------------------------------------------------------------------------
+# Rule 9 -- analog layout records
+# --------------------------------------------------------------------------
+ANALOG_PDK_PINS = REPO_ROOT / "sim" / "pdk-pins.json"
+ANALOG_REPORT_NAMES = (
+    "drc-report.json",
+    "drc-native-report.json",
+    "lvs-report.json",
+    "erc-supply-report.json",
+)
+VALID_ANALOG_POWER_STATUSES = {"match", "mismatch", "unchecked"}
+
+
+def _is_count(value) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def check_analog_layout(
+    meta: dict, path: Path, findings: Findings, superseded: set[str] | None = None
+) -> None:
+    """Hold an `analog-layout` record to what DRC, LVS and ERC each said.
+
+    Freshness against the current tree (the superseded exemption) is
+    `check_freshness`'s job; this checks the record's internal consistency.
+    """
+    if meta.get("record_kind") != RECORD_KIND_ANALOG_LAYOUT:
+        return
+    name = path.name
+    tag = "analog-layout"
+    stages = meta.get("stages")
+    if not isinstance(stages, dict):
+        return  # reported by check_required_fields
+
+    design = meta.get("design") if isinstance(meta.get("design"), dict) else {}
+    if design.get("anchors_design_claim") is not False:
+        findings.add(
+            tag,
+            f"{name}: design.anchors_design_claim must be false -- one leaf's layout does "
+            "not anchor a block-level claim, and citing it is out of this record's scope",
+        )
+
+    # 9a. the GDS is the one the generator reproduces, and the record names it.
+    repro = meta.get("reproducibility") if isinstance(meta.get("reproducibility"), dict) else {}
+    if repro.get("regenerated_identical") is not True:
+        findings.add(
+            tag,
+            f"{name}: reproducibility.regenerated_identical is not true -- a layout the "
+            "generator does not reproduce byte for byte is not evidence",
+        )
+    inputs = meta.get("provenance", {}).get("inputs")
+    hashed = (
+        {e.get("path"): e.get("content_hash") for e in inputs if isinstance(e, dict)}
+        if isinstance(inputs, list)
+        else {}
+    )
+    for field in ("netlist", "gds", "generator"):
+        if design.get(field) not in hashed:
+            findings.add(
+                tag, f"{name}: design.{field} {design.get(field)!r} is not in provenance.inputs (unhashed input)"
+            )
+    gds_hash = hashed.get(design.get("gds"))
+    if gds_hash is not None and gds_hash != str(repro.get("gds_sha256")):
+        findings.add(
+            tag,
+            f"{name}: reproducibility.gds_sha256 does not equal the GDS's provenance.inputs hash",
+        )
+
+    # 9b. curated DRC: clean, and the deck's blind spots are in the record.
+    drc = stages.get("drc_curated")
+    if isinstance(drc, dict):
+        if drc.get("status") != "clean" or drc.get("violation_count") != 0:
+            findings.add(
+                tag,
+                f"{name}: stages.drc_curated is status {drc.get('status')!r} with "
+                f"{drc.get('violation_count')!r} violations; the record must be clean",
+            )
+        cov = drc.get("coverage") if isinstance(drc.get("coverage"), dict) else {}
+        for key in ("layers_in_stream_without_rules", "rules_skipped", "deck_scope"):
+            if not isinstance(cov.get(key), list):
+                findings.add(tag, f"{name}: stages.drc_curated.coverage.{key} must be a list (quote it verbatim)")
+        if not cov.get("deck_scope"):
+            findings.add(
+                tag,
+                f"{name}: stages.drc_curated.coverage.deck_scope is empty -- a clean verdict "
+                "that does not say what the deck covers is a false claim",
+            )
+
+    # 9c. native DRC: a zero-finding run is clean only against its category assertion.
+    nat = stages.get("drc_native")
+    if isinstance(nat, dict):
+        if nat.get("status") != "clean" or nat.get("violation_count") != 0:
+            findings.add(
+                tag,
+                f"{name}: stages.drc_native is status {nat.get('status')!r} with "
+                f"{nat.get('violation_count')!r} violations; the record must be clean",
+            )
+        expected, declared = nat.get("expected_rule_categories"), nat.get("declared_rule_categories")
+        if not _is_count(expected) or expected <= 0 or expected != declared:
+            findings.add(
+                tag,
+                f"{name}: stages.drc_native.expected_rule_categories ({expected!r}) must be a "
+                f"positive count equal to declared_rule_categories ({declared!r}); without the "
+                "assertion a zero-finding native run is coverage_unknown, not clean",
+            )
+
+    # 9d. LVS: a match, and nothing but warnings was left over.
+    lvs = stages.get("lvs")
+    if isinstance(lvs, dict):
+        if lvs.get("status") != "match":
+            findings.add(tag, f"{name}: stages.lvs.status is {lvs.get('status')!r}, not 'match'")
+        counts = lvs.get("counts")
+        if isinstance(counts, dict):
+            for kind in ("devices", "nets", "pins"):
+                row = counts.get(kind) if isinstance(counts.get(kind), dict) else {}
+                values = [row.get("layout"), row.get("reference"), row.get("matched")]
+                if not all(_is_count(v) for v in values) or len(set(values)) != 1 or values[0] <= 0:
+                    findings.add(
+                        tag,
+                        f"{name}: stages.lvs.counts.{kind} is {row!r}; layout, reference and "
+                        "matched must be one positive number",
+                    )
+        warnings = lvs.get("warnings_only_mismatches")
+        if isinstance(warnings, list) and lvs.get("mismatch_count") != len(warnings):
+            findings.add(
+                tag,
+                f"{name}: stages.lvs.mismatch_count ({lvs.get('mismatch_count')!r}) is not the "
+                f"{len(warnings)} warning(s) listed -- a match may carry warnings only, all listed",
+            )
+        if lvs.get("body_verification") is None and not str(lvs.get("body_verification_note", "")).strip():
+            findings.add(
+                tag,
+                f"{name}: stages.lvs.body_verification is null with no body_verification_note -- "
+                "an unreported field must say why",
+            )
+        power = lvs.get("power_connectivity") if isinstance(lvs.get("power_connectivity"), dict) else {}
+        if power.get("status") not in VALID_ANALOG_POWER_STATUSES:
+            findings.add(
+                tag,
+                f"{name}: stages.lvs.power_connectivity.status {power.get('status')!r} is not one "
+                f"of {sorted(VALID_ANALOG_POWER_STATUSES)}",
+            )
+        elif power["status"] == "unchecked" and not str(power.get("reason", "")).strip():
+            findings.add(tag, f"{name}: power_connectivity is 'unchecked' with no reason")
+
+    # 9e. ERC: every supply net one island, ties actually checked, never skipped.
+    erc = stages.get("erc")
+    if isinstance(erc, dict):
+        islands = erc.get("supply_islands")
+        if not isinstance(islands, dict) or len(islands) < 2 or set(islands.values()) != {1}:
+            findings.add(
+                tag,
+                f"{name}: stages.erc.supply_islands is {islands!r}; at least two supplies, each "
+                "exactly one island",
+            )
+        if erc.get("erc_finding_count") != 0:
+            findings.add(tag, f"{name}: stages.erc.erc_finding_count is {erc.get('erc_finding_count')!r}, not 0")
+        if not erc.get("ties_checked"):
+            findings.add(
+                tag,
+                f"{name}: stages.erc.ties_checked is empty -- no tie was actually graded "
+                "(a degenerate or undeclared tie is skipped work, not a pass)",
+            )
+        if erc.get("ties_skipped"):
+            findings.add(tag, f"{name}: stages.erc.ties_skipped is {erc.get('ties_skipped')!r}; a skipped tie is not a pass")
+        if erc.get("status") != "clean" and not str(erc.get("status_note", "")).strip():
+            findings.add(
+                tag,
+                f"{name}: stages.erc.status is {erc.get('status')!r} with no status_note saying why "
+                "it is not 'clean'",
+            )
+
+    # 9f. the decks and device models came from the pinned PDK revision (#151).
+    pdk = meta.get("provenance", {}).get("pdk")
+    commit = pdk.get("open_pdks_commit") if isinstance(pdk, dict) else None
+    if ANALOG_PDK_PINS.exists() and isinstance(commit, str):
+        pins = load_json(ANALOG_PDK_PINS)
+        allowed = {pins.get("current", {}).get("open_pdks_commit")}
+        stamp = str(meta.get("record_id", ""))[:8]
+        for retired in pins.get("retired", []):
+            if isinstance(retired, dict) and stamp <= str(retired.get("records_through", "")):
+                allowed.add(retired.get("open_pdks_commit"))
+        if commit not in allowed:
+            findings.add(
+                tag,
+                f"{name}: provenance.pdk.open_pdks_commit {commit} is not a pin sim/pdk-pins.json "
+                "accepts for this record's date (the decks and models must match the pinned PDK)",
+            )
+
+    # 9g. the frozen report copies exist, match their hashes, and cover all four checks.
+    artifacts = meta.get("provenance", {}).get("artifacts")
+    if isinstance(artifacts, list):
+        names = {Path(str(a.get("path", ""))).name for a in artifacts if isinstance(a, dict)}
+        missing = sorted(set(ANALOG_REPORT_NAMES) - names)
+        if missing:
+            findings.add(tag, f"{name}: provenance.artifacts omits report(s) {missing}")
+        for entry in artifacts:
+            if not isinstance(entry, dict) or "path" not in entry or "content_hash" not in entry:
+                findings.add(tag, f"{name}: provenance.artifacts entry needs `path` and `content_hash`: {entry!r}")
+                continue
+            target = REPO_ROOT / entry["path"]
+            if not target.exists():
+                findings.add(tag, f"{name}: artifact {entry['path']} does not exist")
+            elif sha256_file(target) != entry["content_hash"]:
+                findings.add(tag, f"{name}: artifact {entry['path']} does not match its recorded hash")
+
+    gaps = meta.get("tool_gaps")
+    if not isinstance(gaps, list) or not all(isinstance(g, str) and g.startswith("https://") for g in gaps):
+        findings.add(tag, f"{name}: tool_gaps must be a list of https URLs (the upstream filings made)")
+
+
+# --------------------------------------------------------------------------
 # Rule 6 -- DRC deck pinning and gap enumeration
 # --------------------------------------------------------------------------
 def check_drc_deck(meta: dict, path: Path, coverage: dict, findings: Findings) -> None:
@@ -1326,6 +1611,7 @@ def lint_experiment(
         check_power_connectivity(meta, path, findings, superseded)
         check_drc_deck(meta, path, coverage, findings)
         check_synthesis_only(meta, path, findings, superseded)
+        check_analog_layout(meta, path, findings, superseded)
     return len(record_paths)
 
 

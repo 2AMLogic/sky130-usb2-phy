@@ -137,6 +137,31 @@ must not be stapled onto physical measurements that no longer describe it.
 Re-run `flow/run_flow.py` first in that case. `--no-record` runs the
 regression and writes nothing, for a dry check.
 
+## Analog layout records (issue #167)
+
+`flow/analog-layout-<block>/` holds the append-only records for an analog leaf's
+layout (`record_kind: "analog-layout"`), minted by
+`layout/analog/<block>/run_checks.py --record`. They share this directory's
+mechanics (manifest, base-ref comparison, freshness, supersession) but have no
+corner and no timing: the record id ends in the block name, not a corner, and
+`ANALOG_LAYOUT_REQUIRED_FIELDS` in `check_records.py` is normative. On top of
+the shared rules the lint (`check_analog_layout`) fails a record unless:
+
+- the curated DRC verdict is clean **and** quotes its coverage (`deck_scope`,
+  `rules_skipped`, `layers_in_stream_without_rules`, `voltage_domain_warnings`);
+- the PDK-native DRC run is clean against its `--expect-rule-categories`
+  assertion (without it a zero-finding native run is `coverage_unknown`);
+- LVS is `match` with equal, non-zero device/net/pin counts and nothing left over
+  but listed warnings, and `body_verification: null` says why;
+- every supply net in the ERC report is exactly one island, the ties were
+  actually *checked* (a skipped tie is not a pass), and `erc_finding_count` is 0;
+- the GDS is the one the generator reproduces, the open_pdks revision is accepted by
+  `sim/pdk-pins.json`, and the frozen report copies match their hashes;
+- `design.anchors_design_claim` is `false`: one leaf does not anchor a block claim.
+
+The conventions the layouts follow are in
+[`layout/analog/README.md`](../layout/analog/README.md).
+
 ## Corner matrix
 
 `flow/corners.json` is the single source of truth, and it is **not
