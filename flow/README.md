@@ -90,7 +90,7 @@ outright.
 If `$PDK_ROOT` is unset, `run_flow.py` resolves it via `klt pdk find` and
 exports it before invoking any stage. That is a deliberate workaround for
 [klayout-tools#1868](https://github.com/2AMLogic/klayout-tools/issues/1868):
-`klt` can resolve a PDK through its own search order (e.g. `~/.volare`) with
+`klt` can resolve a PDK through its own search order with
 `$PDK_ROOT` unset, but the documented container wrapper for `openroad` only
 bind-mounts `$PDK_ROOT` — so every stage dies on an opaque `cannot read file
 <liberty>` from inside the container. Delete the workaround once #1868 is

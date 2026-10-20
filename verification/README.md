@@ -21,7 +21,7 @@ the pytest layer:
   new request file is picked up by CI with no edit to the script.
 
 **Not installed in CI, on purpose:** Yosys (`yowasp-yosys`) and the sky130A
-PDK (`volare fetch`/`enable`), the other two pieces of
+PDK (`ciel enable`), the other two pieces of
 `docs/environment-setup.md`'s full bootstrap. `npm run check:ci` never calls
 `klt synthesize` — none of the `request-*.json` files drive a synthesis
 request, and none of the RTL under test instantiates `sky130_fd_sc_hd`

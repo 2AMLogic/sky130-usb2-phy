@@ -35,18 +35,34 @@ def sha256_file(path: Path) -> str:
     return sha256_bytes(Path(path).read_bytes())
 
 
-def find_pdk_dir(name: str) -> Path | None:
+def pdk_roots() -> list[Path]:
+    """PDK search roots in order: explicit `$PDK_ROOT`, then ciel's `~/.ciel`, then system paths."""
     import os
 
     roots = []
     if os.environ.get("PDK_ROOT"):
         roots.append(Path(os.environ["PDK_ROOT"]))
-    roots += [Path("~/.volare").expanduser(), Path("~/.ciel").expanduser(), Path("/usr/share/pdk"),
-              Path("/usr/local/share/pdk"), Path("/opt/pdk")]
-    for root in roots:
+    roots += [Path("~/.ciel").expanduser(), Path("/usr/share/pdk"), Path("/usr/local/share/pdk"),
+              Path("/opt/pdk")]
+    return roots
+
+
+def find_pdk_dir(name: str) -> Path | None:
+    for root in pdk_roots():
         if (root / name / "libs.tech" / "ngspice").is_dir():
             return root / name
     return None
+
+
+def pdk_open_pdks_commit(pdk: Path) -> str:
+    """The open_pdks revision in the tree's `SOURCES` file, or "unknown" (which never matches a pin)."""
+    sources = pdk / "SOURCES"
+    if sources.is_file():
+        for line in sources.read_text().splitlines():
+            parts = line.split()
+            if len(parts) >= 2 and parts[0] == "open_pdks":
+                return parts[1]
+    return "unknown"
 
 
 def lib_sections(lib_path: Path) -> set[str]:
@@ -97,7 +113,12 @@ def check_env(matrix: mx.Matrix) -> dict:
     """Confirm, on this host, the PDK, model library and corner sections."""
     pdk = find_pdk_dir(matrix.pdk["name"])
     if pdk is None:
-        raise RunError(f"{matrix.pdk['name']} not found (set PDK_ROOT or install it under ~/.volare)")
+        raise RunError(f"{matrix.pdk['name']} not found (set PDK_ROOT or install it under ~/.ciel: see docs/environment-setup.md)")
+    commit = pdk_open_pdks_commit(pdk)
+    if commit != matrix.pdk["open_pdks_commit"]:
+        raise RunError(f"PDK at {pdk} is open_pdks {commit}, but the pin in sim/corners.json is "
+                       f"open_pdks {matrix.pdk['open_pdks_commit']}; install the pinned revision under "
+                       "~/.ciel or point PDK_ROOT at it")
     lib = pdk / matrix.pdk["lib"]
     if not lib.is_file():
         raise RunError(f"model library missing: {lib}")
@@ -107,13 +128,6 @@ def check_env(matrix: mx.Matrix) -> dict:
     sections, bad = section_evidence(lib, matrix.process)
     if bad:
         raise RunError("pinned library section mapping differs from the approved one: " + "; ".join(bad[:3]))
-    sources = pdk / "SOURCES"
-    commit = "unknown"
-    if sources.is_file():
-        for line in sources.read_text().splitlines():
-            parts = line.split()
-            if len(parts) >= 2 and parts[0] == "open_pdks":
-                commit = parts[1]
     return {"path": str(pdk), "lib": str(lib), "lib_sha256": sha256_file(lib), "open_pdks_commit": commit,
             "sections_present": list(matrix.process), "sections": sections}
 

@@ -64,7 +64,7 @@ jobs:
       # exercising the pytest layer while still reporting green).
       #
       # Deliberately NOT installed here: Yosys (`yowasp-yosys`) and the
-      # sky130A PDK (`volare fetch`). Both are part of environment-setup.md's
+      # sky130A PDK (`ciel enable`). Both are part of environment-setup.md's
       # full bootstrap, but they back `klt synthesize` (the docs/baseline.md
       # synthesis smoke test), which `scripts/check-ci.sh` never invokes --
       # it only calls `klt functional-verification` against the
