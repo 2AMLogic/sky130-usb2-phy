@@ -1,0 +1,18 @@
+* se-receiver-mismatch (D+) -- sky130 single-ended D+ receiver switching threshold under local device mismatch
+*
+* Circuit body for `klt sim` Monte Carlo (sim/run_mismatch.py). The design netlist
+* (design/netlist/se_receiver_dp.spice) is appended by the runner (mc.json "include") and
+* frozen into the immutable per-campaign snapshot. The request supplies the `*_mm` .lib
+* section (mc_mm_switch=1), .temp, the supply (vsup) and the per-sample seed.
+*
+* Same stimulus and measurements as sim/se-receiver-dp-thresholds: the line input is swept
+* 0 - 3.0 V in 1 mV steps. The threshold depends on the R1/R2 divider ratio (both
+* res_xhigh_po_1p41, independent mismatch per instance) and on the comparator offset (MOS
+* mismatch). The deterministic negative control replaces exactly the XR2 length 14 in the
+* appended design netlist with 60 (a fixed divider-ratio skew that moves VREF past 2.0 V).
+
+vsup vdd 0 dc 3.3
+vi vdd vddr dc 0
+vin in 0 dc 0
+ehalf half 0 vol='v(vdd)/2'
+xrx vddr 0 in rxddp se_receiver_dp

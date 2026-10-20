@@ -1,0 +1,163 @@
+{
+  "schema": "sky130-usb2-phy.sim.mismatch/1",
+  "experiment": "se-receiver-mismatch",
+  "claim": "Switching threshold and output logic levels of the sky130 single-ended D+ and D- receivers under local device mismatch (Monte Carlo, vary=mismatch, `*_mm` library sections) at tt (27 C, 3.3 V) and at the binding corner of the 45-point records (ff, 100 C, 3.0 V), against spec/usb2-phy.md section 6 row 'Single-ended receiver thresholds' VIH > 2.0 V, VIL < 0.8 V, read as in docs/porting-plan.md and the deterministic records (threshold strictly inside (0.8 V, 2.0 V), output a valid logic level below 0.8 V and above 2.0 V). Schematic-level, no layout parasitics; not a signoff or catalog-tier claim.",
+  "spec_rows": [
+    "Single-ended receiver thresholds"
+  ],
+  "corners": [
+    {
+      "id": "tt",
+      "process": "tt_mm",
+      "temperature_c": 27.0,
+      "supply_v": 3.3,
+      "basis": "typical corner with mismatch enabled"
+    },
+    {
+      "id": "binding",
+      "process": "ff_mm",
+      "temperature_c": 100.0,
+      "supply_v": 3.0,
+      "basis": "binding corner of the 45-point records sim/se-receiver-dp-thresholds/records/20261009-142213-484240f.md and sim/se-receiver-dm-thresholds/records/20261009-142853-484240f.md: the lowest threshold (1.2505 V, 450 mV above VIL) is at ff / 100 C / 3.00 V; the highest (1.5136 V at ss / -40 C / 3.60 V) is 486 mV below VIH"
+    }
+  ],
+  "receivers": [
+    {
+      "id": "dp",
+      "netlist": "se_rx_dp_mc_tb.spice",
+      "include": [
+        "../../../design/netlist/se_receiver_dp.spice"
+      ],
+      "analysis": {
+        "kind": "dc",
+        "args": "vin 0 3.0 0.001"
+      },
+      "measure": {
+        "vth_v": {
+          "spice": ".meas dc vth_v WHEN v(rxddp)=v(half) RISE=1"
+        },
+        "rxd_low_max_v": {
+          "spice": ".meas dc rxd_low_max_v MAX v(rxddp) FROM=0 TO=0.8"
+        },
+        "rxd_high_min_v": {
+          "spice": ".meas dc rxd_high_min_v MIN v(rxddp) FROM=2.0 TO=3.0"
+        }
+      },
+      "limits": {
+        "vth_v": {
+          "min": 0.8,
+          "max": 2.0,
+          "exclusive_min": true,
+          "exclusive_max": true
+        },
+        "rxd_low_max_v": {
+          "max_frac_vdd": 0.1
+        },
+        "rxd_high_min_v": {
+          "min_frac_vdd": 0.9
+        }
+      },
+      "control": {
+        "description": "fixed divider-ratio skew: XR2 length 14 -> 60 (VREF = VDD x L2/(L1+L2) moves from 0.42 x VDD to 0.76 x VDD, past VIH)",
+        "replace": [
+          {
+            "find": "XR2 VSS VREF VSS sky130_fd_pr__res_xhigh_po_1p41 L=14 ",
+            "with": "XR2 VSS VREF VSS sky130_fd_pr__res_xhigh_po_1p41 L=60 "
+          }
+        ],
+        "must_detect": [
+          "vth_v",
+          "rxd_high_min_v"
+        ]
+      },
+      "spread_measures": [
+        "vth_v"
+      ]
+    },
+    {
+      "id": "dm",
+      "netlist": "se_rx_dm_mc_tb.spice",
+      "include": [
+        "../../../design/netlist/se_receiver_dm.spice"
+      ],
+      "analysis": {
+        "kind": "dc",
+        "args": "vin 0 3.0 0.001"
+      },
+      "measure": {
+        "vth_v": {
+          "spice": ".meas dc vth_v WHEN v(rxddm)=v(half) RISE=1"
+        },
+        "rxd_low_max_v": {
+          "spice": ".meas dc rxd_low_max_v MAX v(rxddm) FROM=0 TO=0.8"
+        },
+        "rxd_high_min_v": {
+          "spice": ".meas dc rxd_high_min_v MIN v(rxddm) FROM=2.0 TO=3.0"
+        }
+      },
+      "limits": {
+        "vth_v": {
+          "min": 0.8,
+          "max": 2.0,
+          "exclusive_min": true,
+          "exclusive_max": true
+        },
+        "rxd_low_max_v": {
+          "max_frac_vdd": 0.1
+        },
+        "rxd_high_min_v": {
+          "min_frac_vdd": 0.9
+        }
+      },
+      "control": {
+        "description": "fixed divider-ratio skew: XR2 length 14 -> 60 (VREF = VDD x L2/(L1+L2) moves from 0.42 x VDD to 0.76 x VDD, past VIH)",
+        "replace": [
+          {
+            "find": "XR2 VSS VREF VSS sky130_fd_pr__res_xhigh_po_1p41 L=14 ",
+            "with": "XR2 VSS VREF VSS sky130_fd_pr__res_xhigh_po_1p41 L=60 "
+          }
+        ],
+        "must_detect": [
+          "vth_v",
+          "rxd_high_min_v"
+        ]
+      },
+      "spread_measures": [
+        "vth_v"
+      ]
+    }
+  ],
+  "record": {
+    "netlist_provenance": "schematic-derived netlists: xschem export of design/se_receiver_dp.sch and design/se_receiver_dm.sch (design/netlist/se_receiver_{dp,dm}.spice) plus the Monte Carlo testbench decks, frozen per campaign; no layout, no parasitic extraction",
+    "statistical_convention": "Monte Carlo of local device mismatch only (monte_carlo.vary = mismatch): n = 400 samples per corner per receiver, base seed 166, per-sample seeds derived by `klt sim`; every MOS and res_xhigh_po_1p41 instance (R1, R2, RBIAS and the comparator devices) draws independent mismatch (mc_mm_switch = 1 through the `*_mm` library sections); global process spread is the separate corner axis and is not sampled",
+    "method": [
+      "Stimulus and measurements as sim/se-receiver-dp-thresholds and sim/se-receiver-dm-thresholds: the line input swept 0 - 3.0 V at 1 mV; supply, temperature and library section of the corner.",
+      "Row measurements: `vth_v` = first rising crossing of RXD through VDD/2, must lie strictly inside (0.8 V, 2.0 V); `rxd_low_max_v` = maximum of RXD over input 0 - 0.8 V, must be <= 0.1 x VDD; `rxd_high_min_v` = minimum of RXD over input 2.0 - 3.0 V, must be >= 0.9 x VDD. A sample with no rising crossing (an inverted or dead receiver) has no `vth_v` and is reported by klt yield as `errored`; the lint requires errored = 0 for a PASS record.",
+      "Each (receiver, corner) is its own population: one `klt sim` Monte Carlo request, backend batch, per receiver per corner; nothing is pooled across corners or across D+/D-. `klt yield-samples` pairs each nominal campaign with its negative-control campaign (same deck, same seeds, the deterministic skew below), and `klt yield` grades the pair against the row limits with target_yield 0.99 at 95 % confidence.",
+      "Negative control (deterministic): the control campaign lengthens R2 from 14 to 60 (fixed divider-ratio skew), which moves VREF and so the threshold above 2.0 V at every sample. The yield report must flag it `detected` for every measurement that the skew degrades (at least `vth_v`); a campaign whose control is `not_detected` for `vth_v` cannot be a PASS record.",
+      "Mismatch activity: as in sim/diff-receiver-mismatch; the stddev of `vth_v` in each yield report's `distribution` is the evidence that mismatch reached the divider and the comparator (a stddev of zero would fail the record).",
+      "PDK: the pinned open_pdks revision of sim/pdk-pins.json (current pin); each record states the revision and the model library sha256."
+    ],
+    "footer": "Scope: schematic-level statistical evidence for one block against the ratified single-ended-threshold row, at the corners named in the record. Local device mismatch only; global process spread is covered by the deterministic corner records, and the corner x mismatch combination is limited to the two corners named. It does not claim layout, DRC/LVS, input hysteresis, level shifting or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance."
+  },
+  "monte_carlo": {
+    "n": 400,
+    "n_control": 50,
+    "seed": 166,
+    "vary": "mismatch"
+  },
+  "yield": {
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "target_yield": 0.99,
+    "sample_size_justification": "target_yield 0.99 at 95 % two-sided confidence: with zero observed failures the exact (Clopper-Pearson) lower bound reaches 0.99 only for n >= 368 (klt yield `required_n_for_target`), so n = 400 per corner is the smallest round count that can support the claim; the +/-0.01 precision target needs n >= 183. A failing row is not rescued by a larger n: it is recorded as failing."
+  },
+  "batch": {
+    "capacity_wait_s": 900,
+    "max_concurrent_jobs": 2
+  },
+  "remote_hosts": {
+    "nominal": 4,
+    "control": 1
+  }
+}

@@ -35,7 +35,7 @@ REQUIRED_FIELDS = ("Record ID", "Status", "Claim", "Netlist provenance", "Corner
 RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
 FIELD_RE = re.compile(r"^- \*\*(?P<k>[^*]+)\*\*:\s*(?P<v>.*)$")
 CORNER_LOG_RE = re.compile(r"^(?P<p>[a-z]+(?:_[a-z]+)?)_(?P<t>-?\d+(?:\.\d+)?)c_(?P<v>\d+\.\d\d)v\.log$")
-EVIDENCE_PATH_RE = re.compile(r"^sim/[^/]+/(records|netlist-snapshots|corners)/")
+EVIDENCE_PATH_RE = re.compile(r"^sim/[^/]+/(records|netlist-snapshots|corners|campaigns)/")
 NO_SUPERSESSION_RE = re.compile(r"^\(?\s*(none|n/?a)\b", re.IGNORECASE)
 
 
@@ -57,7 +57,7 @@ def _git(repo: Path, *args: str):
 
 
 def check_append_only(repo: Path, base_ref: str) -> list[str]:
-    """Only additions are allowed under sim/*/{records,netlist-snapshots,corners}/."""
+    """Only additions are allowed under sim/*/{records,netlist-snapshots,corners,campaigns}/."""
     if not base_ref:
         return ["append-only: no base ref given (set FLOW_LINT_BASE_REF or pass --base-ref)"]
     if _git(repo, "rev-parse", "--verify", "--quiet", f"{base_ref}^{{commit}}").returncode != 0:
@@ -245,7 +245,9 @@ def lint_all(sim_dir: Path = mx.SIM_DIR) -> list[str]:
             problems.append(f"{cfg['file']}: {exc}")
     for exp in sorted(p for p in sim_dir.iterdir() if (p / "testbench" / "tb.json").is_file()):
         problems += [f"{exp.name}: {p}" for p in lint_experiment(exp)]
-    return problems
+    from . import mismatch_lint  # experiments with testbench/mc.json (mismatch Monte Carlo)
+
+    return problems + mismatch_lint.lint_all(sim_dir)
 
 
 def main(argv=None) -> int:

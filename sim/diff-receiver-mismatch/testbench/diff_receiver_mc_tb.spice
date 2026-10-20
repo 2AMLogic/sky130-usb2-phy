@@ -1,0 +1,40 @@
+* diff-receiver-mismatch -- sky130 differential receiver input offset under local device mismatch
+*
+* Circuit body for `klt sim` Monte Carlo (sim/run_mismatch.py). The design netlist
+* (design/netlist/differential_receiver.spice) is appended by the runner (mc.json
+* "include") and frozen into the immutable per-campaign snapshot. The request supplies the
+* `*_mm` .lib section (mc_mm_switch=1), .temp, the supply (vsup) and the per-sample seed.
+*
+* Same stimulus as sim/diff-receiver-sensitivity: one receiver instance per common-mode point
+* (0.8 / 1.65 / 2.5 V), DP = VCM + VDIFF/2 + skew_v/2, DM = VCM - VDIFF/2 - skew_v/2 (differential input VDIFF + skew_v, common mode unchanged), VDIFF swept
+* -400 ... +400 mV in 1 mV steps. Each instance draws its own mismatch, so one sample yields
+* three independent input-referred offsets.
+*
+* skew_v is the deterministic negative-control knob: 0 in the nominal campaign. The control
+* campaign replaces exactly the `.param skew_v=0` card below with a fixed 0.25 V input-pair
+* offset (an equivalent input-referred Vth skew), which must push the threshold past the
+* 200 mV row. The skew is split across both inputs so the common mode, and the input range of the pair, stay where the nominal campaign has them.
+
+.param skew_v=0
+
+vsup vdd 0 dc 3.3
+vd vd 0 dc 0
+ehalf half 0 vol='v(vdd)/2'
+
+* ---- common mode 0.8 V ----
+vcm08 cm08 0 dc 0.8
+edp08 dp08 0 vol='v(cm08)+v(vd)/2+skew_v/2'
+edm08 dm08 0 vol='v(cm08)-v(vd)/2-skew_v/2'
+x08 vdd 0 dp08 dm08 rxd08 differential_receiver
+
+* ---- common mode 1.65 V ----
+vcm165 cm165 0 dc 1.65
+edp165 dp165 0 vol='v(cm165)+v(vd)/2+skew_v/2'
+edm165 dm165 0 vol='v(cm165)-v(vd)/2-skew_v/2'
+x165 vdd 0 dp165 dm165 rxd165 differential_receiver
+
+* ---- common mode 2.5 V ----
+vcm25 cm25 0 dc 2.5
+edp25 dp25 0 vol='v(cm25)+v(vd)/2+skew_v/2'
+edm25 dm25 0 vol='v(cm25)-v(vd)/2-skew_v/2'
+x25 vdd 0 dp25 dm25 rxd25 differential_receiver
