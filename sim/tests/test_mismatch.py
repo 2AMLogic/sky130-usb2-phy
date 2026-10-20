@@ -143,12 +143,23 @@ def test_grade_rejects_a_missing_measurement():
 def test_pdk_problems_demand_staged_pinned_models():
     pdk = {"open_pdks_commit": PINS["open_pdks_commit"], "lib_sha256": PINS["lib_sha256"]}
     good = {"models_staged": True, "provenance_pdk_version": f"open_pdks {pdk['open_pdks_commit']}",
-            "models_lib_sha256": pdk["lib_sha256"], "job_id": "klt-sim-1", "worker_image_pdk_stamp": "open_pdks old"}
+            "models_lib_sha256": pdk["lib_sha256"], "job_ids": ["klt-sim-1"], "worker_image_pdk_stamps": ["open_pdks old"]}
     assert mm.pdk_problems("s", good, pdk) == []
     assert any("models_staged" in p for p in mm.pdk_problems("s", {**good, "models_staged": False}, pdk))
     assert any("provenance" in p for p in mm.pdk_problems("s", {**good, "provenance_pdk_version": "open_pdks c6d73a3"}, pdk))
     assert any("sha256" in p for p in mm.pdk_problems("s", {**good, "models_lib_sha256": "0" * 64}, pdk))
-    assert any("job id" in p for p in mm.pdk_problems("s", {**good, "job_id": None}, pdk))
+    assert any("job id" in p for p in mm.pdk_problems("s", {**good, "job_ids": []}, pdk))
+
+
+def test_exec_pdk_reads_every_shard_of_a_sharded_report():
+    shard = lambda job, staged: {"job_id": job, "instance_type": "c7i", "lifecycle": "spot",
+                                 "worker_environment": {"pdk": {"models_staged": staged, "stamp_text": "open_pdks old"}}}
+    base = {"environment": {"models_lib_sha256": "h", "remote": {"fleet": [shard("a", True), shard("b", True)]}},
+            "provenance": {"pdk": {"version": "open_pdks x"}}}
+    ex = mm.exec_pdk(base)
+    assert ex["job_ids"] == ["a", "b"] and ex["models_staged"] is True
+    base["environment"]["remote"]["fleet"][1] = shard("b", False)
+    assert mm.exec_pdk(base)["models_staged"] is False
 
 
 # ---------------------------------------------------------------- lint on a synthetic record

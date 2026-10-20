@@ -28,7 +28,12 @@ def main(argv=None) -> int:
     ap.add_argument("--max-in-flight", type=int, default=4, help="batch requests in flight at once (default 4)")
     ap.add_argument("--capacity-retries", type=int, default=0,
                     help="re-submit a request refused for fleet capacity up to N more times (default 0)")
-    ap.add_argument("--only", nargs="+", help="debug subset: receiver id(s); cannot be recorded")
+    ap.add_argument("--from-work", type=Path, nargs="+", default=None, metavar="DIR",
+                    help="grade and record the output of batch-set(s) that already finished (previous "
+                         "sim/.work/<experiment>/<id> directories, later ones win for a campaign they complete) "
+                         "instead of submitting again")
+    ap.add_argument("--only", nargs="+", help="subset: receiver id(s) and/or campaign stem(s) such as dp-tt-nominal "
+                    "(e.g. to resubmit one request after a Spot reclaim); cannot be recorded, use --from-work")
     ap.add_argument("--no-write", action="store_true", help="grade but do not record evidence")
     ap.add_argument("--klt-runner-version-check", choices=("enforce", "warn"), default=None,
                     help="batch only: how to treat fleet-runner/client klt version skew (default enforce)")
@@ -49,7 +54,7 @@ def main(argv=None) -> int:
             return 3
         return mismatch.run(args.experiment, args.klt, args.hosts, args.klt_runner_version_check,
                             args.max_in_flight, not args.no_write, args.only, args.supersedes,
-                            args.capacity_retries)
+                            args.capacity_retries, args.from_work)
     except (runner.RunError, mx.MatrixError, mismatch.MismatchError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 3

@@ -1,0 +1,53 @@
+{
+  "netlist": "dp-tt-control.spice",
+  "engine": "ngspice",
+  "backend": "batch",
+  "models": {
+    "pdk": "sky130A",
+    "lib": "libs.tech/ngspice/sky130.lib.spice"
+  },
+  "corners": {
+    "process": [
+      "tt_mm"
+    ],
+    "supply_v": {
+      "vsup": [
+        3.3
+      ]
+    },
+    "temperature_c": [
+      27.0
+    ]
+  },
+  "monte_carlo": {
+    "n": 50,
+    "seed": 166,
+    "vary": "mismatch"
+  },
+  "analysis": {
+    "kind": "dc",
+    "args": "vin 0 3.0 0.001"
+  },
+  "measurements": [
+    {
+      "name": "vth_v",
+      "spice": ".meas dc vth_v WHEN v(rxddp)=v(half) RISE=1"
+    },
+    {
+      "name": "rxd_low_max_v",
+      "spice": ".meas dc rxd_low_max_v MAX v(rxddp) FROM=0 TO=0.8"
+    },
+    {
+      "name": "rxd_high_min_v",
+      "spice": ".meas dc rxd_high_min_v MIN v(rxddp) FROM=2.0 TO=3.0"
+    }
+  ],
+  "options": {
+    "timeout_s": 900,
+    "stage_model_inputs": true
+  },
+  "batch": {
+    "capacity_wait_s": 900,
+    "max_concurrent_jobs": 2
+  }
+}

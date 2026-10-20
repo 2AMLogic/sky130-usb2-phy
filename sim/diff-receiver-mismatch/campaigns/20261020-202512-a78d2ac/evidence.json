@@ -1,0 +1,634 @@
+{
+  "author": "ubuntu (agent)",
+  "backend": "batch",
+  "campaigns": [
+    {
+      "corner": "tt",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-b886d9ad6df6",
+          "klt-sim-5375802a0b2f",
+          "klt-sim-e340e109688d",
+          "klt-sim-8c234535a88b"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-b886d9ad6df6",
+        "klt-sim-5375802a0b2f",
+        "klt-sim-e340e109688d",
+        "klt-sim-8c234535a88b"
+      ],
+      "kind": "nominal",
+      "receiver": "diff",
+      "report": true,
+      "stem": "diff-tt-nominal"
+    },
+    {
+      "corner": "tt",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-65f37ffa7b4e"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-65f37ffa7b4e"
+      ],
+      "kind": "control",
+      "receiver": "diff",
+      "report": true,
+      "stem": "diff-tt-control"
+    },
+    {
+      "corner": "binding",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-d035c234dab8",
+          "klt-sim-82159f71adb9",
+          "klt-sim-e33b0b8ea9dd",
+          "klt-sim-7ebf156cf0d1"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-d035c234dab8",
+        "klt-sim-82159f71adb9",
+        "klt-sim-e33b0b8ea9dd",
+        "klt-sim-7ebf156cf0d1"
+      ],
+      "kind": "nominal",
+      "receiver": "diff",
+      "report": true,
+      "stem": "diff-binding-nominal"
+    },
+    {
+      "corner": "binding",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-39eb6cde7a3e"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-39eb6cde7a3e"
+      ],
+      "kind": "control",
+      "receiver": "diff",
+      "report": true,
+      "stem": "diff-binding-control"
+    }
+  ],
+  "collected_from_batch_set": [
+    "20261020-183613-a78d2ac"
+  ],
+  "corners": [
+    {
+      "basis": "typical corner with mismatch enabled",
+      "id": "tt",
+      "process": "tt_mm",
+      "supply_v": 3.3,
+      "temperature_c": 27.0
+    },
+    {
+      "basis": "binding corner of the 45-point record sim/diff-receiver-sensitivity/records/20261009-121939-0555da1.md: the largest |vth| (-75.97 mV, vth_cm2p50_v) is at sf / 100 C / 3.00 V",
+      "id": "binding",
+      "process": "sf_mm",
+      "supply_v": 3.0,
+      "temperature_c": 100.0
+    }
+  ],
+  "experiment": "diff-receiver-mismatch",
+  "files": {
+    "diff-binding-control.report.json": "77244d6d4c6eed817122d0580ab0a4e5d4fd0fbf5a3292e254afa143c50fbaff",
+    "diff-binding-control.request.json": "7efc7d2ef3ad41505155cbbe0bd198b0ab1b06d746264dcb68e70f208cc04aef",
+    "diff-binding-control.spice": "51a6bd64cd08a32253724b71a1526dc909cf6e192ae6244892f0d9f802fb6b17",
+    "diff-binding-nominal.report.json": "0bc6b905016d9f06f99294e0f6fafbe01b40b2be18a902d9a2e5f3bd8c21f009",
+    "diff-binding-nominal.request.json": "6b38b9a55540de551846ad1e43c8b9d507013b9a9cc38816e97b8affac7ea9bc",
+    "diff-binding-nominal.spice": "1419f1914c64174ce8cad10ed78a62f1551daa9ea098476a2d28d16239875c6e",
+    "diff-binding.limits.json": "d14382711af33d9c9953b0cc17f47fa2e9b7f65acad93420c46ac85d1bcff1ec",
+    "diff-binding.samples.json": "e63f053bc9411ba7578a7da106eb7ccecdca7849432621ec4f66057fd223e941",
+    "diff-binding.yield.json": "51dcda9c3038c2b822e930dff02db7bfae20d07d658a5ff344a69f4072de6e07",
+    "diff-tt-control.report.json": "c56ad783780df3678600bff298a43b5d41de73fef72acf63014287b863d94173",
+    "diff-tt-control.request.json": "447712cff4c13ac025c27d6a1420d6c7e4aa14358af38e617dbdb41cae72ea92",
+    "diff-tt-control.spice": "51a6bd64cd08a32253724b71a1526dc909cf6e192ae6244892f0d9f802fb6b17",
+    "diff-tt-nominal.report.json": "5aa5a2c95596a945308c8a9a19d14c8a7c63fb9aa83c03cc1078ce48048d0f4b",
+    "diff-tt-nominal.request.json": "8afbd175a423cc2d5b9ce92ee0e98b4320f3efb04ea7052ecbff8b9dab16de4f",
+    "diff-tt-nominal.spice": "1419f1914c64174ce8cad10ed78a62f1551daa9ea098476a2d28d16239875c6e",
+    "diff-tt.limits.json": "0b1837bcf90d9ea5089cb421a9108fbfc888d79685c18a6ba6b1dfaf12e929bc",
+    "diff-tt.samples.json": "d10015ec93457c9e4048586da20867559f9f174be4100caca42096cd6ce7ea91",
+    "diff-tt.yield.json": "3419c8727e1713b3c4c7500b5e5bc9fe6e35afc83ceeca24ff1fed3f0d620c39",
+    "klt-batch-set.json": "b4e94d38dd73ef65841b10ea6c14083689a9f55fdbad1b754045a4609d017255",
+    "klt-stderr.txt": "93382ccf4ae2c1552213ed458a010dbc5437a9612deddae1c8fb9c62d6ec64d9",
+    "mc.json": "8df72879657729dff16ec9505a3cffeae254e69a6ae8d6e989de94a951b76969"
+  },
+  "git": {
+    "dirty": true,
+    "head": "a78d2aca778b5cb6952688b7dc32ac4a58edf1dd"
+  },
+  "harness_version": "0.1.0",
+  "klt_version": "klt 0.7.1.dev2264+gcba5e957d9ed",
+  "monte_carlo": {
+    "n": 400,
+    "n_control": 50,
+    "seed": 166,
+    "vary": "mismatch"
+  },
+  "pdk": {
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "name": "sky130A",
+    "open_pdks_commit": "f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
+  },
+  "problems": [],
+  "record_id": "20261020-202512-a78d2ac",
+  "schema": "sky130-usb2-phy.sim.mismatch-evidence/1",
+  "started_utc": "2026-10-20T20:25:12+00:00",
+  "status": "PASS",
+  "yield": {
+    "confidence": 0.95,
+    "sample_size_justification": "target_yield 0.99 at 95 % two-sided confidence: with zero observed failures the exact (Clopper-Pearson) lower bound reaches 0.99 only for n >= 368 (klt yield `required_n_for_target`), so n = 400 per corner is the smallest round count that can support the claim; the +/-0.01 precision target needs n >= 183. A failing row is not rescued by a larger n: it is recorded as failing.",
+    "target_ci_halfwidth": 0.01,
+    "target_yield": 0.99
+  },
+  "yields": [
+    {
+      "corner": "tt",
+      "limits": "diff-tt.limits.json",
+      "measurements": {
+        "rxd_m200_cm0p80_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.33,
+            "target_yield": 0.99
+          },
+          "max": 1.35612e-09,
+          "mean": 1.326420825e-09,
+          "min": 1.30523e-09,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 8.977449027813662e-12,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_m200_cm1p65_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.33,
+            "target_yield": 0.99
+          },
+          "max": 1.35215e-09,
+          "mean": 1.3255492000000002e-09,
+          "min": 1.30019e-09,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 8.806709384637574e-12,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_m200_cm2p50_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.33,
+            "target_yield": 0.99
+          },
+          "max": 1.38864e-09,
+          "mean": 1.3623976749999998e-09,
+          "min": 1.33153e-09,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 9.88916945580817e-12,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_p200_cm0p80_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.97,
+            "target_yield": 0.99
+          },
+          "max": 3.3,
+          "mean": 3.2999999999999754,
+          "min": 3.3,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 2.4455495040329057e-14,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_p200_cm1p65_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.97,
+            "target_yield": 0.99
+          },
+          "max": 3.3,
+          "mean": 3.2999999999999754,
+          "min": 3.3,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 2.4455495040329057e-14,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_p200_cm2p50_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.97,
+            "target_yield": 0.99
+          },
+          "max": 3.3,
+          "mean": 3.2999999999999754,
+          "min": 3.3,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 2.4455495040329057e-14,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_cm0p80_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 0.2,
+            "min": -0.2,
+            "target_yield": 0.99
+          },
+          "max": 0.000541635,
+          "mean": -0.021299332504999997,
+          "min": -0.0426827,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.007254719757462818,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_cm1p65_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 0.2,
+            "min": -0.2,
+            "target_yield": 0.99
+          },
+          "max": 0.00344597,
+          "mean": -0.0208827621525,
+          "min": -0.0440853,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.007444354656253902,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_cm2p50_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 0.2,
+            "min": -0.2,
+            "target_yield": 0.99
+          },
+          "max": -0.00494666,
+          "mean": -0.024909099075,
+          "min": -0.0595241,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.00843790178086494,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        }
+      },
+      "receiver": "diff",
+      "samples": "diff-tt.samples.json",
+      "yield": "diff-tt.yield.json",
+      "yield_status": "pass"
+    },
+    {
+      "corner": "binding",
+      "limits": "diff-binding.limits.json",
+      "measurements": {
+        "rxd_m200_cm0p80_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.3,
+            "target_yield": 0.99
+          },
+          "max": 1.80189e-09,
+          "mean": 1.7393227249999985e-09,
+          "min": 1.68199e-09,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 1.9752834378623954e-11,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_m200_cm1p65_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.3,
+            "target_yield": 0.99
+          },
+          "max": 1.90442e-09,
+          "mean": 1.832678975000001e-09,
+          "min": 1.76177e-09,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 2.80853181741231e-11,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_m200_cm2p50_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.3,
+            "target_yield": 0.99
+          },
+          "max": 0.0012839,
+          "mean": 1.61675689325e-05,
+          "min": 2.66225e-07,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 7.998860385084783e-05,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_p200_cm0p80_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.7,
+            "target_yield": 0.99
+          },
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.0,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_p200_cm1p65_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.7,
+            "target_yield": 0.99
+          },
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.0,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_p200_cm2p50_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.7,
+            "target_yield": 0.99
+          },
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.0,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_cm0p80_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 0.2,
+            "min": -0.2,
+            "target_yield": 0.99
+          },
+          "max": -0.00156038,
+          "mean": -0.023011946050000027,
+          "min": -0.0444728,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.006957566450372703,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_cm1p65_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 0.2,
+            "min": -0.2,
+            "target_yield": 0.99
+          },
+          "max": -0.00328675,
+          "mean": -0.026323638325,
+          "min": -0.0485824,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.007124000292276654,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_cm2p50_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 0.2,
+            "min": -0.2,
+            "target_yield": 0.99
+          },
+          "max": -0.051599,
+          "mean": -0.07556112599999994,
+          "min": -0.112256,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.010756690942457764,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        }
+      },
+      "receiver": "diff",
+      "samples": "diff-binding.samples.json",
+      "yield": "diff-binding.yield.json",
+      "yield_status": "pass"
+    }
+  ]
+}

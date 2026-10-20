@@ -8,11 +8,11 @@
     },
     "9": {
       "file": "signoff/evidence/item-9-testbenches.json",
-      "content_hash": "sha256:75bf3d23aa41df1e1e6a233ea58eab4ffce9dcb16c440644cef2a4de82a82778"
+      "content_hash": "sha256:762ca9841508fe9448876a9b2fe56ac56c943d853616b8f21f49ea101e7563d4"
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:764ab07e9249f437fff37ea69257d7eff61e0bf78d4f3cf341c499604886f5a6"
+      "content_hash": "sha256:359dc2916823291be3579f37d0bfc4cc27d7a5fe163672fca7db5036808b5554"
     }
   }
 }

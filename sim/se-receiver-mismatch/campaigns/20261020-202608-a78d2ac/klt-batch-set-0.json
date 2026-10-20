@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "status": "error",
+  "request_count": 8,
+  "max_in_flight": 3,
+  "submitted": 8,
+  "refused": 1,
+  "refused_codes": [],
+  "requests": [
+    {
+      "index": 0,
+      "request": "dp-tt-nominal.request.json",
+      "status": "error",
+      "exit_code": 4,
+      "job_id": null,
+      "job_ids": [
+        "klt-sim-b0130dcd5db3",
+        "klt-sim-debde427d0f6",
+        "klt-sim-783de9c42d7f",
+        "klt-sim-c79817953a87"
+      ],
+      "report": "out/dp-tt-nominal.request/report.json",
+      "error": null
+    },
+    {
+      "index": 1,
+      "request": "dp-tt-control.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": "klt-sim-182217dc17ba",
+      "job_ids": [
+        "klt-sim-182217dc17ba"
+      ],
+      "report": "out/dp-tt-control.request/report.json",
+      "error": null
+    },
+    {
+      "index": 2,
+      "request": "dp-binding-nominal.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": null,
+      "job_ids": [
+        "klt-sim-125bc60921f1",
+        "klt-sim-b227a11e2987",
+        "klt-sim-0aa0a20f0874",
+        "klt-sim-f937e6a61c6f"
+      ],
+      "report": "out/dp-binding-nominal.request/report.json",
+      "error": null
+    },
+    {
+      "index": 3,
+      "request": "dp-binding-control.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": "klt-sim-d4540ed9c253",
+      "job_ids": [
+        "klt-sim-d4540ed9c253"
+      ],
+      "report": "out/dp-binding-control.request/report.json",
+      "error": null
+    },
+    {
+      "index": 4,
+      "request": "dm-tt-nominal.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": null,
+      "job_ids": [
+        "klt-sim-557a97f731b3",
+        "klt-sim-c36f69feb98c",
+        "klt-sim-7c3092dedff2",
+        "klt-sim-55698cf0ecc2"
+      ],
+      "report": "out/dm-tt-nominal.request/report.json",
+      "error": null
+    },
+    {
+      "index": 5,
+      "request": "dm-tt-control.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": "klt-sim-9d2525f54b92",
+      "job_ids": [
+        "klt-sim-9d2525f54b92"
+      ],
+      "report": "out/dm-tt-control.request/report.json",
+      "error": null
+    },
+    {
+      "index": 6,
+      "request": "dm-binding-nominal.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": null,
+      "job_ids": [
+        "klt-sim-32c16d5c6d99",
+        "klt-sim-e73c2281ca65",
+        "klt-sim-eb07b15c3b18",
+        "klt-sim-09fface43fff"
+      ],
+      "report": "out/dm-binding-nominal.request/report.json",
+      "error": null
+    },
+    {
+      "index": 7,
+      "request": "dm-binding-control.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": "klt-sim-9ef6a27e41d1",
+      "job_ids": [
+        "klt-sim-9ef6a27e41d1"
+      ],
+      "report": "out/dm-binding-control.request/report.json",
+      "error": null
+    }
+  ]
+}

@@ -18,6 +18,7 @@ import datetime as _dt
 import getpass
 import json
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -155,18 +156,27 @@ def grade(rcv: dict, yld: dict) -> tuple[dict, list[str]]:
 
 
 def exec_pdk(report: dict) -> dict:
-    """What a batch report says about the models the fleet actually executed."""
+    """What a batch report says about the models the fleet actually executed.
+
+    A one-job report carries its job under `environment.remote`; a sharded one (`remote.hosts`
+    > 1) lists one entry per shard under `environment.remote.fleet`. Every shard counts.
+    """
     env = report.get("environment") or {}
     remote = env.get("remote") or {}
-    wpdk = ((remote.get("worker_environment") or {}).get("pdk") or {})
+    fleet = remote.get("fleet")
+    shards = [s for s in fleet if isinstance(s, dict)] if isinstance(fleet, list) and fleet else [remote]
+
+    def wpdk(s: dict) -> dict:
+        return (s.get("worker_environment") or {}).get("pdk") or {}
+
     return {
         "provenance_pdk_version": ((report.get("provenance") or {}).get("pdk") or {}).get("version"),
         "models_lib_sha256": env.get("models_lib_sha256"),
-        "models_staged": wpdk.get("models_staged"),
-        "worker_image_pdk_stamp": wpdk.get("stamp_text"),
-        "job_id": remote.get("job_id"),
-        "instance_type": remote.get("instance_type"),
-        "lifecycle": remote.get("lifecycle"),
+        "models_staged": all(wpdk(s).get("models_staged") is True for s in shards),
+        "worker_image_pdk_stamps": sorted({wpdk(s).get("stamp_text") for s in shards if wpdk(s).get("stamp_text")}),
+        "job_ids": [s["job_id"] for s in shards if s.get("job_id")],
+        "instance_types": sorted({s["instance_type"] for s in shards if s.get("instance_type")}),
+        "lifecycles": sorted({s["lifecycle"] for s in shards if s.get("lifecycle")}),
     }
 
 
@@ -175,15 +185,24 @@ def pdk_problems(stem: str, ex: dict, pdk: dict) -> list[str]:
     out = []
     if ex.get("models_staged") is not True:
         out.append(f"{stem}: models_staged is {ex.get('models_staged')!r}; the fleet image's PDK "
-                   f"({ex.get('worker_image_pdk_stamp')!r}) would have run, not the pinned one")
+                   f"({ex.get('worker_image_pdk_stamps')!r}) would have run, not the pinned one")
     if pdk["open_pdks_commit"] not in str(ex.get("provenance_pdk_version")):
         out.append(f"{stem}: report provenance PDK {ex.get('provenance_pdk_version')!r} is not the pinned "
                    f"open_pdks {pdk['open_pdks_commit']}")
     if ex.get("models_lib_sha256") != pdk["lib_sha256"]:
         out.append(f"{stem}: models library sha256 {ex.get('models_lib_sha256')} != pinned {pdk['lib_sha256']}")
-    if not ex.get("job_id"):
+    if not ex.get("job_ids"):
         out.append(f"{stem}: the report carries no batch job id")
     return out
+
+
+def _complete(report_path: Path) -> bool:
+    """Every sample of a klt report simulated (none errored, lost or interrupted)."""
+    try:
+        corners = json.loads(report_path.read_text()).get("corners") or []
+    except (OSError, ValueError):
+        return False
+    return bool(corners) and all(c.get("status") in ("pass", "fail") for c in corners)
 
 
 def _git(*args: str) -> str:
@@ -196,7 +215,7 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> subprocess.Compl
 
 def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str | None,
         max_in_flight: int, record: bool, only: list[str] | None = None, supersedes: str = "",
-        capacity_retries: int = 0) -> int:
+        capacity_retries: int = 0, from_work: list[Path] | None = None) -> int:
     exp_dir = mx.SIM_DIR / experiment
     spec = load_spec(exp_dir)
     matrix = mx.load_by_id(mx.LEGACY_ID)
@@ -214,11 +233,11 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
     work.mkdir(parents=True, exist_ok=True)
     campaigns = []
     for rcv in spec["receivers"]:
-        if only and rcv["id"] not in only:
-            continue
         for corner in spec["corners"]:
             for kind in ("nominal", "control"):
                 stem = campaign_stem(rcv["id"], corner["id"], kind)
+                if only and rcv["id"] not in only and stem not in only:
+                    continue
                 body = build_body(exp_dir, rcv, kind == "control")
                 (work / f"{stem}.spice").write_bytes(body)
                 request = build_request(spec, rcv, corner, kind == "control", f"{stem}.spice", runner_version_check)
@@ -227,20 +246,54 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
     print(f"experiment {experiment}: {len(campaigns)} campaign request(s), backend batch, "
           f"record {rid if record else '(none)'}")
 
-    cmd = [klt, "sim", "--batch-set", *[f"{c['stem']}.request.json" for c in campaigns],
-           "--max-in-flight", str(max_in_flight), "-o", "out", "--format", "json"]
-    if hosts:
-        cmd += ["--hosts", str(hosts)]
-    if capacity_retries:
-        cmd += ["--capacity-retries", str(capacity_retries)]
-    proc = _run(cmd, work, {**os.environ, "PDK_ROOT": str(Path(env_info["path"]).parent)})
-    try:
-        envelope = json.loads(proc.stdout)
-    except ValueError as exc:
-        raise MismatchError(f"klt sim --batch-set produced no JSON envelope (exit {proc.returncode}); "
-                            f"stderr tail:\n{(proc.stderr or proc.stdout)[-1500:]}") from exc
-    (work / "klt-stderr.txt").write_text(proc.stderr or "")
-    (work / "klt-batch-set.json").write_text(proc.stdout)
+    if from_work:
+        # re-collect finished batch-sets (e.g. the harness stopped after the fleet did its work, or
+        # a Spot reclaim lost one request and only that request was submitted again): reuse their
+        # output, but only if each request and deck is exactly what this spec generates -- nothing
+        # is resubmitted and nothing is edited. A campaign takes its report from the LAST directory
+        # that has a complete one (every sample simulated), else from the last that has any.
+        envelope = {"requests": []}
+        for k, d in enumerate(from_work):
+            src = json.loads((d / "klt-batch-set.json").read_text())
+            shutil.copy(d / "klt-batch-set.json", work / f"klt-batch-set-{k}.json")
+            for r in src.get("requests", []):
+                stem = Path(r["request"]).name.removesuffix(".request.json")
+                c = next((c for c in campaigns if c["stem"] == stem), None)
+                if c is None:
+                    continue
+                for suffix in (".request.json", ".spice"):
+                    if (d / f"{stem}{suffix}").read_bytes() != (work / f"{stem}{suffix}").read_bytes():
+                        raise MismatchError(f"{d}: {stem}{suffix} differs from what mc.json generates now")
+                rep = d / r["report"] if r.get("report") else None
+                have = rep is not None and rep.is_file()
+                prev = next((e for e in envelope["requests"] if e["request"] == r["request"]), None)
+                if prev is not None and prev["complete"] and not (have and _complete(rep)):
+                    continue
+                if prev is not None:
+                    envelope["requests"].remove(prev)
+                    shutil.rmtree(work / "out" / f"{stem}.request", ignore_errors=True)
+                if have:
+                    shutil.copytree(rep.parent, work / "out" / f"{stem}.request")
+                envelope["requests"].append({**r, "report": f"out/{stem}.request/report.json" if have else None,
+                                             "complete": bool(have and _complete(rep)), "from": d.name})
+        (work / "klt-batch-set.json").write_text(json.dumps(envelope, indent=2) + "\n")
+        (work / "klt-stderr.txt").write_text("".join(
+            f"--- {d.name} ---\n" + (d / "klt-stderr.txt").read_text() for d in from_work))
+    else:
+        cmd = [klt, "sim", "--batch-set", *[f"{c['stem']}.request.json" for c in campaigns],
+               "--max-in-flight", str(max_in_flight), "-o", "out", "--format", "json"]
+        if hosts:
+            cmd += ["--hosts", str(hosts)]
+        if capacity_retries:
+            cmd += ["--capacity-retries", str(capacity_retries)]
+        proc = _run(cmd, work, {**os.environ, "PDK_ROOT": str(Path(env_info["path"]).parent)})
+        try:
+            envelope = json.loads(proc.stdout)
+        except ValueError as exc:
+            raise MismatchError(f"klt sim --batch-set produced no JSON envelope (exit {proc.returncode}); "
+                                f"stderr tail:\n{(proc.stderr or proc.stdout)[-1500:]}") from exc
+        (work / "klt-stderr.txt").write_text(proc.stderr or "")
+        (work / "klt-batch-set.json").write_text(proc.stdout)
     problems: list[str] = []
     by_request = {Path(r["request"]).name: r for r in envelope.get("requests", [])}
     for c in campaigns:
@@ -250,10 +303,13 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
         path = None
         if report:
             path = Path(report) if Path(report).is_absolute() else work / report
-        if r.get("status") == "error" or path is None or not path.is_file():
+        if path is None or not path.is_file():
             problems.append(f"{c['stem']}: campaign did not complete: {json.dumps(r.get('error'))}")
             c["report"] = None
         else:
+            if not _complete(path):
+                problems.append(f"{c['stem']}: not every sample simulated (a lost, interrupted or errored "
+                                "sample); the report is kept as the evidence of that")
             c["report"] = path
             (work / f"{c['stem']}.report.json").write_bytes(path.read_bytes())
             c["exec_pdk"] = exec_pdk(json.loads(path.read_text()))
@@ -263,10 +319,12 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
         print("BATCH ERROR: " + "; ".join(problems))
         if not record:
             return 2
-    return _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, problems, record, supersedes)
+    return _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, problems, record, supersedes,
+                             [d.name for d in from_work] if from_work else None)
 
 
-def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, problems, record, supersedes) -> int:
+def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, problems, record, supersedes,
+                      collected_from=None) -> int:
     yields = []
     cpath = {(c["receiver"], c["corner"], c["kind"]): c for c in campaigns}
     for rcv in spec["receivers"]:
@@ -321,6 +379,8 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
     files = {"mc.json": (exp_dir / "testbench" / "mc.json").read_bytes(),
              "klt-stderr.txt": (work / "klt-stderr.txt").read_bytes(),
              "klt-batch-set.json": (work / "klt-batch-set.json").read_bytes()}
+    for extra in sorted(work.glob("klt-batch-set-*.json")):  # original envelopes of a --from-work collection
+        files[extra.name] = extra.read_bytes()
     camp_rows = []
     for c in campaigns:
         for suffix in (".spice", ".request.json"):
@@ -341,6 +401,7 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
         "problems": problems, "backend": "batch", "harness_version": HARNESS_VERSION,
         "started_utc": now.isoformat(timespec="seconds"), "author": f"{getpass.getuser()} (agent)",
         "git": git, "klt_version": runner.tool_version([klt, "--version"]), "pdk": pdk_ident,
+        "collected_from_batch_set": collected_from,
         "monte_carlo": spec["monte_carlo"], "yield": spec["yield"],
         "corners": spec["corners"], "campaigns": camp_rows, "yields": yields,
         "files": {n: hashlib.sha256(d).hexdigest() for n, d in sorted(files.items())},
@@ -382,8 +443,14 @@ def render_record(spec: dict, rid: str, m: dict, manifest_sha: str, supersedes: 
         f"- backend: `batch`; batch job ids: {', '.join(f'`{j}`' for j in jobs) or 'none'}",
         f"- klt: `{m['klt_version']}`",
         f"- PDK: `{m['pdk']['name']}` open_pdks `{m['pdk']['open_pdks_commit']}`; model library sha256 `{m['pdk']['lib_sha256']}`",
-        f"- harness {HARNESS_VERSION}; repo HEAD `{m['git']['head']}` dirty={m['git']['dirty']}",
-        "", "## Method", ""] + [f"- {x}" for x in meta["method"]]
+        f"- harness {HARNESS_VERSION}; repo HEAD `{m['git']['head']}` dirty={m['git']['dirty']}"]
+    if m.get("collected_from_batch_set"):
+        srcs = ", ".join(f"`{d}`" for d in m["collected_from_batch_set"])
+        lines.append(f"- collected (`--from-work`) from the finished batch-set output(s) {srcs} (original envelopes: "
+                     "`klt-batch-set-<n>.json`, in that order): the requests and decks were byte-compared with what mc.json "
+                     "generates and nothing was resubmitted by the collection; a campaign takes its report from the last "
+                     "directory with a complete one, and the batch job ids above are those of the reports used")
+    lines += ["", "## Method", ""] + [f"- {x}" for x in meta["method"]]
     for c in m["corners"]:
         lines.append(f"- Corner `{c['id']}`: {c['basis']}.")
     lines += ["", "## Yield per receiver and corner", "",

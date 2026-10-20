@@ -1,0 +1,657 @@
+{
+  "author": "ubuntu (agent)",
+  "backend": "batch",
+  "campaigns": [
+    {
+      "corner": "tt",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-a5a0228b87b4",
+          "klt-sim-838d9919f5ed",
+          "klt-sim-53e3544df82e",
+          "klt-sim-eac42fa60cb6"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-a5a0228b87b4",
+        "klt-sim-838d9919f5ed",
+        "klt-sim-53e3544df82e",
+        "klt-sim-eac42fa60cb6"
+      ],
+      "kind": "nominal",
+      "receiver": "dp",
+      "report": true,
+      "stem": "dp-tt-nominal"
+    },
+    {
+      "corner": "tt",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-182217dc17ba"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-182217dc17ba"
+      ],
+      "kind": "control",
+      "receiver": "dp",
+      "report": true,
+      "stem": "dp-tt-control"
+    },
+    {
+      "corner": "binding",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-125bc60921f1",
+          "klt-sim-b227a11e2987",
+          "klt-sim-0aa0a20f0874",
+          "klt-sim-f937e6a61c6f"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-125bc60921f1",
+        "klt-sim-b227a11e2987",
+        "klt-sim-0aa0a20f0874",
+        "klt-sim-f937e6a61c6f"
+      ],
+      "kind": "nominal",
+      "receiver": "dp",
+      "report": true,
+      "stem": "dp-binding-nominal"
+    },
+    {
+      "corner": "binding",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-d4540ed9c253"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-d4540ed9c253"
+      ],
+      "kind": "control",
+      "receiver": "dp",
+      "report": true,
+      "stem": "dp-binding-control"
+    },
+    {
+      "corner": "tt",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-557a97f731b3",
+          "klt-sim-c36f69feb98c",
+          "klt-sim-7c3092dedff2",
+          "klt-sim-55698cf0ecc2"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-557a97f731b3",
+        "klt-sim-c36f69feb98c",
+        "klt-sim-7c3092dedff2",
+        "klt-sim-55698cf0ecc2"
+      ],
+      "kind": "nominal",
+      "receiver": "dm",
+      "report": true,
+      "stem": "dm-tt-nominal"
+    },
+    {
+      "corner": "tt",
+      "exec_pdk": {
+        "instance_types": [
+          "m7i.4xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-9d2525f54b92"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-9d2525f54b92"
+      ],
+      "kind": "control",
+      "receiver": "dm",
+      "report": true,
+      "stem": "dm-tt-control"
+    },
+    {
+      "corner": "binding",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-32c16d5c6d99",
+          "klt-sim-e73c2281ca65",
+          "klt-sim-eb07b15c3b18",
+          "klt-sim-09fface43fff"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-32c16d5c6d99",
+        "klt-sim-e73c2281ca65",
+        "klt-sim-eb07b15c3b18",
+        "klt-sim-09fface43fff"
+      ],
+      "kind": "nominal",
+      "receiver": "dm",
+      "report": true,
+      "stem": "dm-binding-nominal"
+    },
+    {
+      "corner": "binding",
+      "exec_pdk": {
+        "instance_types": [
+          "c7i.8xlarge"
+        ],
+        "job_ids": [
+          "klt-sim-9ef6a27e41d1"
+        ],
+        "lifecycles": [
+          "spot"
+        ],
+        "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+        "models_staged": true,
+        "provenance_pdk_version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+        "worker_image_pdk_stamps": [
+          "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b"
+        ]
+      },
+      "job_ids": [
+        "klt-sim-9ef6a27e41d1"
+      ],
+      "kind": "control",
+      "receiver": "dm",
+      "report": true,
+      "stem": "dm-binding-control"
+    }
+  ],
+  "collected_from_batch_set": [
+    "20261020-190037-a78d2ac",
+    "20261020-200319-a78d2ac"
+  ],
+  "corners": [
+    {
+      "basis": "typical corner with mismatch enabled",
+      "id": "tt",
+      "process": "tt_mm",
+      "supply_v": 3.3,
+      "temperature_c": 27.0
+    },
+    {
+      "basis": "binding corner of the 45-point records sim/se-receiver-dp-thresholds/records/20261009-142213-484240f.md and sim/se-receiver-dm-thresholds/records/20261009-142853-484240f.md: the lowest threshold (1.2505 V, 450 mV above VIL) is at ff / 100 C / 3.00 V; the highest (1.5136 V at ss / -40 C / 3.60 V) is 486 mV below VIH",
+      "id": "binding",
+      "process": "ff_mm",
+      "supply_v": 3.0,
+      "temperature_c": 100.0
+    }
+  ],
+  "experiment": "se-receiver-mismatch",
+  "files": {
+    "dm-binding-control.report.json": "c27a8e2f7e09e34df61beed9e754eef7ba2c58b9a887cb65fbed0aa1b25d24e8",
+    "dm-binding-control.request.json": "17811e0f3620f009f541d65ae4a0b19abff52ab158feb3a6b7e25b9e2925e644",
+    "dm-binding-control.spice": "86a576997f545ceaec70fe2472a3b9555d7418f644b32bda110c62faf6c4a599",
+    "dm-binding-nominal.report.json": "8184c807b5d0f3dad0fea48fccb6556ac770842901423ca79287cba9f195964c",
+    "dm-binding-nominal.request.json": "c2b7c664d5967959840ed9b496ac1c1ec6833a06dc8ee71320ac50e5117801b2",
+    "dm-binding-nominal.spice": "2cfa21f4772a68ab70b52cd026d31fac882ec14436065ff169961252d690beef",
+    "dm-binding.limits.json": "3de9a84ed63328f5722c3fa78ab833a89f673892388daab72e172435b8c96e53",
+    "dm-binding.samples.json": "5e0c71ff232ea96e71c96dae22cd015e17870057ff742f3a04ff514a84e866c2",
+    "dm-binding.yield.json": "afcfefcc8da816e15434c8199356bc93704e60cfd19210a16c12fa809d4d1ed0",
+    "dm-tt-control.report.json": "f2f4f26e05c3a2cb5958f8bb3e55d4855c62e58bff97fbfa858d65fba28d6b82",
+    "dm-tt-control.request.json": "ae57423fefa25d254549edac445f5c96de16149d4c7f3b169a3615182b432fe3",
+    "dm-tt-control.spice": "86a576997f545ceaec70fe2472a3b9555d7418f644b32bda110c62faf6c4a599",
+    "dm-tt-nominal.report.json": "1e3ca220e4e4e0fba8f7025574ce6fac51499bcf8fb9ef24f69df60b8c793d93",
+    "dm-tt-nominal.request.json": "999bff449cd9f3f20f622fbd5e7c665dc70c7272d58af995466b6d3f5833bc3b",
+    "dm-tt-nominal.spice": "2cfa21f4772a68ab70b52cd026d31fac882ec14436065ff169961252d690beef",
+    "dm-tt.limits.json": "4b4b9e969f0134fd6f95181078784ded8a57dfa8b12a0cde4a3e9a39d7f505d5",
+    "dm-tt.samples.json": "a41593a21d6cc583f5f34fba8743221b555cd4aa79ad25ecb0b996d94529f1b4",
+    "dm-tt.yield.json": "137d2de8ac2c1fcd238f1e6249ae942d2127299a29f8ccf8aa401956450d23ca",
+    "dp-binding-control.report.json": "057a2bd8c33059d2152869061afac715d2cc78473f9bea34e6ce49dd01d657c8",
+    "dp-binding-control.request.json": "77ff853bfcefe27a0b25220b2715ca5db59e8e22efd4546c75f3752996c48b76",
+    "dp-binding-control.spice": "603f93fc77e9c8f393b52444f6c2404b0ac172aeb087ef1fdb3e0165b282c5a5",
+    "dp-binding-nominal.report.json": "86d4aaf701584f39f8a0b284f625d8e269940aac66f0bea81c401c4b2a40e10e",
+    "dp-binding-nominal.request.json": "da98383ae17b9eb834fe521e855b6b8c2880e1c0ab9e626eba68ec8cd419d926",
+    "dp-binding-nominal.spice": "6fe127b72aa19db8805aa5b7cdce31d300fb27cb264043dbedca8eb24cef65d2",
+    "dp-binding.limits.json": "3de9a84ed63328f5722c3fa78ab833a89f673892388daab72e172435b8c96e53",
+    "dp-binding.samples.json": "8e3f13f0903b6e55a4dab4cc5a217219ea3233ad32d18b004f65e75e12c4c802",
+    "dp-binding.yield.json": "49de02f38d387b3d70b63cf9cd5fe95ea4c535853b9fbb1a6dee6371d72d37d7",
+    "dp-tt-control.report.json": "8d508a58005ec612d9ff637e919c2a959c74b23fafe66ad1c177bf78ae05a2a5",
+    "dp-tt-control.request.json": "f25d7f459b5f70eaefa9cff1e4922c2478a14836205150a2b45082d2c0746eaa",
+    "dp-tt-control.spice": "603f93fc77e9c8f393b52444f6c2404b0ac172aeb087ef1fdb3e0165b282c5a5",
+    "dp-tt-nominal.report.json": "501df8272b04aa6bd089397665954fe36f63c750039e08ddf8a640198b2ecd19",
+    "dp-tt-nominal.request.json": "95d0db7bc605405f84f504675a0c0b1ef06e3b07db5639340cce0874126c97cc",
+    "dp-tt-nominal.spice": "6fe127b72aa19db8805aa5b7cdce31d300fb27cb264043dbedca8eb24cef65d2",
+    "dp-tt.limits.json": "4b4b9e969f0134fd6f95181078784ded8a57dfa8b12a0cde4a3e9a39d7f505d5",
+    "dp-tt.samples.json": "f76915003014071e3ad12c9ab37df3d6b46007a3e5f62c97c15ad1dab3a30ec4",
+    "dp-tt.yield.json": "69a7be5b33165da7b53f6e96dafc56293c29294013bb22b0c3a08e83828ca28a",
+    "klt-batch-set-0.json": "dfaecdcfc703efa421106895d12c6dc53b876ca52f59149d65b08b71918b2fce",
+    "klt-batch-set-1.json": "a0127a508d96a8b04f3387f1a78a6117bff11a655b5d1ec290ef35e669572b35",
+    "klt-batch-set.json": "1a0c5815f2d5ce443de35732f5ef54a86473f5c52b379b385ffdb69039c21c87",
+    "klt-stderr.txt": "2793488dbdae4730dd8d44b411ecfaa99cb455dd9155152a740a55bfefb11564",
+    "mc.json": "0527d7f75b72a94b98d42395d72c5b9ad4fb15633b2a619c6079eb951971c9c7"
+  },
+  "git": {
+    "dirty": true,
+    "head": "a78d2aca778b5cb6952688b7dc32ac4a58edf1dd"
+  },
+  "harness_version": "0.1.0",
+  "klt_version": "klt 0.7.1.dev2264+gcba5e957d9ed",
+  "monte_carlo": {
+    "n": 400,
+    "n_control": 50,
+    "seed": 166,
+    "vary": "mismatch"
+  },
+  "pdk": {
+    "lib": "libs.tech/ngspice/sky130.lib.spice",
+    "lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "name": "sky130A",
+    "open_pdks_commit": "f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
+  },
+  "problems": [],
+  "record_id": "20261020-202608-a78d2ac",
+  "schema": "sky130-usb2-phy.sim.mismatch-evidence/1",
+  "started_utc": "2026-10-20T20:26:08+00:00",
+  "status": "PASS",
+  "yield": {
+    "confidence": 0.95,
+    "sample_size_justification": "target_yield 0.99 at 95 % two-sided confidence: with zero observed failures the exact (Clopper-Pearson) lower bound reaches 0.99 only for n >= 368 (klt yield `required_n_for_target`), so n = 400 per corner is the smallest round count that can support the claim; the +/-0.01 precision target needs n >= 183. A failing row is not rescued by a larger n: it is recorded as failing.",
+    "target_ci_halfwidth": 0.01,
+    "target_yield": 0.99
+  },
+  "yields": [
+    {
+      "corner": "tt",
+      "limits": "dp-tt.limits.json",
+      "measurements": {
+        "rxd_high_min_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.97,
+            "target_yield": 0.99
+          },
+          "max": 3.3,
+          "mean": 3.2999999999999754,
+          "min": 3.3,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 2.4455495040329057e-14,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_low_max_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.33,
+            "target_yield": 0.99
+          },
+          "max": 1.35254e-09,
+          "mean": 1.32585905e-09,
+          "min": 1.3014e-09,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 9.147567659367523e-12,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 2.0,
+            "min": 0.8,
+            "target_yield": 0.99
+          },
+          "max": 1.41552,
+          "mean": 1.3828039250000006,
+          "min": 1.34731,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.01133996379144808,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        }
+      },
+      "receiver": "dp",
+      "samples": "dp-tt.samples.json",
+      "yield": "dp-tt.yield.json",
+      "yield_status": "pass"
+    },
+    {
+      "corner": "binding",
+      "limits": "dp-binding.limits.json",
+      "measurements": {
+        "rxd_high_min_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.7,
+            "target_yield": 0.99
+          },
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.0,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_low_max_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.3,
+            "target_yield": 0.99
+          },
+          "max": 2.07829e-08,
+          "mean": 1.7345124749999993e-08,
+          "min": 1.41453e-08,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 1.1033578295196635e-09,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 2.0,
+            "min": 0.8,
+            "target_yield": 0.99
+          },
+          "max": 1.28161,
+          "mean": 1.2507904749999996,
+          "min": 1.21813,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.010638328586397176,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        }
+      },
+      "receiver": "dp",
+      "samples": "dp-binding.samples.json",
+      "yield": "dp-binding.yield.json",
+      "yield_status": "pass"
+    },
+    {
+      "corner": "tt",
+      "limits": "dm-tt.limits.json",
+      "measurements": {
+        "rxd_high_min_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.97,
+            "target_yield": 0.99
+          },
+          "max": 3.3,
+          "mean": 3.2999999999999754,
+          "min": 3.3,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 2.4455495040329057e-14,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_low_max_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.33,
+            "target_yield": 0.99
+          },
+          "max": 1.35254e-09,
+          "mean": 1.32585905e-09,
+          "min": 1.3014e-09,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 9.147567659367523e-12,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 2.0,
+            "min": 0.8,
+            "target_yield": 0.99
+          },
+          "max": 1.41552,
+          "mean": 1.3828039250000006,
+          "min": 1.34731,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.01133996379144808,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        }
+      },
+      "receiver": "dm",
+      "samples": "dm-tt.samples.json",
+      "yield": "dm-tt.yield.json",
+      "yield_status": "pass"
+    },
+    {
+      "corner": "binding",
+      "limits": "dm-binding.limits.json",
+      "measurements": {
+        "rxd_high_min_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "min": 2.7,
+            "target_yield": 0.99
+          },
+          "max": 3.0,
+          "mean": 3.0,
+          "min": 3.0,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.0,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "rxd_low_max_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "max": 0.3,
+            "target_yield": 0.99
+          },
+          "max": 2.07829e-08,
+          "mean": 1.7345124749999993e-08,
+          "min": 1.41453e-08,
+          "n": 400,
+          "negative_control_verdict": "not_detected",
+          "negative_control_yield": 1.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 1.1033578295196635e-09,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        },
+        "vth_v": {
+          "censored": 0,
+          "empirical_yield": 1.0,
+          "errored": 0,
+          "failed_unmeasurable": 0,
+          "inconclusive": 0,
+          "limits": {
+            "exclusive_max": true,
+            "exclusive_min": true,
+            "max": 2.0,
+            "min": 0.8,
+            "target_yield": 0.99
+          },
+          "max": 1.28161,
+          "mean": 1.2507904749999996,
+          "min": 1.21813,
+          "n": 400,
+          "negative_control_verdict": "detected",
+          "negative_control_yield": 0.0,
+          "sample_size_verdict": "sufficient",
+          "status": "pass",
+          "stddev": 0.010638328586397176,
+          "yield_ci_high": 1.0,
+          "yield_ci_low": 0.9908201954163351
+        }
+      },
+      "receiver": "dm",
+      "samples": "dm-binding.samples.json",
+      "yield": "dm-binding.yield.json",
+      "yield_status": "pass"
+    }
+  ]
+}
