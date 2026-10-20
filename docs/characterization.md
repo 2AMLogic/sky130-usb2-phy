@@ -87,6 +87,44 @@ their own `corner_matrix.subset_justification`: they do not re-run the
 physical flow, they add a nominal-corner-only stage on top of the sweep
 whose physical results they carry forward.
 
+### 1.1 Analog sim records re-qualified under open_pdks `f6eeac7` (#152)
+
+The open_pdks pin moved from `c6d73a35…` to `f6eeac7d…` in #151. The cited
+analog sim records were re-run as **new** records (full grids through
+`klt sim`, batch backend, one `environment.remote` job id each); each new
+record's `Supersedes` names the `c6d73a3` record. The old records are
+unchanged and remain as historical evidence under the retired pin. The digital
+flow records (`flow/smoke-utmi_stub`, `flow/utmi-top`) are **not** yet
+re-qualified, see the note under the table.
+
+| Experiment (variant) | Superseded (`c6d73a3`) | New (`f6eeac7`) | Grid | Status |
+|---|---|---|---|---|
+| `diff-receiver-sensitivity` | `20261009-121939-0555da1` | `20261020-172719-ca4a45a` | 45 | PASS |
+| `diff-receiver-sensitivity` (resistor-sets) | `20261010-094000-0d51889` | `20261020-173124-ca4a45a` | 225 | PASS |
+| `dplus-pullup-tolerance` | `20261009-172948-d85f0dc` | `20261020-174332-ca4a45a` | 45 | PASS |
+| `dplus-pullup-tolerance` (resistor-sets) | `20261010-014615-8ebfb55` | `20261020-174658-ca4a45a` | 225 | PASS |
+| `driver-signal-quality` | `20261009-182102-e232b2f` | `20261020-181618-ca4a45a` | 45 | PASS |
+| `driver-static` | `20261009-185058-e232b2f` | `20261020-194710-ca4a45a` | 45 | PASS |
+| `se-receiver-dm-thresholds` | `20261009-142853-484240f` | `20261020-202908-ea63f5c` | 45 | PASS |
+| `se-receiver-dm-thresholds` (resistor-sets) | `20261010-090217-0d51889` | `20261020-203356-ea63f5c` | 225 | PASS |
+| `se-receiver-dp-thresholds` | `20261009-142213-484240f` | `20261020-204606-ea63f5c` | 45 | PASS |
+| `se-receiver-dp-thresholds` (resistor-sets) | `20261010-074010-0d51889` | `20261020-205102-ea63f5c` | 225 | PASS |
+
+**Movement table.** Every measurement at every corner was compared between
+each superseded/new pair (306 measurement series over 1,170 corner points;
+each pair has an identical corner set). Result: **no measurement moved at all**
+(max |delta| = 0, bit-identical values) and no check changed verdict, so no
+result crossed its spec/tolerance and no movement issue is needed. This is
+consistent with the evidence: the model library hash is unchanged across the
+re-pin (`lib_sha256` `17c208a6…` in both the old and new records), so the
+re-pin changed the PDK revision identity without changing the ngspice model
+files these decks include.
+
+Not re-run: the driver-signal-quality records dated `20261016-*-59ec9c0`
+fail `sim/check_records.py` ("frozen corners.json: PDK identity …
+c6d73a35… was retired") on `main` already; they are not cited references and
+are left untouched.
+
 ## 2. `spec/usb2-phy.md` §6 — per-row evidence index
 
 Rows are numbered top-to-bottom as they appear in §6's table; the spec itself
