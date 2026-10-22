@@ -3,6 +3,14 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-21
+
+- **PR #181**: fix(signoff): refresh item-10 ci.yml pin after comment-only change
+- **PR #179**: fix: extend retired open_pdks pin records_through to 20261016
+- **PR #178**: Bump Repo Skills 0.24.3 -> 0.24.7
+- **Issue #180** (closed): main red: klt signoff inventory pin item-10-hygiene is stale after a ci.yml change
+- **Issue #173** (closed): main red: 4 driver-signal-quality records (20261016) carry the retired open_pdks pin
+
 ### 2026-10-20
 
 - **PR #153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
