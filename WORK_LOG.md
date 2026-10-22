@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-22
 
+- **PR #189**: docs: remove stale harness sharing analysis
+- **Issue #174** (closed): Remove sim/harness/SHARING.md: closed #119 analysis with drifted line counts and citations
 - **PR #176**: sim: mismatch Monte Carlo evidence for the receiver sensitivity and threshold rows
 - **Issue #166** (closed): T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement
 - **PR #184**: flow: re-qualify digital flow records under open_pdks f6eeac7
