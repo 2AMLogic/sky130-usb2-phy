@@ -509,6 +509,7 @@
     "unchecked_rules": [],
     "deck_scope": [],
     "unmodeled_rules": [],
+    "isolation_only_rules": [],
     "schema_version": 1,
     "known": true,
     "checked": [
@@ -770,7 +771,7 @@
     "satisfied": true
   },
   "provenance": {
-    "klt_version": "0.7.1.dev2264+gcba5e957d9ed",
+    "klt_version": "0.7.1.dev2419+ga7dfbc5ce95d",
     "klayout_version": "0.30.12",
     "pdk": {
       "name": "sky130A",

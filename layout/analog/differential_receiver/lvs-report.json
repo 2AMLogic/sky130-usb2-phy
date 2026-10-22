@@ -833,7 +833,7 @@
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.7.1.dev2264+gcba5e957d9ed",
+    "klt_version": "0.7.1.dev2419+ga7dfbc5ce95d",
     "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
@@ -854,6 +854,7 @@
       },
       "content_hash": "sha256:5b4ede4bdb4744b60e42c9b29baa93f40bb24430fb8f3a48a276a712a492ac38",
       "klayout_application_version": "0.28.16",
+      "exit_status": 0,
       "engine_error_lines": []
     }
   },
