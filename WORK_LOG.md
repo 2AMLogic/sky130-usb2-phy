@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-22
 
+- **PR #176**: sim: mismatch Monte Carlo evidence for the receiver sensitivity and threshold rows
+- **Issue #166** (closed): T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement
 - **PR #184**: flow: re-qualify digital flow records under open_pdks f6eeac7
 - **PR #172**: feat(layout): sky130 differential_receiver layout with DRC/LVS/ERC evidence and analog record lint
 - **PR #177**: test(sim): re-qualify cited analog sim records under open_pdks f6eeac7
