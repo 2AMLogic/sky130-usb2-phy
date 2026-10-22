@@ -1,0 +1,206 @@
+--- 20261020-190037-a78d2ac ---
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt sim: warning: batch job bound 45120s (options.timeout_s 900s x 50 units + 120s; a conservative fully-serial upper bound, not a runtime estimate) exceeds the fleet's whole-job ceiling of 3600s (max_job_seconds from fleet_config); a job still running at the ceiling is killed and every unit is reported batch_job_timeout. Set request.remote.hosts to at least 17 to run one job per shard of at most 3 units, each within the ceiling
+klt: batch job klt-sim-182217dc17ba submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-182217dc17ba
+klt: batch job klt-sim-b227a11e2987 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-b227a11e2987
+klt: batch job klt-sim-125bc60921f1 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-125bc60921f1
+klt: batch job klt-sim-debde427d0f6 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-debde427d0f6
+klt: batch job klt-sim-b0130dcd5db3 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-b0130dcd5db3
+klt sim: batch job klt-sim-182217dc17ba: submitted
+klt sim: batch job klt-sim-125bc60921f1: submitted
+klt sim: batch job klt-sim-b227a11e2987: submitted
+klt sim: batch job klt-sim-debde427d0f6: submitted
+klt sim: batch job klt-sim-b0130dcd5db3: submitted
+klt sim: batch job klt-sim-182217dc17ba launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-182217dc17ba`
+klt sim: batch job klt-sim-182217dc17ba state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-125bc60921f1 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-125bc60921f1`
+klt sim: batch job klt-sim-125bc60921f1 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-b227a11e2987 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-b227a11e2987`
+klt sim: batch job klt-sim-debde427d0f6 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-debde427d0f6`
+klt sim: batch job klt-sim-b227a11e2987 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-debde427d0f6 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-b0130dcd5db3 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-b0130dcd5db3`
+klt sim: batch job klt-sim-b0130dcd5db3 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-182217dc17ba: running
+klt sim: batch job klt-sim-182217dc17ba state=running elapsed=32s
+klt sim: batch job klt-sim-125bc60921f1: running
+klt sim: batch job klt-sim-125bc60921f1 state=running elapsed=31s
+klt sim: batch job klt-sim-b227a11e2987: running
+klt sim: batch job klt-sim-b227a11e2987 state=running elapsed=32s
+klt sim: batch job klt-sim-debde427d0f6: running
+klt sim: batch job klt-sim-debde427d0f6 state=running elapsed=32s
+klt sim: batch job klt-sim-b0130dcd5db3: running
+klt sim: batch job klt-sim-b0130dcd5db3 state=running elapsed=31s
+klt sim: batch job klt-sim-182217dc17ba: done
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt sim: warning: batch job bound 45120s (options.timeout_s 900s x 50 units + 120s; a conservative fully-serial upper bound, not a runtime estimate) exceeds the fleet's whole-job ceiling of 3600s (max_job_seconds from fleet_config); a job still running at the ceiling is killed and every unit is reported batch_job_timeout. Set request.remote.hosts to at least 17 to run one job per shard of at most 3 units, each within the ceiling
+klt: batch job klt-sim-d4540ed9c253 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-d4540ed9c253
+klt sim: batch job klt-sim-debde427d0f6: interrupted
+klt sim: batch job klt-sim-debde427d0f6 state=interrupted elapsed=247s
+klt sim: batch job klt-sim-125bc60921f1 state=running elapsed=339s
+klt sim: batch job klt-sim-b227a11e2987 state=running elapsed=339s
+klt sim: batch job klt-sim-b0130dcd5db3 state=running elapsed=339s
+klt sim: batch job klt-sim-125bc60921f1: done
+klt: batch job klt-sim-0aa0a20f0874 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-0aa0a20f0874
+klt sim: batch job klt-sim-b227a11e2987: done
+klt: batch job klt-sim-f937e6a61c6f submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-f937e6a61c6f
+klt sim: batch job klt-sim-b0130dcd5db3: done
+klt: batch job klt-sim-783de9c42d7f submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-783de9c42d7f
+klt sim: batch job klt-sim-d4540ed9c253: submitted
+klt sim: batch job klt-sim-d4540ed9c253 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-d4540ed9c253`
+klt sim: batch job klt-sim-d4540ed9c253 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-d4540ed9c253: running
+klt sim: batch job klt-sim-d4540ed9c253 state=running elapsed=32s
+klt sim: batch job klt-sim-debde427d0f6 state=interrupted elapsed=555s
+klt sim: batch job klt-sim-0aa0a20f0874: submitted
+klt sim: batch job klt-sim-0aa0a20f0874 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-0aa0a20f0874`
+klt sim: batch job klt-sim-0aa0a20f0874 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-f937e6a61c6f: submitted
+klt sim: batch job klt-sim-f937e6a61c6f launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-f937e6a61c6f`
+klt sim: batch job klt-sim-f937e6a61c6f state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-0aa0a20f0874: running
+klt sim: batch job klt-sim-0aa0a20f0874 state=running elapsed=31s
+klt sim: batch job klt-sim-783de9c42d7f: submitted
+klt sim: batch job klt-sim-783de9c42d7f launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-783de9c42d7f`
+klt sim: batch job klt-sim-783de9c42d7f state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-f937e6a61c6f: running
+klt sim: batch job klt-sim-f937e6a61c6f state=running elapsed=31s
+klt sim: batch job klt-sim-783de9c42d7f: running
+klt sim: batch job klt-sim-783de9c42d7f state=running elapsed=31s
+klt sim: batch job klt-sim-d4540ed9c253: done
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt: batch job klt-sim-557a97f731b3 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-557a97f731b3
+klt: batch job klt-sim-c36f69feb98c submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-c36f69feb98c
+klt sim: batch job klt-sim-debde427d0f6 state=interrupted elapsed=862s
+klt sim: batch job klt-sim-0aa0a20f0874 state=running elapsed=339s
+klt sim: batch job klt-sim-c36f69feb98c: submitted
+klt sim: batch job klt-sim-557a97f731b3: submitted
+klt sim: batch job klt-sim-c36f69feb98c launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-c36f69feb98c`
+klt sim: batch job klt-sim-557a97f731b3 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-557a97f731b3`
+klt sim: batch job klt-sim-c36f69feb98c state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-557a97f731b3 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-f937e6a61c6f state=running elapsed=339s
+klt sim: batch job klt-sim-783de9c42d7f state=running elapsed=339s
+klt sim: batch job klt-sim-557a97f731b3: running
+klt sim: batch job klt-sim-557a97f731b3 state=running elapsed=31s
+klt sim: batch job klt-sim-c36f69feb98c: running
+klt sim: batch job klt-sim-c36f69feb98c state=running elapsed=32s
+klt sim: batch job klt-sim-783de9c42d7f: done
+klt: batch job klt-sim-c79817953a87 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-c79817953a87
+klt sim: batch job klt-sim-f937e6a61c6f: done
+klt sim: batch job klt-sim-0aa0a20f0874: done
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt sim: warning: batch job bound 45120s (options.timeout_s 900s x 50 units + 120s; a conservative fully-serial upper bound, not a runtime estimate) exceeds the fleet's whole-job ceiling of 3600s (max_job_seconds from fleet_config); a job still running at the ceiling is killed and every unit is reported batch_job_timeout. Set request.remote.hosts to at least 17 to run one job per shard of at most 3 units, each within the ceiling
+klt: batch job klt-sim-9d2525f54b92 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-9d2525f54b92
+klt sim: batch job klt-sim-debde427d0f6 state=interrupted elapsed=1169s
+klt sim: batch job klt-sim-c79817953a87: submitted
+klt sim: batch job klt-sim-c79817953a87 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-c79817953a87`
+klt sim: batch job klt-sim-c79817953a87 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-9d2525f54b92: submitted
+klt sim: batch job klt-sim-c36f69feb98c state=running elapsed=339s
+klt sim: batch job klt-sim-557a97f731b3: done
+klt: batch job klt-sim-7c3092dedff2 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-7c3092dedff2
+klt sim: batch job klt-sim-c79817953a87: running
+klt sim: batch job klt-sim-c79817953a87 state=running elapsed=31s
+klt sim: batch job klt-sim-9d2525f54b92 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-9d2525f54b92`
+klt sim: batch job klt-sim-9d2525f54b92 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-c36f69feb98c: done
+klt: batch job klt-sim-55698cf0ecc2 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-55698cf0ecc2
+klt sim: batch job klt-sim-9d2525f54b92: running
+klt sim: batch job klt-sim-9d2525f54b92 state=running elapsed=31s
+klt sim: batch job klt-sim-debde427d0f6 state=interrupted elapsed=1476s
+klt sim: batch job klt-sim-7c3092dedff2: submitted
+klt sim: batch job klt-sim-7c3092dedff2 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-7c3092dedff2`
+klt sim: batch job klt-sim-7c3092dedff2 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-55698cf0ecc2: submitted
+klt sim: batch job klt-sim-7c3092dedff2: running
+klt sim: batch job klt-sim-7c3092dedff2 state=running elapsed=31s
+klt sim: batch job klt-sim-55698cf0ecc2 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-55698cf0ecc2`
+klt sim: batch job klt-sim-55698cf0ecc2 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-c79817953a87 state=running elapsed=339s
+klt sim: batch job klt-sim-55698cf0ecc2: running
+klt sim: batch job klt-sim-55698cf0ecc2 state=running elapsed=32s
+klt sim: batch job klt-sim-9d2525f54b92 state=running elapsed=339s
+klt sim: batch job klt-sim-debde427d0f6 state=interrupted elapsed=1784s
+klt sim: batch job klt-sim-c79817953a87: done
+klt sim: batch job klt-sim-9d2525f54b92: done
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt: batch job klt-sim-e73c2281ca65 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-e73c2281ca65
+klt: batch job klt-sim-32c16d5c6d99 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-32c16d5c6d99
+klt sim: batch job klt-sim-7c3092dedff2 state=running elapsed=339s
+klt sim: batch job klt-sim-55698cf0ecc2 state=running elapsed=339s
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt sim: warning: batch job bound 45120s (options.timeout_s 900s x 50 units + 120s; a conservative fully-serial upper bound, not a runtime estimate) exceeds the fleet's whole-job ceiling of 3600s (max_job_seconds from fleet_config); a job still running at the ceiling is killed and every unit is reported batch_job_timeout. Set request.remote.hosts to at least 17 to run one job per shard of at most 3 units, each within the ceiling
+klt: batch job klt-sim-9ef6a27e41d1 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-9ef6a27e41d1
+klt sim: batch job klt-sim-7c3092dedff2: done
+klt sim: batch job klt-sim-e73c2281ca65: submitted
+klt sim: batch job klt-sim-32c16d5c6d99: submitted
+klt sim: batch job klt-sim-55698cf0ecc2: done
+klt sim: batch job klt-sim-32c16d5c6d99 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-32c16d5c6d99`
+klt sim: batch job klt-sim-e73c2281ca65 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-e73c2281ca65`
+klt sim: batch job klt-sim-32c16d5c6d99 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-e73c2281ca65 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-32c16d5c6d99: running
+klt sim: batch job klt-sim-32c16d5c6d99 state=running elapsed=31s
+klt sim: batch job klt-sim-e73c2281ca65: running
+klt sim: batch job klt-sim-e73c2281ca65 state=running elapsed=31s
+klt sim: batch job klt-sim-9ef6a27e41d1: submitted
+klt sim: batch job klt-sim-9ef6a27e41d1 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-9ef6a27e41d1`
+klt sim: batch job klt-sim-9ef6a27e41d1 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-9ef6a27e41d1: running
+klt sim: batch job klt-sim-9ef6a27e41d1 state=running elapsed=31s
+klt sim: batch job klt-sim-32c16d5c6d99: done
+klt sim: batch job klt-sim-e73c2281ca65 state=running elapsed=339s
+klt: batch job klt-sim-eb07b15c3b18 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-eb07b15c3b18
+klt sim: batch job klt-sim-e73c2281ca65: done
+klt: batch job klt-sim-09fface43fff submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-09fface43fff
+klt sim: batch job klt-sim-9ef6a27e41d1: done
+klt sim: batch job klt-sim-eb07b15c3b18: submitted
+klt sim: batch job klt-sim-eb07b15c3b18 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-eb07b15c3b18`
+klt sim: batch job klt-sim-eb07b15c3b18 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-eb07b15c3b18: running
+klt sim: batch job klt-sim-eb07b15c3b18 state=running elapsed=31s
+klt sim: batch job klt-sim-09fface43fff: submitted
+klt sim: batch job klt-sim-09fface43fff launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-09fface43fff`
+klt sim: batch job klt-sim-09fface43fff state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-09fface43fff: running
+klt sim: batch job klt-sim-09fface43fff state=running elapsed=31s
+klt sim: batch job klt-sim-eb07b15c3b18 state=running elapsed=339s
+klt sim: batch job klt-sim-09fface43fff state=running elapsed=338s
+klt sim: batch job klt-sim-09fface43fff: done
+klt sim: batch job klt-sim-eb07b15c3b18: done
+--- 20261020-200319-a78d2ac ---
+klt: warning: 2 installs provide PDK variant 'sky130A'; read /home/ubuntu/.ciel (PDK_ROOT environment variable), skipped /home/ubuntu/.volare (search root: ~/.volare). Resolution is first-match-wins, so a pinned open_pdks build may not be the one this run read -- pin the root explicitly (--pdk-root, or a request's models.pdk_root) to disable the search and choose deliberately.
+klt: batch job klt-sim-a5a0228b87b4 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-a5a0228b87b4
+klt: batch job klt-sim-838d9919f5ed submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-838d9919f5ed
+klt sim: batch job klt-sim-838d9919f5ed: submitted
+klt sim: batch job klt-sim-a5a0228b87b4: submitted
+klt sim: batch job klt-sim-838d9919f5ed launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-838d9919f5ed`
+klt sim: batch job klt-sim-a5a0228b87b4 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-a5a0228b87b4`
+klt sim: batch job klt-sim-838d9919f5ed state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-a5a0228b87b4 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-838d9919f5ed: running
+klt sim: batch job klt-sim-838d9919f5ed state=running elapsed=31s
+klt sim: batch job klt-sim-a5a0228b87b4: running
+klt sim: batch job klt-sim-a5a0228b87b4 state=running elapsed=32s
+klt sim: batch job klt-sim-838d9919f5ed state=running elapsed=339s
+klt sim: batch job klt-sim-a5a0228b87b4 state=running elapsed=339s
+klt sim: batch job klt-sim-838d9919f5ed: done
+klt sim: batch job klt-sim-a5a0228b87b4: done
+klt: batch job klt-sim-53e3544df82e submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-53e3544df82e
+klt: batch job klt-sim-eac42fa60cb6 submitting to s3://2am-batch-jobs-221082181346/jobs/klt-sim-eac42fa60cb6
+klt sim: batch job klt-sim-53e3544df82e: submitted
+klt sim: batch job klt-sim-eac42fa60cb6: submitted
+klt sim: batch job klt-sim-eac42fa60cb6 launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-eac42fa60cb6`
+klt sim: batch job klt-sim-53e3544df82e launched; re-attach with `klt sim <request> --backend batch --attach klt-sim-53e3544df82e`
+klt sim: batch job klt-sim-eac42fa60cb6 state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-53e3544df82e state=no status.json yet elapsed=1s
+klt sim: batch job klt-sim-eac42fa60cb6: running
+klt sim: batch job klt-sim-eac42fa60cb6 state=running elapsed=31s
+klt sim: batch job klt-sim-53e3544df82e: running
+klt sim: batch job klt-sim-53e3544df82e state=running elapsed=31s
+klt sim: batch job klt-sim-eac42fa60cb6 state=running elapsed=339s
+klt sim: batch job klt-sim-53e3544df82e: done
+klt sim: batch job klt-sim-eac42fa60cb6: done

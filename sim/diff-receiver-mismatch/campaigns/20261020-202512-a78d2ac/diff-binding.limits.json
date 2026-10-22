@@ -1,0 +1,52 @@
+{
+  "confidence": 0.95,
+  "target_ci_halfwidth": 0.01,
+  "min_samples": 2,
+  "measurements": {
+    "vth_cm0p80_v": {
+      "min": -0.2,
+      "max": 0.2,
+      "exclusive_min": true,
+      "exclusive_max": true,
+      "target_yield": 0.99
+    },
+    "rxd_p200_cm0p80_v": {
+      "min": 2.7,
+      "target_yield": 0.99
+    },
+    "rxd_m200_cm0p80_v": {
+      "max": 0.3,
+      "target_yield": 0.99
+    },
+    "vth_cm1p65_v": {
+      "min": -0.2,
+      "max": 0.2,
+      "exclusive_min": true,
+      "exclusive_max": true,
+      "target_yield": 0.99
+    },
+    "rxd_p200_cm1p65_v": {
+      "min": 2.7,
+      "target_yield": 0.99
+    },
+    "rxd_m200_cm1p65_v": {
+      "max": 0.3,
+      "target_yield": 0.99
+    },
+    "vth_cm2p50_v": {
+      "min": -0.2,
+      "max": 0.2,
+      "exclusive_min": true,
+      "exclusive_max": true,
+      "target_yield": 0.99
+    },
+    "rxd_p200_cm2p50_v": {
+      "min": 2.7,
+      "target_yield": 0.99
+    },
+    "rxd_m200_cm2p50_v": {
+      "max": 0.3,
+      "target_yield": 0.99
+    }
+  }
+}

@@ -125,7 +125,7 @@ mints a new record id. Compare corner values with the old record's
 which already fetches full history and exports `FLOW_LINT_BASE_REF`) needs only
 python3 and git. It fails on:
 
-- any file under `sim/*/records/`, `netlist-snapshots/`, `corners/` that is
+- any file under `sim/*/records/`, `netlist-snapshots/`, `corners/`, `campaigns/` that is
   modified, deleted or renamed relative to the merge base with the base ref
   (new files are fine); an unresolvable base ref also **fails**;
 - missing record fields, an id/filename mismatch, a snapshot or evidence
@@ -134,7 +134,13 @@ python3 and git. It fails on:
   exactly the 45 matrix tuples once each, every simulation `pass`, every
   expected measurement finite and inside the `tb.json` bounds, a request that
   is the sky130 matrix (no gf180 library, `typical`, 125 C or +-10 % supply),
-  a batch job id, and a snapshot hash equal to the envelope's netlist hash.
+  a batch job id, and a snapshot hash equal to the envelope's netlist hash;
+- for the Monte Carlo experiments (`testbench/mc.json`, see "diff-receiver-mismatch,
+  se-receiver-mismatch" below): a record whose requests are not the batch, mismatch-only,
+  staged-pinned-model requests `mc.json` generates, whose control deck is not the nominal deck
+  plus the declared skew, whose reports do not show the pinned models executed on every shard,
+  whose sample sets do not pin the committed reports by hash, or whose `klt yield` reports do
+  not re-grade as a PASS (yield claim, sample size, detected negative control, non-zero spread).
 
 Self-tests: `python3 -m pytest sim/tests` (matrix, request, mocked batch
 success/failure, git-fixture append-only cases). CI never submits a job.
@@ -203,6 +209,80 @@ minimum over 2.0-3.0 V, the 0.8 V / 2.0 V boundary probes, the internal
 Records: `se-receiver-dp-thresholds/records/`, `se-receiver-dm-thresholds/records/`.
 No Monte Carlo is run; each record says so. Both ran on fleet runner klt
 0.5.0 against client 0.7.0 with the version check in `warn` mode, as above.
+
+## diff-receiver-mismatch, se-receiver-mismatch (Monte Carlo, T1 item 6)
+
+The statistical evidence for the two receiver rows that mismatch limits by construction
+(#166): `spec/usb2-phy.md` section 6 "Differential input sensitivity" (|(D+) - (D-)| > 200 mV)
+and "Single-ended receiver thresholds" (VIH > 2.0 V, VIL < 0.8 V, read as in the
+deterministic records: threshold strictly inside (0.8 V, 2.0 V) and valid output levels
+beyond). The deterministic 45- and 225-point records above are corner evidence and say so;
+these experiments add the local-mismatch Monte Carlo that item 6 asks for. They are separate
+experiment directories (`testbench/mc.json`, not `tb.json`), so the PVT lint above does not
+apply to them; `harness/mismatch_lint.py` does, and `sim/check_records.py` runs both.
+
+Per receiver (the differential receiver; the D+ and the D- single-ended receivers) and per
+corner there is one `klt sim` Monte Carlo request (`vary: mismatch`, seed 166, n = 400
+samples; the `*_mm` library sections, which set `mc_mm_switch = 1`) and one **negative-control**
+request (n = 50, same deck and seeds, one fixed skew declared in `mc.json`: a 0.25 V
+differential input offset for the receiver; R2 length 14 -> 60, a divider-ratio skew, for the
+single-ended receivers). `klt yield-samples` pairs each control with its nominal campaign and
+`klt yield` grades the pair against the row limits (exclusive bounds, VDD-relative output
+levels at the corner supply) with `target_yield` 0.99 at 95 % confidence. Each (receiver,
+corner) is its own population; nothing is pooled across corners or across D+/D-.
+
+Corners: `tt_mm` at 27 C / 3.3 V, and the binding corner read from the 45-point records
+(`mc.json` `corners[].basis`): differential receiver `sf_mm` / 100 C / 3.0 V (largest
+|threshold| at common-mode 2.5 V), single-ended receivers `ff_mm` / 100 C / 3.0 V (lowest
+threshold, closest to VIL). Global process spread stays on the corner axis; the mismatch
+campaign runs at those two corners, not across the 45-point grid.
+
+Sample size: with zero failures the exact lower bound reaches 0.99 only from n = 368
+(`required_n_for_target`); n = 400 is the smallest round count that can support the claim, and
+the precision target (+/-0.01) needs 183. A failing row is recorded as failing; a larger n
+does not rescue it.
+
+Reproduce (the campaigns are submitted to the batch fleet, never run locally):
+
+```bash
+# klt yield needs the klt_yield_native extension, which is not on PyPI (klayout-tools#2900).
+# Build it into a throwaway venv, never into the host tools (see the worker rules):
+#   maturin build --release -j 2 -o <wheel-dir>      # in klayout-tools native/yield
+#   uv venv --python 3.12 <venv> && uv pip install --python <venv>/bin/python <klayout-tools checkout> <wheel>
+python3 sim/run_mismatch.py --list
+python3 sim/run_mismatch.py diff-receiver-mismatch --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
+python3 sim/run_mismatch.py se-receiver-mismatch  --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
+```
+
+Choices worth knowing:
+
+- `options.stage_model_inputs` is set on every request. The fleet image's PDK stamp can lag the
+  submitter's pin (after the #151 re-pin it still reports open_pdks `c6d73a3`), so without staging
+  the image's tree would execute. With staging the executed models are the submitter's (pinned
+  `f6eeac7`) files; `mismatch.pdk_problems` fails a record whose report does not show
+  `models_staged` on every shard, the pinned `provenance.pdk.version` and the pinned library hash.
+- The 400-sample requests are sharded (`remote.hosts: 4`, `batch.max_concurrent_jobs: 2`) because the
+  fleet kills a job at its whole-job ceiling (3600 s) and loses every unit of it.
+- Mismatch reaches the devices used here (g5v0d10v5 MOS and res_xhigh_po_1p41): each yield report's
+  `distribution.stddev` of the threshold is non-zero, and `mismatch.grade` fails a record whose
+  `spread_measures` have zero spread.
+- `--from-work <dir>` grades and records a batch-set that already finished (for example when the
+  harness stopped after the fleet did its work) without resubmitting; it byte-compares the requests and
+  decks with what `mc.json` generates and the record says it was collected that way.
+
+The D+ and D- receivers are identical netlists and both campaigns use seed 166, so their sample sets are
+numerically identical: one population counted for two receivers, not two independent draws (the record says so).
+
+Result at the time of writing (see the records for the numbers): every receiver/corner population has 400/400
+samples inside the row limits (empirical yield 1, exact 95 % lower bound 0.9908 >= 0.99), the declared negative
+control is `detected` for every measurement it is expected to degrade, and the threshold spread from mismatch is
+7 - 11 mV (1-sigma) against a margin of 120 - 200 mV: the worst case is the differential receiver at common-mode 2.5 V
+at the binding corner, threshold -75.6 mV (sigma 10.8 mV), 11.6 sigma from the 200 mV limit. This is local mismatch only, at
+two corners per receiver; it does not replace the corner records and says nothing about layout.
+
+Records: `diff-receiver-mismatch/records/`, `se-receiver-mismatch/records/`; raw evidence (requests,
+decks, klt reports, sample sets, limits files, `klt yield` reports) in
+`<experiment>/campaigns/<record-id>/`, hashed by `evidence.json`.
 
 ## dplus-pullup-tolerance
 

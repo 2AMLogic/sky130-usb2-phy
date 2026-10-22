@@ -1,0 +1,159 @@
+{
+  "schema": "sky130-usb2-phy.sim.mismatch/1",
+  "experiment": "diff-receiver-mismatch",
+  "claim": "Input-referred threshold (offset) of the sky130 differential receiver under local device mismatch (Monte Carlo, vary=mismatch, `*_mm` library sections) at common-mode 0.8, 1.65 and 2.5 V, at tt (27 C, 3.3 V) and at the binding corner of the 45-point record (sf, 100 C, 3.0 V), against spec/usb2-phy.md section 6 row 'Differential input sensitivity' |(D+) - (D-)| > 200 mV (threshold strictly inside (-200 mV, +200 mV) and the output a valid logic level at VDIFF = +/-200 mV). Schematic-level, no layout parasitics; not a signoff or catalog-tier claim.",
+  "spec_rows": [
+    "Differential input sensitivity"
+  ],
+  "corners": [
+    {
+      "id": "tt",
+      "process": "tt_mm",
+      "temperature_c": 27.0,
+      "supply_v": 3.3,
+      "basis": "typical corner with mismatch enabled"
+    },
+    {
+      "id": "binding",
+      "process": "sf_mm",
+      "temperature_c": 100.0,
+      "supply_v": 3.0,
+      "basis": "binding corner of the 45-point record sim/diff-receiver-sensitivity/records/20261009-121939-0555da1.md: the largest |vth| (-75.97 mV, vth_cm2p50_v) is at sf / 100 C / 3.00 V"
+    }
+  ],
+  "receivers": [
+    {
+      "id": "diff",
+      "netlist": "diff_receiver_mc_tb.spice",
+      "include": [
+        "../../../design/netlist/differential_receiver.spice"
+      ],
+      "analysis": {
+        "kind": "dc",
+        "args": "vd -0.4 0.4 0.001"
+      },
+      "measure": {
+        "vth_cm0p80_v": {
+          "spice": ".meas dc vth_cm0p80_v WHEN v(rxd08)=v(half) CROSS=1"
+        },
+        "rxd_p200_cm0p80_v": {
+          "spice": ".meas dc rxd_p200_cm0p80_v FIND v(rxd08) AT=0.2"
+        },
+        "rxd_m200_cm0p80_v": {
+          "spice": ".meas dc rxd_m200_cm0p80_v FIND v(rxd08) AT=-0.2"
+        },
+        "vth_cm1p65_v": {
+          "spice": ".meas dc vth_cm1p65_v WHEN v(rxd165)=v(half) CROSS=1"
+        },
+        "rxd_p200_cm1p65_v": {
+          "spice": ".meas dc rxd_p200_cm1p65_v FIND v(rxd165) AT=0.2"
+        },
+        "rxd_m200_cm1p65_v": {
+          "spice": ".meas dc rxd_m200_cm1p65_v FIND v(rxd165) AT=-0.2"
+        },
+        "vth_cm2p50_v": {
+          "spice": ".meas dc vth_cm2p50_v WHEN v(rxd25)=v(half) CROSS=1"
+        },
+        "rxd_p200_cm2p50_v": {
+          "spice": ".meas dc rxd_p200_cm2p50_v FIND v(rxd25) AT=0.2"
+        },
+        "rxd_m200_cm2p50_v": {
+          "spice": ".meas dc rxd_m200_cm2p50_v FIND v(rxd25) AT=-0.2"
+        }
+      },
+      "limits": {
+        "vth_cm0p80_v": {
+          "min": -0.2,
+          "max": 0.2,
+          "exclusive_min": true,
+          "exclusive_max": true
+        },
+        "rxd_p200_cm0p80_v": {
+          "min_frac_vdd": 0.9
+        },
+        "rxd_m200_cm0p80_v": {
+          "max_frac_vdd": 0.1
+        },
+        "vth_cm1p65_v": {
+          "min": -0.2,
+          "max": 0.2,
+          "exclusive_min": true,
+          "exclusive_max": true
+        },
+        "rxd_p200_cm1p65_v": {
+          "min_frac_vdd": 0.9
+        },
+        "rxd_m200_cm1p65_v": {
+          "max_frac_vdd": 0.1
+        },
+        "vth_cm2p50_v": {
+          "min": -0.2,
+          "max": 0.2,
+          "exclusive_min": true,
+          "exclusive_max": true
+        },
+        "rxd_p200_cm2p50_v": {
+          "min_frac_vdd": 0.9
+        },
+        "rxd_m200_cm2p50_v": {
+          "max_frac_vdd": 0.1
+        }
+      },
+      "control": {
+        "description": "fixed 0.25 V differential input offset (equivalent input-referred input-pair Vth skew, split across DP and DM) via the testbench skew_v parameter",
+        "replace": [
+          {
+            "find": ".param skew_v=0\n",
+            "with": ".param skew_v=0.25\n"
+          }
+        ],
+        "must_detect": [
+          "vth_cm0p80_v",
+          "vth_cm1p65_v",
+          "vth_cm2p50_v",
+          "rxd_m200_cm0p80_v",
+          "rxd_m200_cm1p65_v",
+          "rxd_m200_cm2p50_v"
+        ]
+      },
+      "spread_measures": [
+        "vth_cm0p80_v",
+        "vth_cm1p65_v",
+        "vth_cm2p50_v"
+      ]
+    }
+  ],
+  "record": {
+    "netlist_provenance": "schematic-derived netlist: xschem export of design/differential_receiver.sch (design/netlist/differential_receiver.spice) plus the Monte Carlo testbench deck, frozen per campaign; no layout, no parasitic extraction",
+    "statistical_convention": "Monte Carlo of local device mismatch only (monte_carlo.vary = mismatch): n = 400 samples per corner, base seed 166, per-sample seeds derived by `klt sim` (seed contract: sim.md 'Monte Carlo sampling'); every MOS and res_xhigh_po_1p41 instance draws independent mismatch (mc_mm_switch = 1 through the `*_mm` library sections); global process spread is the separate corner axis (tt and sf here, plus the 45- and 225-point deterministic records) and is not sampled",
+    "method": [
+      "Stimulus and measurements as sim/diff-receiver-sensitivity (VDIFF = DP - DM swept -400 ... +400 mV at 1 mV, VCM in {0.8, 1.65, 2.5} V, one receiver instance per VCM), with the supply, temperature and library section of the corner and the extra `skew_v` input-pair offset parameter (0 in the nominal campaign).",
+      "Row measurements per VCM: `vth_*` = first VDIFF at which RXD crosses VDD/2, must lie strictly inside (-200 mV, +200 mV); `rxd_p200_*` / `rxd_m200_*` = RXD at VDIFF = +/-200 mV, must be >= 0.9 x VDD / <= 0.1 x VDD of the corner supply (a valid logic level at the row limit). A sample with no crossing in +/-400 mV has no `vth` and is reported by klt yield as `errored`; the lint requires errored = 0 for a PASS record.",
+      "Each corner is its own population (one `klt sim` Monte Carlo request, backend batch, per corner); nothing is pooled across corners. `klt yield-samples` pairs each nominal campaign with its negative-control campaign (same deck, same seeds, the deterministic skew below), and `klt yield` grades the pair against the row limits with target_yield 0.99 at 95 % confidence.",
+      "Negative control (deterministic): the control campaign applies a fixed 0.25 V differential input offset (`skew_v`), which moves every sample's differential threshold to about -0.28 ... -0.33 V, past the 200 mV row. The yield report must flag it `detected` for every measurement; a campaign whose control is `not_detected` cannot be a PASS record. `rxd_p200_*` is not degraded by the declared skew by construction (a +0.25 V offset only raises the output at VDIFF = +200 mV), so its control is expected to read `not_detected` and is not graded; `klt yield` therefore also prints a run-level warning that at least one negative control did not show the expected degradation, which is this expected case, not a failure.",
+      "Mismatch activity: `klt sim --dry-run` reports mosfet and resistor mismatch as active for `*_mm` sections; the per-sample spread of `vth_*` in the report (stddev in each yield report's `distribution`) is the evidence that mismatch reached the g5v0d10v5 devices used here (a stddev of zero would fail the record).",
+      "PDK: the pinned open_pdks revision of sim/pdk-pins.json (current pin); each record states the revision and the model library sha256."
+    ],
+    "footer": "Scope: schematic-level statistical evidence for one block against the ratified differential-sensitivity row, at the corners named in the record. Local device mismatch only; global process spread is covered by the deterministic corner records, and the corner x mismatch combination is limited to the two corners named. It does not claim layout, DRC/LVS, level shifting or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance."
+  },
+  "monte_carlo": {
+    "n": 400,
+    "n_control": 50,
+    "seed": 166,
+    "vary": "mismatch"
+  },
+  "yield": {
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "target_yield": 0.99,
+    "sample_size_justification": "target_yield 0.99 at 95 % two-sided confidence: with zero observed failures the exact (Clopper-Pearson) lower bound reaches 0.99 only for n >= 368 (klt yield `required_n_for_target`), so n = 400 per corner is the smallest round count that can support the claim; the +/-0.01 precision target needs n >= 183. A failing row is not rescued by a larger n: it is recorded as failing."
+  },
+  "batch": {
+    "capacity_wait_s": 900,
+    "max_concurrent_jobs": 2
+  },
+  "remote_hosts": {
+    "nominal": 4,
+    "control": 1
+  }
+}

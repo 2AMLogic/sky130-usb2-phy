@@ -137,6 +137,25 @@
       ]
     },
     {
+      "id": "diff-receiver-mismatch",
+      "partition": "analog",
+      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+      "cold_start": "python3 sim/run_mismatch.py diff-receiver-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/diff-receiver-mismatch/testbench/mc.json",
+          "sha256": "sha256:8df72879657729dff16ec9505a3cffeae254e69a6ae8d6e989de94a951b76969",
+          "role": "Monte Carlo campaign definition"
+        },
+        {
+          "path": "sim/diff-receiver-mismatch/testbench/diff_receiver_mc_tb.spice",
+          "sha256": "sha256:eae62ee61fc5211e6ec7b2c817456bb8c1a2fe65c2aa8916b280c63ffb9d4988",
+          "role": "testbench netlist"
+        }
+      ]
+    },
+    {
       "id": "diff-receiver-sensitivity",
       "partition": "analog",
       "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
@@ -247,6 +266,30 @@
           "path": "sim/se-receiver-dp-thresholds/testbench/se_rx_dp_tb.spice",
           "sha256": "sha256:1b80fed8d59cb94ba5896a29eadba6acd6da3033880bacd1e80dbcee51b6c8cd",
           "role": "testbench netlist"
+        }
+      ]
+    },
+    {
+      "id": "se-receiver-mismatch",
+      "partition": "analog",
+      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+      "cold_start": "python3 sim/run_mismatch.py se-receiver-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/se-receiver-mismatch/testbench/mc.json",
+          "sha256": "sha256:0527d7f75b72a94b98d42395d72c5b9ad4fb15633b2a619c6079eb951971c9c7",
+          "role": "Monte Carlo campaign definition"
+        },
+        {
+          "path": "sim/se-receiver-mismatch/testbench/se_rx_dp_mc_tb.spice",
+          "sha256": "sha256:e9b58fcd3442fe2138f6c7287895be6607029ffe82cd2eb498411412c2e79082",
+          "role": "testbench netlist (D+)"
+        },
+        {
+          "path": "sim/se-receiver-mismatch/testbench/se_rx_dm_mc_tb.spice",
+          "sha256": "sha256:ac4ea37382785b11112dbadaf3537c58a351c937eb8cc6addb9f848d07495ba2",
+          "role": "testbench netlist (D-)"
         }
       ]
     },

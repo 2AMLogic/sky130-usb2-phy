@@ -1,0 +1,66 @@
+{
+  "requests": [
+    {
+      "index": 0,
+      "request": "diff-tt-nominal.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": null,
+      "job_ids": [
+        "klt-sim-b886d9ad6df6",
+        "klt-sim-5375802a0b2f",
+        "klt-sim-e340e109688d",
+        "klt-sim-8c234535a88b"
+      ],
+      "report": "out/diff-tt-nominal.request/report.json",
+      "error": null,
+      "complete": true,
+      "from": "20261020-183613-a78d2ac"
+    },
+    {
+      "index": 1,
+      "request": "diff-tt-control.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": "klt-sim-65f37ffa7b4e",
+      "job_ids": [
+        "klt-sim-65f37ffa7b4e"
+      ],
+      "report": "out/diff-tt-control.request/report.json",
+      "error": null,
+      "complete": true,
+      "from": "20261020-183613-a78d2ac"
+    },
+    {
+      "index": 2,
+      "request": "diff-binding-nominal.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": null,
+      "job_ids": [
+        "klt-sim-d035c234dab8",
+        "klt-sim-82159f71adb9",
+        "klt-sim-e33b0b8ea9dd",
+        "klt-sim-7ebf156cf0d1"
+      ],
+      "report": "out/diff-binding-nominal.request/report.json",
+      "error": null,
+      "complete": true,
+      "from": "20261020-183613-a78d2ac"
+    },
+    {
+      "index": 3,
+      "request": "diff-binding-control.request.json",
+      "status": "pass",
+      "exit_code": 0,
+      "job_id": "klt-sim-39eb6cde7a3e",
+      "job_ids": [
+        "klt-sim-39eb6cde7a3e"
+      ],
+      "report": "out/diff-binding-control.request/report.json",
+      "error": null,
+      "complete": true,
+      "from": "20261020-183613-a78d2ac"
+    }
+  ]
+}
