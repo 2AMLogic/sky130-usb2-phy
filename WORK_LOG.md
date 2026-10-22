@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-20
+
+- **PR #153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
+- **Issue #151** (closed): Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3
+
 ### 2026-10-17
 
 - **PR #169**: fix(rtl): register RX FIFO full flag to remove wr_en combinational loop
