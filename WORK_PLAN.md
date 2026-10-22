@@ -46,7 +46,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#176**: sim: mismatch Monte Carlo evidence for the receiver sensitivity and threshold rows
 
 ## Proposed
 
@@ -75,7 +75,7 @@ Issues carrying `loom:curated`.
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 3 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 2 |
