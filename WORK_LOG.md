@@ -5,8 +5,10 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-22
 
+- **PR #184**: flow: re-qualify digital flow records under open_pdks f6eeac7
 - **PR #172**: feat(layout): sky130 differential_receiver layout with DRC/LVS/ERC evidence and analog record lint
 - **PR #177**: test(sim): re-qualify cited analog sim records under open_pdks f6eeac7
+- **Issue #152** (closed): Re-qualify cited sim and flow records under open_pdks f6eeac7 (child of #151)
 - **Issue #167** (closed): T1 items 2-4 (analog): lay out the differential receiver as the first DRC/LVS-verified analog leaf
 
 ### 2026-10-21

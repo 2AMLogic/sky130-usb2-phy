@@ -35,13 +35,12 @@ _None._
 Issues currently being built (`loom:building`).
 
 - **#166**: T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement
-- **#167**: T1 items 2-4 (analog): lay out the differential receiver as the first DRC/LVS-verified analog leaf
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#177**: test(sim): re-qualify cited analog sim records under open_pdks f6eeac7
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -55,13 +54,11 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#152**: Re-qualify cited sim and flow records under open_pdks f6eeac7 (child of #151) *(curated)*
 - **#166**: T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement *(curated)*
-- **#167**: T1 items 2-4 (analog): lay out the differential receiver as the first DRC/LVS-verified analog leaf *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-_None._
+- **#174**: Remove sim/harness/SHARING.md: closed #119 analysis with drifted line counts and citations *(hermit)*
 
 ## Epics
 
@@ -76,10 +73,10 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 1 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 5 |
-| Architect / Hermit proposals | 0 |
+| Curated | 3 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
