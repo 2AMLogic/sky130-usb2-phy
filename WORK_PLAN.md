@@ -34,7 +34,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#174**: Remove sim/harness/SHARING.md: closed #119 analysis with drifted line counts and citations
 
 ## PRs Awaiting Review
 
@@ -46,7 +46,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#189**: docs: remove stale harness sharing analysis
 
 ## Proposed
 
@@ -72,9 +72,9 @@ Issues carrying `loom:curated`.
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 0 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 2 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 2 |
