@@ -87,6 +87,95 @@ their own `corner_matrix.subset_justification`: they do not re-run the
 physical flow, they add a nominal-corner-only stage on top of the sweep
 whose physical results they carry forward.
 
+### 1.1 Analog sim records re-qualified under open_pdks `f6eeac7` (#152)
+
+The open_pdks pin moved from `c6d73a35…` to `f6eeac7d…` in #151. The cited
+analog sim records were re-run as **new** records (full grids through
+`klt sim`, batch backend, one `environment.remote` job id each); each new
+record's `Supersedes` names the `c6d73a3` record. The old records are
+unchanged and remain as historical evidence under the retired pin. The digital
+flow records are re-qualified in §1.2.
+
+| Experiment (variant) | Superseded (`c6d73a3`) | New (`f6eeac7`) | Grid | Status |
+|---|---|---|---|---|
+| `diff-receiver-sensitivity` | `20261009-121939-0555da1` | `20261020-172719-ca4a45a` | 45 | PASS |
+| `diff-receiver-sensitivity` (resistor-sets) | `20261010-094000-0d51889` | `20261020-173124-ca4a45a` | 225 | PASS |
+| `dplus-pullup-tolerance` | `20261009-172948-d85f0dc` | `20261020-174332-ca4a45a` | 45 | PASS |
+| `dplus-pullup-tolerance` (resistor-sets) | `20261010-014615-8ebfb55` | `20261020-174658-ca4a45a` | 225 | PASS |
+| `driver-signal-quality` | `20261009-182102-e232b2f` | `20261020-181618-ca4a45a` | 45 | PASS |
+| `driver-static` | `20261009-185058-e232b2f` | `20261020-194710-ca4a45a` | 45 | PASS |
+| `se-receiver-dm-thresholds` | `20261009-142853-484240f` | `20261020-202908-ea63f5c` | 45 | PASS |
+| `se-receiver-dm-thresholds` (resistor-sets) | `20261010-090217-0d51889` | `20261020-203356-ea63f5c` | 225 | PASS |
+| `se-receiver-dp-thresholds` | `20261009-142213-484240f` | `20261020-204606-ea63f5c` | 45 | PASS |
+| `se-receiver-dp-thresholds` (resistor-sets) | `20261010-074010-0d51889` | `20261020-205102-ea63f5c` | 225 | PASS |
+
+**Movement table.** Every measurement at every corner was compared between
+each superseded/new pair (306 measurement series over 1,170 corner points;
+each pair has an identical corner set). Result: **no measurement moved at all**
+(max |delta| = 0, bit-identical values) and no check changed verdict, so no
+result crossed its spec/tolerance and no movement issue is needed. This is
+consistent with the evidence: the model library hash is unchanged across the
+re-pin (`lib_sha256` `17c208a6…` in both the old and new records), so the
+re-pin changed the PDK revision identity without changing the ngspice model
+files these decks include.
+
+Not re-run: the driver-signal-quality records dated `20261016-*-59ec9c0`
+fail `sim/check_records.py` ("frozen corners.json: PDK identity …
+c6d73a35… was retired") on `main` already; they are not cited references and
+are left untouched.
+
+### 1.2 Digital flow records re-qualified under open_pdks `f6eeac7` (#152)
+
+The `flow/smoke-utmi_stub` six-corner sweep was re-run through
+`flow/run_flow.py`, and `flow/utmi-top` through `flow/run_synth_utmi_top.py`,
+as **new** records; each names its predecessor in `supersedes`. The nominal
+corner's functional-verification record was re-minted by
+`flow/postlayout_verify_utmi_stub.py` on top of the new nominal record. Old
+records, `flow/drc-deck-coverage.json` and the old artifacts are untouched.
+The `layout/utmi_stub.*` copies were overwritten by the nominal run, as every
+run of `run_flow.py` does; they are the nominal corner's committed outputs.
+
+**DRC deck held constant.** The installed `klt` (`0.7.1.dev2430`) ships a
+different curated deck than the one `flow/drc-deck-coverage.json` describes
+(`content_hash sha256:a903acb1…`, klt `0.5.0`). So the DRC stage alone ran
+through `uvx --from klayout-tools==0.5.0 klt drc` (`run_flow.py --drc-klt-from`),
+and the other stages ran on the installed `klt`. Each new record lists the
+`klt` version per stage in `provenance.klt_version_by_stage`. The 0.5.0 deck
+ran on the `f6eeac7` tree's GDS without problems.
+
+| Experiment | Superseded | New | Scope |
+|---|---|---|---|
+| `smoke-utmi_stub` (6 corners) | `20260918-214755-fb60e2c-<corner>` | `20261022-072118-57ba26c-<corner>` | synth, P&R, STA, extract, LVS, DRC |
+| `smoke-utmi_stub` (`tt_025C_1v80`) | `20260919-001148-0f7636d-tt_025C_1v80` | `20261022-072504-57ba26c-tt_025C_1v80` | the six stages + post-layout functional verification (2/2 pass) |
+| `utmi-top` | `20261017-193151-1e192d8-tt_025C_1v80` | `20261022-072453-57ba26c-tt_025C_1v80` | synthesis-only + RTL / gate-level FV |
+
+`20261022-072404-57ba26c-tt_025C_1v80` is an intermediate functional-verification
+record, minted before a help-text edit to the driver made its input hash stale;
+`…072504…` supersedes it. It is kept because records are append-only.
+
+**Movement table.** Every numeric and verdict field the section 3 table reports
+was compared between each superseded/new pair:
+
+| Field | All six corners | Movement |
+|---|---|---|
+| synthesized instances / area | 9 / 225.216 µm² | none |
+| die area / utilization | 500.48 µm² / 51.5 % | none |
+| routed wirelength | 485 → 494 µm | +9 µm (+1.9 %), no spec row |
+| timing | `unconstrained` | none |
+| DRC | clean (0) | none |
+| LVS / power connectivity | match | none |
+| LVS net correspondence | `VGND` → `TXREADY` pairing absent from the new `lvs-report.json` (klt 0.7.1.dev) | behavior change in the tool, an improvement; `flow/README.md`'s present-tense disclosure still describes the 0.4.0/0.5.0 records |
+| `utmi-top` synthesis | 939 cells, 311 flip-flops, 11931.4432 µm² | none |
+| `utmi-top` gate-level FV | 25/26 pass | none, the same single failure as the predecessor |
+
+The wirelength change comes with a different clock-leaf assignment in
+`layout/utmi_stub.asbuilt.v`. It cannot be attributed to the PDK pin alone:
+the non-DRC stages also ran on a newer `klt` (`0.7.1.dev2430`) than the
+predecessors (`0.5.0`), and the PDK pin and the `klt` version were not varied
+separately. No spec row constrains wirelength and no verdict changed, so no
+movement issue is filed. The `utmi-top` gate-level FV failure predates this
+re-run and is unchanged.
+
 ## 2. `spec/usb2-phy.md` §6 — per-row evidence index
 
 Rows are numbered top-to-bottom as they appear in §6's table; the spec itself

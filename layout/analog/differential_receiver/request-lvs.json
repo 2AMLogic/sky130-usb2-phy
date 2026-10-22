@@ -1,0 +1,34 @@
+{
+  "_comment": [
+    "klt lvs request for layout/analog/differential_receiver (issue #167), engine klayout-runset:",
+    "the PDK's own sky130.lvs runset, so the 5V devices and the xhigh_po resistor are recognised.",
+    "Paths are repo-relative and `$PDK_ROOT` is the open_pdks tree run_checks.py resolved and",
+    "verified against sim/pdk-pins.json; run_checks.py writes an absolute-path copy to a scratch",
+    "directory (klt resolves request paths against the request file) and runs that.",
+    "deck_vars, each load-bearing:",
+    "  convert_subckts=true  the reference is an xschem export of `X<name> ... <model> L= W=` lines;",
+    "                        without it the runset reads them as calls to an undefined subcircuit",
+    "                        and the reference has no devices (klayout-tools#3989).",
+    "  scale=true            the reference writes L/W in micrometres with no unit suffix, which the",
+    "                        SPICE reader stores as metres; the runset scales the layout side by",
+    "                        1e6 to match (klayout-tools#3989).",
+    "  thr=2                 runset thread count; this host is shared and the repo's rule is to stay",
+    "                        at or below 2."
+  ],
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout-runset",
+  "layout": {
+    "file": "layout/analog/differential_receiver/differential_receiver.gds",
+    "top": "differential_receiver"
+  },
+  "reference": {
+    "netlist": "design/netlist/differential_receiver.spice",
+    "top": "differential_receiver"
+  },
+  "deck_file": "$PDK_ROOT/sky130A/libs.tech/klayout/lvs/sky130.lvs",
+  "deck_vars": {
+    "convert_subckts": "true",
+    "scale": "true",
+    "thr": "2"
+  }
+}

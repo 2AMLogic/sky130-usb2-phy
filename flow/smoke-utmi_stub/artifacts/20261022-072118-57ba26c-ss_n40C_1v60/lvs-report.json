@@ -1,0 +1,464 @@
+{
+  "schema_version": 1,
+  "engine": "klayout",
+  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/flow/build/ss_n40C_1v60/.klt/extract/utmi_stub.gate.spice",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/flow/build/ss_n40C_1v60/.klt/place-and-route/utmi_stub.v",
+  "top": "UTMI_STUB",
+  "reference_top": "UTMI_STUB",
+  "parameter_tolerance": null,
+  "options": {
+    "combine_devices": false,
+    "combine_devices_per_circuit": null,
+    "combine_devices_max_attempts": 5,
+    "flatten_layout": false,
+    "flatten_reference": false,
+    "netgen_setup": null,
+    "parameter_tolerance": null,
+    "compare_parameters": null,
+    "power_connectivity": {
+      "expected_nets": {
+        "VPWR": "VPWR",
+        "VGND": "VGND"
+      }
+    },
+    "anchor_top_level_pins": null,
+    "strict_top_level_pin_count": false,
+    "compare_mos_flavour": false,
+    "supply_nets": [
+      "GND",
+      "VCC",
+      "VDD",
+      "VGND",
+      "VPWR",
+      "VSS"
+    ],
+    "finfet_bulk": null
+  },
+  "hints_applied": null,
+  "constant_nets_applied": null,
+  "status": "match",
+  "power_connectivity": {
+    "status": "match",
+    "reason": null,
+    "power_pins": [
+      "VGND",
+      "VPB",
+      "VPWR"
+    ],
+    "power_pins_derivation": {
+      "rule": "declared-by-every-instantiated-master",
+      "masters": [
+        "SKY130_FD_SC_HD__BUF_4",
+        "SKY130_FD_SC_HD__DFRTP_1",
+        "SKY130_FD_SC_HD__INV_1"
+      ],
+      "master_count": 3,
+      "corroborated": true,
+      "reason": null
+    },
+    "instance_count": 60,
+    "expected_nets": {
+      "VGND": "VGND",
+      "VPWR": "VPWR"
+    },
+    "unchecked_expected_pins": [],
+    "findings": [],
+    "finding_count": 0
+  },
+  "body_verification": {
+    "status": "unchecked",
+    "reason": "no request.layout.deck was given (the pre-extracted request.layout.netlist form), so nothing establishes this layout's substrate/well-tap convention and no synthesized body net can be told apart from a real one -- this run verified nothing about the device bodies either way",
+    "device_classes": [],
+    "device_count": 0,
+    "findings": [],
+    "finding_count": 0
+  },
+  "device_parameter_coverage": [],
+  "mismatch_count": 3,
+  "error_count": 0,
+  "category_counts": {
+    "topology.power_only_pruned": 1,
+    "topology.reference_port_alias_joined": 1,
+    "topology.top_level_pins_anchored": 1
+  },
+  "category_error_counts": {},
+  "counts": {
+    "nets": {
+      "layout": 26,
+      "reference": 23,
+      "matched": 42
+    },
+    "devices": {
+      "layout": 0,
+      "reference": 0,
+      "matched": 0
+    },
+    "pins": {
+      "layout": 25,
+      "reference": 21,
+      "matched": 43
+    }
+  },
+  "device_classes": null,
+  "environment": {
+    "engine": "klayout",
+    "engine_version": "0.30.12",
+    "netgen_binary": null,
+    "layout_sha256": "be1f5c4887f3439bd3e38872dc74075301d48019353c50e1ef63e22cc6b2f083",
+    "reference_sha256": "54421a42cfa50da1ba9ed5ba4dfb2f72c61fa699346d1f786d10cb01d69b267a",
+    "extracted_netlist": null
+  },
+  "provenance": {
+    "klt_version": "0.7.1.dev2430+g6bf32713ea21",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": null,
+    "input": {
+      "content_hash": "sha256:be1f5c4887f3439bd3e38872dc74075301d48019353c50e1ef63e22cc6b2f083",
+      "role": "netlist"
+    },
+    "klayout_version_mismatch": false,
+    "pin_order_sources": [
+      {
+        "library": "sky130_fd_sc_hd",
+        "path": "/home/ubuntu/.ciel/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice",
+        "cells": 437
+      }
+    ]
+  },
+  "mismatches": [
+    {
+      "category": "topology.power_only_pruned",
+      "severity": "warning",
+      "description": "removed layout-side circuit(s) whose every declared pin is a power/ground pin of the reference library (a pin the library declares but the gate-level-Verilog reference never carries), and every instance of them, before comparing -- 5 circuit(s): SKY130_FD_SC_HD__FILL_1, SKY130_FD_SC_HD__FILL_2, SKY130_FD_SC_HD__FILL_4, SKY130_FD_SC_HD__FILL_8, SKY130_FD_SC_HD__TAPVPWRVGND_1 (see docs/cli/lvs.md, \"topology.power_only_pruned\")",
+      "side": "layout",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "topology.reference_port_alias_joined",
+      "severity": "warning",
+      "description": "reference circuit 'utmi_stub' declared port(s) TxReady via a plain 'assign <port> = ...;' alias (request.reference.form: \"gate-level-verilog\") -- joined onto the same net as 'RxValid' before comparing, matching a layout with a single physical net for these names, instead of reporting them as unmatched (see docs/cli/lvs.md, \"topology.reference_port_alias_joined\")",
+      "side": "reference",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": {
+        "canonical_net": "RxValid",
+        "aliased_ports": [
+          "TxReady"
+        ]
+      },
+      "circuit": {
+        "layout": null,
+        "reference": "utmi_stub"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "topology.top_level_pins_anchored",
+      "severity": "warning",
+      "description": "20 top-level pin name(s) declared on both sides were anchored by name before comparing (options.anchor_top_level_pins): each one's layout net is asserted to match the reference net of the same-named pin, which the comparer's own topology-only net pairing does not otherwise require. Without it, two boundary nets with identical topology (e.g. two bits of a black-box macro's bus) are interchangeable and a swap between them compares clean -- see docs/cli/lvs.md, \"Top-level pin anchoring\"",
+      "side": "both",
+      "net": null,
+      "device": null,
+      "property": null,
+      "details": {
+        "pins": [
+          "CLK",
+          "DATAIN[0]",
+          "DATAIN[1]",
+          "DATAIN[2]",
+          "DATAIN[3]",
+          "DATAIN[4]",
+          "DATAIN[5]",
+          "DATAIN[6]",
+          "DATAIN[7]",
+          "DATAOUT[0]",
+          "DATAOUT[1]",
+          "DATAOUT[2]",
+          "DATAOUT[3]",
+          "DATAOUT[4]",
+          "DATAOUT[5]",
+          "DATAOUT[6]",
+          "DATAOUT[7]",
+          "RST_N",
+          "RXVALID",
+          "TXVALID"
+        ],
+        "pin_count": 20,
+        "pins_truncated": false
+      },
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    }
+  ],
+  "net_correspondence": [
+    {
+      "layout": "VGND",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VGND",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VGND",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VGND",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VPB",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VPB",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VPB",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "VPWR",
+      "reference": null,
+      "pin": true,
+      "heuristic": true
+    },
+    {
+      "layout": "Y",
+      "reference": null,
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "A",
+      "reference": "A",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "CLK",
+      "reference": "CLK",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "CLK",
+      "reference": "CLK",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "CLKNET_0_CLK",
+      "reference": "CLKNET_0_CLK",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "CLKNET_1_0__LEAF_CLK",
+      "reference": "CLKNET_1_0__LEAF_CLK",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "CLKNET_1_1__LEAF_CLK",
+      "reference": "CLKNET_1_1__LEAF_CLK",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "D",
+      "reference": "D",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[0]",
+      "reference": "DATAIN[0]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[1]",
+      "reference": "DATAIN[1]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[2]",
+      "reference": "DATAIN[2]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[3]",
+      "reference": "DATAIN[3]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[4]",
+      "reference": "DATAIN[4]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[5]",
+      "reference": "DATAIN[5]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[6]",
+      "reference": "DATAIN[6]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAIN[7]",
+      "reference": "DATAIN[7]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[0]",
+      "reference": "DATAOUT[0]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[1]",
+      "reference": "DATAOUT[1]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[2]",
+      "reference": "DATAOUT[2]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[3]",
+      "reference": "DATAOUT[3]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[4]",
+      "reference": "DATAOUT[4]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[5]",
+      "reference": "DATAOUT[5]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[6]",
+      "reference": "DATAOUT[6]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "DATAOUT[7]",
+      "reference": "DATAOUT[7]",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "Q",
+      "reference": "Q",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "RESET_B",
+      "reference": "RESET_B",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "RST_N",
+      "reference": "RST_N",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "RXVALID",
+      "reference": "RXVALID",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "TXVALID",
+      "reference": "TXVALID",
+      "pin": true,
+      "heuristic": false
+    },
+    {
+      "layout": "X",
+      "reference": "X",
+      "pin": true,
+      "heuristic": false
+    }
+  ]
+}

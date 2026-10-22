@@ -10,7 +10,7 @@ outside the markers is touched by automation.
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
+_None._
 
 ## Very Important
 
@@ -34,7 +34,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#151**: Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3
+- **#166**: T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement
 
 ## PRs Awaiting Review
 
@@ -46,7 +46,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
+_None._
 
 ## Proposed
 
@@ -54,11 +54,11 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#151**: Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3 *(curated)*
+- **#166**: T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement *(curated)*
 
 ## Proposed (Architect / Hermit)
 
-_None._
+- **#174**: Remove sim/harness/SHARING.md: closed #119 analysis with drifted line counts and citations *(hermit)*
 
 ## Epics
 
@@ -69,14 +69,14 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
+| Approved PRs awaiting merge | 0 |
 | Curated | 3 |
-| Architect / Hermit proposals | 0 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->

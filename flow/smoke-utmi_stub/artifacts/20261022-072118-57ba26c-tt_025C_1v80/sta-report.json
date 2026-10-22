@@ -1,0 +1,172 @@
+{
+  "schema_version": 2,
+  "engine": "openroad",
+  "engine_version": "26Q3-1510-g6cb3f2b704",
+  "hdl_toplevel": "utmi_stub",
+  "status": "ok",
+  "def_path": {
+    "path": "flow/build/tt_025C_1v80/.klt/place-and-route/utmi_stub.def",
+    "scope": "repo"
+  },
+  "verilog_path": null,
+  "geometry_source": "routed",
+  "wire_load_model": null,
+  "wire_load_mode": null,
+  "clock_mode": "ideal",
+  "spef_path": null,
+  "worst_slack_ns": 1e+39,
+  "total_negative_slack_ns": 0,
+  "worst_hold_slack_ns": 1e+39,
+  "total_negative_hold_slack_ns": 0,
+  "fmax_mhz": 59.066,
+  "timing_status": "unconstrained",
+  "constraint_completeness": {
+    "status": "incomplete",
+    "unconstrained_endpoints": {
+      "status": "ok",
+      "count": 19,
+      "sample": [
+        "DataIn[0]",
+        "DataIn[1]",
+        "DataIn[2]",
+        "DataIn[3]",
+        "DataIn[4]",
+        "DataIn[5]",
+        "DataIn[6]",
+        "DataIn[7]",
+        "RxValid",
+        "TxReady",
+        "_0_/D",
+        "_1_/D",
+        "_2_/D",
+        "_3_/D",
+        "_4_/D",
+        "_5_/D",
+        "_6_/D",
+        "_7_/D",
+        "_8_/D"
+      ],
+      "truncated": false,
+      "reason": null
+    },
+    "unclocked_registers": {
+      "status": "ok",
+      "count": 0,
+      "sample": [],
+      "truncated": false,
+      "reason": null
+    },
+    "sample_limit": 20
+  },
+  "setup_violation_count": 0,
+  "hold_violation_count": 0,
+  "worst_setup_path": {
+    "status": "no_paths",
+    "check_type": null,
+    "engine_check_role": null,
+    "startpoint": null,
+    "endpoint": null,
+    "slack_ns": null,
+    "consistent_with_aggregate": null,
+    "reason": null
+  },
+  "worst_hold_path": {
+    "status": "no_paths",
+    "check_type": null,
+    "engine_check_role": null,
+    "startpoint": null,
+    "endpoint": null,
+    "slack_ns": null,
+    "consistent_with_aggregate": null,
+    "reason": null
+  },
+  "clock_skew_ns": 0,
+  "estimated_power_mw": 0.0187,
+  "power_basis": {
+    "activity_source": "engine_default",
+    "activity": null,
+    "duty": null,
+    "parasitics": "estimate_only"
+  },
+  "provenance": {
+    "klt_version": "0.7.1.dev2430+g6bf32713ea21",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": {
+      "name": "sky130_fd_sc_hd__tt_025C_1v80",
+      "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+      "released": false,
+      "path": {
+        "path": null,
+        "scope": "external"
+      }
+    },
+    "input": {
+      "content_hash": "sha256:644279d847c2902677e1f0487eeb2f5e5c2a443c7bd4411d89df373cbca59c30",
+      "role": "layout"
+    }
+  },
+  "spef_annotation": null,
+  "clock_propagation": null,
+  "sdf": null,
+  "electrical_checks": {
+    "parasitics_source": "none",
+    "max_transition": {
+      "coverage": "checked",
+      "limit_source": "liberty",
+      "unit": "ns",
+      "violation_count": 0,
+      "net_count": 0,
+      "worst_excess": null,
+      "worst_pin": null
+    },
+    "max_capacitance": {
+      "coverage": "checked",
+      "limit_source": "liberty",
+      "unit": "pF",
+      "violation_count": 0,
+      "net_count": 0,
+      "worst_excess": null,
+      "worst_pin": null
+    }
+  },
+  "engine_log": {
+    "invocation_id": "fb80451052f24c878a1ca2c1ee55fd3a",
+    "script_name": "sta_utmi_stub.tcl",
+    "script_path": {
+      "path": "flow/build/tt_025C_1v80/.klt/sta/sta_utmi_stub.tcl",
+      "scope": "repo"
+    },
+    "script_sha256": "0d6a03232e3ac4360293474bcc9fe2cbefa16ec7c09d958c3d1a4364114f5ba7",
+    "metrics_path": {
+      "path": "flow/build/tt_025C_1v80/.klt/sta/utmi_stub_metrics.json",
+      "scope": "repo"
+    },
+    "outcome": "exited",
+    "returncode": 0,
+    "directory": {
+      "path": "flow/build/tt_025C_1v80/.klt/sta/openroad-logs/fb80451052f24c878a1ca2c1ee55fd3a",
+      "scope": "repo"
+    },
+    "stdout_path": {
+      "path": "flow/build/tt_025C_1v80/.klt/sta/openroad-logs/fb80451052f24c878a1ca2c1ee55fd3a/stdout.log",
+      "scope": "repo"
+    },
+    "stderr_path": {
+      "path": "flow/build/tt_025C_1v80/.klt/sta/openroad-logs/fb80451052f24c878a1ca2c1ee55fd3a/stderr.log",
+      "scope": "repo"
+    },
+    "metadata_path": {
+      "path": "flow/build/tt_025C_1v80/.klt/sta/openroad-logs/fb80451052f24c878a1ca2c1ee55fd3a/invocation.json",
+      "scope": "repo"
+    },
+    "retention_errors": []
+  }
+}

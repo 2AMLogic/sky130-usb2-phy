@@ -1,0 +1,5476 @@
+{
+  "schema_version": 3,
+  "netlist": {
+    "path": "sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/body.spice",
+    "scope": "repo"
+  },
+  "status": "pass",
+  "corner_count": 45,
+  "passed": 45,
+  "failed": 0,
+  "errored": 0,
+  "inconclusive": 0,
+  "diagnostic_counts": {
+    "by_code": {},
+    "by_severity": {},
+    "corners_with_diagnostics": 0
+  },
+  "metrics": {
+    "sim__corner__count": 45,
+    "sim__corner__passed_count": 45,
+    "sim__corner__failed_count": 0,
+    "sim__corner__errored_count": 0,
+    "sim__corner__inconclusive_count": 0
+  },
+  "environment": {
+    "engine": "ngspice",
+    "engine_version": "46",
+    "ngspice_binary": "/usr/local/bin/ngspice",
+    "engine_build": {
+      "version_banner": "******\n** ngspice-46 : Circuit level simulation program\n** Compiled with KLU Direct Linear Solver\n** The U. C. Berkeley CAD Group\n** Copyright 1985-1994, Regents of the University of California.\n** Copyright 2001-2025, The ngspice team.\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\n** Creation Date: Wed Aug  5 10:12:28 UTC 2026\n******",
+      "binary_sha256": "c874869b16dc8a31cfa9d37d2b90a2a9e0e5b996f8e2535db89eb82855072931",
+      "probe": "ok",
+      "reason": null
+    },
+    "models_lib": {
+      "path": null,
+      "scope": "external"
+    },
+    "models_lib_sha256": "17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+    "models_lib_sha256_scope": "client",
+    "netlist_sha256": "4ac43d1a8b9d6353802caff0bdf6eead45507d3736de095ee90d16945e8b5be4",
+    "netlist_closure": [
+      {
+        "path": "sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/body.spice",
+        "scope": "repo",
+        "sha256": "4ac43d1a8b9d6353802caff0bdf6eead45507d3736de095ee90d16945e8b5be4"
+      }
+    ],
+    "netlist_identity": "sha256:5da462d1fca7a2e8d8ecd8cf438af4783b01d2cbb3ef95f41e84df70e7a72454",
+    "remote": {
+      "provider": "aws-batch-fleet",
+      "job_id": "klt-sim-2945eb0172e4",
+      "region": "us-east-1",
+      "instance_id": "i-06b6daf79f9c40a73",
+      "instance_type": "c7i.8xlarge",
+      "availability_zone": "us-east-1d",
+      "ami_id": "ami-0e0bec04ad8e81877",
+      "lifecycle": "spot",
+      "spot": true,
+      "state": "done",
+      "exit_code": "0",
+      "concurrency": "2",
+      "physical_cores": "16",
+      "elapsed_seconds": 223,
+      "client_submitted_at": "2026-10-20T20:29:09.167399Z",
+      "client_launched_at": "2026-10-20T20:29:26.853601Z",
+      "client_status_terminal_at": "2026-10-20T20:33:33.036743Z",
+      "client_collected_at": "2026-10-20T20:33:34.171250Z",
+      "runner_klt_version": "0.7.0",
+      "client_klt_version": "0.7.1.dev2264+gcba5e957d9ed",
+      "runner_compatibility": "match",
+      "worker_environment": {
+        "capture": "ok",
+        "simulator": {
+          "requested_binary": "ngspice",
+          "binary_source": "PATH",
+          "selected_path": "/usr/local/bin/ngspice",
+          "version_banner": "******\n** ngspice-46 : Circuit level simulation program\n** Compiled with KLU Direct Linear Solver\n** The U. C. Berkeley CAD Group\n** Copyright 1985-1994, Regents of the University of California.\n** Copyright 2001-2025, The ngspice team.\n** Please get your ngspice manual from https://ngspice.sourceforge.io/docs.html\n** Please file your bug-reports at http://ngspice.sourceforge.net/bugrep.html\n** Creation Date: Thu Oct  1 23:51:59 UTC 2026\n******\n",
+          "version_probe": "ok"
+        },
+        "pdk": {
+          "variant": "sky130A",
+          "root": "/opt/pdk",
+          "stamp_scheme": "sources-sha256",
+          "stamp_sha256": "d5ac52956829da3fee35d0b307d4e6cb83ae0e6535b56dba2eefed61cdffaf9b",
+          "stamp_text": "open_pdks c6d73a35f524070e85faff4a6a9eef49553ebc2b",
+          "models_staged": false
+        },
+        "cpu_model": "Intel(R) Xeon(R) Platinum 8488C",
+        "omp_num_threads": null,
+        "image_manifest": null,
+        "model_inputs": null,
+        "diagnostics": [],
+        "pdk_stamp_comparison": {
+          "status": "mismatch",
+          "warning": "the worker's PDK revision stamp for sky130A differs from the one the submitter resolved locally; results may differ from a local run (a matching stamp would not prove identical models)"
+        },
+        "engine_build_comparison": {
+          "status": "mismatch",
+          "warning": "the worker's ngspice --version banner differs from the local binary's; build options (e.g. FFT linkage) may differ, so results derived from them can differ from a local run"
+        }
+      },
+      "runner_model_inputs": null,
+      "job_ceiling": {
+        "basis": "conservative_serial_bound",
+        "unit_count": 45,
+        "per_unit_timeout_s": 900,
+        "overhead_s": 120.0,
+        "job_bound_s": 40620.0,
+        "max_job_seconds": 3600.0,
+        "max_job_seconds_source": "fleet_config",
+        "exceeds_ceiling": true,
+        "check": "warn",
+        "max_units_per_job": 3,
+        "recommended_hosts": 15,
+        "warning": "batch job bound 40620s (options.timeout_s 900s x 45 units + 120s; a conservative fully-serial upper bound, not a runtime estimate) exceeds the fleet's whole-job ceiling of 3600s (max_job_seconds from fleet_config); a job still running at the ceiling is killed and every unit is reported batch_job_timeout. Set request.remote.hosts to at least 15 to run one job per shard of at most 3 units, each within the ceiling"
+      }
+    },
+    "engine_host": "worker",
+    "client_ngspice_binary": "/home/ubuntu/.local/bin/ngspice",
+    "backend": {
+      "resolved": "batch",
+      "source": "flag",
+      "requested": "batch"
+    }
+  },
+  "coverage": {
+    "corners_simulated": 45,
+    "measurements_declared": 8,
+    "measurements_with_limits": 0,
+    "unrecognized_limit_keys": [],
+    "schema_version": 1,
+    "known": true,
+    "checked": [
+      "measurement:[0,\"tt/3.000V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[0,\"tt/3.000V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[0,\"tt/3.000V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[0,\"tt/3.000V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[0,\"tt/3.000V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[0,\"tt/3.000V/-40C\",\"vref_v\"]/observation",
+      "measurement:[0,\"tt/3.000V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[0,\"tt/3.000V/-40C\",\"vth_v\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"isup_ua\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"vref_v\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[1,\"tt/3.000V/27C\",\"vth_v\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"isup_ua\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"vref_v\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[10,\"ff/3.000V/27C\",\"vth_v\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"isup_ua\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"vref_v\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[11,\"ff/3.000V/100C\",\"vth_v\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"vref_v\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[12,\"ff/3.300V/-40C\",\"vth_v\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"isup_ua\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"vref_v\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[13,\"ff/3.300V/27C\",\"vth_v\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"isup_ua\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"vref_v\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[14,\"ff/3.300V/100C\",\"vth_v\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"vref_v\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[15,\"ff/3.600V/-40C\",\"vth_v\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"isup_ua\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"vref_v\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[16,\"ff/3.600V/27C\",\"vth_v\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"isup_ua\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"vref_v\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[17,\"ff/3.600V/100C\",\"vth_v\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"vref_v\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[18,\"ss/3.000V/-40C\",\"vth_v\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"isup_ua\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"vref_v\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[19,\"ss/3.000V/27C\",\"vth_v\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"isup_ua\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"vref_v\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[2,\"tt/3.000V/100C\",\"vth_v\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"isup_ua\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"vref_v\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[20,\"ss/3.000V/100C\",\"vth_v\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"vref_v\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[21,\"ss/3.300V/-40C\",\"vth_v\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"isup_ua\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"vref_v\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[22,\"ss/3.300V/27C\",\"vth_v\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"isup_ua\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"vref_v\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[23,\"ss/3.300V/100C\",\"vth_v\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"vref_v\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[24,\"ss/3.600V/-40C\",\"vth_v\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"isup_ua\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"vref_v\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[25,\"ss/3.600V/27C\",\"vth_v\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"isup_ua\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"vref_v\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[26,\"ss/3.600V/100C\",\"vth_v\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"vref_v\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[27,\"fs/3.000V/-40C\",\"vth_v\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"isup_ua\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"vref_v\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[28,\"fs/3.000V/27C\",\"vth_v\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"isup_ua\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"vref_v\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[29,\"fs/3.000V/100C\",\"vth_v\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"vref_v\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[3,\"tt/3.300V/-40C\",\"vth_v\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"vref_v\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[30,\"fs/3.300V/-40C\",\"vth_v\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"isup_ua\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"vref_v\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[31,\"fs/3.300V/27C\",\"vth_v\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"isup_ua\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"vref_v\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[32,\"fs/3.300V/100C\",\"vth_v\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"vref_v\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[33,\"fs/3.600V/-40C\",\"vth_v\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"isup_ua\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"vref_v\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[34,\"fs/3.600V/27C\",\"vth_v\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"isup_ua\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"vref_v\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[35,\"fs/3.600V/100C\",\"vth_v\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"vref_v\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[36,\"sf/3.000V/-40C\",\"vth_v\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"isup_ua\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"vref_v\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[37,\"sf/3.000V/27C\",\"vth_v\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"isup_ua\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"vref_v\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[38,\"sf/3.000V/100C\",\"vth_v\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"vref_v\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[39,\"sf/3.300V/-40C\",\"vth_v\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"isup_ua\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"vref_v\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[4,\"tt/3.300V/27C\",\"vth_v\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"isup_ua\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"vref_v\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[40,\"sf/3.300V/27C\",\"vth_v\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"isup_ua\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"vref_v\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[41,\"sf/3.300V/100C\",\"vth_v\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"vref_v\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[42,\"sf/3.600V/-40C\",\"vth_v\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"isup_ua\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"vref_v\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[43,\"sf/3.600V/27C\",\"vth_v\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"isup_ua\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"vref_v\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[44,\"sf/3.600V/100C\",\"vth_v\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"isup_ua\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"vref_v\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[5,\"tt/3.300V/100C\",\"vth_v\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"vref_v\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[6,\"tt/3.600V/-40C\",\"vth_v\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"isup_ua\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"vref_v\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"vth_last_v\"]/observation",
+      "measurement:[7,\"tt/3.600V/27C\",\"vth_v\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"isup_ua\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"vref_v\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"vth_last_v\"]/observation",
+      "measurement:[8,\"tt/3.600V/100C\",\"vth_v\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"isup_ua\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"rxd_at_vih_v\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"rxd_at_vil_v\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"rxd_high_min_v\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"rxd_low_max_v\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"vref_v\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"vth_last_v\"]/observation",
+      "measurement:[9,\"ff/3.000V/-40C\",\"vth_v\"]/observation"
+    ],
+    "skipped": [],
+    "inapplicable": [
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[0,\"tt/3.000V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[1,\"tt/3.000V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[10,\"ff/3.000V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[11,\"ff/3.000V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[12,\"ff/3.300V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[13,\"ff/3.300V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[14,\"ff/3.300V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[15,\"ff/3.600V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[16,\"ff/3.600V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[17,\"ff/3.600V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[18,\"ss/3.000V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[19,\"ss/3.000V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[2,\"tt/3.000V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[20,\"ss/3.000V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[21,\"ss/3.300V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[22,\"ss/3.300V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[23,\"ss/3.300V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[24,\"ss/3.600V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[25,\"ss/3.600V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[26,\"ss/3.600V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[27,\"fs/3.000V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[28,\"fs/3.000V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[29,\"fs/3.000V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[3,\"tt/3.300V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[30,\"fs/3.300V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[31,\"fs/3.300V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[32,\"fs/3.300V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[33,\"fs/3.600V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[34,\"fs/3.600V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[35,\"fs/3.600V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[36,\"sf/3.000V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[37,\"sf/3.000V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[38,\"sf/3.000V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[39,\"sf/3.300V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[4,\"tt/3.300V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[40,\"sf/3.300V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[41,\"sf/3.300V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[42,\"sf/3.600V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[43,\"sf/3.600V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[44,\"sf/3.600V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[5,\"tt/3.300V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[6,\"tt/3.600V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[7,\"tt/3.600V/27C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[8,\"tt/3.600V/100C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"isup_ua\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"rxd_at_vih_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"rxd_at_vil_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"rxd_high_min_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"rxd_low_max_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"vref_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"vth_last_v\"]/limits",
+        "reason": "characterization_without_limits"
+      },
+      {
+        "id": "measurement:[9,\"ff/3.000V/-40C\",\"vth_v\"]/limits",
+        "reason": "characterization_without_limits"
+      }
+    ],
+    "unknown": [],
+    "nothing_checked": false,
+    "nothing_checked_reasons": []
+  },
+  "provenance": {
+    "klt_version": "0.7.1.dev2264+gcba5e957d9ed",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": {
+      "name": "sky130.lib.spice",
+      "content_hash": "sha256:17c208a699228f5acb87bf59c09c22a4c4d3937b6766b4957737d34e8e075f64",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:4ac43d1a8b9d6353802caff0bdf6eead45507d3736de095ee90d16945e8b5be4",
+      "role": "netlist"
+    }
+  },
+  "measurements": [
+    {
+      "name": "vth_v",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 1.26051,
+        "margin": null
+      }
+    },
+    {
+      "name": "vth_last_v",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 1.26051,
+        "margin": null
+      }
+    },
+    {
+      "name": "rxd_low_max_v",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 1.00593e-09,
+        "margin": null
+      }
+    },
+    {
+      "name": "rxd_high_min_v",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 3.0,
+        "margin": null
+      }
+    },
+    {
+      "name": "rxd_at_vil_v",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 1.00593e-09,
+        "margin": null
+      }
+    },
+    {
+      "name": "rxd_at_vih_v",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 3.0,
+        "margin": null
+      }
+    },
+    {
+      "name": "vref_v",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 1.27507,
+        "margin": null
+      }
+    },
+    {
+      "name": "isup_ua",
+      "unit": null,
+      "limits": null,
+      "status": "pass",
+      "worst_case": {
+        "corner_id": "tt/3.000V/-40C",
+        "value": 7.99644e-05,
+        "margin": null
+      }
+    }
+  ],
+  "corners": [
+    {
+      "corner_id": "tt/3.000V/-40C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 135.359,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.26051,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.26051,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.00593e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.00593e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27507,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 7.99644e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p000V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p000V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.000V/27C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 136.248,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25705,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25705,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.29198e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.29198e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27528,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 9.11797e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p000V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p000V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.000V/100C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 136.201,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25348,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25348,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 4.95792e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 4.95792e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27551,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000102927,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p000V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p000V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.300V/-40C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 128.452,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38648,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38648,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.03796e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.03796e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40263,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000112964,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p300V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p300V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.300V/27C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 63.926,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38252,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38252,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.32574e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.32574e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40287,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000125463,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p300V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p300V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.300V/100C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 135.807,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.37863,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.37863,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 5.05085e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 5.05085e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40312,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.00013917,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p300V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p300V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.600V/-40C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 54.229,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.51249,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.51249,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.07723e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.07723e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.5302,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 9.86526e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p600V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p600V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.600V/27C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 132.191,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.50846,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.50846,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.36851e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.36851e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53047,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000112332,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p600V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p600V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "tt/3.600V/100C",
+      "process": "tt",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 135.386,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.50447,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.50447,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 5.19134e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 5.19134e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53075,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000129539,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p600V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/tt_3p600V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.000V/-40C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 134.284,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25856,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25856,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 9.10359e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 9.10359e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27507,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 8.18826e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p000V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p000V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.000V/27C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 135.802,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25457,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25457,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.2013e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.2013e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27528,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 9.34859e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p000V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p000V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.000V/100C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 136.172,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25054,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25054,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.73407e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.73407e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27551,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000105661,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p000V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p000V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.300V/-40C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 136.17,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38458,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38458,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 9.43007e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 9.43007e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40263,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000118745,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p300V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p300V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.300V/27C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 133.074,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.3805,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.3805,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.23774e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.23774e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40287,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000131146,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p300V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p300V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.300V/100C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 131.64,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.37624,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.37624,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.78097e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.78098e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40312,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000145026,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p300V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p300V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.600V/-40C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 131.581,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.51109,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.51109,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 9.83428e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 9.83428e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.5302,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000100929,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p600V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p600V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.600V/27C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 96.605,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.50649,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.50649,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.28435e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.28435e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53047,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000117674,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p600V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p600V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ff/3.600V/100C",
+      "process": "ff",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 88.162,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.50175,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.50175,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.84579e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.84579e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53075,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000152168,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p600V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ff_3p600V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.000V/-40C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 43.047,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.2625,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.2625,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.12296e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.12296e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27507,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 7.83372e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p000V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p000V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.000V/27C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 42.854,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25949,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25949,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.45038e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.45038e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27528,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 8.92138e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p000V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p000V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.000V/100C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 41.501,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25644,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25644,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 2.60806e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 2.60806e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27551,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000100588,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p000V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p000V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.300V/-40C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 43.305,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38801,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38801,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.15377e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.15377e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40263,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000108271,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p300V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p300V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.300V/27C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 41.407,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38455,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38455,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.48272e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.48272e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40287,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000120832,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p300V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p300V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.300V/100C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 40.856,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.3815,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.3815,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 2.64055e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 2.64055e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40312,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.0001344,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p300V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p300V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.600V/-40C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 40.903,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.51359,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.51359,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.19266e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.19266e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.5302,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 9.67787e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p600V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p600V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.600V/27C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 39.303,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.51046,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.51046,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.52507e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.52507e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53047,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000109955,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p600V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p600V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "ss/3.600V/100C",
+      "process": "ss",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 39.256,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.50672,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.50672,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 2.69407e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 2.69407e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53075,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000123868,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p600V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/ss_3p600V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.000V/-40C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 40.607,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.26058,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.26058,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.14183e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.14183e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27507,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 7.77394e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p000V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p000V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.000V/27C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 39.759,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25753,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25753,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.64653e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.64653e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27528,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 8.85111e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p000V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p000V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.000V/100C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 40.315,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25437,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25437,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 4.55676e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 4.55676e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27551,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 9.9773e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p000V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p000V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.300V/-40C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 39.453,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38654,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38654,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.17166e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.17166e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40263,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000110056,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p300V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p300V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.300V/27C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 39.161,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38345,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38345,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.68496e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.68496e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40287,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000121804,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p300V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p300V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.300V/100C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 38.899,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.37964,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.37964,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 4.65675e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 4.65675e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40312,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000134672,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p300V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p300V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.600V/-40C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 37.756,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.51257,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.51257,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.21543e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.21543e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.5302,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 9.61704e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p600V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p600V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.600V/27C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 37.559,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.50932,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.50932,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.7434e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.7434e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53047,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000109233,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p600V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p600V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "fs/3.600V/100C",
+      "process": "fs",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 38.013,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.50552,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.50552,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 4.81348e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 4.81348e-08,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53075,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000123069,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p600V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/fs_3p600V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.000V/-40C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 38.723,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25951,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25951,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 8.97924e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 8.97924e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27507,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 8.27537e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p000V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p000V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.000V/27C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 38.927,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25549,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25549,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.13565e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.13565e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27528,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 9.45084e-05,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p000V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p000V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.000V/100C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.0
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 38.805,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.25145,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.25145,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.73835e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.73835e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.0,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.27551,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000106849,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p000V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p000V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.300V/-40C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 39.511,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38544,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38544,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 9.3118e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 9.3118e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40263,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000116342,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p300V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p300V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.300V/27C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 38.823,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.38058,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.38058,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.17048e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.17048e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40287,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000129759,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p300V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p300V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.300V/100C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.3
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 38.92,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.3765,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.3765,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.77155e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.77155e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.3,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.40312,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000144557,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p300V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p300V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.600V/-40C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": -40.0,
+      "status": "pass",
+      "runtime_s": 38.604,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.51144,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.51144,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 9.68882e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 9.68882e-10,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.5302,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000102004,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p600V_n40C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p600V_n40C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.600V/27C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 27.0,
+      "status": "pass",
+      "runtime_s": 38.619,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.5065,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.5065,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.21066e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.21066e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53047,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000121199,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p600V_27C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p600V_27C/corner.cir"
+      },
+      "monte_carlo": null
+    },
+    {
+      "corner_id": "sf/3.600V/100C",
+      "process": "sf",
+      "supply_v": {
+        "vsup": 3.6
+      },
+      "temperature_c": 100.0,
+      "status": "pass",
+      "runtime_s": 39.077,
+      "measurements": [
+        {
+          "name": "vth_v",
+          "value": 1.5017,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vth_last_v",
+          "value": 1.5017,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_low_max_v",
+          "value": 1.81406e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_high_min_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vil_v",
+          "value": 1.81406e-09,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "rxd_at_vih_v",
+          "value": 3.6,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "vref_v",
+          "value": 1.53075,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        },
+        {
+          "name": "isup_ua",
+          "value": 0.000156016,
+          "unit": null,
+          "status": "pass",
+          "margin": null
+        }
+      ],
+      "diagnostics": [],
+      "artifacts": {
+        "log": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p600V_100C/ngspice.log",
+        "raw": null,
+        "waveform": null,
+        "deck": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-152/sim/.work/se-receiver-dm-thresholds/20261020-202908-ea63f5c/klt-out/sf_3p600V_100C/corner.cir"
+      },
+      "monte_carlo": null
+    }
+  ]
+}

@@ -109,3 +109,11 @@ PDK=sky130A python3 flow/run_flow.py
 Everything in this directory is a build product. Editing a file here by hand
 invalidates every record whose `provenance.artifacts` cites its content hash,
 and the lint will say so.
+
+## Analog leaves
+
+The analog partition's layouts live under
+[`analog/`](analog/README.md), one directory per leaf, with their own generator,
+reports and conventions. They are separate from the `utmi_stub` smoke artifacts above and
+are real leaf layouts rather than toolchain plumbing,
+but anchor no sign-off claim until every analog leaf has one.

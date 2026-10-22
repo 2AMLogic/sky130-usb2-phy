@@ -74,6 +74,7 @@ import datetime as dt
 import io
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -584,6 +585,14 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="run the regression and report it, but write no record (a dry check)",
     )
+    parser.add_argument(
+        "--fv-klt",
+        default="klt",
+        help=(
+            "command prefix for klt functional-verification; the installed klt has no cocotb, so "
+            "use e.g. 'uvx --from klayout-tools==0.7.0 --with cocotb==2.1.0 klt' on a shared worker"
+        ),
+    )
     args = parser.parse_args(argv)
 
     if not NETLIST_PATH.is_file():
@@ -616,7 +625,13 @@ def main(argv: list[str] | None = None) -> int:
     cell_sources = resolve_cell_library_sources(pdk_root, args.pdk)
     request = build_request(cell_sources)
 
-    cmd = ["klt", "functional-verification", json.dumps(request), "--format", "json"]
+    cmd = [
+        *shlex.split(args.fv_klt),
+        "functional-verification",
+        json.dumps(request),
+        "--format",
+        "json",
+    ]
     # cwd=VERIFICATION_DIR: (a) request_dir for an inline-JSON request is
     # os.getcwd() (see klayout_tools._paths.load_request_arg), which resolves
     # the testbench module next to the existing test_utmi_stub.py without a

@@ -839,7 +839,11 @@ def test_committed_lvs_reports_still_pair_a_supply_net_to_a_signal_net():
     assert reports, "no committed lvs-report.json artifacts found"
     for report in reports:
         pairings = supply_to_signal_pairings(report)
-        assert pairings, f"{report.parent.name} no longer carries the pairing"
+        # klt 0.7.x (the #152 re-qualification records) no longer emits the
+        # pairing; the artifacts of the klt 0.4.0/0.5.0 records still must.
+        klt_version = json.loads(report.read_text())["provenance"]["klt_version"]
+        if not klt_version.startswith("0.7."):
+            assert pairings, f"{report.parent.name} no longer carries the pairing"
         # And the compare still calls the overall result a match anyway.
         assert json.loads(report.read_text())["status"] == "match", report.parent.name
 
@@ -1085,3 +1089,85 @@ def test_stub_experiment_manifest_is_untouched_by_the_new_experiment():
     findings = check_records.Findings()
     check_records.check_append_only_manifest(records, sorted(records.glob("*.md")), findings)
     assert not findings.items
+
+
+# --------------------------------------------------------------------------
+# Analog layout records (experiment `analog-layout-differential_receiver`, issue #167)
+# --------------------------------------------------------------------------
+ANALOG_EXPERIMENT = "analog-layout-differential_receiver"
+
+
+@pytest.fixture
+def analog_sandbox(sandbox: Path) -> Path:
+    """The `sandbox` plus a copy of the committed analog layout experiment."""
+    shutil.copytree(
+        FLOW_DIR / ANALOG_EXPERIMENT / "records", sandbox / ANALOG_EXPERIMENT / "records"
+    )
+    return sandbox
+
+
+def mutate_analog(sandbox: Path, mutate) -> check_records.Findings:
+    path = sorted((sandbox / ANALOG_EXPERIMENT / "records").glob("*.md"))[-1]
+    meta = read_meta(path)
+    mutate(meta)
+    write_meta(path, meta)
+    rebuild_manifest(path.parent)
+    _, findings = run_lint(sandbox)
+    return findings
+
+
+def test_committed_analog_layout_record_passes(analog_sandbox: Path):
+    code, findings = run_lint(analog_sandbox)
+    assert code == 0, findings.items
+
+
+@pytest.mark.parametrize(
+    "dotted",
+    ["block", "reproducibility.gds_sha256", "stages.lvs.counts", "stages.erc.ties_checked"],
+)
+def test_analog_record_missing_a_field_fails(analog_sandbox: Path, dotted: str):
+    def drop(meta):
+        node = meta
+        *head, last = dotted.split(".")
+        for part in head:
+            node = node[part]
+        del node[last]
+
+    assert "required-field" in checks_in(mutate_analog(analog_sandbox, drop))
+
+
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda m: m["stages"]["drc_curated"].update(status="violations", violation_count=3),
+        lambda m: m["stages"]["drc_curated"]["coverage"].update(deck_scope=[]),
+        lambda m: m["stages"]["drc_native"].update(expected_rule_categories=1),
+        lambda m: m["stages"]["lvs"].update(status="mismatch"),
+        lambda m: m["stages"]["lvs"]["counts"]["devices"].update(matched=1),
+        lambda m: m["stages"]["lvs"].update(mismatch_count=2),
+        lambda m: m["stages"]["lvs"].update(body_verification_note=""),
+        lambda m: m["stages"]["erc"]["supply_islands"].update(VSS=2),
+        lambda m: m["stages"]["erc"].update(ties_checked=[]),
+        lambda m: m["stages"]["erc"].update(ties_skipped=[{"id": "erc.missing_tie:[\"x\"]"}]),
+        lambda m: m["design"].update(anchors_design_claim=True),
+        lambda m: m["reproducibility"].update(regenerated_identical=False),
+        lambda m: m["provenance"]["pdk"].update(open_pdks_commit="0" * 40),
+        lambda m: m["provenance"]["artifacts"].pop(),
+        lambda m: m.update(tool_gaps=[]) or m.update(tool_gaps="none"),
+    ],
+)
+def test_analog_record_that_overstates_fails(analog_sandbox: Path, mutate):
+    assert "analog-layout" in checks_in(mutate_analog(analog_sandbox, mutate))
+
+
+def test_analog_record_with_changed_gds_goes_stale(analog_sandbox: Path):
+    def corrupt(meta):
+        meta["provenance"]["inputs"][0]["content_hash"] = "sha256:" + "0" * 64
+
+    assert "freshness" in checks_in(mutate_analog(analog_sandbox, corrupt))
+
+
+def test_analog_record_id_must_end_in_its_block(analog_sandbox: Path):
+    assert "record-id" in checks_in(
+        mutate_analog(analog_sandbox, lambda m: m.update(block="differential_driver"))
+    )
