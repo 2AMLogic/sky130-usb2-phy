@@ -1,0 +1,112 @@
+{
+  "schema_version": 2,
+  "engine": "yosys",
+  "engine_version": "0.67+post",
+  "hdl_toplevel": "utmi_stub",
+  "parameters": {},
+  "run_id": "run-e6f4fe3651ca4fa092200249f346b422",
+  "status": "ok",
+  "instance_count": 9,
+  "area_um2": 225.216,
+  "sequential_area_um2": 225.216,
+  "instance_counts_by_type": {
+    "sky130_fd_sc_hd__dfrtp_1": 9
+  },
+  "leakage_power_nw": 0.10487052,
+  "leakage_by_type_nw": {
+    "sky130_fd_sc_hd__dfrtp_1": 0.01165228
+  },
+  "timing": null,
+  "clock_targets": {
+    "clocks": [],
+    "delay_target_ps": 33333,
+    "delay_target_basis": "clock_period_ns",
+    "per_clock_enforced": false
+  },
+  "sta": null,
+  "sta_unavailable_reason": "the optional klt_statime_native extension is not installed (it is not shipped with the published klayout-tools package), so no gate-level static timing analysis was attempted -- from a repo checkout, run `uv sync --group statime` (or `maturin develop --release` inside native/statime/) and re-run to populate `sta`; from an installed package, `klt sta` with a `verilog` request gives a netlist-level timing estimate (needs OpenSTA)",
+  "structural": {
+    "latches": 0,
+    "expected_latches": 0,
+    "unexpected_latches": 0,
+    "comb_loops": 0,
+    "multi_driven": 0,
+    "has_critical": false
+  },
+  "cell_exclusions": {
+    "mode": "additive",
+    "requested": [],
+    "library_defaults": [
+      "sky130_fd_sc_hd__lpflow_*",
+      "sky130_fd_sc_hd__probe*"
+    ],
+    "effective": [
+      "sky130_fd_sc_hd__lpflow_*",
+      "sky130_fd_sc_hd__probe*"
+    ],
+    "validated": null,
+    "engine_supports_dont_use": true
+  },
+  "warnings": {
+    "total": 1,
+    "by_category": {
+      "timing_unavailable": 1
+    },
+    "representatives": [
+      {
+        "category": "timing_unavailable",
+        "count": 1,
+        "text": "The current invocation's ABC log has no readable stime summary; timing is null and any requested clock target remains unverified."
+      }
+    ]
+  },
+  "memory_mapping": {
+    "status": "none_detected",
+    "reason": null,
+    "modules": [],
+    "script_path": {
+      "path": "flow/build/tt_025C_1v80/.klt/synthesize/run-e6f4fe3651ca4fa092200249f346b422/utmi_stub_memory_evidence.ys",
+      "scope": "repo"
+    }
+  },
+  "blackbox_modules": [],
+  "netlist_path": {
+    "path": "flow/build/tt_025C_1v80/.klt/synthesize/run-e6f4fe3651ca4fa092200249f346b422/utmi_stub_synth.v",
+    "scope": "repo"
+  },
+  "netlist_sha256": "194342003fb5e14f3cb4117fe47014512bcc403b5769522b3633c793d78c318e",
+  "script_path": {
+    "path": "flow/build/tt_025C_1v80/.klt/synthesize/run-e6f4fe3651ca4fa092200249f346b422/synth_utmi_stub.ys",
+    "scope": "repo"
+  },
+  "run_script_path": {
+    "path": "flow/build/tt_025C_1v80/.klt/synthesize/run-e6f4fe3651ca4fa092200249f346b422/synth_utmi_stub.run.ys",
+    "scope": "repo"
+  },
+  "provenance": {
+    "klt_version": "0.7.1.dev2430+g6bf32713ea21",
+    "klayout_version": "0.30.12",
+    "pdk": {
+      "name": "sky130A",
+      "source": "PDK_ROOT environment variable",
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
+      "ambiguous_sources": [
+        "search root: ~/.volare"
+      ]
+    },
+    "deck": {
+      "name": "sky130_fd_sc_hd__tt_025C_1v80",
+      "content_hash": "sha256:8e78e14442062dba34d414fca6490b2f6b96038d4510d1438ca44fee31487135",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:b11cf0e00737eff6a01a76a37e08a0508a22827a1a438c3194d891c31750d548",
+      "role": "source"
+    },
+    "parameters": {}
+  },
+  "equivalence": null,
+  "restructuring": null,
+  "arithmetic": null,
+  "baseline": null
+}
