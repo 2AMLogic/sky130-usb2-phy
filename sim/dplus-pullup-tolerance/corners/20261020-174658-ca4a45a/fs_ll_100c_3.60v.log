@@ -1,0 +1,42 @@
+
+Note: No compatibility mode selected!
+
+
+Circuit: * klt sim -- generated corner deck, do not edit
+
+Doing analysis at TEMP = 100.000000 and TNOM = 27.000000
+
+Using SPARSE 1.3 as Direct Linear Solver
+
+No. of Data Rows : 2
+
+  Measurements for DC Analysis
+
+vdp_c00_v           =  3.21023e+00
+vdp_c01_v           =  3.21977e+00
+vdp_c02_v           =  3.22936e+00
+vdp_c03_v           =  3.23903e+00
+vdp_c04_v           =  3.24867e+00
+vdp_c05_v           =  3.25846e+00
+vdp_c06_v           =  3.26830e+00
+vdp_c07_v           =  3.27822e+00
+vdp_c08_v           =  3.28782e+00
+vdp_c09_v           =  3.29787e+00
+vdp_c10_v           =  3.30797e+00
+vdp_c11_v           =  3.31815e+00
+vdp_c12_v           =  3.32831e+00
+vdp_c13_v           =  3.33863e+00
+vdp_c14_v           =  3.34899e+00
+vdp_c15_v           =  3.35945e+00
+voff_d1_v           =  1.16827e-04
+voff_d0_v           =  1.16861e-04
+ioff_d1_na          =  7.78847e-09
+ioff_d0_na          =  7.79073e-09
+ioff_dz_na          =  7.78880e-09
+ioff_dh_na          =  -9.29182e-12
+isup_d1_na          =  7.91741e-09
+isup_d0_na          =  7.91455e-09
+isup_dz_na          =  7.91699e-09
+isup_dh_na          =  1.27054e-10
+
+ngspice-46 done

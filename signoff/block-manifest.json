@@ -4,7 +4,7 @@
   "evidence": {
     "8": {
       "file": "signoff/evidence/characterization-report.json",
-      "content_hash": "sha256:2ed4a092a80df6168b8a00f4a9193d532a6223bbd14748df765103178f6564ff"
+      "content_hash": "sha256:f218cfdfde51ceb852105add2a8170210241ba30d45687217257e4f6834b3671"
     },
     "9": {
       "file": "signoff/evidence/item-9-testbenches.json",
