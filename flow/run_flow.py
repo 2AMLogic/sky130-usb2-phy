@@ -94,9 +94,14 @@ def log(message: str) -> None:
     print(message, flush=True)
 
 
-def run_klt(args: list[str], cwd: Path, env: dict[str, str]) -> dict:
-    """Run a klt subcommand with --format json and return the parsed envelope."""
-    cmd = ["klt", *args, "--format", "json"]
+def run_klt(
+    args: list[str], cwd: Path, env: dict[str, str], klt_cmd: list[str] | None = None
+) -> dict:
+    """Run a klt subcommand with --format json and return the parsed envelope.
+
+    `klt_cmd` replaces the plain `klt` executable, e.g. `uvx --from klayout-tools==0.5.0 klt`.
+    """
+    cmd = [*(klt_cmd or ["klt"]), *args, "--format", "json"]
     log(f"    $ (cd {cwd.relative_to(REPO_ROOT)} && {' '.join(cmd)})")
     result = subprocess.run(cmd, cwd=str(cwd), env=env, capture_output=True, text=True)
     stdout = result.stdout.strip()
@@ -339,7 +344,9 @@ def stage_lvs(
     return run_klt(["lvs", path.name], work, env)
 
 
-def stage_drc(work: Path, gds_path: str, env: dict[str, str]) -> dict:
+def stage_drc(
+    work: Path, gds_path: str, env: dict[str, str], klt_cmd: list[str] | None = None
+) -> dict:
     doc = load_json(FLOW_DIR / "request-drc-utmi_stub.json")
     args = ["drc", gds_path, "--deck", doc["deck"], "--engine", doc.get("engine", "curated")]
     if doc.get("top"):
@@ -348,7 +355,7 @@ def stage_drc(work: Path, gds_path: str, env: dict[str, str]) -> dict:
         args += ["--deck-var", f"{key}={value}"]
     if doc.get("timeout_s"):
         args += ["--timeout-s", str(doc["timeout_s"])]
-    return run_klt(args, work, env)
+    return run_klt(args, work, env, klt_cmd)
 
 
 # --------------------------------------------------------------------------
@@ -674,6 +681,17 @@ def build_record_meta(
         },
         "provenance": {
             "klt_version": drc.get("provenance", {}).get("klt_version"),
+            "klt_version_by_stage": {
+                name: (envelope.get("provenance") or {}).get("klt_version")
+                for name, envelope in (
+                    ("synthesize", synth),
+                    ("place_and_route", par),
+                    ("sta", sta),
+                    ("extract", extract),
+                    ("lvs", lvs),
+                    ("drc", drc),
+                )
+            },
             "klayout_version": drc.get("provenance", {}).get("klayout_version"),
             "openroad_version": or_version,
             "yosys_version": synth.get("engine_version"),
@@ -992,7 +1010,19 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="keep flow/build/<corner>/ from a previous run instead of clearing it",
     )
+    parser.add_argument(
+        "--drc-klt-from",
+        metavar="REQUIREMENT",
+        default=None,
+        help=(
+            "run only the DRC stage through `uvx --from REQUIREMENT klt` (e.g. "
+            "klayout-tools==0.5.0) in a throwaway environment, so the curated deck stays at "
+            "the revision flow/drc-deck-coverage.json describes while the other stages use "
+            "the installed klt"
+        ),
+    )
     args = parser.parse_args(argv)
+    drc_klt_cmd = ["uvx", "--from", args.drc_klt_from, "klt"] if args.drc_klt_from else None
 
     corners_cfg = load_json(FLOW_DIR / "corners.json")
     coverage = load_json(FLOW_DIR / "drc-deck-coverage.json")
@@ -1113,7 +1143,7 @@ def main(argv: list[str] | None = None) -> int:
             lvs = stage_lvs(work, extracted_netlist, par_paths["verilog"], env)
 
             log("  [6/6] klt drc")
-            drc = stage_drc(work, par_paths["gds"], env)
+            drc = stage_drc(work, par_paths["gds"], env, drc_klt_cmd)
         except StageError as exc:
             print(f"\nrun_flow: stage failed at corner {corner}:\n  {exc}", file=sys.stderr)
             return 2

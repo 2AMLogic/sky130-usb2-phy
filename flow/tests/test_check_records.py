@@ -839,7 +839,11 @@ def test_committed_lvs_reports_still_pair_a_supply_net_to_a_signal_net():
     assert reports, "no committed lvs-report.json artifacts found"
     for report in reports:
         pairings = supply_to_signal_pairings(report)
-        assert pairings, f"{report.parent.name} no longer carries the pairing"
+        # klt 0.7.x (the #152 re-qualification records) no longer emits the
+        # pairing; the artifacts of the klt 0.4.0/0.5.0 records still must.
+        klt_version = json.loads(report.read_text())["provenance"]["klt_version"]
+        if not klt_version.startswith("0.7."):
+            assert pairings, f"{report.parent.name} no longer carries the pairing"
         # And the compare still calls the overall result a match anyway.
         assert json.loads(report.read_text())["status"] == "match", report.parent.name
 
