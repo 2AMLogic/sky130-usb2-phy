@@ -10,7 +10,7 @@ outside the markers is touched by automation.
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
+_None._
 
 ## Very Important
 
@@ -34,19 +34,20 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#151**: Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3
+- **#166**: T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement
+- **#167**: T1 items 2-4 (analog): lay out the differential receiver as the first DRC/LVS-verified analog leaf
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#177**: test(sim): re-qualify cited analog sim records under open_pdks f6eeac7
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#153**: feat: re-pin open_pdks to the ciel f6eeac7 revision and verify the PDK revision at resolution
+_None._
 
 ## Proposed
 
@@ -54,7 +55,9 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#151**: Re-pin open_pdks to f6eeac7 (ciel) — fleet retires volare c6d73a3 *(curated)*
+- **#152**: Re-qualify cited sim and flow records under open_pdks f6eeac7 (child of #151) *(curated)*
+- **#166**: T1 item 6 (analog): Monte Carlo mismatch evidence for the receiver sensitivity and threshold rows, and correct the "no statistical row" statement *(curated)*
+- **#167**: T1 items 2-4 (analog): lay out the differential receiver as the first DRC/LVS-verified analog leaf *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -69,14 +72,14 @@ _None._
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 1 |
-| PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 3 |
+| In Progress (`loom:building`) | 2 |
+| PRs awaiting review | 1 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 5 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
