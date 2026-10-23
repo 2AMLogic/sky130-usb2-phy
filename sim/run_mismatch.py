@@ -8,6 +8,9 @@
 Every campaign goes to the batch fleet through `klt sim --batch-set`; a backend error fails the
 run, there is no local fallback. `klt yield` needs the klt_yield_native extension: point --klt at
 a klt that has it (see sim/README.md, "Mismatch Monte Carlo").
+
+A recorded run stores the raw evidence in the artifact store and commits only the manifest and
+the record; the store is checked before anything is submitted (exit 4 if it is unusable).
 """
 
 import argparse
@@ -16,7 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from harness import matrix as mx, mismatch, runner  # noqa: E402
+from harness import evidence_store as es, matrix as mx, mismatch, runner  # noqa: E402
 
 
 def main(argv=None) -> int:
@@ -55,6 +58,9 @@ def main(argv=None) -> int:
         return mismatch.run(args.experiment, args.klt, args.hosts, args.klt_runner_version_check,
                             args.max_in_flight, not args.no_write, args.only, args.supersedes,
                             args.capacity_retries, args.from_work)
+    except es.StoreUnavailable as exc:
+        print(f"error: artifact store unavailable, nothing was recorded: {exc}", file=sys.stderr)
+        return 4
     except (runner.RunError, mx.MatrixError, mismatch.MismatchError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 3
