@@ -3,6 +3,12 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-23
+
+- **PR #197**: feat: store mismatch campaign evidence in the artifact store
+- **Issue #195** (closed): Rewire sim/run_mismatch.py Monte Carlo campaigns to the artifact store
+- **PR #194**: feat: store new sim evidence in the artifact store with manifest-based records
+
 ### 2026-10-22
 
 - **PR #189**: docs: remove stale harness sharing analysis
