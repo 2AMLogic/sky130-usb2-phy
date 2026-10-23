@@ -17,7 +17,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import HARNESS_VERSION, matrix as mx, results as rs
+from . import HARNESS_VERSION, evidence_store as es, matrix as mx, results as rs
+from .evidence_store import StoreUnavailable  # noqa: F401  (re-exported for the CLI)
 
 KLT = "klt"
 WORK_DIR = mx.SIM_DIR / ".work"
@@ -177,30 +178,36 @@ def invoke_klt(request_path: Path, outdir: Path, backend: str, workdir: Path,
 
 
 def write_evidence(exp_dir: Path, rid: str, parts: dict) -> Path:
-    """Write snapshot + corners/<rid>/ + records/<rid>.md. Never overwrites."""
+    """Store the run's raw outputs in the artifact store; commit the snapshot + records/<rid>.md.
+
+    Nothing is written under sim/<bench>/ or manifests/ unless every put succeeded; on a store
+    failure the staged files stay under sim/.work/.stage/ and StoreUnavailable is raised.
+    """
+    bench = exp_dir.name
     snap = exp_dir / "netlist-snapshots" / f"{rid}.spice"
-    cdir = exp_dir / "corners" / rid
     rec = exp_dir / "records" / f"{rid}.md"
-    for p in (snap, cdir, rec):
+    for p in (snap, rec, exp_dir / "corners" / rid):
         if p.exists():
             raise RunError(f"{p} exists; evidence is append-only")
-    snap.parent.mkdir(parents=True, exist_ok=True)
-    rec.parent.mkdir(parents=True, exist_ok=True)
-    cdir.mkdir(parents=True)
-    snap.write_bytes(parts["body"])
     files = {"request.json": parts["request_bytes"], "tb.json": parts["tb_bytes"],
              "corners.json": parts["matrix_bytes"], "klt-stderr.txt": parts["stderr"].encode()}
     if parts.get("report") is not None:
         files["report.json"] = (json.dumps(parts["report"], indent=2) + "\n").encode()
     files.update(parts["logs"])
-    for name, data in files.items():
-        (cdir / name).write_bytes(data)
     manifest = dict(parts["manifest"])
     manifest["files"] = {n: sha256_bytes(d) for n, d in sorted(files.items())}
     manifest["snapshot_sha256"] = sha256_bytes(parts["body"])
     mbytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode()
-    (cdir / "evidence.json").write_bytes(mbytes)
-    rec.write_text(render_record(rid, manifest, sha256_bytes(mbytes), parts))
+    files["evidence.json"] = mbytes
+    stage = WORK_DIR / ".stage" / bench / rid
+    staged = es.stage_bytes(stage, files)
+    rows = es.store_files(bench, rid, {f"{bench}/{rid}/{n}": p for n, p in staged.items()},
+                          stage.parent / f"{rid}.manifest.json")
+    msha = sha256_file(es.manifest_path(bench, rid))
+    snap.parent.mkdir(parents=True, exist_ok=True)
+    rec.parent.mkdir(parents=True, exist_ok=True)
+    snap.write_bytes(parts["body"])
+    rec.write_text(render_record(rid, manifest, sha256_bytes(mbytes), parts, stored=(msha, rows)))
     return rec
 
 
@@ -226,7 +233,7 @@ def _measurement_ranges(m: dict) -> list[str]:
     return ["| measurement | corners with a value | min (corner) | max (corner) |", "|---|---|---|---|"] + rows
 
 
-def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
+def render_record(rid: str, m: dict, manifest_sha: str, parts: dict, stored: tuple | None = None) -> str:
     matrix_file = mx.APPROVED_MATRICES[m.get("matrix_id", mx.LEGACY_ID)]["file"]
     rel = f"sim/{m['experiment']}"
     ok = sum(1 for r in m["results"] if r["status"] == "ok")
@@ -253,8 +260,10 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
         f"- **Statistical convention**: {meta['statistical_convention']}",
         f"- **Result**: {m['status']} -- {ok}/{len(m['results'])} corners simulated with finite measurements inside "
         f"{meta['bounds']}{problem_note}",
-        f"- **Links**: {rel}/testbench/, {rel}/netlist-snapshots/{rid}.spice, {rel}/corners/{rid}/ "
-        f"(evidence.json sha256 `{manifest_sha}`)",
+        (f"- **Links**: {rel}/testbench/, {rel}/netlist-snapshots/{rid}.spice, {rel}/corners/{rid}/ "
+         f"(evidence.json sha256 `{manifest_sha}`)") if stored is None else
+        (f"- **Links**: {rel}/testbench/, {rel}/netlist-snapshots/{rid}.spice, "
+         f"{es.manifest_rel(m['experiment'], rid)} (manifest sha256 `{stored[0]}`)"),
         f"- **Timestamp / author**: {m['started_utc']} / {m['author']}",
         f"- **Supersedes**: {parts.get('supersedes') or '(none)'}",
         "", "## Provenance", "",
@@ -264,6 +273,9 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict) -> str:
         f"model library sha256 `{m['pdk'].get('lib_sha256')}`",
         f"- harness {HARNESS_VERSION}; repo HEAD `{m['git']['head']}` dirty={m['git']['dirty']}",
     ]
+    if stored is not None:
+        lines += [""] + es.stored_table(stored[1]) + ["", f"Fetch with `klt artifact get`; check with "
+                  f"`klt artifact verify {es.manifest_rel(m['experiment'], rid)}`."]
     if meta.get("method"):
         lines += ["", "## Method", ""] + [f"- {x}" for x in meta["method"]]
     if detailed:
@@ -310,6 +322,8 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
         raise RunError("the full grid must go through the batch backend; use --corner/--temp/--supply "
                        "for a single-corner local debug probe")
 
+    if record:
+        es.preflight()  # fail closed before simulating: recorded bytes go to the artifact store only
     env = check_env(matrix)  # submitting host: fails early if the pin is wrong
     if env["open_pdks_commit"] != matrix.pdk["open_pdks_commit"] or env["lib_sha256"] != matrix.pdk["lib_sha256"]:
         raise RunError("installed PDK differs from the pin in sim/corners.json "

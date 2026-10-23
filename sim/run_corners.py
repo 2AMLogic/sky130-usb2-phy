@@ -56,6 +56,9 @@ def main(argv=None) -> int:
         subset = {"process": args.corner, "temperature_c": args.temp, "supply_v": args.supply}
         return runner.run(args.experiment, args.backend, not args.no_write, subset, args.supersedes,
                           args.klt_runner_version_check, args.variant, args.hosts)
+    except runner.StoreUnavailable as exc:
+        print(f"error: artifact store unavailable, nothing was recorded: {exc}", file=sys.stderr)
+        return 4
     except (runner.RunError, mx.MatrixError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 3

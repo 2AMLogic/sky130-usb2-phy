@@ -118,6 +118,35 @@ mints a new record id. Compare corner values with the old record's
 `report.json`. Never edit the old one. To supersede, pass
 `--supersedes <record-id>`.
 
+## Stored evidence (fleet artifact store)
+
+New recorded runs do not commit their raw outputs. `run_corners.py` stages the request, frozen
+testbench/matrix, klt report and stderr, every per-corner `.log` and `evidence.json` under
+`sim/.work/.stage/<bench>/<record-id>/` (git-ignored), puts each object with
+`klt artifact put --manifest manifests/artifacts/<bench>-<record-id>.manifest.json`, and commits only:
+
+- `manifests/artifacts/<bench>-<record-id>.manifest.json` (every `uri` is `artifact:<key>`),
+- `sim/<bench>/records/<record-id>.md` with a **Stored evidence** table (name, size, sha256),
+- the netlist snapshot `netlist-snapshots/<record-id>.spice` (small, source-like; stays in git).
+
+`python3 sim/run_store_evidence.py <bench> <staged-dir>` does the same for a staged campaign
+directory (e.g. Monte Carlo output under `sim/.work/`), writing `sim/<bench>/campaigns/<run-id>.md`.
+
+**No fallback.** Needs `$KLT_ARTIFACT_BROKER` (never written to the repo or argv), a klt with
+`artifact put` (klayout-tools `7e3561f` or later) and a reachable broker; all three are checked
+before anything is simulated. Otherwise the run exits 4 with nothing committed, and no flag commits
+bytes instead. If a put fails after the grid, the staged files stay under `sim/.work/.stage/`.
+Zero-byte files cannot be stored (a manifest entry needs size >= 1); they are listed in the table
+with size 0.
+
+Fetch with `klt artifact get`; check with `klt artifact verify manifests/artifacts/<name>.manifest.json`
+(needs the broker, so CI does not run it). CI (`scripts/check_artifact_manifests.py`, in `lint.sh`)
+validates schema, `artifact:` URIs only, and that no stored object's bytes are also committed. The
+record lint checks a stored record's manifest citation and table; it cannot re-derive the PASS verdict
+from raw bytes it does not have. Re-derive from `klt artifact get` output when auditing. Historical
+committed `corners/<record-id>/` evidence is unchanged and still linted in full; the `.gitignore` log
+exception was dropped so new logs cannot be re-admitted.
+
 ## Append-only rule and lint
 
 `python3 sim/check_records.py --base-ref <ref>` (wired into

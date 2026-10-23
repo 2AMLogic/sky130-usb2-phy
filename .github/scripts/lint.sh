@@ -38,6 +38,12 @@ if ! python3 sim/check_records.py --base-ref "$BASE_REF"; then
 fi
 
 echo
+echo "== Artifact-store manifests: scripts/check_artifact_manifests.py =="
+if ! python3 scripts/check_artifact_manifests.py; then
+  STATUS=1
+fi
+
+echo
 echo "== Evidence-record lint self-tests: flow/tests/ + sim/tests/ =="
 if ! command -v python3 >/dev/null 2>&1; then
   echo "ERROR: python3 not found" >&2

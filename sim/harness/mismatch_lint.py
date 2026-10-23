@@ -206,7 +206,11 @@ def lint_experiment(exp_dir: Path) -> list[str]:
         problems += check_record(exp_dir, rec)
     d = exp_dir / "campaigns"
     for p in sorted(d.iterdir()) if d.is_dir() else []:
-        if p.stem not in rids:
+        if p.is_file() and p.suffix == ".md":  # stored-evidence summary (run_store_evidence.py)
+            from . import evidence_lint as el
+
+            problems += el.check_stored_summary(p.read_text(), f"campaigns/{p.name}", exp_dir.parent.parent)
+        elif p.stem not in rids:
             problems.append(f"campaigns/{p.name}: no summary record cites it")
     return problems
 

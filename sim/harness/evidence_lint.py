@@ -28,14 +28,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-from . import matrix as mx, results as rs
+from . import artifact_manifest as am, matrix as mx, results as rs
 
 REQUIRED_FIELDS = ("Record ID", "Status", "Claim", "Netlist provenance", "Corner matrix run",
                    "Statistical convention", "Result", "Links", "Timestamp / author", "Supersedes")
 RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
 FIELD_RE = re.compile(r"^- \*\*(?P<k>[^*]+)\*\*:\s*(?P<v>.*)$")
 CORNER_LOG_RE = re.compile(r"^(?P<p>[a-z]+(?:_[a-z]+)?)_(?P<t>-?\d+(?:\.\d+)?)c_(?P<v>\d+\.\d\d)v\.log$")
-EVIDENCE_PATH_RE = re.compile(r"^sim/[^/]+/(records|netlist-snapshots|corners|campaigns)/")
+EVIDENCE_PATH_RE = re.compile(r"^(sim/[^/]+/(records|netlist-snapshots|corners|campaigns)/|manifests/artifacts/)")
+MANIFEST_CITE_RE = re.compile(r"(manifests/artifacts/[\w.-]+\.manifest\.json) \(manifest sha256 `([0-9a-f]{64})`\)")
+STORED_ROW_RE = re.compile(r"^\| `([^`]+)` \| (\d+) \| `([0-9a-f]{64})` \|$", re.MULTILINE)
 NO_SUPERSESSION_RE = re.compile(r"^\(?\s*(none|n/?a)\b", re.IGNORECASE)
 
 
@@ -66,7 +68,7 @@ def check_append_only(repo: Path, base_ref: str) -> list[str]:
     mb = _git(repo, "merge-base", base_ref, "HEAD")
     if mb.returncode != 0 or not mb.stdout.strip():
         return [f"append-only: no merge base between {base_ref!r} and HEAD (shallow clone?)"]
-    diff = _git(repo, "diff", "--name-status", "--no-renames", mb.stdout.strip(), "--", "sim")
+    diff = _git(repo, "diff", "--name-status", "--no-renames", mb.stdout.strip(), "--", "sim", "manifests")
     if diff.returncode != 0:
         return [f"append-only: git diff failed: {diff.stderr.strip()}"]
     problems = []
@@ -75,6 +77,35 @@ def check_append_only(repo: Path, base_ref: str) -> list[str]:
         if EVIDENCE_PATH_RE.match(path) and status != "A":
             problems.append(f"append-only: {path} was {'deleted' if status == 'D' else 'modified'}"
                             f" ({status}) relative to {base_ref}; evidence is append-only -- mint a new record")
+    return problems
+
+
+def check_stored_summary(text: str, ident: str, repo: Path) -> list[str]:
+    """A record/summary whose bytes live in the artifact store: it must cite a manifest in the repo
+    (by sha256) and its "Stored evidence" table must list exactly the manifest's objects."""
+    m = MANIFEST_CITE_RE.search(text)
+    if not m:
+        return [f"{ident}: no manifest citation (manifests/artifacts/<name>.manifest.json (manifest sha256 `...`))"]
+    path = repo / m.group(1)
+    if not path.is_file():
+        return [f"{ident}: cited manifest {m.group(1)} is missing"]
+    problems = []
+    if sha256_file(path) != m.group(2):
+        problems.append(f"{ident}: manifest sha256 does not match the one cited")
+    data, errs = am.load_manifest(path)
+    problems += [f"{ident}: {e}" for e in errs]
+    if data is None:
+        return problems
+    rows = {(n, int(sz), sh) for n, sz, sh in STORED_ROW_RE.findall(text)}
+    stored = {(e.get("name"), e["size"], e["sha256"]) for e in data["entries"] if isinstance(e, dict)
+              and "size" in e and "sha256" in e}
+    if not stored <= rows:
+        problems.append(f"{ident}: Stored evidence table lacks manifest object(s) "
+                        f"{sorted(n or '?' for n, _, _ in stored - rows)[:3]}")
+    extra = {r for r in rows - stored if r[1] != 0}
+    if extra:
+        problems.append(f"{ident}: Stored evidence table lists object(s) not in the manifest "
+                        f"{sorted(n for n, _, _ in extra)[:3]}")
     return problems
 
 
@@ -199,6 +230,13 @@ def lint_experiment(exp_dir: Path) -> list[str]:
         if not (exp_dir / "netlist-snapshots" / f"{rid}.spice").is_file():
             problems.append(f"{rid}: netlist-snapshots/{rid}.spice missing")
         cdir = exp_dir / "corners" / rid
+        if MANIFEST_CITE_RE.search(fields.get("Links", "")):
+            # bytes live in the artifact store: the raw envelope cannot be re-derived here
+            # (klt artifact get/verify does that); check the citation and that no copy is committed
+            problems += check_stored_summary(rec.read_text(), rid, exp_dir.parent.parent)
+            if cdir.exists():
+                problems.append(f"{rid}: corners/{rid}/ is committed but the record cites stored evidence")
+            continue
         if not cdir.is_dir():
             problems.append(f"{rid}: corners/{rid}/ missing")
             continue
