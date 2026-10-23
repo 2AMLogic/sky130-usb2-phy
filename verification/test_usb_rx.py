@@ -72,6 +72,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, Timer
 
+from monitors import Monitor, RxMonitor
 from usbfs import packets, pid, scenarios
 from usbfs.linestate import LineState, to_dpdm
 from usbfs.timing import MAX_FREQ_OFFSET_PPM, TimingConfig
@@ -171,55 +172,16 @@ def _is_subsequence(needle, haystack):
     return all(x in it for x in needle)
 
 
-class RxMonitor:
-    """Background monitor: samples RxValid/DataIn/RxActive/RxError once
-    per clk_utmi edge (the UTMI-domain output rate)."""
-
+class LineStateMonitor(Monitor):
     def __init__(self, dut):
-        self.dut = dut
-        self.bytes = []
-        self.saw_error = False
-        self.active_trace = []  # one bool per clk_utmi edge
-        self._task = None
-
-    async def _run(self):
-        while True:
-            await RisingEdge(self.dut.clk_utmi)
-            await ReadOnly()
-            if self.dut.RxValid.value:
-                self.bytes.append(int(self.dut.DataIn.value))
-            if self.dut.RxError.value:
-                self.saw_error = True
-            self.active_trace.append(bool(self.dut.RxActive.value))
-
-    def start(self):
-        self._task = cocotb.start_soon(self._run())
-
-    def stop(self):
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
-
-
-class LineStateMonitor:
-    def __init__(self, dut):
-        self.dut = dut
+        super().__init__(dut)
         self.trace = []
-        self._task = None
 
     async def _run(self):
         while True:
             await RisingEdge(self.dut.clk_utmi)
             await ReadOnly()
             self.trace.append(int(self.dut.LineState.value))
-
-    def start(self):
-        self._task = cocotb.start_soon(self._run())
-
-    def stop(self):
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
 
 
 async def _drive_and_receive(dut, states, timing=None, idle_bit_times=4,
