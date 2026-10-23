@@ -269,7 +269,8 @@ def test_variant_run_writes_a_225_point_record_the_lint_accepts(sandbox):
     assert "225 points" in rec and "sim/corners-resistor-sets.json" in rec and "pvt225-mos-rc" in rec
     assert "- **Status**: PASS" in rec and "225 unique" not in rec
     assert lint.lint_all(sandbox) == []
-    cdir = sandbox / EXP.name / "corners" / rid
+    assert not (sandbox / EXP.name / "corners" / rid).exists()  # bytes went to the store, not to git
+    cdir = sandbox.parent / "work/.stage" / EXP.name / rid
     man = json.loads((cdir / "evidence.json").read_text())
     assert man["variant"] == "resistor-sets" and man["matrix_id"] == mx.RESISTOR_SETS_ID
     assert man["sections"]["ss_hl"]["resistor_set"] == "high" and len(man["sections"]) == 25
@@ -290,15 +291,28 @@ def _reseal(sim, rid, edit):
 
 
 def _variant_rid(sim):
-    for p in sorted((sim / EXP.name / "corners").iterdir()):
-        m = json.loads((p / "evidence.json").read_text())
-        if m.get("variant") == "resistor-sets" and m["status"] == "PASS":
-            return p.name
+    for p in sorted((sim / EXP.name / "records").glob("*.md")):
+        if "manifest sha256" in p.read_text() and "- **Status**: PASS" in p.read_text():
+            return p.stem
+
+
+def _materialize(sim, rid):
+    """Turn the stored-evidence record into the historical committed form (corners/<rid>/ + evidence.json
+    sha in Links) so the semantic re-derivation can be tampered with and re-sealed."""
+    cdir = sim / EXP.name / "corners" / rid
+    shutil.copytree(sim.parent / "work/.stage" / EXP.name / rid, cdir)
+    recp = sim / EXP.name / "records" / f"{rid}.md"
+    text = re.sub(r"manifests/artifacts/\S+ \(manifest sha256 `[0-9a-f]{64}`\)",
+                  f"sim/{EXP.name}/corners/{rid}/ (evidence.json sha256 `{lint.sha256_file(cdir / 'evidence.json')}`)",
+                  recp.read_text())
+    recp.write_text(text.split("## Stored evidence")[0] + "\n")
 
 
 def test_lint_rejects_resealed_tampering_of_a_resistor_set_record(sandbox):
     test_variant_run_writes_a_225_point_record_the_lint_accepts(sandbox)
     rid = _variant_rid(sandbox)
+    _materialize(sandbox, rid)
+    assert lint.lint_all(sandbox) == []
     pristine = shutil.copytree(sandbox, sandbox.parent / "pristine")
 
     def narrow_matrix(cdir):  # self-declare a matrix without the hh sets

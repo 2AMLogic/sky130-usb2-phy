@@ -5,9 +5,9 @@
 __pycache__/
 .DS_Store
 
-# sim/ harness: per-corner ngspice logs under corners/ are committed evidence
-# (append-only record trail), so they escape the *.log rule.
-!sim/*/corners/**/*.log
+# sim/ harness: new runs keep raw outputs (incl. per-corner ngspice logs) in the fleet
+# artifact store, not in git, so corners/ logs are no longer re-admitted here. The historical
+# corners/<record-id>/ logs are already tracked and stay (tracking overrides ignore rules).
 sim/build/
 # synthesis / P&R scratch: flow/run_flow.py's per-corner working directories
 # (flow/build/<corner>/, each with its own .klt/ output tree), plus any .klt/
