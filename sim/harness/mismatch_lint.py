@@ -58,6 +58,13 @@ def check_record(exp_dir: Path, rec: Path) -> list[str]:
         if not ref or not (exp_dir / "records" / f"{ref.group(0)}.md").is_file():
             problems.append(f"{rid}: Supersedes names a record that does not exist")
     cdir = exp_dir / "campaigns" / rid
+    if el.MANIFEST_CITE_RE.search(fields.get("Links", "")):
+        # bytes live in the artifact store: PASS/FAIL cannot be re-derived here (klt artifact
+        # get/verify does that); check the citation and that no copy is also committed
+        problems += el.check_stored_summary(rec.read_text(), rid, exp_dir.parent.parent)
+        if cdir.exists():
+            problems.append(f"{rid}: campaigns/{rid}/ is committed but the record cites stored evidence")
+        return problems
     if not cdir.is_dir():
         return problems + [f"{rid}: campaigns/{rid}/ missing"]
     cited = re.search(r"evidence\.json sha256 `([0-9a-f]{64})`", fields.get("Links", ""))

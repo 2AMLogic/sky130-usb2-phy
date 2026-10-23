@@ -344,3 +344,65 @@ def test_fail_record_must_state_its_problems(tmp_path):
 
 def test_committed_mismatch_records_pass_the_lint():
     assert ml.lint_all(SIM) == []
+
+
+def to_stored(tmp_path, tweak=None):
+    """Turn the synthetic committed record into a stored one: manifest + table, no campaigns/ dir."""
+    import shutil
+    from harness import evidence_store as es
+    exp = build_tree(tmp_path)
+    cdir = exp / "campaigns" / RID
+    rows = [{"name": p.name, "size": p.stat().st_size, "sha256": sha(p.read_bytes())} for p in sorted(cdir.iterdir())]
+    shutil.rmtree(cdir)
+    mpath = tmp_path / es.manifest_rel("x-mismatch", RID)
+    mpath.parent.mkdir(parents=True)
+    mpath.write_text(json.dumps({"schema_version": 1, "entries": [
+        {"sha256": r["sha256"], "size": r["size"], "kind": "evidence", "name": f"x-mismatch/{RID}/{r['name']}",
+         "producer": {"tool": "klt", "version": "t", "loom.repo": "o/r", "commit": None},
+         "uri": f"artifact:evidence/o__r/{r['sha256']}"} for r in rows if r["size"]]}, indent=2) + "\n")
+    rec = exp / "records" / f"{RID}.md"
+    lines = rec.read_text().splitlines()
+    lines = [f"- **Links**: sim/x-mismatch/testbench/, {es.manifest_rel('x-mismatch', RID)} (manifest sha256 `{sha(mpath.read_bytes())}`)"
+             if l.startswith("- **Links**") else l for l in lines]
+    rec.write_text("\n".join(lines + [""] + es.stored_table(
+        [dict(r, name=f"x-mismatch/{RID}/{r['name']}") for r in rows]) + [""]))
+    return exp, mpath
+
+
+def test_stored_record_passes_the_lint(tmp_path):
+    exp, _ = to_stored(tmp_path)
+    assert lint(exp) == []
+
+
+def test_stored_record_with_tampered_manifest_fails(tmp_path):
+    exp, mpath = to_stored(tmp_path)
+    mpath.write_text(mpath.read_text() + " ")
+    assert any("manifest sha256 does not match" in p for p in lint(exp))
+
+
+def test_stored_record_with_missing_manifest_fails(tmp_path):
+    exp, mpath = to_stored(tmp_path)
+    mpath.unlink()
+    assert any("is missing" in p for p in lint(exp))
+
+
+def test_stored_record_must_not_also_commit_campaigns(tmp_path):
+    exp, _ = to_stored(tmp_path)
+    (exp / "campaigns" / RID).mkdir(parents=True)
+    assert any("is committed but the record cites stored evidence" in p for p in lint(exp))
+
+
+def test_recorded_run_fails_closed_before_submitting(monkeypatch):
+    from harness import evidence_store as es
+    calls = []
+
+    def boom():
+        raise es.StoreUnavailable("no broker")
+    monkeypatch.setattr(es, "preflight", boom)
+    monkeypatch.setattr(mm.runner, "check_env", lambda m: calls.append("env") or {"lib": "x"})
+    monkeypatch.setattr(mm, "_run", lambda *a, **k: calls.append("run"))
+    with pytest.raises(es.StoreUnavailable):
+        mm.run("diff-receiver-mismatch", "klt", None, None, 4, True)
+    assert calls == []
+    import run_mismatch
+    assert run_mismatch.main(["diff-receiver-mismatch"]) == 4
