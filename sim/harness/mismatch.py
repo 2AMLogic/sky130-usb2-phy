@@ -6,7 +6,8 @@ builds two `klt sim` requests -- the nominal campaign and a deterministic negati
 campaign (same deck and seeds with one fixed skew) -- submits all of them to the batch fleet in
 one `klt sim --batch-set` (never local: there is no fallback), pairs them with `klt
 yield-samples`, grades the pair with `klt yield`, and mints an append-only record under
-`sim/<experiment>/records/` with the raw evidence under `sim/<experiment>/campaigns/<record-id>/`.
+`sim/<experiment>/records/`; the raw evidence goes to the fleet artifact store and git keeps
+`manifests/artifacts/<experiment>-<record-id>.manifest.json`.
 
 `grade` and the file/hash conventions are shared with `mismatch_lint`, so the runner and the
 toolchain-free lint apply one rule.
@@ -22,7 +23,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import HARNESS_VERSION, matrix as mx, runner
+from . import HARNESS_VERSION, evidence_store as es, matrix as mx, runner
 
 SCHEMA = "sky130-usb2-phy.sim.mismatch/1"
 EVIDENCE_SCHEMA = "sky130-usb2-phy.sim.mismatch-evidence/1"
@@ -226,6 +227,8 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
         raise MismatchError(f"{lib} has no .lib section(s) {missing}")
     if record and only:
         raise MismatchError("a subset run cannot be recorded; drop --only or pass --no-write")
+    if record:
+        es.preflight()  # fail closed before submitting anything: recorded bytes go to the artifact store only
 
     now = _dt.datetime.now(_dt.timezone.utc)
     rid = runner.allocate_record_id(exp_dir / "records", now)
@@ -370,12 +373,9 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
     git = {"head": _git("rev-parse", "HEAD"), "dirty": bool(_git("status", "--porcelain"))}
     pdk_ident = {"name": "sky130A", "open_pdks_commit": env_info["open_pdks_commit"],
                  "lib_sha256": env_info["lib_sha256"], "lib": LIB}
-    cdir = exp_dir / "campaigns" / rid
     rec = exp_dir / "records" / f"{rid}.md"
-    if cdir.exists() or rec.exists():
+    if rec.exists() or (exp_dir / "campaigns" / rid).exists():
         raise MismatchError(f"{rid}: evidence exists; records are append-only")
-    cdir.mkdir(parents=True)
-    rec.parent.mkdir(parents=True, exist_ok=True)
     files = {"mc.json": (exp_dir / "testbench" / "mc.json").read_bytes(),
              "klt-stderr.txt": (work / "klt-stderr.txt").read_bytes(),
              "klt-batch-set.json": (work / "klt-batch-set.json").read_bytes()}
@@ -394,8 +394,6 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
         for k in ("samples", "limits", "yield"):
             files[y[k]] = (work / y[k]).read_bytes()
     import hashlib
-    for name, data in files.items():
-        (cdir / name).write_bytes(data)
     manifest = {
         "schema": EVIDENCE_SCHEMA, "record_id": rid, "experiment": exp_dir.name, "status": status,
         "problems": problems, "backend": "batch", "harness_version": HARNESS_VERSION,
@@ -407,8 +405,16 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
         "files": {n: hashlib.sha256(d).hexdigest() for n, d in sorted(files.items())},
     }
     mbytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode()
-    (cdir / "evidence.json").write_bytes(mbytes)
-    rec.write_text(render_record(spec, rid, manifest, hashlib.sha256(mbytes).hexdigest(), supersedes))
+    files["evidence.json"] = mbytes
+    bench = exp_dir.name
+    stage = runner.WORK_DIR / ".stage" / bench / rid  # git-ignored; kept for a retry if a put fails
+    staged = es.stage_bytes(stage, files)
+    rows = es.store_files(bench, rid, {f"{bench}/{rid}/{n}": p for n, p in staged.items()},
+                          stage.parent / f"{rid}.manifest.json")
+    msha = hashlib.sha256(es.manifest_path(bench, rid).read_bytes()).hexdigest()
+    rec.parent.mkdir(parents=True, exist_ok=True)
+    rec.write_text(render_record(spec, rid, manifest, hashlib.sha256(mbytes).hexdigest(), supersedes,
+                                 stored=(msha, rows)))
     print(f"record: {rec}")
     return 0 if status == "PASS" else 1
 
@@ -417,7 +423,8 @@ def _fmt(x, nd=6):
     return "-" if x is None else (f"{x:.{nd}g}" if isinstance(x, float) else str(x))
 
 
-def render_record(spec: dict, rid: str, m: dict, manifest_sha: str, supersedes: str = "") -> str:
+def render_record(spec: dict, rid: str, m: dict, manifest_sha: str, supersedes: str = "",
+                  stored: tuple | None = None) -> str:
     meta = spec["record"]
     rel = f"sim/{m['experiment']}"
     mc, y = m["monte_carlo"], m["yield"]
@@ -436,7 +443,8 @@ def render_record(spec: dict, rid: str, m: dict, manifest_sha: str, supersedes: 
         f"target_yield {y['target_yield']}, target CI half-width {y['target_ci_halfwidth']}; {y['sample_size_justification']}",
         f"- **Result**: {m['status']} -- " + ("every row measurement meets its yield claim, with a sufficient sample size and a detected negative control"
                                             if m["status"] == "PASS" else f"{len(m['problems'])} problem(s), listed under Failures; the failure is evidence, not a waived result"),
-        f"- **Links**: {rel}/testbench/, {rel}/campaigns/{rid}/ (evidence.json sha256 `{manifest_sha}`)",
+        (f"- **Links**: {rel}/testbench/, {rel}/campaigns/{rid}/ (evidence.json sha256 `{manifest_sha}`)") if stored is None else
+        (f"- **Links**: {rel}/testbench/, {es.manifest_rel(m['experiment'], rid)} (manifest sha256 `{stored[0]}`)"),
         f"- **Timestamp / author**: {m['started_utc']} / {m['author']}",
         f"- **Supersedes**: {supersedes or '(none)'}",
         "", "## Provenance", "",
@@ -450,6 +458,9 @@ def render_record(spec: dict, rid: str, m: dict, manifest_sha: str, supersedes: 
                      "`klt-batch-set-<n>.json`, in that order): the requests and decks were byte-compared with what mc.json "
                      "generates and nothing was resubmitted by the collection; a campaign takes its report from the last "
                      "directory with a complete one, and the batch job ids above are those of the reports used")
+    if stored is not None:
+        lines += [""] + es.stored_table(stored[1]) + ["", f"Fetch with `klt artifact get`; check with "
+                  f"`klt artifact verify {es.manifest_rel(m['experiment'], rid)}`."]
     lines += ["", "## Method", ""] + [f"- {x}" for x in meta["method"]]
     for c in m["corners"]:
         lines.append(f"- Corner `{c['id']}`: {c['basis']}.")

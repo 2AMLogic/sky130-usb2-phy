@@ -58,6 +58,9 @@ def main(argv=None) -> int:
     except (runner.RunError, mx.MatrixError, mismatch.MismatchError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 3
+    except runner.StoreUnavailable as exc:
+        print(f"error: artifact store unavailable, nothing was recorded: {exc}", file=sys.stderr)
+        return 4
 
 
 if __name__ == "__main__":
