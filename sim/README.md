@@ -309,16 +309,17 @@ control is `detected` for every measurement it is expected to degrade, and the t
 at the binding corner, threshold -75.6 mV (sigma 10.8 mV), 11.6 sigma from the 200 mV limit. This is local mismatch only, at
 two corners per receiver; it does not replace the corner records and says nothing about layout.
 
-Records: `diff-receiver-mismatch/records/`, `se-receiver-mismatch/records/`. The two committed records keep
-their raw evidence in `<experiment>/campaigns/<record-id>/`, hashed by `evidence.json`. A new recorded run uses
-the artifact store like the corner runner (see "Stored evidence" above): `run_mismatch.py` checks the store
-before submitting anything and exits 4, writing nothing, if `$KLT_ARTIFACT_BROKER` is unset, `klt artifact put`
-is missing or the broker is unreachable (`--no-write` does not need it). The requests, decks, klt reports,
-sample sets, limits files, `klt yield` reports and `evidence.json` are staged under `sim/.work/.stage/`
-(git-ignored) and stored; git keeps `manifests/artifacts/<experiment>-<record-id>.manifest.json` and the record
-with its **Stored evidence** table. `mismatch_lint` checks such a record's manifest citation and table and that
-no `campaigns/<record-id>/` copy is committed; the verdict is re-derived from the fetched files
-(`klt artifact get`), not by the toolchain-free lint.
+Records: `diff-receiver-mismatch/records/`, `se-receiver-mismatch/records/`. Records minted before
+the artifact store keep their raw evidence (requests, decks, klt reports, sample sets, limits files,
+`klt yield` reports) in `<experiment>/campaigns/<record-id>/`, hashed by `evidence.json`.
+
+New recorded runs store those files, plus `evidence.json`, in the artifact store (as the corner
+runner does, see "Stored evidence") and commit only `records/<record-id>.md` and
+`manifests/artifacts/<experiment>-<record-id>.manifest.json`; nothing is written under
+`campaigns/`. `run_mismatch.py` checks the store before it submits anything and exits 4 with
+nothing written if it is unusable; `--no-write` does not need the store. `mismatch_lint` checks a
+stored record's manifest citation and Stored evidence table and fails a record that also commits
+`campaigns/<record-id>/`; like stored corner records, it cannot re-derive PASS/FAIL from the bytes.
 
 ## dplus-pullup-tolerance
 
