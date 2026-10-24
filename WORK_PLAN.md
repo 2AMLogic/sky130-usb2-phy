@@ -40,13 +40,13 @@ Issues currently being built (`loom:building`).
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#194**: feat: store new sim evidence in the artifact store with manifest-based records
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#198**: feat: store Monte Carlo mismatch evidence in the artifact store
 
 ## Proposed
 
@@ -74,8 +74,8 @@ _None._
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 1 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 0 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 1 |
 | Curated | 3 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
