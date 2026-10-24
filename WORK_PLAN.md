@@ -34,7 +34,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#193**: Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
+_None._
 
 ## PRs Awaiting Review
 
@@ -46,7 +46,7 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#198**: feat: store Monte Carlo mismatch evidence in the artifact store
+_None._
 
 ## Proposed
 
@@ -54,8 +54,6 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#193**: Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact) *(curated)*
-
 ## Proposed (Architect / Hermit)
 
 _None._
@@ -73,10 +71,10 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 3 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 2 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
