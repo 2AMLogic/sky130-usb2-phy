@@ -16,11 +16,7 @@ shows trim coverage, not a single calibration code that survives voltage and tem
 
 from __future__ import annotations
 
-import math
-
-
-def _finite(x) -> bool:
-    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+from .integrity import finite as _finite
 
 
 def r_eff(v_dp, vpu, r_load):

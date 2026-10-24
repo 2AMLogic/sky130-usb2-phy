@@ -13,50 +13,22 @@ of these; a FAIL record must state its problems.
 
 from __future__ import annotations
 
-import hashlib
-import json
 import re
 from pathlib import Path
 
-from . import matrix as mx, mismatch as mm
+from . import evidence_lint as el, matrix as mx, mismatch as mm
+from .integrity import check_record_header, load_json, sha256_file
 
 REQUIRED_FIELDS = ("Record ID", "Status", "Claim", "Netlist provenance", "Corners run", "Statistical convention",
                    "Monte Carlo", "Result", "Links", "Timestamp / author", "Supersedes")
 
 
-def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _load(path: Path, problems: list[str], rid: str):
-    try:
-        return json.loads(path.read_text())
-    except (OSError, ValueError) as exc:
-        problems.append(f"{rid}: unreadable JSON {path.name} ({exc})")
-        return None
-
-
 def check_record(exp_dir: Path, rec: Path) -> list[str]:
-    from . import evidence_lint as el
-
     rid = rec.stem
-    if not el.RECORD_ID_RE.match(rid):
-        return [f"{rec.name}: not a <YYYYMMDD>-<HHMMSS>-<sha> record id"]
-    problems: list[str] = []
-    fields = el.parse_fields(rec.read_text())
-    for f in REQUIRED_FIELDS:
-        if not fields.get(f):
-            problems.append(f"{rid}: required field {f!r} missing or empty")
-    if fields.get("Record ID") != rid:
-        problems.append(f"{rid}: Record ID field {fields.get('Record ID')!r} != filename")
+    fields, problems = check_record_header(rec, exp_dir / "records", REQUIRED_FIELDS)
+    if fields is None:
+        return problems
     status = fields.get("Status")
-    if status not in ("PASS", "FAIL"):
-        problems.append(f"{rid}: Status must be PASS or FAIL")
-    sup = fields.get("Supersedes", "")
-    if sup and not el.NO_SUPERSESSION_RE.match(sup):
-        ref = re.search(r"\d{8}-\d{6}-[0-9a-f]{7,40}", sup)
-        if not ref or not (exp_dir / "records" / f"{ref.group(0)}.md").is_file():
-            problems.append(f"{rid}: Supersedes names a record that does not exist")
     cdir = exp_dir / "campaigns" / rid
     if el.MANIFEST_CITE_RE.search(fields.get("Links", "")):
         # bytes live in the artifact store: PASS/FAIL cannot be re-derived here (klt artifact
@@ -98,7 +70,7 @@ def check_record(exp_dir: Path, rec: Path) -> list[str]:
 def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
     """(criteria failures re-derived from the raw files, structural problems with the evidence)."""
     bad: list[str] = []
-    spec = _load(cdir / "mc.json", bad, rid)
+    spec = load_json(cdir / "mc.json", bad, rid)
     if not isinstance(spec, dict) or spec.get("schema") != mm.SCHEMA:
         return None, bad + [f"{rid}: frozen mc.json is missing or not a {mm.SCHEMA} document"]
     rcvs = {r["id"]: r for r in spec["receivers"]}
@@ -120,7 +92,7 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
         if rcv is None or corner is None or stem != mm.campaign_stem(c["receiver"], c["corner"], c["kind"]):
             bad.append(f"{rid}: campaign {stem} does not match the declared receivers/corners")
             continue
-        request = _load(cdir / f"{stem}.request.json", bad, rid)
+        request = load_json(cdir / f"{stem}.request.json", bad, rid)
         if not isinstance(request, dict):
             continue
         control = c["kind"] == "control"
@@ -137,11 +109,11 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
         if not c.get("report"):
             failing.append(f"{stem}: campaign did not complete (no report)")
             continue
-        report = _load(cdir / f"{stem}.report.json", bad, rid)
+        report = load_json(cdir / f"{stem}.report.json", bad, rid)
         if not isinstance(report, dict):
             continue
         env = report.get("environment") or {}
-        if env.get("netlist_sha256") != _sha(cdir / f"{stem}.spice"):
+        if env.get("netlist_sha256") != sha256_file(cdir / f"{stem}.spice"):
             bad.append(f"{rid}: {stem}: deck sha256 differs from the netlist hash in the klt report")
         mcs = [x for x in report.get("corners", []) if isinstance(x, dict) and x.get("monte_carlo")]
         if len(mcs) != request["monte_carlo"]["n"]:
@@ -176,9 +148,9 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
         if rcv is None or corner is None:
             bad.append(f"{rid}: yield entry {r}/{cn} is not a declared receiver/corner")
             continue
-        yld = _load(cdir / y["yield"], bad, rid)
-        samples = _load(cdir / y["samples"], bad, rid)
-        limits = _load(cdir / y["limits"], bad, rid)
+        yld = load_json(cdir / y["yield"], bad, rid)
+        samples = load_json(cdir / y["samples"], bad, rid)
+        limits = load_json(cdir / y["limits"], bad, rid)
         if not all(isinstance(x, dict) for x in (yld, samples, limits)):
             continue
         if limits != mm.resolve_limits(spec, rcv, corner):
@@ -187,7 +159,7 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
         for key, kind in (("nominal", "nominal"), ("negative_control", "control")):
             src = (der.get(key) or {}).get("content_hash")
             rep = cdir / f"{mm.campaign_stem(r, cn, kind)}.report.json"
-            if rep.is_file() and src != f"sha256:{_sha(rep)}":
+            if rep.is_file() and src != f"sha256:{sha256_file(rep)}":
                 bad.append(f"{rid}: {y['samples']}: {key} hash does not pin {rep.name}")
         if yld.get("status") != y.get("yield_status"):
             bad.append(f"{rid}: {y['yield']}: status {yld.get('status')!r} != evidence.json {y.get('yield_status')!r}")
@@ -214,9 +186,7 @@ def lint_experiment(exp_dir: Path) -> list[str]:
     d = exp_dir / "campaigns"
     for p in sorted(d.iterdir()) if d.is_dir() else []:
         if p.is_file() and p.suffix == ".md":  # stored-evidence summary (run_store_evidence.py)
-            from . import evidence_lint as el
-
-            problems += el.check_stored_summary(p.read_text(), f"campaigns/{p.name}", exp_dir.parent.parent)
+                    problems += el.check_stored_summary(p.read_text(), f"campaigns/{p.name}", exp_dir.parent.parent)
         elif p.stem not in rids:
             problems.append(f"campaigns/{p.name}: no summary record cites it")
     return problems
