@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "engine": "icarus",
+  "hdl_toplevel": "usb_utmi_top",
+  "testbench": "test_usb_utmi_top",
+  "status": "fail",
+  "test_count": 26,
+  "passed_count": 25,
+  "failed_count": 1,
+  "skipped_count": 0,
+  "tests": [
+    {
+      "name": "test_loopback_stuff_before_eop_payload",
+      "status": "passed",
+      "sim_time_ns": 6066.606,
+      "real_time_s": 0.09838509559631348
+    },
+    {
+      "name": "test_loopback_all_ones_payload",
+      "status": "passed",
+      "sim_time_ns": 11566.551,
+      "real_time_s": 0.1902008056640625
+    },
+    {
+      "name": "test_loopback_all_zeros_payload",
+      "status": "passed",
+      "sim_time_ns": 10733.225999999999,
+      "real_time_s": 0.17188000679016113
+    },
+    {
+      "name": "test_loopback_max_length_bulk_payload",
+      "status": "passed",
+      "sim_time_ns": 48132.852,
+      "real_time_s": 0.7974357604980469
+    },
+    {
+      "name": "test_loopback_corrupted_crc_token",
+      "status": "passed",
+      "sim_time_ns": 5299.947,
+      "real_time_s": 0.08461618423461914
+    },
+    {
+      "name": "test_tx_only_max_length_bulk_payload",
+      "status": "passed",
+      "sim_time_ns": 46149.82399999999,
+      "real_time_s": 0.5310823917388916
+    },
+    {
+      "name": "test_tx_only_max_length_isochronous_payload",
+      "status": "passed",
+      "sim_time_ns": 689775.296,
+      "real_time_s": 8.264516830444336
+    },
+    {
+      "name": "test_tx_only_stuff_before_eop_payload",
+      "status": "passed",
+      "sim_time_ns": 4069.1840000000084,
+      "real_time_s": 0.04860997200012207
+    },
+    {
+      "name": "test_tx_only_all_ones_payload",
+      "status": "passed",
+      "sim_time_ns": 9568.832000000053,
+      "real_time_s": 0.11017513275146484
+    },
+    {
+      "name": "test_tx_only_all_zeros_payload",
+      "status": "passed",
+      "sim_time_ns": 8735.551999999909,
+      "real_time_s": 0.09851622581481934
+    },
+    {
+      "name": "test_tx_only_corrupted_crc_token",
+      "status": "passed",
+      "sim_time_ns": 3319.23199999996,
+      "real_time_s": 0.038576364517211914
+    },
+    {
+      "name": "test_tx_only_truncated_packet",
+      "status": "passed",
+      "sim_time_ns": 4652.479999999981,
+      "real_time_s": 0.05481410026550293
+    },
+    {
+      "name": "test_rx_only_max_length_bulk_payload",
+      "status": "passed",
+      "sim_time_ns": 48032.853,
+      "real_time_s": 0.6198475360870361
+    },
+    {
+      "name": "test_rx_only_max_length_isochronous_payload",
+      "status": "passed",
+      "sim_time_ns": 691693.083,
+      "real_time_s": 8.24470067024231
+    },
+    {
+      "name": "test_rx_only_stuff_before_eop_payload",
+      "status": "passed",
+      "sim_time_ns": 5966.607000000076,
+      "real_time_s": 0.06243252754211426
+    },
+    {
+      "name": "test_rx_only_all_ones_payload",
+      "status": "passed",
+      "sim_time_ns": 11466.552000000142,
+      "real_time_s": 0.12461161613464355
+    },
+    {
+      "name": "test_rx_only_all_zeros_payload",
+      "status": "passed",
+      "sim_time_ns": 10633.226999999955,
+      "real_time_s": 0.11264610290527344
+    },
+    {
+      "name": "test_rx_only_corrupted_crc_token",
+      "status": "passed",
+      "sim_time_ns": 5199.947999999858,
+      "real_time_s": 0.052135467529296875
+    },
+    {
+      "name": "test_rx_only_truncated_packet",
+      "status": "passed",
+      "sim_time_ns": 6533.267999999924,
+      "real_time_s": 0.06661367416381836
+    },
+    {
+      "name": "test_opmode_bypass_at_top_ports",
+      "status": "passed",
+      "sim_time_ns": 3533.2979999999516,
+      "real_time_s": 0.03722214698791504
+    },
+    {
+      "name": "test_opmode_non_driving_at_top_ports",
+      "status": "passed",
+      "sim_time_ns": 12598.13599999994,
+      "real_time_s": 0.17879867553710938
+    },
+    {
+      "name": "test_suspendm_disables_the_line_drivers",
+      "status": "passed",
+      "sim_time_ns": 20035.439000000013,
+      "real_time_s": 0.22273826599121094
+    },
+    {
+      "name": "test_control_input_synchronizer_depth_is_two",
+      "status": "failed",
+      "sim_time_ns": 299.99700000020675,
+      "real_time_s": 0.005780935287475586,
+      "error_type": "AttributeError",
+      "error_message": "usb_utmi_top contains no child object named term_select_144"
+    },
+    {
+      "name": "test_txvalid_lags_dataout_by_the_skew_guard_flop",
+      "status": "passed",
+      "sim_time_ns": 866.658000000054,
+      "real_time_s": 0.008053779602050781
+    },
+    {
+      "name": "test_txready_is_exactly_one_utmi_cycle_per_byte",
+      "status": "passed",
+      "sim_time_ns": 8735.551999999909,
+      "real_time_s": 0.0950157642364502
+    },
+    {
+      "name": "test_negative_control_over_advancing_link_corrupts_packet",
+      "status": "passed",
+      "sim_time_ns": 66865.9979999999,
+      "real_time_s": 1.0812461376190186
+    }
+  ],
+  "coverage": null,
+  "trace": null,
+  "environment": {
+    "engine": "icarus",
+    "engine_version": "13.0",
+    "cocotb_version": "2.0.1",
+    "results_xml": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-200/verification/.klt/functional-verification/results_icarus.xml",
+    "random_seed": 1,
+    "sdf": null
+  }
+}
