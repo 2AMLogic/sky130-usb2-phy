@@ -74,6 +74,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, NextTimeStep, ReadOnly, RisingEdge, Timer
 
+from monitors import Monitor, RxMonitor
 from usbfs import packets, scenarios
 from usbfs.bits import bits_of_byte, bits_to_bytes, bytes_to_bits
 from usbfs.linestate import from_dpdm, level_to_state
@@ -261,47 +262,14 @@ async def _collect_tx_line_states(dut):
     return states
 
 
-class RxMonitor:
-    """Samples `RxValid`/`DataIn`/`RxActive`/`RxError` once per `clk_utmi`
-    edge -- the rate at which the UTMI-domain outputs can change. Same
-    monitor shape as `test_usb_rx.py`'s."""
-
-    def __init__(self, dut):
-        self.dut = dut
-        self.bytes = []
-        self.saw_error = False
-        self.saw_active = False
-        self._task = None
-
-    async def _run(self):
-        while True:
-            await RisingEdge(self.dut.clk_utmi)
-            await ReadOnly()
-            if self.dut.RxValid.value:
-                self.bytes.append(int(self.dut.DataIn.value))
-            if self.dut.RxError.value:
-                self.saw_error = True
-            if self.dut.RxActive.value:
-                self.saw_active = True
-
-    def start(self):
-        self._task = cocotb.start_soon(self._run())
-
-    def stop(self):
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
-
-
-class DriverMonitor:
+class DriverMonitor(Monitor):
     """Records whether the pad-side driver enables ever asserted, and the
     `TxReady` pulse widths observed in the UTMI domain."""
 
     def __init__(self, dut):
-        self.dut = dut
+        super().__init__(dut)
         self.saw_oe = False
         self.saw_drive_en = False
-        self._task = None
 
     async def _run(self):
         while True:
@@ -312,22 +280,13 @@ class DriverMonitor:
             if self.dut.tx_drive_en.value:
                 self.saw_drive_en = True
 
-    def start(self):
-        self._task = cocotb.start_soon(self._run())
 
-    def stop(self):
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
-
-
-class LoopbackWire:
+class LoopbackWire(Monitor):
     """The DP/DM loopback: `tx_dp`/`tx_dn` -> `dp`/`dm`, resampled once per
     `clk_144` edge (see the module docstring)."""
 
     def __init__(self, dut):
-        self.dut = dut
-        self._task = None
+        super().__init__(dut)
 
     async def _run(self):
         while True:
@@ -340,14 +299,6 @@ class LoopbackWire:
             await NextTimeStep()
             self.dut.dp.value = dp
             self.dut.dm.value = dm
-
-    def start(self):
-        self._task = cocotb.start_soon(self._run())
-
-    def stop(self):
-        if self._task is not None:
-            self._task.cancel()
-            self._task = None
 
 
 # ---------------------------------------------------------------------------

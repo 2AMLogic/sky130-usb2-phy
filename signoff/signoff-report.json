@@ -249,7 +249,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:762ca9841508fe9448876a9b2fe56ac56c943d853616b8f21f49ea101e7563d4",
+        "content_hash": "sha256:b980e0f080655a3bf40d7749b901ce7437f47ef8db94358c161d9b1b89883411",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -258,7 +258,7 @@
             "path": "signoff/inventory/item-9-testbenches.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:762ca9841508fe9448876a9b2fe56ac56c943d853616b8f21f49ea101e7563d4",
+          "content_hash": "sha256:b980e0f080655a3bf40d7749b901ce7437f47ef8db94358c161d9b1b89883411",
           "input_verified": true,
           "summary": "T1 item 9: every cocotb suite in verification/ and every analog testbench under sim/*/testbench/ is committed, with its cold-start invocation and the pinned PDK revision. The audited artifact is signoff/inventory/item-9-testbenches.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-9-testbenches.json"
@@ -280,7 +280,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:762ca9841508fe9448876a9b2fe56ac56c943d853616b8f21f49ea101e7563d4",
+        "content_hash": "sha256:b980e0f080655a3bf40d7749b901ce7437f47ef8db94358c161d9b1b89883411",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -289,7 +289,7 @@
             "path": "signoff/inventory/item-9-testbenches.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:762ca9841508fe9448876a9b2fe56ac56c943d853616b8f21f49ea101e7563d4",
+          "content_hash": "sha256:b980e0f080655a3bf40d7749b901ce7437f47ef8db94358c161d9b1b89883411",
           "input_verified": true,
           "summary": "T1 item 9: every cocotb suite in verification/ and every analog testbench under sim/*/testbench/ is committed, with its cold-start invocation and the pinned PDK revision. The audited artifact is signoff/inventory/item-9-testbenches.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-9-testbenches.json"
