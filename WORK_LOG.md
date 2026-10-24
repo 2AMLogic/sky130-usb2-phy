@@ -3,6 +3,14 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-24
+
+- **PR #203**: refactor: share cocotb Monitor base and RxMonitor across verification suites
+- **Issue #200** (closed): Consolidate duplicated cocotb monitor classes in verification tests
+- **PR #202**: refactor: share record-header, hash and JSON helpers across sim harness
+- **Issue #201** (closed): Consolidate duplicated record-header lint and hash helpers in sim/harness
+- **PR #198**: feat: store Monte Carlo mismatch evidence in the artifact store
+
 ### 2026-10-23
 
 - **PR #197**: feat: store mismatch campaign evidence in the artifact store
