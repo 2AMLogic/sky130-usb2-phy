@@ -25,6 +25,7 @@ import subprocess
 from pathlib import Path
 
 from . import HARNESS_VERSION, evidence_store as es, matrix as mx, runner
+from .integrity import sha256_bytes, sha256_file
 
 SCHEMA = "sky130-usb2-phy.sim.mismatch/1"
 EVIDENCE_SCHEMA = "sky130-usb2-phy.sim.mismatch-evidence/1"
@@ -395,7 +396,6 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
     for y in yields:
         for k in ("samples", "limits", "yield"):
             files[y[k]] = (work / y[k]).read_bytes()
-    import hashlib
     manifest = {
         "schema": EVIDENCE_SCHEMA, "record_id": rid, "experiment": exp_dir.name, "status": status,
         "problems": problems, "backend": "batch", "harness_version": HARNESS_VERSION,
@@ -404,7 +404,7 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
         "collected_from_batch_set": collected_from,
         "monte_carlo": spec["monte_carlo"], "yield": spec["yield"],
         "corners": spec["corners"], "campaigns": camp_rows, "yields": yields,
-        "files": {n: hashlib.sha256(d).hexdigest() for n, d in sorted(files.items())},
+        "files": {n: sha256_bytes(d) for n, d in sorted(files.items())},
     }
     mbytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode()
     files["evidence.json"] = mbytes
@@ -412,9 +412,9 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
     staged = es.stage_bytes(stage, files)
     rows = es.store_files(exp_dir.name, rid, {f"{exp_dir.name}/{rid}/{n}": p for n, p in staged.items()},
                           stage.parent / f"{rid}.manifest.json")
-    msha = hashlib.sha256(es.manifest_path(exp_dir.name, rid).read_bytes()).hexdigest()
+    msha = sha256_file(es.manifest_path(exp_dir.name, rid))
     rec.parent.mkdir(parents=True, exist_ok=True)
-    rec.write_text(render_record(spec, rid, manifest, hashlib.sha256(mbytes).hexdigest(), supersedes,
+    rec.write_text(render_record(spec, rid, manifest, sha256_bytes(mbytes), supersedes,
                                  stored=(msha, rows)))
     print(f"record: {rec}")
     return 0 if status == "PASS" else 1

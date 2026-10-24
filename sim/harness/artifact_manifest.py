@@ -15,11 +15,12 @@ duplicate; the same bytes under that run's own evidence path are.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 import subprocess
 from pathlib import Path
+
+from .integrity import sha256_file
 
 SCHEMA_VERSION = 1
 KINDS = ("evidence", "transcript", "log", "pdk")
@@ -89,14 +90,6 @@ def load_manifest(path: Path) -> tuple[dict | None, list[str]]:
                 problems.append(f"{path.name}: entry {i}: duplicate sha256+name")
             seen.add(key)
     return data, problems
-
-
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def tracked_files(repo: Path) -> tuple[list[str] | None, str]:

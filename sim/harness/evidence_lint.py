@@ -21,7 +21,6 @@ an unresolvable base ref FAILS (a shallow clone must not silently skip it).
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import subprocess
@@ -29,29 +28,15 @@ import sys
 from pathlib import Path
 
 from . import artifact_manifest as am, matrix as mx, results as rs
+from .integrity import (  # noqa: F401  (re-exported for callers and tests)
+    NO_SUPERSESSION_RE, RECORD_ID_RE, check_record_header, load_json, parse_fields, sha256_file)
 
 REQUIRED_FIELDS = ("Record ID", "Status", "Claim", "Netlist provenance", "Corner matrix run",
                    "Statistical convention", "Result", "Links", "Timestamp / author", "Supersedes")
-RECORD_ID_RE = re.compile(r"^\d{8}-\d{6}-[0-9a-f]{7,40}$")
-FIELD_RE = re.compile(r"^- \*\*(?P<k>[^*]+)\*\*:\s*(?P<v>.*)$")
 CORNER_LOG_RE = re.compile(r"^(?P<p>[a-z]+(?:_[a-z]+)?)_(?P<t>-?\d+(?:\.\d+)?)c_(?P<v>\d+\.\d\d)v\.log$")
 EVIDENCE_PATH_RE = re.compile(r"^(sim/[^/]+/(records|netlist-snapshots|corners|campaigns)/|manifests/artifacts/)")
 MANIFEST_CITE_RE = re.compile(r"(manifests/artifacts/[\w.-]+\.manifest\.json) \(manifest sha256 `([0-9a-f]{64})`\)")
 STORED_ROW_RE = re.compile(r"^\| `([^`]+)` \| (\d+) \| `([0-9a-f]{64})` \|$", re.MULTILINE)
-NO_SUPERSESSION_RE = re.compile(r"^\(?\s*(none|n/?a)\b", re.IGNORECASE)
-
-
-def sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def parse_fields(text: str) -> dict[str, str]:
-    out = {}
-    for line in text.splitlines():
-        m = FIELD_RE.match(line)
-        if m:
-            out[m.group("k").strip()] = m.group("v").strip()
-    return out
 
 
 def _git(repo: Path, *args: str):
@@ -109,14 +94,6 @@ def check_stored_summary(text: str, ident: str, repo: Path) -> list[str]:
     return problems
 
 
-def _load_json(path: Path, problems: list[str], what: str):
-    try:
-        return json.loads(path.read_text())
-    except (OSError, ValueError) as exc:
-        problems.append(f"{what}: unreadable JSON {path.name} ({exc})")
-        return None
-
-
 def check_evidence_dir(cdir: Path, rid: str, record_sha_of_manifest: str | None) -> tuple[list[str], dict | None]:
     problems: list[str] = []
     manifest_path = cdir / "evidence.json"
@@ -124,7 +101,7 @@ def check_evidence_dir(cdir: Path, rid: str, record_sha_of_manifest: str | None)
         return [f"{rid}: {cdir.name}/evidence.json missing"], None
     if record_sha_of_manifest and sha256_file(manifest_path) != record_sha_of_manifest:
         problems.append(f"{rid}: evidence.json sha256 does not match the one cited in the record's Links")
-    m = _load_json(manifest_path, problems, rid)
+    m = load_json(manifest_path, problems, rid)
     if not isinstance(m, dict):
         return problems, None
     if m.get("record_id") != rid:
@@ -210,23 +187,11 @@ def lint_experiment(exp_dir: Path) -> list[str]:
     for rec in sorted(records.glob("*.md")) if records.is_dir() else []:
         rid = rec.stem
         rids.add(rid)
-        if not RECORD_ID_RE.match(rid):
-            problems.append(f"{rec.name}: not a <YYYYMMDD>-<HHMMSS>-<sha> record id")
+        fields, errs = check_record_header(rec, records, REQUIRED_FIELDS)
+        problems += errs
+        if fields is None:
             continue
-        fields = parse_fields(rec.read_text())
-        for f in REQUIRED_FIELDS:
-            if not fields.get(f):
-                problems.append(f"{rid}: required field {f!r} missing or empty")
-        if fields.get("Record ID") != rid:
-            problems.append(f"{rid}: Record ID field {fields.get('Record ID')!r} != filename")
         status = fields.get("Status")
-        if status not in ("PASS", "FAIL"):
-            problems.append(f"{rid}: Status must be PASS or FAIL")
-        sup = fields.get("Supersedes", "")
-        if sup and not NO_SUPERSESSION_RE.match(sup):
-            ref = re.search(r"\d{8}-\d{6}-[0-9a-f]{7,40}", sup)
-            if not ref or not (records / f"{ref.group(0)}.md").is_file():
-                problems.append(f"{rid}: Supersedes names a record that does not exist")
         if not (exp_dir / "netlist-snapshots" / f"{rid}.spice").is_file():
             problems.append(f"{rid}: netlist-snapshots/{rid}.spice missing")
         cdir = exp_dir / "corners" / rid

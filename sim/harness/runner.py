@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import datetime as _dt
 import getpass
-import hashlib
 import json
 import os
 import shutil
@@ -18,6 +17,7 @@ import subprocess
 from pathlib import Path
 
 from . import HARNESS_VERSION, evidence_store as es, matrix as mx, results as rs
+from .integrity import sha256_bytes, sha256_file  # noqa: F401  (re-exported)
 from .evidence_store import StoreUnavailable  # noqa: F401  (re-exported for the CLI)
 
 KLT = "klt"
@@ -26,14 +26,6 @@ WORK_DIR = mx.SIM_DIR / ".work"
 
 class RunError(RuntimeError):
     pass
-
-
-def sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def sha256_file(path: Path) -> str:
-    return sha256_bytes(Path(path).read_bytes())
 
 
 def pdk_roots() -> list[Path]:

@@ -8,9 +8,9 @@ measurement finite and inside the testbench's harness-only bounds.
 
 from __future__ import annotations
 
-import math
 
 from . import matrix as mx
+from .integrity import finite as _finite
 from . import trim as trimmod
 
 DEFAULT_TIMEOUT_S = 300
@@ -79,10 +79,6 @@ def build_request(
     if hosts and hosts > 1:
         request["remote"] = {"hosts": int(hosts)}
     return request
-
-
-def _finite(value) -> bool:
-    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
 
 def corner_key(c: dict):
