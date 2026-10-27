@@ -536,7 +536,7 @@ through `klt functional-verification` against the RTL and against that netlist
 (plus `sky130_fd_sc_hd` `primitives.v` / `sky130_fd_sc_hd.v`, `-DFUNCTIONAL`,
 no power pins), and writes the record. `klt functional-verification` needs
 cocotb, which the shared worker's `klt` does not have, so the default is a
-throwaway `uvx --from klayout-tools==0.7.0 --with cocotb==2.0.1 klt`
+throwaway `uvx --from klayout-tools==0.8.0 --with cocotb==2.0.1 klt`
 (`--fv-klt` overrides).
 
 **How a synthesis-only record differs from a full-flow record.** It declares

@@ -32,7 +32,7 @@ Usage:
 `klt functional-verification` needs cocotb in klt's own environment, which the
 shared worker's `klt` does not have and this repo does not install into host
 tools. The default `--fv-klt` is therefore a throwaway uvx environment:
-`uvx --from klayout-tools==0.7.0 --with cocotb==2.0.1 klt`.
+`uvx --from klayout-tools==0.8.0 --with cocotb==2.0.1 klt`.
 
 Exit codes: 0 recorded, 2 a stage or the environment failed outright, 1 the
 two synthesis runs disagreed.
@@ -65,7 +65,7 @@ FV_TEMPLATE = FLOW_DIR / EXPERIMENT / "gatelevel-fv-request.template.json"
 RTL_FV_REQUEST = REPO_ROOT / "verification" / "request-usb-utmi_top.json"
 NETLIST_REL = "design/netlist/usb_utmi_top.v"
 CELL_LIBRARY = "sky130_fd_sc_hd"
-DEFAULT_FV_KLT = "uvx --from klayout-tools==0.7.0 --with cocotb==2.0.1 klt"
+DEFAULT_FV_KLT = "uvx --from klayout-tools==0.8.0 --with cocotb==2.0.1 klt"
 SCRATCH = run_flow.BUILD_DIR / EXPERIMENT
 
 FLIP_FLOP_RE = re.compile(r"^sky130_fd_sc_hd__(s?e?df|dlx|dlr|dlxb|dlrb|dfx)")
