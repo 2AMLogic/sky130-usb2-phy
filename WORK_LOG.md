@@ -3,6 +3,13 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-27
+
+- **PR #211**: feat(signoff): bind not_applicable statement for T1 item 6 digital, re-pin klt 0.8.0
+- **Issue #208** (closed): T1 item 6 (Monte Carlo, digital partition): bound not_applicable statement for the UTMI digital rows
+- **PR #210**: feat(signoff): cite T1 item 1 digital via klt attest envelope
+- **Issue #206** (closed): T1 item 1 (design sources, digital partition): attest and cite the ready UTMI source inventory as 1.digital
+
 ### 2026-10-24
 
 - **PR #203**: refactor: share cocotb Monitor base and RxMonitor across verification suites
