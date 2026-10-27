@@ -590,7 +590,7 @@ def main(argv: list[str] | None = None) -> int:
         default="klt",
         help=(
             "command prefix for klt functional-verification; the installed klt has no cocotb, so "
-            "use e.g. 'uvx --from klayout-tools==0.7.0 --with cocotb==2.1.0 klt' on a shared worker"
+            "use e.g. 'uvx --from klayout-tools==0.8.0 --with cocotb==2.1.0 klt' on a shared worker"
         ),
     )
     args = parser.parse_args(argv)
