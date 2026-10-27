@@ -34,13 +34,20 @@ def tree(tmp_path, monkeypatch):
     """A copy of the signoff dir plus every file an inventory lists."""
     check = _load_check()
     shutil.copytree(SIGNOFF, tmp_path / "signoff", ignore=shutil.ignore_patterns("tests"))
-    names = [v[0] for v in check.ANCHORED.values()] + list(check.UNCITED_INVENTORIES)
+    names = [v[0] for v in check.ANCHORED.values()]
     for name in names:
         inventory = json.loads((REAL_ROOT / name).read_text())
         for member in check._members(inventory):
             dest = tmp_path / member["path"]
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REAL_ROOT / member["path"], dest)
+    for _inventory, envelope_rel in check.ATTESTED.values():
+        envelope = json.loads((REAL_ROOT / envelope_rel).read_text())
+        for entry in envelope["attestation"]["checks"]:
+            if entry["check"] == "present":
+                dest = tmp_path / entry["path"]
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy(REAL_ROOT / entry["path"], dest)
     shutil.copy(REAL_ROOT / "spec" / "usb2-phy.md", _mk(tmp_path / "spec" / "usb2-phy.md"))
     shutil.copy(REAL_ROOT / "docs" / "characterization.md", _mk(tmp_path / "docs" / "characterization.md"))
     # klt resolves a `scope: repo` input path against the repo root it finds
@@ -69,7 +76,6 @@ def test_fresh_copy_passes(tree):
         "sim/smoke-inverter/testbench/tb.json",  # item 9 analog member
         "README.md",  # item 10 member
         "LICENSE",  # item 10 member
-        "rtl/usb_rx_cdc.v",  # item 1 (digital) member
     ],
 )
 def test_mutating_an_inventoried_file_fails_the_gate(tree, mutated, capsys):
@@ -77,6 +83,24 @@ def test_mutating_an_inventoried_file_fails_the_gate(tree, mutated, capsys):
     with (root / mutated).open("a") as handle:
         handle.write("\n// mutated\n")
     assert not check.check_inventory_members()
+    assert mutated in capsys.readouterr().err
+
+
+def manifest_for(check):
+    return json.loads(check.MANIFEST.read_text())
+
+
+def test_attested_item1_fresh_copy_passes(tree):
+    check, _ = tree
+    assert check.check_attested(manifest_for(check))
+
+
+@pytest.mark.parametrize("mutated", ["rtl/usb_rx_cdc.v", "flow/request-synth-usb_utmi_top.json"])
+def test_mutating_an_item1_source_fails_the_gate(tree, mutated, capsys):
+    check, root = tree
+    with (root / mutated).open("a") as handle:
+        handle.write("\n// mutated\n")
+    assert not check.check_attested(manifest_for(check))
     assert mutated in capsys.readouterr().err
 
 

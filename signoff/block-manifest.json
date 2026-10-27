@@ -2,6 +2,10 @@
   "block": "sky130-usb2-phy",
   "kind": "mixed-signal",
   "evidence": {
+    "1.digital": {
+      "file": "signoff/evidence/item-1-digital-sources.json",
+      "content_hash": "sha256:72d7197c3c896ec6ffaa0b71de62a05a1cb40c4c475bbb7cbd64ed9c74b4cd95"
+    },
     "8": {
       "file": "signoff/evidence/characterization-report.json",
       "content_hash": "sha256:55242b39fe793b8bb8a81bd844bf96d4a4a3c331a3778602a72c72c4ac5720c4"
@@ -12,7 +16,7 @@
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:876238379a06f78c7b69825a95e4310a2d4c18170c1163682e132a59a0e07308"
+      "content_hash": "sha256:e5c8ed79c1b4fabb09bf9f92095d525864ea4ead1dcddb5a6104da004817f4a5"
     },
     "6.digital": {
       "not_applicable": {
