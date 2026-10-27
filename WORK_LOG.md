@@ -5,6 +5,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-27
 
+- **PR #214**: chore: bump pinned klayout-tools to 0.8.0 in flow defaults and docs
+- **Issue #213** (closed): Bump klayout-tools pin 0.7.0 → 0.8.0
 - **PR #211**: feat(signoff): bind not_applicable statement for T1 item 6 digital, re-pin klt 0.8.0
 - **Issue #208** (closed): T1 item 6 (Monte Carlo, digital partition): bound not_applicable statement for the UTMI digital rows
 - **PR #210**: feat(signoff): cite T1 item 1 digital via klt attest envelope
