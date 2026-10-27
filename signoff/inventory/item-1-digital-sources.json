@@ -1,92 +1,39 @@
 {
-  "schema": "sky130-usb2-phy.signoff.inventory/1",
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
   "t1_item": 1,
-  "partition": "digital",
-  "note": "Digital design sources: rtl/usb_*.v, the synthesized gate-level netlist, and the synthesis request and record. NOT YET CITED by signoff/block-manifest.json: the combinational loop in rtl/usb_rx_cdc.v is fixed (#164 landed; the current synthesis record reports 0 combinational loops), but citing this item is a separate step that has not been taken. Plain versioned file kept ready for that citation.",
-  "rtl": [
-    {
-      "path": "rtl/usb_bit_destuffer.v",
-      "sha256": "sha256:03fc67bcec9eaece476ed46a7cb41fab4000bcd49e18cc7c7bf60f016f1ffc51",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_bit_stuffer.v",
-      "sha256": "sha256:8987568b5bf36d0bfa649c2cb8bfbe7c06a2a3c22df3491d5548820a917ce0c4",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_bit_sync.v",
-      "sha256": "sha256:361f9c615d3ef030584384de2f04fe29f43f4b9eb9da8ab95e3e15afdbb3a145",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_linestate.v",
-      "sha256": "sha256:beb5a2f4c30e74d7cd883de9d241edccf5cd8631fcfd0df056d277b2234222a7",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_nrzi_decoder.v",
-      "sha256": "sha256:aa7eef14d8b00c6969ff375007ce34b960a9e2bd8f337d18590d902edad426c3",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_nrzi_encoder.v",
-      "sha256": "sha256:9ab1f95a877aab538d13784fa02e7c260d173cac851b4c9e9fa78d25ea01bf39",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_rx_cdc.v",
-      "sha256": "sha256:51f44bff8c98a706bdeab1107d29c96a85946adc11b4004d4d3f0aef534bdaa3",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_rx_framer.v",
-      "sha256": "sha256:2cec795c15feae44da651c8b55063c816bed2398cdfb9760ba6884bc9d6e286b",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_rx_path.v",
-      "sha256": "sha256:a87bf71fc3eca750ef3ec1a1f3e8997d7209a4a7ecb4467398d9d138ad696e75",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_tx_framer.v",
-      "sha256": "sha256:ee88fd2b593fa631a212d41fd00034422e7a8e99caaee96184d943475080952e",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_tx_serializer.v",
-      "sha256": "sha256:62f097bcb5c4feee2d1f6ce20f3744fc8d7898ac34a9424fa487a9529deceaca",
-      "role": "RTL source"
-    },
-    {
-      "path": "rtl/usb_utmi_top.v",
-      "sha256": "sha256:da74d9a87c09317719cff4be9a2ebf315038bddab7336c25725c811bf2a290c1",
-      "role": "RTL source"
-    }
+  "description": "Digital design sources for T1 item 1: rtl/usb_*.v plus the synthesis request, and the synthesized gate-level netlist design/netlist/usb_utmi_top.v derived from them, whose freshness check re-runs klt synthesize --check against the newest synthesis report.",
+  "sources": [
+    "rtl/usb_bit_destuffer.v",
+    "rtl/usb_bit_stuffer.v",
+    "rtl/usb_bit_sync.v",
+    "rtl/usb_linestate.v",
+    "rtl/usb_nrzi_decoder.v",
+    "rtl/usb_nrzi_encoder.v",
+    "rtl/usb_rx_cdc.v",
+    "rtl/usb_rx_framer.v",
+    "rtl/usb_rx_path.v",
+    "rtl/usb_tx_framer.v",
+    "rtl/usb_tx_serializer.v",
+    "rtl/usb_utmi_top.v",
+    "flow/request-synth-usb_utmi_top.json"
   ],
-  "netlist": [
+  "derived": [
     {
       "path": "design/netlist/usb_utmi_top.v",
-      "sha256": "sha256:44441f5ae2fbda739aa783f0e60352c1cb8f86b75d9f64839b02ac12e2867edd",
-      "role": "synthesized gate-level netlist (sky130_fd_sc_hd)"
-    }
-  ],
-  "synthesis": [
-    {
-      "path": "flow/request-synth-usb_utmi_top.json",
-      "sha256": "sha256:f4249277e7ae4f2458949b877db67fa96f6a31e12e3292e88876771b5a727272",
-      "role": "synthesis request"
-    },
-    {
-      "path": "flow/utmi-top/records/20261008-210449-1a11293-tt_025C_1v80.md",
-      "sha256": "sha256:c2d98e3bd6f72a4d1617a7560e2d08e0d49dc3fc3905eaaafa60206266d288d4",
-      "role": "synthesis record"
-    },
-    {
-      "path": "flow/utmi-top/artifacts/20261008-210449-1a11293-tt_025C_1v80/synthesize-report.json",
-      "sha256": "sha256:b8e74470dbda6f1925380b699a1d674176552f19ee8f1f5cbf19d65be596ef5b",
-      "role": "klt synthesize report"
+      "generator": "klt synthesize",
+      "check": {
+        "argv": [
+          "klt",
+          "synthesize",
+          "flow/request-synth-usb_utmi_top.json",
+          "--pdk",
+          "sky130A",
+          "--check",
+          "flow/utmi-top/artifacts/20261024-000101-85fcd37-tt_025C_1v80/synthesize-report.json"
+        ],
+        "local_only": true
+      }
     }
   ]
 }

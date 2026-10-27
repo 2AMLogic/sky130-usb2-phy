@@ -35,8 +35,9 @@ alone cannot cover all of them:
    files the inventory lists, so this check re-hashes every listed member
    too. Mutating an inventoried file fails the gate until the inventory is
    refreshed (`--regen`), which moves the inventory hash and with it the
-   envelope and manifest pins. The item-1 (digital) inventory is kept fresh
-   the same way even while uncited.
+   envelope and manifest pins. Item 1 (digital) is cited through a
+   `klt signoff --attest` envelope instead; `check_attested` re-hashes the
+   files that envelope recorded (re-attest to refresh it).
 4. **The grader itself runs clean.** Exit 0 (`tier: "T1"`) or 3 (`tier: null`,
    at least one item unmet) are both fine -- an all-`unmet` report is a
    correct result. Exit 1/2 mean the manifest is malformed,
@@ -83,9 +84,8 @@ CHARACTERIZATION_ENVELOPE = "signoff/evidence/characterization-report.json"
 # Artifact-anchored citations (klayout-tools#2718): T1 item -> (inventory,
 # envelope, what the envelope attests). The inventory is the single audited
 # artifact the envelope pins; its members are re-hashed by
-# check_inventory_members. Item 1 (digital) has an inventory but no citation
-# yet (the #164 loop fix has landed; citing it is a separate step); it is only
-# kept fresh.
+# check_inventory_members. Item 1 (digital) is not here: its envelope is
+# produced by `klt signoff --attest` (see ATTESTED), not rewritten by --regen.
 ANCHORED = {
     "9": (
         "signoff/inventory/item-9-testbenches.json",
@@ -101,7 +101,18 @@ ANCHORED = {
         "commands that keep the harness and evidence formats valid are named",
     ),
 }
-UNCITED_INVENTORIES = ("signoff/inventory/item-1-digital-sources.json",)
+
+# Citations produced by `klt signoff --attest` (klt >= 0.8.0, newer than the
+# 0.7.0 grader): manifest key -> (inventory, envelope). The inventory carries
+# no per-file hashes; the envelope's `present` checks record them, so
+# check_attested re-hashes against those. --regen does not rewrite these --
+# re-run the attest command in signoff/README.md and commit the envelope.
+ATTESTED = {
+    "1.digital": (
+        "signoff/inventory/item-1-digital-sources.json",
+        "signoff/evidence/item-1-digital-sources.json",
+    ),
+}
 
 # `klt signoff --manifest` exit codes that mean "the grader ran": 0 is
 # tier T1, 3 is "ran fine, at least one item unmet". Anything else is a
@@ -279,7 +290,7 @@ def _members(node):
 def check_inventory_members() -> bool:
     """Every file an inventory lists still hashes to what it recorded."""
     ok = True
-    names = [v[0] for v in ANCHORED.values()] + list(UNCITED_INVENTORIES)
+    names = [v[0] for v in ANCHORED.values()]
     for name in names:
         path = REPO_ROOT / name
         try:
@@ -308,6 +319,70 @@ def check_inventory_members() -> bool:
             ok = False
         else:
             print(f"ok   {name}: {len(members)} inventoried files re-hash")
+    return ok
+
+
+def check_attested(manifest: dict) -> bool:
+    """`klt signoff --attest` envelopes still describe the tree.
+
+    The 0.7.0 grader re-hashes only the inventory, and the `--attest --check`
+    re-attestation needs klt >= 0.8.0, so this re-derives what it can with the
+    stdlib: the envelope binds this inventory by hash, lists exactly the
+    inventory's sources, and every `present` check's recorded hash still holds.
+    The `local_only` freshness command is NOT re-run here (it needs the PDK);
+    re-run `klt signoff --attest 1 --check` where klt >= 0.8.0 and the PDK exist.
+    """
+    ok = True
+    for key, (inventory_rel, envelope_rel) in ATTESTED.items():
+        try:
+            inventory = json.loads((REPO_ROOT / inventory_rel).read_text())
+            envelope = json.loads((REPO_ROOT / envelope_rel).read_text())
+        except (OSError, ValueError) as exc:
+            fail(f"{inventory_rel} / {envelope_rel}: unreadable ({exc})")
+            ok = False
+            continue
+        refresh = (
+            "     Re-attest and commit the envelope: uvx --from "
+            f'"klayout-tools==0.8.0" klt signoff --attest {key.split(".")[0]} '
+            f"--inventory {inventory_rel} -o {envelope_rel}"
+        )
+        bad = False
+        if str((manifest["evidence"].get(key) or {}).get("file")) != envelope_rel:
+            fail(f"signoff/block-manifest.json: {key} must cite {envelope_rel}")
+            bad = True
+        attestation = envelope.get("attestation") or {}
+        if envelope.get("status") != "pass" or not attestation.get("check_count"):
+            fail(f"{envelope_rel}: not a passing --attest envelope")
+            bad = True
+        present = [
+            c for c in attestation.get("checks", []) if c.get("check") == "present"
+        ]
+        listed = set(inventory.get("sources", []))
+        recorded = {c.get("path") for c in present if c.get("role") == "source"}
+        if listed != recorded:
+            fail(
+                f"{envelope_rel}: attests {sorted(recorded ^ listed)} differently "
+                f"from the sources {inventory_rel} lists (stale).\n{refresh}"
+            )
+            bad = True
+        for check in present:
+            path = REPO_ROOT / check["path"]
+            if not path.is_file():
+                fail(f"{envelope_rel}: attested file {check['path']} does not exist")
+                bad = True
+            elif sha256_file(path) != check.get("content_hash"):
+                fail(
+                    f"{envelope_rel}: attested file {check['path']} changed since "
+                    f"it was attested (stale).\n{refresh}"
+                )
+                bad = True
+        for check in attestation.get("checks", []):
+            if check.get("check") == "command" and not check.get("passed"):
+                fail(f"{envelope_rel}: freshness command {check.get('argv')} failed")
+                bad = True
+        if not bad:
+            print(f"ok   {envelope_rel}: {len(present)} attested files re-hash")
+        ok = ok and not bad
     return ok
 
 
@@ -550,7 +625,7 @@ def refresh_anchored() -> None:
     Same honesty price as refresh_item8_source_hash: a refreshed hash is an
     observation, not an audit -- re-read what changed first.
     """
-    for name in [v[0] for v in ANCHORED.values()] + list(UNCITED_INVENTORIES):
+    for name in [v[0] for v in ANCHORED.values()]:
         path = REPO_ROOT / name
         inventory = json.loads(path.read_text())
         moved = []
@@ -638,6 +713,7 @@ def main(argv: list[str] | None = None) -> int:
     ok = check_inventory_members() and ok
     ok = check_item9_complete() and ok
     ok = check_anchored_envelopes(manifest) and ok
+    ok = check_attested(manifest) and ok
 
     stdout, report, ran = run_grader()
     if not ran:
