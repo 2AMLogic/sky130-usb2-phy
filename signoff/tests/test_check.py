@@ -41,6 +41,7 @@ def tree(tmp_path, monkeypatch):
             dest = tmp_path / member["path"]
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(REAL_ROOT / member["path"], dest)
+    shutil.copy(REAL_ROOT / "spec" / "usb2-phy.md", _mk(tmp_path / "spec" / "usb2-phy.md"))
     shutil.copy(REAL_ROOT / "docs" / "characterization.md", _mk(tmp_path / "docs" / "characterization.md"))
     # klt resolves a `scope: repo` input path against the repo root it finds
     # from the evidence file; give the copy one.
@@ -116,3 +117,64 @@ def test_grader_renders_stale_when_the_bound_inventory_moves(tree, item):
     report = json.loads(proc.stdout)
     rows = [i for i in report["items"] if i["tier"] == "T1" and i["id"] == int(item)]
     assert rows and all(r["reason"] == "stale_evidence" for r in rows)
+
+
+def _manifest(root: Path) -> dict:
+    return json.loads((root / "signoff" / "block-manifest.json").read_text())
+
+
+def test_item6_binding_passes_on_the_real_tree(tree):
+    check, root = tree
+    assert check.check_item6_binding(_manifest(root), root)
+
+
+def test_editing_the_spec_markdown_fails_the_item6_gate(tree, capsys):
+    check, root = tree
+    with (root / "spec" / "usb2-phy.md").open("a") as handle:
+        handle.write("\nA new row.\n")
+    assert not check.check_item6_binding(_manifest(root), root)
+    assert "now hashes to" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("edit", ["drop", "add"])
+def test_a_statement_row_mismatch_fails_the_item6_gate(tree, edit, capsys):
+    check, root = tree
+    path = root / check.ITEM6_STATEMENT
+    statement = json.loads(path.read_text())
+    if edit == "drop":
+        statement["rows"].pop()
+    else:
+        statement["rows"].append({"id": "extra-row", "class": "x", "reason": "y"})
+    path.write_text(json.dumps(statement))
+    assert not check.check_item6_binding(_manifest(root), root)
+    assert "must account for exactly the rows" in capsys.readouterr().err
+
+
+SCAN_WORDS = ("sigma", "σ", "yield", "cpk", "offset", "mismatch", "matching", "accuracy", "monte carlo", "std dev")
+
+
+def test_item6_texts_avoid_the_graders_statistical_vocabulary():
+    check = _load_check()
+    for rel in (check.ITEM6_SPEC, check.ITEM6_STATEMENT):
+        data = json.loads((REAL_ROOT / rel).read_text())
+        rows = [r for r in data["rows"]]
+        text = json.dumps(rows, ensure_ascii=False).lower()
+        assert not [w for w in SCAN_WORDS if w in text], rel
+
+
+@pytest.mark.skipif(shutil.which("klt") is None, reason="klt not on PATH")
+def test_grader_refuses_a_scan_word_in_a_statement_class(tree):
+    check, root = tree
+    path = root / check.ITEM6_STATEMENT
+    statement = json.loads(path.read_text())
+    statement["rows"][0]["class"] = "yield bound"
+    path.write_text(json.dumps(statement))
+    check.refresh_item6()
+    proc = subprocess.run(
+        ["klt", "signoff", "--manifest", "signoff/block-manifest.json", "--format", "json"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+    )
+    row = [i for i in json.loads(proc.stdout)["items"] if i["id"] == 6 and i["partition"] == "digital"][0]
+    assert row["status"] != "not_applicable"

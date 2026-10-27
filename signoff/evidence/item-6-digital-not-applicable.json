@@ -1,0 +1,55 @@
+{
+  "note": "Statement for T1 item 6, digital partition: every row of signoff/spec/digital-rows.json and the reason its class is not statistical.",
+  "rows": [
+    {
+      "id": "fs-signaling-rate",
+      "class": "protocol/functional (bit-exact)",
+      "reason": "The signaling mode is a binary architectural choice. It is exercised by the bit-exact cocotb suites as NRZI encode/decode at the FS rate; a transcript either reproduces the expected bits or it does not."
+    },
+    {
+      "id": "bit-period",
+      "class": "structural declaration",
+      "reason": "The period is the arithmetic reciprocal of the signaling rate. It is a derived constant of the design, with no distribution behind it."
+    },
+    {
+      "id": "utmi-interface-variant",
+      "class": "structural declaration",
+      "reason": "Which interface variant the block implements is a declaration about the port list, decided at design time and not measured."
+    },
+    {
+      "id": "utmi-data-bus-width",
+      "class": "structural declaration",
+      "reason": "Bus width is the number of declared port bits on DataOut and DataIn. It is counted from the netlist."
+    },
+    {
+      "id": "utmi-interface-clock",
+      "class": "corner-bounded timing",
+      "reason": "The clock frequency is a fixed design input. Whether the datapath closes timing at it is a static timing question answered per PVT corner at the ratified corner set."
+    },
+    {
+      "id": "utmi-core-signal-set",
+      "class": "protocol/functional (bit-exact)",
+      "reason": "Each signal's behaviour is a deterministic protocol rule (handshakes, framing, state reporting) checked bit-exactly by the cocotb suites."
+    },
+    {
+      "id": "oversampling-ratio",
+      "class": "corner-bounded timing",
+      "reason": "The ratio is a fixed integer. The digital synchronizer's ability to sample at 144 MHz is a timing-closure question answered per PVT corner."
+    },
+    {
+      "id": "core-supply-rail",
+      "class": "corner-bounded timing",
+      "reason": "The rail is a nominal library characterization voltage. Digital behaviour across supply variation is bounded by the corner set, with each corner a fixed deterministic condition."
+    },
+    {
+      "id": "driver-control-interface",
+      "class": "protocol/functional (bit-exact)",
+      "reason": "These are logic-level outputs of the UTMI layer. Their value at each cycle is a deterministic function of the transmit state machine and is checked bit-exactly."
+    },
+    {
+      "id": "pullup-control-interface",
+      "class": "protocol/functional (bit-exact)",
+      "reason": "The enable is a single logic output sequenced by the reset, attach and suspend state machine; its value at each step is deterministic and checked bit-exactly."
+    }
+  ]
+}

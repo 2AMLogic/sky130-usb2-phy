@@ -16,9 +16,10 @@
     "-- observed live for 0.5.0 (klayout-tools#2216) -- and the committed",
     "signoff-report.json is only byte-reproducible when graded with the",
     "distribution it was committed from. signoff/check.py asserts the full",
-    "build identity (git_tag v0.7.0, is_release true) before grading.",
+    "build identity (git_tag v0.8.0, is_release true) before grading.",
     "",
-    "0.7.0 bundles the 11-item checklist and grades item 11 and the",
+    "0.8.0 (issue #208) adds the item-6 `not_applicable` outcome for a digital",
+    "partition (klayout-tools#2865); 0.7.0 could not grade it. 0.7.0 bundled the 11-item checklist and grades item 11 and the",
     "artifact-anchored generic envelopes for items 1, 2, 9 and 10",
     "(klayout-tools#2718). The vendored checklist and the --tiers-doc flag that",
     "worked around 0.5.0's 10-item bundle are retired (issue #165). `klt signoff",
@@ -28,11 +29,11 @@
     "--attest over the same inventory files."
   ],
   "klt": {
-    "package_version": "0.7.0",
-    "install": "pip install klayout-tools==0.7.0",
+    "package_version": "0.8.0",
+    "install": "pip install klayout-tools==0.8.0",
     "release": {
-      "package_version": "0.7.0",
-      "git_tag": "v0.7.0",
+      "package_version": "0.8.0",
+      "git_tag": "v0.8.0",
       "is_release": true
     }
   }
