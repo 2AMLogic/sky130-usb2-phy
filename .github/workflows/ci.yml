@@ -183,7 +183,7 @@ jobs:
       # committed from (same-version git snapshots have been observed to
       # grade differently -- klayout-tools#2216).
       - name: Install the pinned grading klt (klayout-tools)
-        run: python3 -m pip install klayout-tools==0.7.0
+        run: python3 -m pip install klayout-tools==0.8.0
 
       - name: Confirm the grading build is the pinned release
         run: klt version --format json

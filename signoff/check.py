@@ -11,7 +11,7 @@ manifest citation is a claim about *that* evidence file against *that* input
 revision, and the moment either moves without the claim moving with it, the
 committed verdict is a statement about a tree that no longer exists.
 
-This script is what stops that. Five distinct checks, because `klt signoff`
+This script is what stops that. Six distinct checks, because `klt signoff`
 alone cannot cover all of them:
 
 1. **The grader is the pinned released wheel.** `klt` on PATH must be the
@@ -38,11 +38,14 @@ alone cannot cover all of them:
    envelope and manifest pins. Item 1 (digital) is cited through a
    `klt signoff --attest` envelope instead; `check_attested` re-hashes the
    files that envelope recorded (re-attest to refresh it).
-4. **The grader itself runs clean.** Exit 0 (`tier: "T1"`) or 3 (`tier: null`,
+4. **The item-6 digital statement is bound to the spec.** The grader hashes
+   the rows file and the statement but never opens `spec/usb2-phy.md`; this
+   re-hashes the markdown against the rows file's recorded source.
+5. **The grader itself runs clean.** Exit 0 (`tier: "T1"`) or 3 (`tier: null`,
    at least one item unmet) are both fine -- an all-`unmet` report is a
    correct result. Exit 1/2 mean the manifest is malformed,
    which is a real failure.
-5. **The committed report still matches the rendered one.** Compared on a
+6. **The committed report still matches the rendered one.** Compared on a
    normalized projection (per-item `status`/`reason`, counts, tier, source
    doc), so a `klt` release that merely adds a field does not trip it -- but
    a citation going stale, a check starting to fail, or the T1 checklist
@@ -101,6 +104,13 @@ ANCHORED = {
         "commands that keep the harness and evidence formats valid are named",
     ),
 }
+# Item 6 (digital): a bound `not_applicable` statement (klayout-tools#2865).
+# The grader cannot parse spec/usb2-phy.md, so the ratified digital rows live
+# in ITEM6_SPEC (machine-readable) with the markdown's content hash recorded
+# in its `source`; check_item6_binding re-hashes the markdown against it.
+ITEM6_KEY = "6.digital"
+ITEM6_SPEC = "signoff/spec/digital-rows.json"
+ITEM6_STATEMENT = "signoff/evidence/item-6-digital-not-applicable.json"
 
 # Citations produced by `klt signoff --attest` (klt >= 0.8.0, newer than the
 # 0.7.0 grader): manifest key -> (inventory, envelope). The inventory carries
@@ -121,8 +131,8 @@ RAN_CLEAN = (0, 3)
 
 # The grading build identity, asserted two ways (see check 1 above). Keep in
 # sync with signoff/toolchain.json and the `signoff` CI job's pip pin.
-GRADER_PACKAGE_VERSION = "0.7.0"
-GRADER_GIT_TAG = "v0.7.0"
+GRADER_PACKAGE_VERSION = "0.8.0"
+GRADER_GIT_TAG = "v0.8.0"
 
 
 def fail(msg: str) -> None:
@@ -673,6 +683,72 @@ def refresh_anchored() -> None:
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
 
 
+def check_item6_binding(manifest: dict, root: Path | None = None) -> bool:
+    """The item-6 digital statement is bound to the live spec markdown.
+
+    `klt signoff` hash-pins the rows file and the statement but never opens
+    spec/usb2-phy.md, so a spec edit would leave the "accounts for every row"
+    claim silently stale. This re-hashes the markdown against the rows file's
+    recorded source and requires the statement to name exactly the same rows.
+    """
+    root = root or REPO_ROOT
+    try:
+        spec = json.loads((root / ITEM6_SPEC).read_text())
+        statement = json.loads((root / ITEM6_STATEMENT).read_text())
+    except (OSError, ValueError) as exc:
+        fail(f"item 6 (digital): rows file or statement unreadable ({exc})")
+        return False
+    ok = True
+    source = spec.get("source") or {}
+    source_path = root / str(source.get("file", ""))
+    if not source.get("file") or not source_path.is_file():
+        fail(f"{ITEM6_SPEC}: source {source.get('file')!r} does not exist")
+        return False
+    actual = sha256_file(source_path)
+    if actual != source.get("content_hash"):
+        fail(
+            f"{ITEM6_SPEC}: records {source.get('content_hash')} for "
+            f"{source['file']} but it now hashes to {actual}.\n"
+            "     The spec changed since the digital rows were accounted for. "
+            "Re-read it, update the rows file and the statement,\n"
+            "     then re-pin (python3 signoff/check.py --regen)."
+        )
+        ok = False
+    spec_ids = sorted(r.get("id") for r in spec.get("rows", []))
+    statement_ids = sorted(r.get("id") for r in statement.get("rows", []))
+    if spec_ids != statement_ids:
+        fail(
+            f"{ITEM6_STATEMENT}: must account for exactly the rows of "
+            f"{ITEM6_SPEC}; missing {sorted(set(spec_ids) - set(statement_ids))}, "
+            f"extra {sorted(set(statement_ids) - set(spec_ids))}"
+        )
+        ok = False
+    cited = ((manifest["evidence"].get(ITEM6_KEY) or {}).get("not_applicable")) or {}
+    for part, rel in (("spec", ITEM6_SPEC), ("statement", ITEM6_STATEMENT)):
+        if (cited.get(part) or {}).get("file") != rel:
+            fail(f"signoff/block-manifest.json: {ITEM6_KEY} must cite {rel} as {part}")
+            ok = False
+    if ok:
+        print(f"ok   {ITEM6_SPEC}: bound to {source['file']}; statement covers {len(spec_ids)} rows")
+    return ok
+
+
+def refresh_item6() -> None:
+    """--regen: re-pin the item-6 citation to the current rows file and statement.
+
+    The spec-markdown hash inside the rows file is deliberately NOT refreshed:
+    re-pinning it is the human act of re-reading the spec and re-accounting
+    for its rows, not a derivation.
+    """
+    manifest = json.loads(MANIFEST.read_text())
+    entry = (manifest["evidence"].get(ITEM6_KEY) or {}).get("not_applicable")
+    if not isinstance(entry, dict):
+        return
+    for part, rel in (("spec", ITEM6_SPEC), ("statement", ITEM6_STATEMENT)):
+        entry[part] = {"file": rel, "content_hash": sha256_file(REPO_ROOT / rel)}
+    MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
@@ -702,6 +778,7 @@ def main(argv: list[str] | None = None) -> int:
         if refreshed is None:
             return 1
         refresh_anchored()
+        refresh_item6()
         manifest = load_manifest()
         if manifest is None:
             return 1
@@ -713,6 +790,7 @@ def main(argv: list[str] | None = None) -> int:
     ok = check_inventory_members() and ok
     ok = check_item9_complete() and ok
     ok = check_anchored_envelopes(manifest) and ok
+    ok = check_item6_binding(manifest) and ok
     ok = check_attested(manifest) and ok
 
     stdout, report, ran = run_grader()

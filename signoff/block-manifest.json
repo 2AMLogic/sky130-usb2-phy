@@ -16,7 +16,19 @@
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:eea27cc555e90989eb2638fe8e83446a3666cda795e1910405857c5bad88bf93"
+      "content_hash": "sha256:e5c8ed79c1b4fabb09bf9f92095d525864ea4ead1dcddb5a6104da004817f4a5"
+    },
+    "6.digital": {
+      "not_applicable": {
+        "spec": {
+          "file": "signoff/spec/digital-rows.json",
+          "content_hash": "sha256:29eae90a1eb795d625fa49db0a3f8e83a4639da7a1a2c39dcbaef59f1603c55a"
+        },
+        "statement": {
+          "file": "signoff/evidence/item-6-digital-not-applicable.json",
+          "content_hash": "sha256:ae86fe71ef8f38cfb72748b99099b9f2c0c8b6917319311c1f9676202f27adac"
+        }
+      }
     }
   }
 }

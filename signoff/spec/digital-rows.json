@@ -1,0 +1,137 @@
+{
+  "status": "ratified",
+  "source": {
+    "file": "spec/usb2-phy.md",
+    "content_hash": "sha256:b80cbc2207d251bc6240fbd0a8f3dd4af25534c4b7de78398868c4b0c4f4e634"
+  },
+  "note": "Digital-partition rows of the ratified spec/usb2-phy.md (Ratified 2026-08-05), derived by hand from its sections 2-6. A repo-side gate (signoff/check.py) re-hashes the source and fails when it moves. Rows owned by the analog partition or the PLL are listed under excluded and are not accounted for here.",
+  "rows": [
+    {
+      "id": "fs-signaling-rate",
+      "spec_section": "2",
+      "requirement": "USB 2.0 full-speed signaling at 12 Mbps"
+    },
+    {
+      "id": "bit-period",
+      "spec_section": "2",
+      "requirement": "Bit period 83.33 ns (1 / 12 Mbps)"
+    },
+    {
+      "id": "utmi-interface-variant",
+      "spec_section": "3",
+      "requirement": "Interface is UTMI, not UTMI+"
+    },
+    {
+      "id": "utmi-data-bus-width",
+      "spec_section": "3",
+      "requirement": "Data bus width 8 bits, parallel"
+    },
+    {
+      "id": "utmi-interface-clock",
+      "spec_section": "3",
+      "requirement": "Interface clock 30 MHz for FS operation"
+    },
+    {
+      "id": "utmi-core-signal-set",
+      "spec_section": "3",
+      "requirement": "Core signal set: TxValid, TxReady, DataOut, RxValid, RxActive, RxError, DataIn, LineState, OpMode, TermSelect, XcvrSelect, SuspendM, Reset"
+    },
+    {
+      "id": "oversampling-ratio",
+      "spec_section": "4",
+      "requirement": "Oversampling ratio 12x minimum (144 MHz internal clock) as consumed by the digital side"
+    },
+    {
+      "id": "core-supply-rail",
+      "spec_section": "5",
+      "requirement": "Core (digital UTMI logic) rail 1.8 V"
+    },
+    {
+      "id": "driver-control-interface",
+      "spec_section": "6",
+      "requirement": "Digital-side control of the line driver: differential drive enable, output enable (OE), TxD+ and TxD- data lines"
+    },
+    {
+      "id": "pullup-control-interface",
+      "spec_section": "6",
+      "requirement": "Digital-side single-bit pull-up enable, driven during reset, attach and suspend sequencing"
+    }
+  ],
+  "excluded": [
+    {
+      "id": "pll-reference-input",
+      "spec_section": "4, 6",
+      "reason": "owned by the PLL (sky130-pll); an analog input requirement"
+    },
+    {
+      "id": "pll-output-jitter",
+      "spec_section": "4, 6",
+      "reason": "owned by the PLL, consumed by pinned reference; its limit is a random-process bound graded in the analog partition (#40)"
+    },
+    {
+      "id": "pll-oversampling-delivery",
+      "spec_section": "6",
+      "reason": "same requirement as oversampling-ratio, stated from the PLL side; the PLL owns delivering it"
+    },
+    {
+      "id": "io-supply-rail",
+      "spec_section": "5",
+      "reason": "3.3 V pad-ring rail; analog-facing, owned by the analog partition"
+    },
+    {
+      "id": "driver-output-voltage-swing",
+      "spec_section": "6",
+      "reason": "analog driver electrical row (#112)"
+    },
+    {
+      "id": "driver-output-resistance",
+      "spec_section": "6",
+      "reason": "analog driver electrical row (#112)"
+    },
+    {
+      "id": "driver-rise-fall-time",
+      "spec_section": "6",
+      "reason": "analog driver electrical row (#112)"
+    },
+    {
+      "id": "driver-crossover-voltage",
+      "spec_section": "6",
+      "reason": "analog driver electrical row (#112)"
+    },
+    {
+      "id": "receiver-differential-sensitivity",
+      "spec_section": "6",
+      "reason": "analog receiver electrical row (#111)"
+    },
+    {
+      "id": "receiver-common-mode-range",
+      "spec_section": "6",
+      "reason": "analog receiver electrical row (#111)"
+    },
+    {
+      "id": "receiver-single-ended-thresholds",
+      "spec_section": "6",
+      "reason": "analog receiver electrical row (#110)"
+    },
+    {
+      "id": "squelch-detection-threshold",
+      "spec_section": "6",
+      "reason": "analog row, DR-0003 Decision 2 proposes HS stretch scope"
+    },
+    {
+      "id": "squelch-output-interface",
+      "spec_section": "6",
+      "reason": "owned with the squelch detector, DR-0003 Decision 2"
+    },
+    {
+      "id": "pullup-resistance",
+      "spec_section": "6",
+      "reason": "analog termination row (#113)"
+    },
+    {
+      "id": "pulldown-resistance",
+      "spec_section": "6",
+      "reason": "analog termination row, DR-0003 Decision 3"
+    }
+  ]
+}
