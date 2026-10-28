@@ -171,10 +171,12 @@ are not covered; the measured threshold contains the systematic offset only.
 
 Regenerate the netlists with `design/export_netlist.sh se_receiver_dp` and
 `design/export_netlist.sh se_receiver_dm` (run here with xschem 3.4.4 and the
-installed open_pdks `sky130A` symbols). Two consecutive exports produced
+installed open_pdks `sky130A` symbols). Two consecutive exports on that host produced
 byte-identical files, and the same host re-exported
-`differential_receiver.spice` byte-identically, so the helper is reproducible
-across this xschem version.
+`differential_receiver.spice` byte-identically. Byte-identity is a same-host
+property: another xschem build can re-wrap the `+` continuation lines, so use
+`design/check_netlist.py` (which ignores `+` wrapping) as the host-independent
+freshness check.
 
 ### Pin contract
 
@@ -310,8 +312,9 @@ re-derived for sky130. Nothing from the gf180 evidence (record
 **Status: schematic level only** (no layout, no parasitics, no mismatch, no
 regulator, no trim storage). Evidence: see "What the grid shows" below.
 Regenerate the netlist with `design/export_netlist.sh dplus_pullup`; two
-consecutive exports are byte-identical (xschem 3.4.4, installed open_pdks
-`sky130A` symbols).
+consecutive exports on that host are byte-identical (xschem 3.4.4, installed
+open_pdks `sky130A` symbols); across hosts only `+` wrapping may differ, so check
+freshness with `design/check_netlist.py`, which ignores it.
 
 ### Pin contract
 
@@ -532,9 +535,10 @@ were re-measured.
 **Status: schematic level only** (no layout, no parasitics, no mismatch, no
 passive-process spread, no level shifter). Evidence: "What the grids show"
 below. Regenerate the netlist with `design/export_netlist.sh
-differential_driver`; two consecutive exports are byte-identical to the
+differential_driver`; two consecutive exports on that host are byte-identical to the
 committed `design/netlist/differential_driver.spice` (xschem 3.4.4, installed
-open_pdks `sky130A` symbols), and only `sky130_fd_pr__*` devices appear.
+open_pdks `sky130A` symbols; across hosts only `+` wrapping may differ, which
+`design/check_netlist.py` ignores), and only `sky130_fd_pr__*` devices appear.
 
 ### Pin contract
 
