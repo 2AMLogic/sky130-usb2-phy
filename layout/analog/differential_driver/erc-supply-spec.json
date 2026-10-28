@@ -1,0 +1,83 @@
+{
+  "_comment": [
+    "klt erc supply spec for layout/analog/differential_driver/differential_driver.gds",
+    "(issue #220): the analog half of T1 item 11 (power delivery, structural)",
+    "for the differential_driver leaf. Item 11 is graded from this run's",
+    "supply findings -- VDD and VSS each exactly one island, no",
+    "erc.missing_tie from a checked tie -- not from the report's overall `status`.",
+    "",
+    "    klt erc layout/analog/differential_driver/differential_driver.gds \\",
+    "      layout/analog/differential_driver/erc-supply-spec.json \\",
+    "      --top differential_driver --pdk sky130 --format json \\",
+    "      > layout/analog/differential_driver/erc-supply-report.json",
+    "",
+    "Layer numbers are sky130A's own drawn layers (the same table gen.py draws",
+    "to): poly 66/20, diff 65/20, tap 65/44, nsdm 93/44, psdm 94/20,",
+    "nwell 64/20, licon1 66/44, li1 67/20, mcon 67/44, met1 68/20, via1 68/44,",
+    "met2 69/20, via2 69/44, met3 70/20.",
+    "",
+    "- Supplies are labelled on met1 (68/5): VDD on the PMOS well ring's rail,",
+    "  VSS on the NMOS ring's rail. The signal pins DP/DM/RXD are labelled on",
+    "  met3 (70/5) and are not declared here: this spec grades supplies only.",
+    "- The stack is li1..met4, which is every layer gen.py routes on (rails and",
+    "  rings on li1/met1, device columns on li1/met1, channel on met2/met3, MIM",
+    "  top-plate straps on met4).",
+    "  poly is declared as the gate role so the antenna table has its denominator;",
+    "  active_layer makes that denominator poly n diff.",
+    "- devices[]: the poly resistor bodies (xhigh_po and generic_po share the",
+    "  poly_res marker 66/13 over poly) are",
+    "  a device, not a wire. Without this entry the VDD island would extend",
+    "  through the resistor into IBIASN and the report would read a rail-to-",
+    "  signal bridge that is the resistor itself (klt erc 'Device bodies are not",
+    "  wires').",
+    "- ties[]: the n-well tie (nwell 64/20, tap 65/44, wired to li1, net VDD) and",
+    "  the substrate tie (die extent minus nwell, tap 65/44, wired to li1, net",
+    "  VSS). sky130's `tap` (65/44) is a tap-only layer -- every shape of it is a",
+    "  tap, ntap inside the nwell and ptap outside -- so tap_is_dedicated is",
+    "  declared instead of narrowing with nsdm/psdm: that narrowing removes",
+    "  nothing from the layout and klt grades it degenerate",
+    "  (`degenerate_tap_declaration`, skipped work rather than a pass). The ring",
+    "  is tap + li1, so li1 is the role the tap reaches directly."
+  ],
+  "stackup": [
+    { "name": "poly", "layer": "66/20", "role": "gate", "active_layer": "65/20" },
+    { "name": "li1", "layer": "67/20" },
+    { "name": "met1", "layer": "68/20", "label_layer": "68/5" },
+    { "name": "met2", "layer": "69/20" },
+    { "name": "met3", "layer": "70/20", "label_layer": "70/5" },
+    { "name": "met4", "layer": "71/20" }
+  ],
+  "vias": [
+    { "name": "licon1", "layer": "66/44", "between": ["poly", "li1"] },
+    { "name": "mcon", "layer": "67/44", "between": ["li1", "met1"] },
+    { "name": "via1", "layer": "68/44", "between": ["met1", "met2"] },
+    { "name": "via2", "layer": "69/44", "between": ["met2", "met3"] },
+    { "name": "via3", "layer": "70/44", "between": ["met3", "met4"] }
+  ],
+  "devices": [
+    { "name": "xhigh_po_resistor_body", "body_layer": "66/13", "on": "poly" }
+  ],
+  "nets": [
+    { "name": "VDD", "kind": "supply" },
+    { "name": "VSS", "kind": "supply" }
+  ],
+  "ties": [
+    {
+      "name": "nwell_vdd",
+      "well_layer": "64/20",
+      "tap_layer": "65/44",
+      "tap_is_dedicated": true,
+      "connect_to": "li1",
+      "net": "VDD"
+    },
+    {
+      "name": "psub_vss",
+      "well_layer": null,
+      "well_complement_of": ["64/20"],
+      "tap_layer": "65/44",
+      "tap_is_dedicated": true,
+      "connect_to": "li1",
+      "net": "VSS"
+    }
+  ]
+}

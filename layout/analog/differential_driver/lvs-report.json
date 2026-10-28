@@ -1,0 +1,2261 @@
+{
+  "schema_version": 2,
+  "engine": "klayout-runset",
+  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-220/layout/analog/differential_driver/differential_driver.gds",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-220/design/netlist/differential_driver.spice",
+  "top": "differential_driver",
+  "reference_top": "differential_driver",
+  "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
+  "deck_vars": {
+    "convert_subckts": "true",
+    "scale": "true",
+    "thr": "2"
+  },
+  "options": {},
+  "hints_applied": null,
+  "status": "mismatch",
+  "power_connectivity": {
+    "status": "unchecked",
+    "reason": "no subcircuit instance in the runset's extracted netlist declares a power/ground-named pin -- the extraction carries no instance-level power connectivity to check",
+    "power_pins": [],
+    "power_pins_derivation": null,
+    "instance_count": 0,
+    "expected_nets": null,
+    "unchecked_expected_pins": [],
+    "excluded_pins": [],
+    "findings": [],
+    "finding_count": 0
+  },
+  "body_verification": null,
+  "device_parameter_coverage": null,
+  "coverage": {
+    "schema_version": 1,
+    "known": true,
+    "checked": [
+      "SKY130_FD_PR__NFET_G5V0D10V5",
+      "SKY130_FD_PR__PFET_G5V0D10V5",
+      "SKY130_FD_PR__RES_GENERIC_PO",
+      "SKY130_FD_PR__RES_XHIGH_PO_1P41",
+      "sky130_fd_pr__model__cap_mim",
+      "sky130_fd_pr__nfet_g5v0d10v5",
+      "sky130_fd_pr__pfet_g5v0d10v5",
+      "sky130_fd_pr__res_generic_po",
+      "sky130_fd_pr__res_xhigh_po_1p41"
+    ],
+    "skipped": [
+      {
+        "id": "sky130_fd_bs_flash__special_sonosfet_star",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_var_hvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_var_lvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_02p4x04p6_m1m2_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_02p7x06p1_m1m2m3m4_shieldl1_fingercap",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_02p7x11p1_m1m2m3m4_shieldl1_fingercap",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_02p7x21p1_m1m2m3m4_shieldl1_fingercap",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_02p7x41p1_m1m2m3m4_shieldl1_fingercap",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_02p9x06p1_m1m2m3m4_shieldl1_fingercap2",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_03p9x03p9_m1m2_shieldl1_floatm3",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield_o2subcell",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_shieldpo_floatm3",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield_o2",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_shieldl1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1m5_floatm4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_05p9x05p9_m1m2m3m4_shieldl1_wafflecap",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_06p8x06p1_l1m1m2m3_shieldpom4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_06p8x06p1_m1m2m3_shieldl1m4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield_o2subcell",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_shieldpo_floatm3",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_shieldl1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1m5_floatm4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p3x11p3_m1m2m3m4_shieldl1_wafflecap",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p3x11p8_l1m1m2m3m4_shieldm5_nhv",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_shieldpom3",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldm4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldpom4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldm5",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5_x",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_shieldl1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1m5_floatm4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldl1m5",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldm5",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_m1m4_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x11p7_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_11p5x23p1_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_22p5x11p7_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_22p5x23p1_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_33p6x11p7_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_33p6x23p1_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_44p7x11p7_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_44p7x23p1_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield_m5pullin",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_m5pullin",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_test",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pd2nw_05v5",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pd2nw_05v5_hvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pd2nw_05v5_lvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pd2nw_11v0",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pw2nd_05v5",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pw2nd_05v5_lvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pw2nd_05v5_nvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__diode_pw2nd_11v0",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__fuse_m4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__model__cap_mim_m4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__nfet_01v8",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__nfet_01v8_lvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__nfet_03v3_nvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__nfet_05v0_nvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__npn_05v5_W1p00L1p00",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__npn_05v5_W1p00L2p00",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__npn_11v0_W1p00L1p00",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__pfet_01v8",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__pfet_01v8_hvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__pfet_01v8_lvt",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__photodiode",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__pnp_05v5_W0p68L0p68",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__pnp_05v5_W3p40L3p40",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_l1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_m1",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_m2",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_m3",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_m4",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_m5",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_nd",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_nd_hv",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_pd",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_generic_pd_hv",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_high_po_0p35",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_high_po_0p69",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_high_po_1p41",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_high_po_2p85",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_high_po_5p73",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_iso_pw",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_xhigh_po_0p35",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_xhigh_po_0p69",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_xhigh_po_2p85",
+        "reason": "declared_not_recognized"
+      },
+      {
+        "id": "sky130_fd_pr__res_xhigh_po_5p73",
+        "reason": "declared_not_recognized"
+      }
+    ],
+    "inapplicable": [],
+    "unknown": [],
+    "nothing_checked": false,
+    "nothing_checked_reasons": [],
+    "declared_device_classes": {
+      "layout": [
+        "sky130_fd_bs_flash__special_sonosfet_star",
+        "sky130_fd_pr__cap_var_hvt",
+        "sky130_fd_pr__cap_var_lvt",
+        "sky130_fd_pr__cap_vpp_02p4x04p6_m1m2_noshield",
+        "sky130_fd_pr__cap_vpp_02p7x06p1_m1m2m3m4_shieldl1_fingercap",
+        "sky130_fd_pr__cap_vpp_02p7x11p1_m1m2m3m4_shieldl1_fingercap",
+        "sky130_fd_pr__cap_vpp_02p7x21p1_m1m2m3m4_shieldl1_fingercap",
+        "sky130_fd_pr__cap_vpp_02p7x41p1_m1m2m3m4_shieldl1_fingercap",
+        "sky130_fd_pr__cap_vpp_02p9x06p1_m1m2m3m4_shieldl1_fingercap2",
+        "sky130_fd_pr__cap_vpp_03p9x03p9_m1m2_shieldl1_floatm3",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield_o2subcell",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_shieldpo_floatm3",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield_o2",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_shieldl1",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1",
+        "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1m5_floatm4",
+        "sky130_fd_pr__cap_vpp_05p9x05p9_m1m2m3m4_shieldl1_wafflecap",
+        "sky130_fd_pr__cap_vpp_06p8x06p1_l1m1m2m3_shieldpom4",
+        "sky130_fd_pr__cap_vpp_06p8x06p1_m1m2m3_shieldl1m4",
+        "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield",
+        "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield_o2subcell",
+        "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_shieldpo_floatm3",
+        "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_noshield",
+        "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_shieldl1",
+        "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1",
+        "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1m5_floatm4",
+        "sky130_fd_pr__cap_vpp_11p3x11p3_m1m2m3m4_shieldl1_wafflecap",
+        "sky130_fd_pr__cap_vpp_11p3x11p8_l1m1m2m3m4_shieldm5_nhv",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_noshield",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_shieldpom3",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldm4",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldpom4",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldm5",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5_x",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_noshield",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_shieldl1",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1m5_floatm4",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldl1m5",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldm5",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_m1m4_noshield",
+        "sky130_fd_pr__cap_vpp_11p5x11p7_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_11p5x23p1_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_22p5x11p7_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_22p5x23p1_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_33p6x11p7_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_33p6x23p1_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_44p7x11p7_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_44p7x23p1_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield_m5pullin",
+        "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield",
+        "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_m5pullin",
+        "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_test",
+        "sky130_fd_pr__diode_pd2nw_05v5",
+        "sky130_fd_pr__diode_pd2nw_05v5_hvt",
+        "sky130_fd_pr__diode_pd2nw_05v5_lvt",
+        "sky130_fd_pr__diode_pd2nw_11v0",
+        "sky130_fd_pr__diode_pw2nd_05v5",
+        "sky130_fd_pr__diode_pw2nd_05v5_lvt",
+        "sky130_fd_pr__diode_pw2nd_05v5_nvt",
+        "sky130_fd_pr__diode_pw2nd_11v0",
+        "sky130_fd_pr__fuse_m4",
+        "sky130_fd_pr__model__cap_mim",
+        "sky130_fd_pr__model__cap_mim_m4",
+        "sky130_fd_pr__nfet_01v8",
+        "sky130_fd_pr__nfet_01v8_lvt",
+        "sky130_fd_pr__nfet_03v3_nvt",
+        "sky130_fd_pr__nfet_05v0_nvt",
+        "sky130_fd_pr__nfet_g5v0d10v5",
+        "sky130_fd_pr__npn_05v5_W1p00L1p00",
+        "sky130_fd_pr__npn_05v5_W1p00L2p00",
+        "sky130_fd_pr__npn_11v0_W1p00L1p00",
+        "sky130_fd_pr__pfet_01v8",
+        "sky130_fd_pr__pfet_01v8_hvt",
+        "sky130_fd_pr__pfet_01v8_lvt",
+        "sky130_fd_pr__pfet_g5v0d10v5",
+        "sky130_fd_pr__photodiode",
+        "sky130_fd_pr__pnp_05v5_W0p68L0p68",
+        "sky130_fd_pr__pnp_05v5_W3p40L3p40",
+        "sky130_fd_pr__res_generic_l1",
+        "sky130_fd_pr__res_generic_m1",
+        "sky130_fd_pr__res_generic_m2",
+        "sky130_fd_pr__res_generic_m3",
+        "sky130_fd_pr__res_generic_m4",
+        "sky130_fd_pr__res_generic_m5",
+        "sky130_fd_pr__res_generic_nd",
+        "sky130_fd_pr__res_generic_nd_hv",
+        "sky130_fd_pr__res_generic_pd",
+        "sky130_fd_pr__res_generic_pd_hv",
+        "sky130_fd_pr__res_generic_po",
+        "sky130_fd_pr__res_high_po_0p35",
+        "sky130_fd_pr__res_high_po_0p69",
+        "sky130_fd_pr__res_high_po_1p41",
+        "sky130_fd_pr__res_high_po_2p85",
+        "sky130_fd_pr__res_high_po_5p73",
+        "sky130_fd_pr__res_iso_pw",
+        "sky130_fd_pr__res_xhigh_po_0p35",
+        "sky130_fd_pr__res_xhigh_po_0p69",
+        "sky130_fd_pr__res_xhigh_po_1p41",
+        "sky130_fd_pr__res_xhigh_po_2p85",
+        "sky130_fd_pr__res_xhigh_po_5p73"
+      ],
+      "reference": [
+        "SKY130_FD_PR__NFET_G5V0D10V5",
+        "SKY130_FD_PR__PFET_G5V0D10V5",
+        "SKY130_FD_PR__RES_GENERIC_PO",
+        "SKY130_FD_PR__RES_XHIGH_PO_1P41"
+      ]
+    },
+    "recognized_device_classes": {
+      "layout": [
+        "sky130_fd_pr__model__cap_mim",
+        "sky130_fd_pr__nfet_g5v0d10v5",
+        "sky130_fd_pr__pfet_g5v0d10v5",
+        "sky130_fd_pr__res_generic_po",
+        "sky130_fd_pr__res_xhigh_po_1p41"
+      ],
+      "reference": [
+        "SKY130_FD_PR__NFET_G5V0D10V5",
+        "SKY130_FD_PR__PFET_G5V0D10V5",
+        "SKY130_FD_PR__RES_GENERIC_PO",
+        "SKY130_FD_PR__RES_XHIGH_PO_1P41"
+      ]
+    },
+    "declared_not_recognized": [
+      "sky130_fd_bs_flash__special_sonosfet_star",
+      "sky130_fd_pr__cap_var_hvt",
+      "sky130_fd_pr__cap_var_lvt",
+      "sky130_fd_pr__cap_vpp_02p4x04p6_m1m2_noshield",
+      "sky130_fd_pr__cap_vpp_02p7x06p1_m1m2m3m4_shieldl1_fingercap",
+      "sky130_fd_pr__cap_vpp_02p7x11p1_m1m2m3m4_shieldl1_fingercap",
+      "sky130_fd_pr__cap_vpp_02p7x21p1_m1m2m3m4_shieldl1_fingercap",
+      "sky130_fd_pr__cap_vpp_02p7x41p1_m1m2m3m4_shieldl1_fingercap",
+      "sky130_fd_pr__cap_vpp_02p9x06p1_m1m2m3m4_shieldl1_fingercap2",
+      "sky130_fd_pr__cap_vpp_03p9x03p9_m1m2_shieldl1_floatm3",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield_o2subcell",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_shieldpo_floatm3",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield_o2",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_shieldl1",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1",
+      "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1m5_floatm4",
+      "sky130_fd_pr__cap_vpp_05p9x05p9_m1m2m3m4_shieldl1_wafflecap",
+      "sky130_fd_pr__cap_vpp_06p8x06p1_l1m1m2m3_shieldpom4",
+      "sky130_fd_pr__cap_vpp_06p8x06p1_m1m2m3_shieldl1m4",
+      "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield",
+      "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield_o2subcell",
+      "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_shieldpo_floatm3",
+      "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_noshield",
+      "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_shieldl1",
+      "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1",
+      "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1m5_floatm4",
+      "sky130_fd_pr__cap_vpp_11p3x11p3_m1m2m3m4_shieldl1_wafflecap",
+      "sky130_fd_pr__cap_vpp_11p3x11p8_l1m1m2m3m4_shieldm5_nhv",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_noshield",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_shieldpom3",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldm4",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldpom4",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldm5",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5_x",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_noshield",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_shieldl1",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1m5_floatm4",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldl1m5",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldm5",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_m1m4_noshield",
+      "sky130_fd_pr__cap_vpp_11p5x11p7_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_11p5x23p1_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_22p5x11p7_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_22p5x23p1_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_33p6x11p7_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_33p6x23p1_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_44p7x11p7_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_44p7x23p1_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield_m5pullin",
+      "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield",
+      "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_m5pullin",
+      "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_test",
+      "sky130_fd_pr__diode_pd2nw_05v5",
+      "sky130_fd_pr__diode_pd2nw_05v5_hvt",
+      "sky130_fd_pr__diode_pd2nw_05v5_lvt",
+      "sky130_fd_pr__diode_pd2nw_11v0",
+      "sky130_fd_pr__diode_pw2nd_05v5",
+      "sky130_fd_pr__diode_pw2nd_05v5_lvt",
+      "sky130_fd_pr__diode_pw2nd_05v5_nvt",
+      "sky130_fd_pr__diode_pw2nd_11v0",
+      "sky130_fd_pr__fuse_m4",
+      "sky130_fd_pr__model__cap_mim_m4",
+      "sky130_fd_pr__nfet_01v8",
+      "sky130_fd_pr__nfet_01v8_lvt",
+      "sky130_fd_pr__nfet_03v3_nvt",
+      "sky130_fd_pr__nfet_05v0_nvt",
+      "sky130_fd_pr__npn_05v5_W1p00L1p00",
+      "sky130_fd_pr__npn_05v5_W1p00L2p00",
+      "sky130_fd_pr__npn_11v0_W1p00L1p00",
+      "sky130_fd_pr__pfet_01v8",
+      "sky130_fd_pr__pfet_01v8_hvt",
+      "sky130_fd_pr__pfet_01v8_lvt",
+      "sky130_fd_pr__photodiode",
+      "sky130_fd_pr__pnp_05v5_W0p68L0p68",
+      "sky130_fd_pr__pnp_05v5_W3p40L3p40",
+      "sky130_fd_pr__res_generic_l1",
+      "sky130_fd_pr__res_generic_m1",
+      "sky130_fd_pr__res_generic_m2",
+      "sky130_fd_pr__res_generic_m3",
+      "sky130_fd_pr__res_generic_m4",
+      "sky130_fd_pr__res_generic_m5",
+      "sky130_fd_pr__res_generic_nd",
+      "sky130_fd_pr__res_generic_nd_hv",
+      "sky130_fd_pr__res_generic_pd",
+      "sky130_fd_pr__res_generic_pd_hv",
+      "sky130_fd_pr__res_high_po_0p35",
+      "sky130_fd_pr__res_high_po_0p69",
+      "sky130_fd_pr__res_high_po_1p41",
+      "sky130_fd_pr__res_high_po_2p85",
+      "sky130_fd_pr__res_high_po_5p73",
+      "sky130_fd_pr__res_iso_pw",
+      "sky130_fd_pr__res_xhigh_po_0p35",
+      "sky130_fd_pr__res_xhigh_po_0p69",
+      "sky130_fd_pr__res_xhigh_po_2p85",
+      "sky130_fd_pr__res_xhigh_po_5p73"
+    ]
+  },
+  "device_census": {
+    "layout": {
+      "sky130_fd_pr__pfet_g5v0d10v5": 36,
+      "sky130_fd_pr__nfet_g5v0d10v5": 37,
+      "sky130_fd_pr__res_generic_po": 2,
+      "sky130_fd_pr__res_xhigh_po_1p41": 1,
+      "sky130_fd_pr__model__cap_mim": 4
+    },
+    "reference": {
+      "SKY130_FD_PR__PFET_G5V0D10V5": 36,
+      "SKY130_FD_PR__NFET_G5V0D10V5": 37,
+      "SKY130_FD_PR__RES_XHIGH_PO_1P41": 1,
+      "SKY130_FD_PR__RES_GENERIC_PO": 2
+    }
+  },
+  "mismatch_count": 52,
+  "error_count": 52,
+  "category_counts": {
+    "device.property": 24,
+    "device.unmatched": 4,
+    "net.unmatched": 24
+  },
+  "category_error_counts": {
+    "device.property": 24,
+    "device.unmatched": 4,
+    "net.unmatched": 24
+  },
+  "counts": {
+    "nets": {
+      "layout": 47,
+      "reference": 43,
+      "matched": 31
+    },
+    "devices": {
+      "layout": 80,
+      "reference": 76,
+      "matched": 52
+    },
+    "pins": {
+      "layout": 8,
+      "reference": 8,
+      "matched": 8
+    }
+  },
+  "device_classes": [
+    "sky130_fd_bs_flash__special_sonosfet_star",
+    "sky130_fd_pr__cap_var_hvt",
+    "sky130_fd_pr__cap_var_lvt",
+    "sky130_fd_pr__cap_vpp_02p4x04p6_m1m2_noshield",
+    "sky130_fd_pr__cap_vpp_02p7x06p1_m1m2m3m4_shieldl1_fingercap",
+    "sky130_fd_pr__cap_vpp_02p7x11p1_m1m2m3m4_shieldl1_fingercap",
+    "sky130_fd_pr__cap_vpp_02p7x21p1_m1m2m3m4_shieldl1_fingercap",
+    "sky130_fd_pr__cap_vpp_02p7x41p1_m1m2m3m4_shieldl1_fingercap",
+    "sky130_fd_pr__cap_vpp_02p9x06p1_m1m2m3m4_shieldl1_fingercap2",
+    "sky130_fd_pr__cap_vpp_03p9x03p9_m1m2_shieldl1_floatm3",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_noshield_o2subcell",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_l1m1m2_shieldpo_floatm3",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_noshield_o2",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2_shieldl1",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1",
+    "sky130_fd_pr__cap_vpp_04p4x04p6_m1m2m3_shieldl1m5_floatm4",
+    "sky130_fd_pr__cap_vpp_05p9x05p9_m1m2m3m4_shieldl1_wafflecap",
+    "sky130_fd_pr__cap_vpp_06p8x06p1_l1m1m2m3_shieldpom4",
+    "sky130_fd_pr__cap_vpp_06p8x06p1_m1m2m3_shieldl1m4",
+    "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield",
+    "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_noshield_o2subcell",
+    "sky130_fd_pr__cap_vpp_08p6x07p8_l1m1m2_shieldpo_floatm3",
+    "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_noshield",
+    "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2_shieldl1",
+    "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1",
+    "sky130_fd_pr__cap_vpp_08p6x07p8_m1m2m3_shieldl1m5_floatm4",
+    "sky130_fd_pr__cap_vpp_11p3x11p3_m1m2m3m4_shieldl1_wafflecap",
+    "sky130_fd_pr__cap_vpp_11p3x11p8_l1m1m2m3m4_shieldm5_nhv",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_noshield",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2_shieldpom3",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldm4",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3_shieldpom4",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldm5",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_l1m1m2m3m4_shieldpom5_x",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_noshield",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2_shieldl1",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3_shieldl1m5_floatm4",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldl1m5",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_m1m2m3m4_shieldm5",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_m1m4_noshield",
+    "sky130_fd_pr__cap_vpp_11p5x11p7_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_11p5x23p1_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_22p5x11p7_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_22p5x23p1_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_33p6x11p7_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_33p6x23p1_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_44p7x11p7_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_44p7x23p1_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_55p8x11p7_pol1m1m2m3m4m5_noshield_m5pullin",
+    "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield",
+    "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_m5pullin",
+    "sky130_fd_pr__cap_vpp_55p8x23p1_pol1m1m2m3m4m5_noshield_test",
+    "sky130_fd_pr__diode_pd2nw_05v5",
+    "sky130_fd_pr__diode_pd2nw_05v5_hvt",
+    "sky130_fd_pr__diode_pd2nw_05v5_lvt",
+    "sky130_fd_pr__diode_pd2nw_11v0",
+    "sky130_fd_pr__diode_pw2nd_05v5",
+    "sky130_fd_pr__diode_pw2nd_05v5_lvt",
+    "sky130_fd_pr__diode_pw2nd_05v5_nvt",
+    "sky130_fd_pr__diode_pw2nd_11v0",
+    "sky130_fd_pr__fuse_m4",
+    "sky130_fd_pr__model__cap_mim",
+    "sky130_fd_pr__model__cap_mim_m4",
+    "sky130_fd_pr__nfet_01v8",
+    "sky130_fd_pr__nfet_01v8_lvt",
+    "sky130_fd_pr__nfet_03v3_nvt",
+    "sky130_fd_pr__nfet_05v0_nvt",
+    "sky130_fd_pr__nfet_g5v0d10v5",
+    "sky130_fd_pr__npn_05v5_W1p00L1p00",
+    "sky130_fd_pr__npn_05v5_W1p00L2p00",
+    "sky130_fd_pr__npn_11v0_W1p00L1p00",
+    "sky130_fd_pr__pfet_01v8",
+    "sky130_fd_pr__pfet_01v8_hvt",
+    "sky130_fd_pr__pfet_01v8_lvt",
+    "sky130_fd_pr__pfet_g5v0d10v5",
+    "sky130_fd_pr__photodiode",
+    "sky130_fd_pr__pnp_05v5_W0p68L0p68",
+    "sky130_fd_pr__pnp_05v5_W3p40L3p40",
+    "sky130_fd_pr__res_generic_l1",
+    "sky130_fd_pr__res_generic_m1",
+    "sky130_fd_pr__res_generic_m2",
+    "sky130_fd_pr__res_generic_m3",
+    "sky130_fd_pr__res_generic_m4",
+    "sky130_fd_pr__res_generic_m5",
+    "sky130_fd_pr__res_generic_nd",
+    "sky130_fd_pr__res_generic_nd_hv",
+    "sky130_fd_pr__res_generic_pd",
+    "sky130_fd_pr__res_generic_pd_hv",
+    "sky130_fd_pr__res_generic_po",
+    "sky130_fd_pr__res_high_po_0p35",
+    "sky130_fd_pr__res_high_po_0p69",
+    "sky130_fd_pr__res_high_po_1p41",
+    "sky130_fd_pr__res_high_po_2p85",
+    "sky130_fd_pr__res_high_po_5p73",
+    "sky130_fd_pr__res_iso_pw",
+    "sky130_fd_pr__res_xhigh_po_0p35",
+    "sky130_fd_pr__res_xhigh_po_0p69",
+    "sky130_fd_pr__res_xhigh_po_1p41",
+    "sky130_fd_pr__res_xhigh_po_2p85",
+    "sky130_fd_pr__res_xhigh_po_5p73"
+  ],
+  "environment": {
+    "engine": "klayout-runset",
+    "engine_version": "0.28.16",
+    "klayout_binary": "/usr/bin/klayout",
+    "netgen_binary": null,
+    "layout_sha256": "2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+    "reference_sha256": "bed3319d65789db0a7d1a14831e113eb957cd1998d3cc58d4dc539dd5ea2fdd0",
+    "extracted_netlist": null
+  },
+  "provenance": {
+    "klt_version": "0.8.1.dev604+g4f345a577997",
+    "klt_git_commit": "4f345a577997d2c31d4fa55e0092efbb3ee24f41",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@4f345a577997d2c31d4fa55e0092efbb3ee24f41",
+    "klayout_version": "0.30.12",
+    "pdk": null,
+    "deck": {
+      "name": "sky130.lvs",
+      "content_hash": "sha256:5b4ede4bdb4744b60e42c9b29baa93f40bb24430fb8f3a48a276a712a492ac38",
+      "released": null
+    },
+    "input": {
+      "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+      "role": "layout"
+    },
+    "runset": {
+      "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
+      "deck_vars": {
+        "convert_subckts": "true",
+        "scale": "true",
+        "thr": "2"
+      },
+      "content_hash": "sha256:5b4ede4bdb4744b60e42c9b29baa93f40bb24430fb8f3a48a276a712a492ac38",
+      "klayout_application_version": "0.28.16",
+      "exit_status": 1,
+      "engine_error_lines": []
+    }
+  },
+  "mismatches": [
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "layout device '78' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "78",
+        "reference": null,
+        "class": "sky130_fd_pr__model__cap_mim"
+      },
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "layout device '80' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "80",
+        "reference": null,
+        "class": "sky130_fd_pr__model__cap_mim"
+      },
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "layout device '77' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "77",
+        "reference": null,
+        "class": "sky130_fd_pr__model__cap_mim"
+      },
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "layout device '79' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "79",
+        "reference": null,
+        "class": "sky130_fd_pr__model__cap_mim"
+      },
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '56' / 'N_KINVN_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "56",
+        "reference": "N_KINVN_DP",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 1000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 1000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '72' / 'N_KINVN_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "72",
+        "reference": "N_KINVN_DM",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 1000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 1000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '55' / 'N_KREPN_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "55",
+        "reference": "N_KREPN_DP",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '71' / 'N_KREPN_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "71",
+        "reference": "N_KREPN_DM",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '50' / 'N_NOFF_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "50",
+        "reference": "N_NOFF_DP",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 20000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 20000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '66' / 'N_NOFF_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "66",
+        "reference": "N_NOFF_DM",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 20000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 20000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '57' / 'N_OUT_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "57",
+        "reference": "N_OUT_DP",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 260000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 260000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '73' / 'N_OUT_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "73",
+        "reference": "N_OUT_DM",
+        "class": "sky130_fd_pr__nfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 260000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 260000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '17' / 'P_KINVN_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "17",
+        "reference": "P_KINVN_DM",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 2000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 2000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '33' / 'P_KINVN_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "33",
+        "reference": "P_KINVN_DP",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 2000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 2000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '18' / 'P_KICK1N_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "18",
+        "reference": "P_KICK1N_DP",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '19' / 'P_KICK2N_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "19",
+        "reference": "P_KICK2N_DM",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '34' / 'P_KICK1N_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "34",
+        "reference": "P_KICK1N_DM",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '35' / 'P_KICK2N_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "35",
+        "reference": "P_KICK2N_DP",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 4000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '12' / 'P_NSW_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "12",
+        "reference": "P_NSW_DP",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 8000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 8000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '28' / 'P_NSW_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "28",
+        "reference": "P_NSW_DM",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 8000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 8000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '20' / 'P_OUT_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "20",
+        "reference": "P_OUT_DP",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 800000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 800000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '36' / 'P_OUT_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "36",
+        "reference": "P_OUT_DM",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 500000.0,
+          "W": 800000000.0
+        },
+        "reference_parameters": {
+          "L": 500000.0,
+          "W": 800000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '16' / 'P_KBIASN_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "16",
+        "reference": "P_KBIASN_DP",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 1000000.0,
+          "W": 8000000.0
+        },
+        "reference_parameters": {
+          "L": 1000000.0,
+          "W": 8000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '32' / 'P_KBIASN_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "32",
+        "reference": "P_KBIASN_DM",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 1000000.0,
+          "W": 8000000.0
+        },
+        "reference_parameters": {
+          "L": 1000000.0,
+          "W": 8000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '13' / 'P_NSRC_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "13",
+        "reference": "P_NSRC_DM",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 1000000.0,
+          "W": 64000000.0
+        },
+        "reference_parameters": {
+          "L": 1000000.0,
+          "W": 64000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '29' / 'P_NSRC_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "29",
+        "reference": "P_NSRC_DP",
+        "class": "sky130_fd_pr__pfet_g5v0d10v5"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 1000000.0,
+          "W": 64000000.0
+        },
+        "reference_parameters": {
+          "L": 1000000.0,
+          "W": 64000000.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '74' / 'SER_DP' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "74",
+        "reference": "SER_DP",
+        "class": "sky130_fd_pr__res_generic_po"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 10800000.0,
+          "W": 20000000.0
+        },
+        "reference_parameters": {
+          "R": 0.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.property",
+      "severity": "error",
+      "description": "devices '75' / 'SER_DM' were paired but do not compare equal",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": "75",
+        "reference": "SER_DM",
+        "class": "sky130_fd_pr__res_generic_po"
+      },
+      "property": null,
+      "details": {
+        "layout_parameters": {
+          "L": 10800000.0,
+          "W": 20000000.0
+        },
+        "reference_parameters": {
+          "R": 0.0
+        }
+      },
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'KNX_DM' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "KNX_DM"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'KNX_DP' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "KNX_DP"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'KSNB_DM' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "KSNB_DM"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'KSNB_DP' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "KSNB_DP"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'KSN_DM' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "KSN_DM"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'KSN_DP' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "KSN_DP"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'XN_DM' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "XN_DM"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "reference net 'XN_DP' has no counterpart",
+      "side": "reference",
+      "net": {
+        "layout": null,
+        "reference": "XN_DP"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$7' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$7",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$12' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$12",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$21' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$21",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$23' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$23",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$24' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$24",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$30' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$30",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$32' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$32",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$33' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$33",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$38' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$38",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$40' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$40",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$42' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$42",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "layout net '$43' has no counterpart",
+      "side": "layout",
+      "net": {
+        "layout": "$43",
+        "reference": null
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "nets '$29' / 'NG_DM,OUTI_DM,PG_DM' were paired but their connectivity differs",
+      "side": "both",
+      "net": {
+        "layout": "$29",
+        "reference": "NG_DM,OUTI_DM,PG_DM"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "nets '$20' / 'NG_DP,OUTI_DP,PG_DP' were paired but their connectivity differs",
+      "side": "both",
+      "net": {
+        "layout": "$20",
+        "reference": "NG_DP,OUTI_DP,PG_DP"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "nets 'VDD' / 'VDD' were paired but their connectivity differs",
+      "side": "both",
+      "net": {
+        "layout": "VDD",
+        "reference": "VDD"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "net.unmatched",
+      "severity": "error",
+      "description": "nets 'VSS' / 'VSS' were paired but their connectivity differs",
+      "side": "both",
+      "net": {
+        "layout": "VSS",
+        "reference": "VSS"
+      },
+      "device": null,
+      "property": null,
+      "details": null,
+      "circuit": {
+        "layout": "differential_driver",
+        "reference": "DIFFERENTIAL_DRIVER"
+      },
+      "instance": null,
+      "subcircuit": null
+    }
+  ],
+  "net_correspondence": [
+    {
+      "layout": "DM",
+      "reference": "DM",
+      "pin": true
+    },
+    {
+      "layout": "DP",
+      "reference": "DP",
+      "pin": true
+    },
+    {
+      "layout": "DRVEN",
+      "reference": "DRVEN",
+      "pin": true
+    },
+    {
+      "layout": "\\$15",
+      "reference": "EN",
+      "pin": false
+    },
+    {
+      "layout": "\\$14",
+      "reference": "ENB",
+      "pin": false
+    },
+    {
+      "layout": "\\$13",
+      "reference": "ENX",
+      "pin": false
+    },
+    {
+      "layout": "\\$11",
+      "reference": "KPX_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$6",
+      "reference": "KPX_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$31",
+      "reference": "KSPB_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$22",
+      "reference": "KSPB_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$10",
+      "reference": "KSP_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$5",
+      "reference": "KSP_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$39",
+      "reference": "NBX_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$46",
+      "reference": "NBX_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$27",
+      "reference": "NB_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$18",
+      "reference": "NB_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$9",
+      "reference": "NONB_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$4",
+      "reference": "NONB_DP",
+      "pin": false
+    },
+    {
+      "layout": "OE",
+      "reference": "OE",
+      "pin": true
+    },
+    {
+      "layout": "\\$25",
+      "reference": "PAX_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$16",
+      "reference": "PAX_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$26",
+      "reference": "PA_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$17",
+      "reference": "PA_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$8",
+      "reference": "PON_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$3",
+      "reference": "PON_DP",
+      "pin": false
+    },
+    {
+      "layout": "TXDM",
+      "reference": "TXDM",
+      "pin": true
+    },
+    {
+      "layout": "TXDP",
+      "reference": "TXDP",
+      "pin": true
+    },
+    {
+      "layout": "\\$1",
+      "reference": "VBN",
+      "pin": false
+    },
+    {
+      "layout": "\\$2",
+      "reference": "VBP",
+      "pin": false
+    },
+    {
+      "layout": "\\$28",
+      "reference": "XP_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$19",
+      "reference": "XP_DP",
+      "pin": false
+    }
+  ]
+}
