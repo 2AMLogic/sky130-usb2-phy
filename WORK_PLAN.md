@@ -34,7 +34,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#213**: Bump klayout-tools pin 0.7.0 → 0.8.0
+_None._
 
 ## PRs Awaiting Review
 
@@ -54,7 +54,6 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#213**: Bump klayout-tools pin 0.7.0 → 0.8.0 *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -73,10 +72,10 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 1 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 3 |
+| Curated | 2 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
