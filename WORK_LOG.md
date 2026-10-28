@@ -3,6 +3,12 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-28
+
+- **PR #225**: docs: rewrite characterization per-row table from committed sim records and re-pin item 8
+- **Issue #218** (closed): T1 item 8 (characterization report): docs/characterization.md is stale — it reports zero evidenced §6 rows while 45/225-point analog records pass; refresh and re-pin
+- **PR #226**: feat: add differential_driver analog layout generator and DRC/ERC-clean GDS
+
 ### 2026-10-27
 
 - **PR #214**: chore: bump pinned klayout-tools to 0.8.0 in flow defaults and docs

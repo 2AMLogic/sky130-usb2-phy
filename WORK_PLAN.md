@@ -34,19 +34,25 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#219**: T1 item 1 (design sources, analog partition): attest the five analog leaf schematics + netlists and cite them as 1.analog
+- **#221**: T1 items 2-4, 11 (analog layout): lay out the se_receiver_dp and se_receiver_dm leaves with DRC, LVS and ERC supply evidence
+- **#222**: T1 items 2-4, 11 (analog layout): lay out the dplus_pullup leaf with DRC, LVS and ERC supply evidence
+- **#223**: T1 item 6 (Monte Carlo, analog): mismatch campaigns for the driver rise/fall matching and D+ pull-up ±5% rows
+- **#224**: T1 item 6 (Monte Carlo, analog): declare the analog statistical row set and cite the committed klt yield reports as 6.analog
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#228**: feat: add sky130 se_receiver_dp and se_receiver_dm analog layouts with check records
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#227**: feat(layout): add sky130 dplus_pullup layout with DRC/LVS/ERC evidence
+- **#229**: feat: declare analog statistical rows and cite receiver yield reports under item 6
+- **#230**: feat: attest analog design sources as 1.analog with klt-based netlist freshness check
 
 ## Proposed
 
@@ -54,6 +60,12 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
+- **#219**: T1 item 1 (design sources, analog partition): attest the five analog leaf schematics + netlists and cite them as 1.analog *(curated)*
+- **#220**: T1 items 2-4, 11 (analog layout): lay out the differential_driver leaf with DRC, LVS and ERC supply evidence *(curated)*
+- **#221**: T1 items 2-4, 11 (analog layout): lay out the se_receiver_dp and se_receiver_dm leaves with DRC, LVS and ERC supply evidence *(curated)*
+- **#222**: T1 items 2-4, 11 (analog layout): lay out the dplus_pullup leaf with DRC, LVS and ERC supply evidence *(curated)*
+- **#223**: T1 item 6 (Monte Carlo, analog): mismatch campaigns for the driver rise/fall matching and D+ pull-up ±5% rows *(curated)*
+- **#224**: T1 item 6 (Monte Carlo, analog): declare the analog statistical row set and cite the committed klt yield reports as 6.analog *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -72,10 +84,10 @@ _None._
 | Very important | 0 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 0 |
-| Curated | 2 |
+| In Progress (`loom:building`) | 5 |
+| PRs awaiting review | 1 |
+| Approved PRs awaiting merge | 3 |
+| Curated | 8 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
