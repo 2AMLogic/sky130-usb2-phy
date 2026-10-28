@@ -7,8 +7,10 @@
 #
 # `--block` turns the commented top-level wrapper (`**.subckt` / `**.ends`) into a
 # real `.subckt`. klt writes an absolute `sch_path`; this script makes it
-# repo-relative and prepends a provenance header so the committed netlist is
-# byte-reproducible from the schematic on any host. Nothing else is edited.
+# repo-relative and prepends a provenance header. Nothing else is edited. Output is
+# byte-reproducible only on a host with the same xschem build (`+` continuation
+# wrapping differs across builds); compare across hosts with `design/check_netlist.py`,
+# which ignores `+` wrapping.
 set -euo pipefail
 cell="${1:?usage: export_netlist.sh <cell>}"
 here="$(cd "$(dirname "$0")" && pwd)"
