@@ -11,28 +11,32 @@ always was, not deleted.
 
 ## Headline
 
-> **Zero of the 16 rows of `spec/usb2-phy.md` §6 currently have
-> design-anchored evidence, at any corner.**
+> **Nine of the 16 rows of `spec/usb2-phy.md` §6 have a committed PASS
+> record at schematic level (§6-04…§6-11 and §6-14); none has post-layout
+> evidence. Seven rows read `NO EVIDENCE`: the three PLL rows (§6-01…§6-03),
+> the two squelch rows (§6-12, §6-13) and §6-15, §6-16.**
 
-This is not a formatting caveat, it is the result. Fourteen evidence records
-are committed under `flow/smoke-utmi_stub/records/` and all fourteen carry
-`design.anchors_design_claim: false`. They are the
-[`smoke-utmi_stub`](../flow/README.md) experiment: `rtl/utmi_stub.v`, nine
-flip-flops with no combinational logic and no USB protocol behaviour, run
-through the physical flow so that any failure is unambiguously a *tool*
-failure. They are real evidence — about the **toolchain**, that
-synthesis → P&R → STA → extract → LVS → DRC → post-layout functional
-verification runs, reports, and can be linted across six corners. They are
-evidence about **nothing in `spec/usb2-phy.md`**.
+The nine PASS rows rest on the analog sim records of §1.1 (the `sim/*`
+experiments, 45-point and 225-point PVT matrices, plus `klt yield` Monte
+Carlo for §6-09 and §6-11). They are **schematic-level**: xschem-exported
+netlists, no layout, no parasitic extraction, no regulator, not a signoff or
+catalog-tier claim. The 45-point matrix is process {tt, ff, ss, fs, sf} x
+temperature {-40, 27, 100} C x supply {3.0, 3.3, 3.6} V; the 225-point matrix
+repeats it for the five pinned-library resistor/capacitor parameter sets
+(`spec/decision-records/0005-resistor-sheet-resistance-corner-coverage.md`).
 
-Consequently this report assigns **no `PASS` and no `FAIL` to any spec row**.
-Every §6 row below reads `NO EVIDENCE`, and the per-corner numbers in
-§3 are presented as toolchain-smoke results, labelled as such, not as
-characterization of the USB 2.0 PHY.
+The fourteen `flow/smoke-utmi_stub/records/` evidence records are a different
+thing: the toolchain experiment (`rtl/utmi_stub.v`, nine flip-flops, all
+fourteen `design.anchors_design_claim: false`). They are evidence about the
+**toolchain**, that synthesis → P&R → STA → extract → LVS → DRC →
+post-layout functional verification runs, reports, and can be linted across
+six corners. They are evidence about **nothing in `spec/usb2-phy.md`**, and §3
+presents their numbers as toolchain-smoke results, labelled as such.
 
 The real UTMI digital datapath (`rtl/usb_utmi_top.v` and the modules it
-instantiates) has **not** been through the physical flow. No committed record
-names any of those files in its `provenance.inputs` — see §4.
+instantiates) has **not** been through the physical flow. No committed
+physical-flow record names any of those files in its `provenance.inputs` —
+see §4.
 
 ## 1. Evidence records this report indexes
 
@@ -182,51 +186,81 @@ Rows are numbered top-to-bottom as they appear in §6's table; the spec itself
 does not number them, so `§6-NN` is this report's citation handle, not spec
 text. Nothing in `spec/` is modified by this report.
 
-`Corners with evidence` counts corners at which a **design-anchored** record
-supports the row. `NO EVIDENCE` means exactly that — not "fails", not
-"passes".
+`Evidence record(s)` names the current record for the row (all under
+`sim/<experiment>/records/`; superseded records are indexed in §1.1, not
+here). `Coverage` is the corner count of the record: **45** = the 45-point PVT
+matrix, **225** = the 225-point resistor-set matrix, **MC** = Monte Carlo
+mismatch, n = 400 per corner, at `tt` (27 C, 3.3 V) and the binding corner.
+Every PASS below is **schematic-level** (no layout parasitics, not
+post-layout, not signoff). `NO EVIDENCE` means exactly that — not "fails",
+not "passes".
 
-| Row | Sibling block | Interface requirement | Target value | Evidence record(s) | Corners with evidence | Verdict |
+| Row | Sibling block | Interface requirement | Target value | Evidence record(s) | Coverage | Verdict |
 |---|---|---|---|---|---|---|
-| §6-01 | PLL | Reference input | 12 MHz ±0.25% (2500 ppm) crystal/resonator | none | 0 of 6 | NO EVIDENCE |
-| §6-02 | PLL | Output jitter (cycle-to-cycle, feeding oversampling clock) | < 5% of one bit period (< 4.17 ns at 144 MHz) | none | 0 of 6 | NO EVIDENCE |
-| §6-03 | PLL | Oversampling ratio delivered to bit/edge sync logic | 12× minimum | none | 0 of 6 | NO EVIDENCE |
-| §6-04 | Current-mode drivers | Output voltage swing, static | VOH 2.8–3.6 V, VOL 0.0–0.3 V | none | 0 of 6 | NO EVIDENCE |
-| §6-05 | Current-mode drivers | Driver output resistance | 28–44 Ω | none | 0 of 6 | NO EVIDENCE |
-| §6-06 | Current-mode drivers | Rise/fall time | 4–20 ns (10%–90%), matched within 10% | none | 0 of 6 | NO EVIDENCE |
-| §6-07 | Current-mode drivers | Output signal crossover voltage | 1.3–2.0 V | none | 0 of 6 | NO EVIDENCE |
-| §6-08 | Current-mode drivers | Control interface from UTMI layer | drive enable, OE, TxD+/TxD− | none | 0 of 6 | NO EVIDENCE |
-| §6-09 | Differential receivers | Differential input sensitivity | \|(D+) − (D−)\| > 200 mV | none | 0 of 6 | NO EVIDENCE |
-| §6-10 | Differential receivers | Common-mode input range | 0.8–2.5 V | none | 0 of 6 | NO EVIDENCE |
-| §6-11 | Differential receivers | Single-ended receiver thresholds | VIH > 2.0 V, VIL < 0.8 V | none | 0 of 6 | NO EVIDENCE |
-| §6-12 | Squelch / envelope detector | Squelch detection threshold | 100–200 mV differential envelope | none | 0 of 6 | NO EVIDENCE |
-| §6-13 | Squelch / envelope detector | Output interface to UTMI layer | 1-bit `SQUELCH`/`LineState`, at the oversampling rate | none | 0 of 6 | NO EVIDENCE |
-| §6-14 | Pull-up/pull-down and termination | FS device D+ pull-up | 1.5 kΩ ±5% to regulated 3.0–3.6 V | none | 0 of 6 | NO EVIDENCE |
-| §6-15 | Pull-up/pull-down and termination | Downstream port pull-downs | 15 kΩ ±5% on each of D+/D− | none | 0 of 6 | NO EVIDENCE |
-| §6-16 | Pull-up/pull-down and termination | Control interface from UTMI layer | 1-bit pull-up enable/disable | none | 0 of 6 | NO EVIDENCE |
+| §6-01 | PLL | Reference input | 12 MHz ±0.25% (2500 ppm) crystal/resonator | none | — | NO EVIDENCE |
+| §6-02 | PLL | Output jitter (cycle-to-cycle, feeding oversampling clock) | < 5% of one bit period (< 4.17 ns at 144 MHz) | none | — | NO EVIDENCE |
+| §6-03 | PLL | Oversampling ratio delivered to bit/edge sync logic | 12× minimum | none | — | NO EVIDENCE |
+| §6-04 | Current-mode drivers | Output voltage swing, static | VOH 2.8–3.6 V, VOL 0.0–0.3 V | `driver-static` `20261020-194710-ca4a45a` | 45 | PASS (schematic-level) |
+| §6-05 | Current-mode drivers | Driver output resistance | 28–44 Ω | `driver-static` `20261020-194710-ca4a45a` | 45 | PASS (schematic-level) |
+| §6-06 | Current-mode drivers | Rise/fall time | 4–20 ns (10%–90%), matched within 10% | `driver-signal-quality` `20261020-181618-ca4a45a` | 45 | PASS (schematic-level) |
+| §6-07 | Current-mode drivers | Output signal crossover voltage | 1.3–2.0 V | `driver-signal-quality` `20261020-181618-ca4a45a` | 45 | PASS (schematic-level) |
+| §6-08 | Current-mode drivers | Control interface from UTMI layer | drive enable, OE, TxD+/TxD− | `driver-static` `20261020-194710-ca4a45a` (drive-enable/OE truth table) | 45 | PASS (analog side, schematic-level) |
+| §6-09 | Differential receivers | Differential input sensitivity | \|(D+) − (D−)\| > 200 mV | `diff-receiver-sensitivity` `20261020-172719-ca4a45a` (45), `20261020-173124-ca4a45a` (225); `diff-receiver-mismatch` `20261020-202512-a78d2ac` (MC) | 45, 225, MC | PASS (schematic-level) |
+| §6-10 | Differential receivers | Common-mode input range | 0.8–2.5 V | `diff-receiver-sensitivity` `20261020-172719-ca4a45a` (45), `20261020-173124-ca4a45a` (225), at VCM 0.8 / 1.65 / 2.5 V | 45, 225 | PASS (schematic-level) |
+| §6-11 | Differential receivers | Single-ended receiver thresholds | VIH > 2.0 V, VIL < 0.8 V | `se-receiver-dp-thresholds` `20261020-204606-ea63f5c` (45), `20261020-205102-ea63f5c` (225); `se-receiver-dm-thresholds` `20261020-202908-ea63f5c` (45), `20261020-203356-ea63f5c` (225); `se-receiver-mismatch` `20261020-202608-a78d2ac` (MC) | 45, 225, MC | PASS (schematic-level) |
+| §6-12 | Squelch / envelope detector | Squelch detection threshold | 100–200 mV differential envelope | none | — | NO EVIDENCE |
+| §6-13 | Squelch / envelope detector | Output interface to UTMI layer | 1-bit `SQUELCH`/`LineState`, at the oversampling rate | none | — | NO EVIDENCE |
+| §6-14 | Pull-up/pull-down and termination | FS device D+ pull-up | 1.5 kΩ ±5% to regulated 3.0–3.6 V | `dplus-pullup-tolerance` `20261020-174332-ca4a45a` (45), `20261020-174658-ca4a45a` (225) | 45, 225 | PASS (schematic-level) |
+| §6-15 | Pull-up/pull-down and termination | Downstream port pull-downs | 15 kΩ ±5% on each of D+/D− | none | — | NO EVIDENCE |
+| §6-16 | Pull-up/pull-down and termination | Control interface from UTMI layer | 1-bit pull-up enable/disable | none | — | NO EVIDENCE |
 
-**Why every row is empty**, by group — these are two different reasons and
-the difference matters:
+**Scope notes on the PASS rows.**
 
-- **§6-01…§6-07, §6-09…§6-12, §6-14, §6-15 — analog rows owed by sibling
-  canary blocks.** These are electrical requirements on a PLL, drivers,
-  receivers, a squelch detector, and the termination network. Per
-  [`CLAUDE.md`](../CLAUDE.md)'s scope rule none of those is designed in this
-  repo, `design/` and `sim/` are empty, and no analog testbench or PVT
-  simulation result exists to cite. There is nothing to be measured here yet
-  and that is the intended state, not a gap in this report.
-- **§6-08, §6-13, §6-16 — the digital side of the analog boundary.** These
-  three are obligations on *this* repo's UTMI layer: the pad-side control and
-  status signals it must present. `rtl/usb_utmi_top.v` declares ports for
-  §6-08 (`tx_drive_en`, `tx_oe`, `tx_dp`, `tx_dn`) and for the digitized
-  pad-level inputs behind §6-13 (`dp`, `dm` → `LineState`). For §6-16 there
-  is no pull-up-enable output port at all: `TermSelect` arrives as a UTMI
-  input and that module's header states it has no consumer inside this repo
-  — its consumer is the sibling termination block — so its synchronized net
-  is an attachment point for a future consumer, not a driven control
-  interface. Existing
-  RTL-level simulation of those ports is *adjacent* evidence, not row
-  evidence — see §4 for exactly what it is and why it does not close a row.
+- No record is post-layout: every one names a schematic-derived netlist
+  (`design/netlist/*.spice`) and states "no layout, no parasitic extraction".
+- §6-04…§6-07 and §6-08: the five process sections of the pinned PDK all load
+  the typical resistor/capacitor parameters, so poly-resistor sheet and MIM
+  spread are not covered by the 45-point driver records, and no 225-point or
+  Monte Carlo driver record exists.
+- §6-08 is the **analog side only**: the driver honors the drive-enable/OE
+  truth table. The UTMI-side obligation is separate (see below).
+- §6-09, §6-11: the Monte Carlo records cover local device mismatch only
+  (`vary=mismatch`); global process spread is the separate corner axis. In
+  `se-receiver-mismatch` the D+ and D− populations are numerically identical
+  (same netlist, same seed), so they count as one population, not two
+  independent draws (the record discloses this).
+- §6-14: PASS when at least one trim code at each corner is inside 1.425–1.575
+  kΩ (trim selected at test). No regulator and no trim storage are modeled.
+
+**Why the seven rows have no evidence**, by group — these are different
+reasons and the difference matters:
+
+- **§6-01…§6-03 — PLL.** The PLL is never designed here; it is consumed by
+  pinned reference to `2AMLogic/sky130-pll` (`CLAUDE.md`). No PLL record is
+  indexed by this report.
+- **§6-12, §6-13 — squelch.** The squelch / envelope detector has no source
+  block and is not in the porting plan; its disposition is DR-0003 Decision 2
+  ([`spec/decision-records/0003-analog-port-scope-and-squelch-disposition.md`](../spec/decision-records/0003-analog-port-scope-and-squelch-disposition.md)),
+  which is a *proposal*, not a ratified change to §6. No squelch evidence
+  exists and none is claimed.
+- **§6-15 — host pull-downs.** A single-role FS device has no downstream-port
+  pull-downs; the porting plan models the host's 15 kΩ as a testbench load
+  and builds no on-die pull-downs (DR-0003 Decision 3, also proposed). That
+  load appears inside other experiments' testbenches but no record
+  evidences this row as written, so the row stays `NO EVIDENCE`.
+- **§6-16 — pull-up enable from the UTMI layer.** The `dplus-pullup-tolerance`
+  record reports the disabled-state D+ voltage and leakage as engineering
+  data only, not as a verdict on this row. On the digital side
+  `rtl/usb_utmi_top.v` has no pull-up-enable output port at all:
+  `TermSelect` arrives as a UTMI input whose consumer is the sibling
+  termination block, so its synchronized net is an attachment point for a
+  future consumer, not a driven control interface.
+
+**The digital side of §6-08 and §6-13.** `rtl/usb_utmi_top.v` declares ports
+for §6-08 (`tx_drive_en`, `tx_oe`, `tx_dp`, `tx_dn`) and for the digitized
+pad-level inputs behind §6-13 (`dp`, `dm` → `LineState`). Existing RTL-level
+simulation of those ports is *adjacent* evidence, not row evidence — see §4
+for exactly what it is and why it does not close a row.
 
 ## 3. Per-corner results from the landed records (toolchain-smoke scope)
 
@@ -435,7 +469,8 @@ says, and no more:
   row moves off `NO EVIDENCE` on synthesis alone, and nothing here is cited by
   the signoff manifest (see item 1 in [`signoff/README.md`](../signoff/README.md)).
 
-The gap that would move §6-08/§6-13/§6-16 off `NO EVIDENCE` is still the
+The gap that would give the digital side of §6-08/§6-13/§6-16 row evidence
+(§6-08 has analog-side schematic-level evidence, §2) is still the
 physical flow for `usb_utmi_top` under this experiment slug (follow-on issue
 #105).
 
@@ -553,9 +588,12 @@ PY
 
 **Rules for a refresh**, so a later pass cannot quietly launder the scope:
 
-1. A record may only move a §6 row off `NO EVIDENCE` if its
-   `design.anchors_design_claim` is `true` **and** its `design.sources` name
-   the RTL (or analog netlist) the row is actually about.
+1. A record may only move a §6 row off `NO EVIDENCE` if it is a committed
+   PASS record whose claim names that row and whose netlist or RTL is the
+   design the row is about (for a `flow/` record, `design.anchors_design_claim`
+   is `true` **and** `design.sources` name that RTL; for a `sim/` record, the
+   claim and `design/netlist/*.spice` provenance). Say its scope
+   (schematic-level, post-layout) in the table.
 2. A `smoke-utmi_stub` record never evidences a spec row, whatever its
    verdicts say.
 3. `unconstrained` timing is never an Fmax and never a pass.
