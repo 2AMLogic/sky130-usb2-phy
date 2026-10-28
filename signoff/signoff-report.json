@@ -5,7 +5,7 @@
   "tier": null,
   "t1_item_count": 22,
   "build_t1_item_count": 22,
-  "t1_met_count": 7,
+  "t1_met_count": 8,
   "t1_not_applicable_count": 1,
   "source_doc": "docs/design-evidence-tiers.md",
   "source_doc_content_hash": "sha256:a26b90262320d0fbd32b3f549a02b6300832706041797a559d8bf6bdb62efdc7",
@@ -26,10 +26,35 @@
       "partition": "analog",
       "text": "committed schematic sources (or generator) plus the netlist derived from them, regenerated on design change.",
       "notes": [],
-      "status": "unmet",
-      "reason": "no_evidence",
+      "status": "met",
+      "reason": null,
       "graded_by_build": true,
-      "citation": null
+      "citation": {
+        "file": "signoff/evidence/item-1-analog-sources.json",
+        "command": null,
+        "kind": "generic",
+        "check_status": "pass",
+        "content_hash": "sha256:3e4d1f4d3f5be7651afa5de2298e67c3d9f75d154eee125feb8793a8d0796a94",
+        "input_verified": true,
+        "exit_status": 0,
+        "artifact_binding": {
+          "t1_item": 1,
+          "path": {
+            "path": "signoff/inventory/item-1-analog-sources.json",
+            "scope": "repo"
+          },
+          "content_hash": "sha256:3e4d1f4d3f5be7651afa5de2298e67c3d9f75d154eee125feb8793a8d0796a94",
+          "input_verified": true,
+          "summary": "T1 item 1 (Design sources): 15/15 attestation checks passed (klt signoff --attest)",
+          "source": "signoff/inventory/item-1-analog-sources.json",
+          "attestation": {
+            "producer": "klt signoff --attest",
+            "inventory_schema_version": 1,
+            "check_count": 15,
+            "passed_count": 15
+          }
+        }
+      }
     },
     {
       "tier": "T1",
@@ -484,7 +509,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:9bdd073faedd80e0074237289c55108603e5574dd0d77264612c3927fc8a23cf",
+        "content_hash": "sha256:b7887c9f6eb70c4dabe0cb0911ff09b4e279074254e3e3243852bf6c7048a4d4",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -493,7 +518,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:9bdd073faedd80e0074237289c55108603e5574dd0d77264612c3927fc8a23cf",
+          "content_hash": "sha256:b7887c9f6eb70c4dabe0cb0911ff09b4e279074254e3e3243852bf6c7048a4d4",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
@@ -515,7 +540,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:9bdd073faedd80e0074237289c55108603e5574dd0d77264612c3927fc8a23cf",
+        "content_hash": "sha256:b7887c9f6eb70c4dabe0cb0911ff09b4e279074254e3e3243852bf6c7048a4d4",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -524,7 +549,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:9bdd073faedd80e0074237289c55108603e5574dd0d77264612c3927fc8a23cf",
+          "content_hash": "sha256:b7887c9f6eb70c4dabe0cb0911ff09b4e279074254e3e3243852bf6c7048a4d4",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"

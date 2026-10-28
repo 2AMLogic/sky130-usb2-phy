@@ -87,7 +87,7 @@ CHARACTERIZATION_ENVELOPE = "signoff/evidence/characterization-report.json"
 # Artifact-anchored citations (klayout-tools#2718): T1 item -> (inventory,
 # envelope, what the envelope attests). The inventory is the single audited
 # artifact the envelope pins; its members are re-hashed by
-# check_inventory_members. Item 1 (digital) is not here: its envelope is
+# check_inventory_members. Item 1 (digital and analog) is not here: its envelope is
 # produced by `klt signoff --attest` (see ATTESTED), not rewritten by --regen.
 ANCHORED = {
     "9": (
@@ -127,6 +127,10 @@ ATTESTED = {
     "1.digital": (
         "signoff/inventory/item-1-digital-sources.json",
         "signoff/evidence/item-1-digital-sources.json",
+    ),
+    "1.analog": (
+        "signoff/inventory/item-1-analog-sources.json",
+        "signoff/evidence/item-1-analog-sources.json",
     ),
 }
 

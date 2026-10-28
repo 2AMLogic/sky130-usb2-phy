@@ -74,7 +74,7 @@
       "members": [
         {
           "path": "signoff/check.py",
-          "sha256": "sha256:c0a170292b24b977bc27a59212b7d9cd2297f9ff940c404c0b5ea0b56a4ef91c"
+          "sha256": "sha256:d52922145860871ff576f0e1d90bb2f0c9261fce782321b005d2e71c36903cf3"
         },
         {
           "path": "signoff/toolchain.json",
