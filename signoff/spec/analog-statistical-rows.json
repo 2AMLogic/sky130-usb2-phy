@@ -1,0 +1,30 @@
+{
+  "status": "ratified",
+  "source": {
+    "file": "spec/usb2-phy.md",
+    "content_hash": "sha256:b80cbc2207d251bc6240fbd0a8f3dd4af25534c4b7de78398868c4b0c4f4e634"
+  },
+  "note": "Statistical (matching, offset or trim-limited) rows of the analog interface-requirement table in section 6 of the ratified spec/usb2-phy.md (Ratified 2026-08-05), selected by hand. Row ids are `6-NN`, NN being the 1-based position of the row in that table, which has no id column (counted 2026-10-28); inserting or reordering table rows renumbers them, which the repo-side gate (signoff/check.py) catches by re-hashing the source. Rows of section 6 not listed here (static levels, PLL rows, squelch, control interfaces) are not claimed to be statistical or non-statistical by this file.",
+  "rows": [
+    {
+      "id": "6-06",
+      "spec_section": "6",
+      "requirement": "Current-mode drivers: rise/fall time 4-20 ns (10%-90%), matched to within 10% rise vs. fall"
+    },
+    {
+      "id": "6-09",
+      "spec_section": "6",
+      "requirement": "Differential receivers: differential input sensitivity |(D+) - (D-)| > 200 mV"
+    },
+    {
+      "id": "6-11",
+      "spec_section": "6",
+      "requirement": "Differential receivers: single-ended receiver thresholds VIH > 2.0 V, VIL < 0.8 V"
+    },
+    {
+      "id": "6-14",
+      "spec_section": "6",
+      "requirement": "Pull-up/pull-down and termination: FS device D+ pull-up 1.5 kOhm +/-5% to internally regulated 3.0-3.6 V"
+    }
+  ]
+}

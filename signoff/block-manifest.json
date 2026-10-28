@@ -16,7 +16,7 @@
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:e5c8ed79c1b4fabb09bf9f92095d525864ea4ead1dcddb5a6104da004817f4a5"
+      "content_hash": "sha256:9bdd073faedd80e0074237289c55108603e5574dd0d77264612c3927fc8a23cf"
     },
     "6.digital": {
       "not_applicable": {
@@ -29,6 +29,66 @@
           "content_hash": "sha256:ae86fe71ef8f38cfb72748b99099b9f2c0c8b6917319311c1f9676202f27adac"
         }
       }
-    }
+    },
+    "6.analog": [
+      {
+        "file": "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-binding.yield.json",
+        "content_hash": "sha256:e63f053bc9411ba7578a7da106eb7ccecdca7849432621ec4f66057fd223e941",
+        "rows": [
+          "6-09"
+        ]
+      },
+      {
+        "file": "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-tt.yield.json",
+        "content_hash": "sha256:d10015ec93457c9e4048586da20867559f9f174be4100caca42096cd6ce7ea91",
+        "rows": [
+          "6-09"
+        ]
+      },
+      {
+        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-binding.yield.json",
+        "content_hash": "sha256:5e0c71ff232ea96e71c96dae22cd015e17870057ff742f3a04ff514a84e866c2",
+        "rows": [
+          "6-11"
+        ]
+      },
+      {
+        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-tt.yield.json",
+        "content_hash": "sha256:a41593a21d6cc583f5f34fba8743221b555cd4aa79ad25ecb0b996d94529f1b4",
+        "rows": [
+          "6-11"
+        ]
+      },
+      {
+        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-binding.yield.json",
+        "content_hash": "sha256:8e3f13f0903b6e55a4dab4cc5a217219ea3233ad32d18b004f65e75e12c4c802",
+        "rows": [
+          "6-11"
+        ]
+      },
+      {
+        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-tt.yield.json",
+        "content_hash": "sha256:f76915003014071e3ad12c9ab37df3d6b46007a3e5f62c97c15ad1dab3a30ec4",
+        "rows": [
+          "6-11"
+        ]
+      }
+    ]
+  },
+  "spec_rows": {
+    "6.analog": [
+      {
+        "id": "6-06"
+      },
+      {
+        "id": "6-09"
+      },
+      {
+        "id": "6-11"
+      },
+      {
+        "id": "6-14"
+      }
+    ]
   }
 }
