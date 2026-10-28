@@ -1,9 +1,10 @@
 # `layout/analog/` — analog leaf layouts and the conventions they share
 
 One directory per analog leaf, named after its subcircuit in
-`design/netlist/`. Today only `differential_receiver/` exists (issue #167);
-the other three leaves (`differential_driver`, the two single-ended
-receivers, `dplus_pullup`) follow **these conventions**, one issue each.
+`design/netlist/`. Today `differential_receiver/` (issue #167) and
+`differential_driver/` (issue #220) exist; the other two leaves (the two
+single-ended receivers, `dplus_pullup`) follow **these conventions**, one
+issue each.
 
 **This directory anchors no sign-off claim yet.** The analog rows of
 `signoff/signoff-report.json` cover the whole analog partition, so items 2
@@ -135,3 +136,31 @@ means re-running that search, not hand-placing it.
   table has no met3 limit: item 11 is graded from the supply findings, not the status.
 * Not done and not claimed: dummy devices, density/fill, antenna closure above
   met2, parasitic extraction, matched-layout analysis, any simulation of the layout.
+
+## `differential_driver/` differences
+
+The driver (issue #220) follows the conventions above; what is new:
+
+* **Floorplan.** Three disjoint x zones: NMOS row (+ the `res_xhigh_po_1p41`
+  bias resistor) in one p-tap ring, then the MIM caps and series poly resistors
+  above the channel, then the PMOS row in one n-well. Disjoint zones mean no
+  NMOS and PMOS met2 drop can share a y-range within spacing, so there is no
+  placement search. `gen.py` reads every device (nets, `W`, `L`, `mult`) from
+  `design/netlist/differential_driver.spice` and folds `W > 10 um` and `mult`
+  into fingers of at most 10 um.
+* **VDD is a routed net.** The bias resistor sits in the p-substrate ring but
+  ties to VDD, so the n-well ring's bottom strip is also a rail (met1) and a
+  met3 trunk carries VDD to the resistor head.
+* **MIM caps** (`sky130_fd_pr__cap_mim_m3_1`): met3 bottom plate (the shared
+  `OUTI_*` net, with a tab carrying the via2 outside the `capm`), `capm`
+  (89/44), and a met4 strap from a via3 on the `capm` down to the net's trunk.
+* **Generic poly resistor** (`res_generic_po`): poly bar under the `poly_res`
+  marker only (no `urpm`), contacted heads outside the marker.
+* **LVS is not a match today.** The PDK's `sky130.lvs` extracts a MIM as
+  `sky130_fd_pr__model__cap_mim` but its `convert_subckts` device list does not
+  contain the xschem export's `sky130_fd_pr__cap_mim_m3_1`, so the reference
+  loses the four caps (and merges the nets they bridge) while the layout has
+  four unmatched capacitors. The other 76 devices and all 8 pins pair. The
+  committed `lvs-report.json` says `mismatch`; no record is minted until it
+  matches (`run_checks.py --record` refuses a failing run).
+
