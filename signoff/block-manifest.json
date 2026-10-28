@@ -6,6 +6,10 @@
       "file": "signoff/evidence/item-1-digital-sources.json",
       "content_hash": "sha256:72d7197c3c896ec6ffaa0b71de62a05a1cb40c4c475bbb7cbd64ed9c74b4cd95"
     },
+    "1.analog": {
+      "file": "signoff/evidence/item-1-analog-sources.json",
+      "content_hash": "sha256:3e4d1f4d3f5be7651afa5de2298e67c3d9f75d154eee125feb8793a8d0796a94"
+    },
     "8": {
       "file": "signoff/evidence/characterization-report.json",
       "content_hash": "sha256:55242b39fe793b8bb8a81bd844bf96d4a4a3c331a3778602a72c72c4ac5720c4"
@@ -16,7 +20,7 @@
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:e5c8ed79c1b4fabb09bf9f92095d525864ea4ead1dcddb5a6104da004817f4a5"
+      "content_hash": "sha256:e917f9632fcb54e281a620c40e7fca45b0b5bed5c08c9b50338af0db54d20644"
     },
     "6.digital": {
       "not_applicable": {

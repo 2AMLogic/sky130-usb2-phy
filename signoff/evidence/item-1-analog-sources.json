@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "kind": "generic",
+  "status": "pass",
+  "t1_item": 1,
+  "summary": "T1 item 1 (Design sources): 15/15 attestation checks passed (klt signoff --attest)",
+  "source": "signoff/inventory/item-1-analog-sources.json",
+  "attestation": {
+    "producer": "klt signoff --attest",
+    "inventory_schema_version": 1,
+    "hash_algorithm": "sha256-raw-bytes",
+    "check_count": 15,
+    "passed_count": 15,
+    "checks": [
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/differential_driver.sch",
+        "passed": true,
+        "content_hash": "sha256:5e2bfbb1458d38c3ddc0b21269fbb41930c4d08a92dae320a8910e4dc6c7dd03"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/differential_receiver.sch",
+        "passed": true,
+        "content_hash": "sha256:be73b13f46a72239e282d2e339454481534a542e01937302cc3955010a648677"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/dplus_pullup.sch",
+        "passed": true,
+        "content_hash": "sha256:0606a61b1c53f6ee7b4fe6b47e1373d5338a72495cf0f9d615e6deef22980374"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/se_receiver_dm.sch",
+        "passed": true,
+        "content_hash": "sha256:e7683388c333f549721164f56359ed96feb6574c0540ee83d02070f178e6f316"
+      },
+      {
+        "check": "present",
+        "role": "source",
+        "path": "design/se_receiver_dp.sch",
+        "passed": true,
+        "content_hash": "sha256:538fd618b0f68aa0a75f107fddeb861951d302de8186206f5cefc821df134025"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/netlist/differential_driver.spice",
+        "passed": true,
+        "content_hash": "sha256:bed3319d65789db0a7d1a14831e113eb957cd1998d3cc58d4dc539dd5ea2fdd0"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/netlist/differential_receiver.spice",
+        "passed": true,
+        "content_hash": "sha256:a4e60f1604ced0bd779dd9c848825d7b7fdaab5bd198307e6c10b38a14d784f1"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/netlist/dplus_pullup.spice",
+        "passed": true,
+        "content_hash": "sha256:b824c18d57e4e493b1b733cf8d3670ef5eada615f2b5f32f2e796ef7170d20e3"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/netlist/se_receiver_dm.spice",
+        "passed": true,
+        "content_hash": "sha256:3ce8e5cf0d64871e845d11c592035cdee07cc01e18168411c78eb4a26dacfa8d"
+      },
+      {
+        "check": "present",
+        "role": "derived",
+        "path": "design/netlist/se_receiver_dp.spice",
+        "passed": true,
+        "content_hash": "sha256:e4d5d15316be7f26ba3a7dd06727c17537083808e5e96a03604f3e44d6413ef6"
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/netlist/differential_driver.spice",
+        "generator": "design/export_netlist.sh",
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "differential_driver"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/netlist/differential_receiver.spice",
+        "generator": "design/export_netlist.sh",
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "differential_receiver"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/netlist/dplus_pullup.spice",
+        "generator": "design/export_netlist.sh",
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "dplus_pullup"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/netlist/se_receiver_dm.spice",
+        "generator": "design/export_netlist.sh",
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "se_receiver_dm"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      },
+      {
+        "check": "command",
+        "role": "freshness",
+        "target": "design/netlist/se_receiver_dp.spice",
+        "generator": "design/export_netlist.sh",
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "se_receiver_dp"
+        ],
+        "cwd": ".",
+        "exit_status": 0,
+        "passed": true,
+        "local_only": true
+      }
+    ]
+  },
+  "provenance": {
+    "klt_version": "0.8.0",
+    "klayout_version": null,
+    "pdk": null,
+    "deck": null,
+    "input": {
+      "path": {
+        "path": "signoff/inventory/item-1-analog-sources.json",
+        "scope": "repo"
+      },
+      "content_hash": "sha256:3e4d1f4d3f5be7651afa5de2298e67c3d9f75d154eee125feb8793a8d0796a94"
+    }
+  }
+}

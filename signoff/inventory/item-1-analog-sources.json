@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "t1-attestation-inventory",
+  "t1_item": 1,
+  "description": "Analog design sources for T1 item 1: the five xschem leaf schematics under design/ and the SPICE netlists derived from them by design/export_netlist.sh. Each netlist's freshness check is design/check_netlist.py, which re-exports the schematic through klt netlist --block and compares it to the committed file after dropping export_netlist.sh's header lines and sch_path and joining '+' continuation lines (klt netlist --check alone reports every file drifted because of those differences). Not in this repo and not listed as sources: the PLL (consumed by pinned reference to 2AMLogic/sky130-pll through reuse.lock.json) and the squelch detector (undecided, DR-0003 Decision 2 pending ratification).",
+  "sources": [
+    "design/differential_driver.sch",
+    "design/differential_receiver.sch",
+    "design/dplus_pullup.sch",
+    "design/se_receiver_dm.sch",
+    "design/se_receiver_dp.sch"
+  ],
+  "derived": [
+    {
+      "path": "design/netlist/differential_driver.spice",
+      "generator": "design/export_netlist.sh",
+      "check": {
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "differential_driver"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/netlist/differential_receiver.spice",
+      "generator": "design/export_netlist.sh",
+      "check": {
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "differential_receiver"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/netlist/dplus_pullup.spice",
+      "generator": "design/export_netlist.sh",
+      "check": {
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "dplus_pullup"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/netlist/se_receiver_dm.spice",
+      "generator": "design/export_netlist.sh",
+      "check": {
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "se_receiver_dm"
+        ],
+        "local_only": true
+      }
+    },
+    {
+      "path": "design/netlist/se_receiver_dp.spice",
+      "generator": "design/export_netlist.sh",
+      "check": {
+        "argv": [
+          "python3",
+          "design/check_netlist.py",
+          "se_receiver_dp"
+        ],
+        "local_only": true
+      }
+    }
+  ]
+}
