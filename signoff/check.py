@@ -111,6 +111,12 @@ ANCHORED = {
 ITEM6_KEY = "6.digital"
 ITEM6_SPEC = "signoff/spec/digital-rows.json"
 ITEM6_STATEMENT = "signoff/evidence/item-6-digital-not-applicable.json"
+# Item 6 (analog): the statistical rows are declared under `spec_rows."6.analog"`
+# and each committed `klt yield` report is cited against its rows. The grader
+# never opens spec/usb2-phy.md, so ITEM6_ANALOG_SPEC records the markdown's
+# hash exactly as ITEM6_SPEC does; the manifest's row set must equal its ids.
+ITEM6_ANALOG_KEY = "6.analog"
+ITEM6_ANALOG_SPEC = "signoff/spec/analog-statistical-rows.json"
 
 # Citations produced by `klt signoff --attest` (klt >= 0.8.0, newer than the
 # 0.7.0 grader): manifest key -> (inventory, envelope). The inventory carries
@@ -687,6 +693,26 @@ def refresh_anchored() -> None:
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
 
 
+def _check_spec_hash(spec: dict, rel: str, root: Path, label: str) -> bool:
+    """Re-hash the spec markdown against the rows file's recorded source."""
+    source = spec.get("source") or {}
+    source_path = root / str(source.get("file", ""))
+    if not source.get("file") or not source_path.is_file():
+        fail(f"{rel}: source {source.get('file')!r} does not exist")
+        return False
+    actual = sha256_file(source_path)
+    if actual != source.get("content_hash"):
+        fail(
+            f"{rel}: records {source.get('content_hash')} for "
+            f"{source['file']} but it now hashes to {actual}.\n"
+            f"     The spec changed since the {label} rows were accounted for. "
+            "Re-read it, update the rows file and what cites it,\n"
+            "     then re-pin (python3 signoff/check.py --regen)."
+        )
+        return False
+    return True
+
+
 def check_item6_binding(manifest: dict, root: Path | None = None) -> bool:
     """The item-6 digital statement is bound to the live spec markdown.
 
@@ -702,22 +728,7 @@ def check_item6_binding(manifest: dict, root: Path | None = None) -> bool:
     except (OSError, ValueError) as exc:
         fail(f"item 6 (digital): rows file or statement unreadable ({exc})")
         return False
-    ok = True
-    source = spec.get("source") or {}
-    source_path = root / str(source.get("file", ""))
-    if not source.get("file") or not source_path.is_file():
-        fail(f"{ITEM6_SPEC}: source {source.get('file')!r} does not exist")
-        return False
-    actual = sha256_file(source_path)
-    if actual != source.get("content_hash"):
-        fail(
-            f"{ITEM6_SPEC}: records {source.get('content_hash')} for "
-            f"{source['file']} but it now hashes to {actual}.\n"
-            "     The spec changed since the digital rows were accounted for. "
-            "Re-read it, update the rows file and the statement,\n"
-            "     then re-pin (python3 signoff/check.py --regen)."
-        )
-        ok = False
+    ok = _check_spec_hash(spec, ITEM6_SPEC, root, "digital")
     spec_ids = sorted(r.get("id") for r in spec.get("rows", []))
     statement_ids = sorted(r.get("id") for r in statement.get("rows", []))
     if spec_ids != statement_ids:
@@ -733,7 +744,75 @@ def check_item6_binding(manifest: dict, root: Path | None = None) -> bool:
             fail(f"signoff/block-manifest.json: {ITEM6_KEY} must cite {rel} as {part}")
             ok = False
     if ok:
-        print(f"ok   {ITEM6_SPEC}: bound to {source['file']}; statement covers {len(spec_ids)} rows")
+        print(f"ok   {ITEM6_SPEC}: bound to {spec['source']['file']}; statement covers {len(spec_ids)} rows")
+    return ok
+
+
+def yield_samples_pin(root: Path, report_rel: str) -> str | None:
+    """The pin `klt signoff` expects for a `klt yield` citation.
+
+    A yield report carries no input hash of its own; the grader hashes the
+    samples document the report names, resolved next to the report.
+    """
+    try:
+        report = json.loads((root / report_rel).read_text())
+        samples = report["samples"]
+    except (OSError, ValueError, KeyError):
+        return None
+    path = (root / report_rel).parent / str(samples)
+    return sha256_file(path) if path.is_file() else None
+
+
+def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
+    """The item-6 analog row set and its yield citations are bound to the tree.
+
+    Re-hashes the spec markdown against the analog rows file, requires the
+    manifest's declared `spec_rows."6.analog"` to equal that file's ids, and
+    requires every cited `klt yield` report to name only declared rows and to
+    still hash (via its samples document) to the manifest's pin.
+    """
+    root = root or REPO_ROOT
+    try:
+        spec = json.loads((root / ITEM6_ANALOG_SPEC).read_text())
+    except (OSError, ValueError) as exc:
+        fail(f"item 6 (analog): rows file unreadable ({exc})")
+        return False
+    ok = _check_spec_hash(spec, ITEM6_ANALOG_SPEC, root, "analog")
+    spec_ids = sorted(r.get("id") for r in spec.get("rows", []))
+    declared = sorted(
+        r.get("id") for r in (manifest.get("spec_rows") or {}).get(ITEM6_ANALOG_KEY, [])
+    )
+    if declared != spec_ids:
+        fail(
+            f"signoff/block-manifest.json: spec_rows.{ITEM6_ANALOG_KEY} must equal the "
+            f"rows of {ITEM6_ANALOG_SPEC}; missing {sorted(set(spec_ids) - set(declared))}, "
+            f"extra {sorted(set(declared) - set(spec_ids))}"
+        )
+        ok = False
+    citations = (manifest["evidence"].get(ITEM6_ANALOG_KEY)) or []
+    if not isinstance(citations, list) or not citations:
+        fail(f"signoff/block-manifest.json: {ITEM6_ANALOG_KEY} must cite the committed klt yield reports")
+        return False
+    for cite in citations:
+        rel = cite.get("file", "")
+        undeclared = sorted(set(cite.get("rows", [])) - set(spec_ids))
+        if not cite.get("rows") or undeclared:
+            fail(f"{rel}: must cite declared rows only; undeclared {undeclared or 'none cited'}")
+            ok = False
+        actual = yield_samples_pin(root, rel)
+        if actual is None:
+            fail(f"{rel}: report or the samples document it names is unreadable")
+            ok = False
+        elif actual != cite.get("content_hash"):
+            fail(
+                f"{rel}: pinned to {cite.get('content_hash')} but its samples "
+                f"document now hashes to {actual}.\n"
+                "     The cited samples changed; recorded results are append-only. "
+                "Restore it, or re-pin deliberately (python3 signoff/check.py --regen)."
+            )
+            ok = False
+    if ok:
+        print(f"ok   {ITEM6_ANALOG_SPEC}: bound to {spec['source']['file']}; {len(citations)} yield reports cited against {len(spec_ids)} declared rows")
     return ok
 
 
@@ -746,10 +825,13 @@ def refresh_item6() -> None:
     """
     manifest = json.loads(MANIFEST.read_text())
     entry = (manifest["evidence"].get(ITEM6_KEY) or {}).get("not_applicable")
-    if not isinstance(entry, dict):
-        return
-    for part, rel in (("spec", ITEM6_SPEC), ("statement", ITEM6_STATEMENT)):
-        entry[part] = {"file": rel, "content_hash": sha256_file(REPO_ROOT / rel)}
+    if isinstance(entry, dict):
+        for part, rel in (("spec", ITEM6_SPEC), ("statement", ITEM6_STATEMENT)):
+            entry[part] = {"file": rel, "content_hash": sha256_file(REPO_ROOT / rel)}
+    for cite in manifest["evidence"].get(ITEM6_ANALOG_KEY) or []:
+        pin = yield_samples_pin(REPO_ROOT, cite["file"])
+        if pin is not None:
+            cite["content_hash"] = pin
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
 
 
@@ -795,6 +877,7 @@ def main(argv: list[str] | None = None) -> int:
     ok = check_item9_complete() and ok
     ok = check_anchored_envelopes(manifest) and ok
     ok = check_item6_binding(manifest) and ok
+    ok = check_item6_analog(manifest) and ok
     ok = check_attested(manifest) and ok
 
     stdout, report, ran = run_grader()

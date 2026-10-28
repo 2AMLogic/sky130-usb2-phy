@@ -48,6 +48,11 @@ def tree(tmp_path, monkeypatch):
                 dest = tmp_path / entry["path"]
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy(REAL_ROOT / entry["path"], dest)
+    manifest = json.loads((REAL_ROOT / "signoff" / "block-manifest.json").read_text())
+    for cite in manifest["evidence"][check.ITEM6_ANALOG_KEY]:
+        report = REAL_ROOT / cite["file"]
+        for src in (report, report.parent / json.loads(report.read_text())["samples"]):
+            shutil.copy(src, _mk(tmp_path / src.relative_to(REAL_ROOT)))
     shutil.copy(REAL_ROOT / "spec" / "usb2-phy.md", _mk(tmp_path / "spec" / "usb2-phy.md"))
     shutil.copy(REAL_ROOT / "docs" / "characterization.md", _mk(tmp_path / "docs" / "characterization.md"))
     # klt resolves a `scope: repo` input path against the repo root it finds
@@ -172,6 +177,48 @@ def test_a_statement_row_mismatch_fails_the_item6_gate(tree, edit, capsys):
     path.write_text(json.dumps(statement))
     assert not check.check_item6_binding(_manifest(root), root)
     assert "must account for exactly the rows" in capsys.readouterr().err
+
+
+def test_item6_analog_binding_passes_on_the_real_tree(tree):
+    check, root = tree
+    assert check.check_item6_analog(_manifest(root), root)
+
+
+def test_editing_the_spec_markdown_fails_the_item6_analog_gate(tree, capsys):
+    check, root = tree
+    with (root / "spec" / "usb2-phy.md").open("a") as handle:
+        handle.write("\nA new row.\n")
+    assert not check.check_item6_analog(_manifest(root), root)
+    assert "now hashes to" in capsys.readouterr().err
+
+
+def test_a_drifted_cited_samples_document_fails_the_item6_analog_gate(tree, capsys):
+    check, root = tree
+    cite = _manifest(root)["evidence"][check.ITEM6_ANALOG_KEY][0]
+    report = root / cite["file"]
+    samples = report.parent / json.loads(report.read_text())["samples"]
+    with samples.open("a") as handle:
+        handle.write("\n")
+    assert not check.check_item6_analog(_manifest(root), root)
+    assert "samples document now hashes to" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("edit", ["drop", "add", "undeclared-citation"])
+def test_a_row_set_mismatch_fails_the_item6_analog_gate(tree, edit, capsys):
+    check, root = tree
+    path = root / "signoff" / "block-manifest.json"
+    manifest = json.loads(path.read_text())
+    declared = manifest["spec_rows"][check.ITEM6_ANALOG_KEY]
+    if edit == "drop":
+        declared.pop()
+    elif edit == "add":
+        declared.append({"id": "6-99"})
+    else:
+        manifest["evidence"][check.ITEM6_ANALOG_KEY][0]["rows"] = ["6-99"]
+    path.write_text(json.dumps(manifest))
+    assert not check.check_item6_analog(_manifest(root), root)
+    err = capsys.readouterr().err
+    assert "must equal the rows" in err or "undeclared" in err
 
 
 SCAN_WORDS = ("sigma", "σ", "yield", "cpk", "offset", "mismatch", "matching", "accuracy", "monte carlo", "std dev")
