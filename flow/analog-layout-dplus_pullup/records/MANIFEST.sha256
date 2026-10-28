@@ -1,0 +1,4 @@
+# Append-only record manifest. One line per record: <sha256>  <filename>.
+# flow/check_records.py fails if a listed record is missing or its hash has
+# changed, and (against origin/main) if a line here was removed or rewritten.
+sha256:f87dcde0843c2c31e2b9ffb1e68486b7c83db857a83fb22e3962512eb4b804c7  20261028-182132-d291864-dplus_pullup.md
