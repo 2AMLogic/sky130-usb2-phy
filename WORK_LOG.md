@@ -5,6 +5,14 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-10-28
 
+- **PR #230**: feat: attest analog design sources as 1.analog with klt-based netlist freshness check
+- **Issue #219** (closed): T1 item 1 (design sources, analog partition): attest the five analog leaf schematics + netlists and cite them as 1.analog
+- **PR #227**: feat(layout): add sky130 dplus_pullup layout with DRC/LVS/ERC evidence
+- **Issue #222** (closed): T1 items 2-4, 11 (analog layout): lay out the dplus_pullup leaf with DRC, LVS and ERC supply evidence
+- **PR #228**: feat: add sky130 se_receiver_dp and se_receiver_dm analog layouts with check records
+- **Issue #221** (closed): T1 items 2-4, 11 (analog layout): lay out the se_receiver_dp and se_receiver_dm leaves with DRC, LVS and ERC supply evidence
+- **PR #229**: feat: declare analog statistical rows and cite receiver yield reports under item 6
+- **Issue #224** (closed): T1 item 6 (Monte Carlo, analog): declare the analog statistical row set and cite the committed klt yield reports as 6.analog
 - **PR #225**: docs: rewrite characterization per-row table from committed sim records and re-pin item 8
 - **Issue #218** (closed): T1 item 8 (characterization report): docs/characterization.md is stale — it reports zero evidenced §6 rows while 45/225-point analog records pass; refresh and re-pin
 - **PR #226**: feat: add differential_driver analog layout generator and DRC/ERC-clean GDS
