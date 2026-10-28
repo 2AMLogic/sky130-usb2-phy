@@ -1,10 +1,12 @@
 # `layout/analog/` — analog leaf layouts and the conventions they share
 
 One directory per analog leaf, named after its subcircuit in
-`design/netlist/`. Today `differential_receiver/` (issue #167) and
-`differential_driver/` (issue #220) exist; the other two leaves (the two
-single-ended receivers, `dplus_pullup`) follow **these conventions**, one
-issue each.
+`design/netlist/`. Today `differential_receiver/` (issue #167),
+`differential_driver/` (issue #220) and the two single-ended receivers
+`se_receiver_dp/` and `se_receiver_dm/` (issue #221) exist; the last leaf
+(`dplus_pullup`) follows **these conventions**, in its own issue. The two
+single-ended receivers differ only in the input and output pin names; each
+directory is self-contained.
 
 **This directory anchors no sign-off claim yet.** The analog rows of
 `signoff/signoff-report.json` cover the whole analog partition, so items 2
