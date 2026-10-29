@@ -27,15 +27,22 @@ dimensions they depend on) live once in `gen_common.py`; operator ruling
 2026-10-29 (#238) allowed shared *code* while outputs stay per leaf. A change
 there must leave every committed GDS byte-identical: run `python3
 layout/analog/<block>/gen.py --check` for all five leaves. Each `gen.py` keeps
-its own layer table, `TOP` and `build()`.
+its own layer table, `TOP` and `build()`, except the two se_receiver leaves
+(below).
 
 Deliberate leaf-local variants, not yet reconciled into the shared helpers:
 
 - `differential_driver/gen.py` keeps its own `Ports` and `mos` (per-gate
   length `gl`, supply-net asserts, `m1`/`m3`/`m4` landing kinds).
-- `resistor`: three variants (`differential_receiver`, `dplus_pullup`, and the
-  identical `se_receiver_dp`/`se_receiver_dm` pair) plus the driver's
-  `xhigh_resistor`/`generic_poly_resistor`, each tied to its block's geometry.
+- `resistor`: variants in `differential_receiver` and `dplus_pullup`, plus the
+  driver's `xhigh_resistor`/`generic_poly_resistor`, each tied to its block's
+  geometry.
+
+`se_receiver_dm` and `se_receiver_dp` are the same circuit with two net names,
+so their drawing (layer table, `resistor()`, `build()`) lives once in
+`gen_se_receiver.py`, parameterised by (leaf, input net, output net); each
+leaf's `gen.py` is a thin entry point and both records pin the module as a
+provenance input (#240).
 
 ## What a leaf directory contains
 
