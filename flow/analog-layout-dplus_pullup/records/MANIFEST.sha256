@@ -2,3 +2,4 @@
 # flow/check_records.py fails if a listed record is missing or its hash has
 # changed, and (against origin/main) if a line here was removed or rewritten.
 sha256:f87dcde0843c2c31e2b9ffb1e68486b7c83db857a83fb22e3962512eb4b804c7  20261028-182132-d291864-dplus_pullup.md
+sha256:cb78cf5741b17a141ddc4d8bafdd1b1479e04130bbc09c1624c2c8a6c462d7d3  20261029-014427-ee156a8-dplus_pullup.md

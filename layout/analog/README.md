@@ -6,7 +6,8 @@ One directory per analog leaf, named after its subcircuit in
 `se_receiver_dp/` and `se_receiver_dm/` (issue #221), and `dplus_pullup/`
 (issue #222) exist; all analog leaves in the porting plan now follow **these
 conventions**. The two single-ended receivers differ only in the input and
-output pin names; each directory is self-contained.
+output pin names. Each directory owns its outputs (GDS, reports, request and
+spec files); the generator helpers are shared in `gen_common.py` (see below).
 
 **This directory anchors no sign-off claim yet.** The analog rows of
 `signoff/signoff-report.json` cover the whole analog partition, so items 2
@@ -19,12 +20,29 @@ Everything is re-derived for sky130 from the committed netlists. A gf180
 placement plan is source evidence for *topology*, never geometry
 (`CLAUDE.md`, scope discipline).
 
+## Shared generator helpers: `gen_common.py`
+
+`snap`, `Canvas`, `contacts_y`, `Ports`, `mos` and `tap_ring` (with the
+dimensions they depend on) live once in `gen_common.py`; operator ruling
+2026-10-29 (#238) allowed shared *code* while outputs stay per leaf. A change
+there must leave every committed GDS byte-identical: run `python3
+layout/analog/<block>/gen.py --check` for all five leaves. Each `gen.py` keeps
+its own layer table, `TOP` and `build()`.
+
+Deliberate leaf-local variants, not yet reconciled into the shared helpers:
+
+- `differential_driver/gen.py` keeps its own `Ports` and `mos` (per-gate
+  length `gl`, supply-net asserts, `m1`/`m3`/`m4` landing kinds).
+- `resistor`: three variants (`differential_receiver`, `dplus_pullup`, and the
+  identical `se_receiver_dp`/`se_receiver_dm` pair) plus the driver's
+  `xhigh_resistor`/`generic_poly_resistor`, each tied to its block's geometry.
+
 ## What a leaf directory contains
 
 | File | What it is |
 |---|---|
 | `<block>.gds` | The layout. Top cell is named after the subcircuit, so the LVS top matches. |
-| `gen.py` | The generator. `klayout.db` only, sky130 layer numbers inline, **no timestamps**: `gen.py --check` re-emits the stream and compares sha256 with the committed file. A hand-edited GDS is not acceptable here: it cannot be reproduced. |
+| `gen.py` | The generator: the block-specific `build()` plus the shared helpers imported from `../gen_common.py`. `klayout.db` only, sky130 layer numbers inline, **no timestamps**: `gen.py --check` re-emits the stream and compares sha256 with the committed file. A hand-edited GDS is not acceptable here: it cannot be reproduced. |
 | `request-lvs.json` | `klt lvs` request (`klayout-runset`, the PDK's own `sky130.lvs`). Repo-relative paths and a `$PDK_ROOT` placeholder; `run_checks.py` writes the absolute copy. |
 | `erc-supply-spec.json` | `klt erc` supply spec: supply nets, `ties[]`, the resistor `devices[]` carve-out. Every field is justified in its `_comment`. |
 | `drc-report.json`, `drc-native-report.json`, `lvs-report.json`, `erc-supply-report.json` | `klt`'s own JSON, verbatim, from the last `run_checks.py` run. The frozen copy that evidence cites lives under `flow/analog-layout-<block>/artifacts/<record-id>/`. |

@@ -36,14 +36,29 @@ from pathlib import Path
 
 import klayout.db as db
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from gen_common import (  # noqa: E402
+    DBU,
+    GC_Y,
+    LIC,
+    LIC_PITCH,
+    PAD,
+    POLY_ENDCAP,
+    POLY_TOP,
+    SD_W,
+    STRIP_W,
+    Canvas,
+    contacts_y,
+    snap,
+    tap_ring,
+)
+
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent.parent
 GDS = HERE / "differential_driver.gds"
 NETLIST = REPO / "design" / "netlist" / "differential_driver.spice"
 TOP = "differential_driver"
 
-DBU = 0.001  # um per database unit
-GRID = 0.005  # sky130 manufacturing grid, um
 
 # --- sky130A drawn-layer table (GDS layer/datatype) -------------------------
 L = {
@@ -73,14 +88,6 @@ L = {
 }
 
 # --- drawn dimensions, um (all on the 0.005 grid) ---------------------------
-SD_W = 0.54  # source/drain column width (licon + 0.185 each side)
-LIC = 0.17  # licon1 / mcon edge
-LIC_PITCH = 0.36  # licon1 / mcon pitch (mcon.2 needs 0.19 space)
-LIC_ENC_Y = 0.06  # diff enclosure of licon along the column
-POLY_ENDCAP = 0.25  # poly extension past diff, both ends
-GC_Y = 0.35  # gate licon bottom, above diff edge
-POLY_TOP = 0.60  # poly end above the diff edge on the contact side
-PAD = 0.35  # met1 / met2 landing pad edge
 V1 = 0.15  # via1 edge
 V2 = 0.20  # via2 edge
 V3 = 0.20  # via3 edge
@@ -88,7 +95,6 @@ TRUNK_W = 0.40  # met3 trunk width
 TRUNK_PITCH = 0.70  # met3 trunk pitch
 V2_PAD = 0.38  # met2 pad around via2 (0.09 enclosure on the sides)
 M4_W = 0.40  # met4 strip / pad width
-STRIP_W = 0.29  # tap strip width (rails, guard rings)
 RES_W = 1.41  # sky130_fd_pr__res_xhigh_po_1p41 body width
 RES_GAP = 0.50  # poly space between serpentine legs
 FINGER_MAX = 10.0  # widest single finger, um
@@ -100,10 +106,6 @@ MIM_TAB = 1.0  # bottom-plate tab below the plate, carries the via2
 # every labelled net into a circuit pin.
 PIN_NETS = {"VDD", "VSS", "TXDP", "TXDM", "DRVEN", "OE", "DP", "DM"}
 SUPPLY = {"VDD", "VSS"}
-
-
-def snap(v: float) -> float:
-    return round(round(v / GRID) * GRID, 6)
 
 
 # --- the netlist: the only source of devices ---------------------------------
@@ -131,43 +133,6 @@ def fingers(w: float, mult: float) -> tuple[int, float]:
     """(finger count, width of each finger) for a device of width w, mult copies."""
     k = math.ceil(w / FINGER_MAX - 1e-9)
     return k * int(mult), w / k
-
-
-class Canvas:
-    """Thin wrapper over a klayout.db cell. Coordinates are um."""
-
-    def __init__(self) -> None:
-        self.ly = db.Layout()
-        self.ly.dbu = DBU
-        self.cell = self.ly.create_cell(TOP)
-        self.idx = {k: self.ly.layer(*v) for k, v in L.items()}
-
-    def rect(self, layer: str, x0: float, y0: float, x1: float, y1: float) -> None:
-        x0, x1 = sorted((snap(x0), snap(x1)))
-        y0, y1 = sorted((snap(y0), snap(y1)))
-        self.cell.shapes(self.idx[layer]).insert(db.DBox(x0, y0, x1, y1))
-
-    def label(self, layer: str, text: str, x: float, y: float) -> None:
-        self.cell.shapes(self.idx[layer]).insert(db.DText(text, snap(x), snap(y)))
-
-    def centred(self, layer: str, cx: float, cy: float, w: float, h: float) -> None:
-        self.rect(layer, cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2)
-
-    def write(self, path: Path) -> None:
-        opt = db.SaveLayoutOptions()
-        opt.format = "GDS2"
-        opt.gds2_write_timestamps = False
-        opt.gds2_write_cell_properties = False
-        opt.gds2_libname = TOP
-        self.ly.write(str(path), opt)
-
-
-def contacts_y(w: float) -> list[float]:
-    """Centre y (from diff bottom) of each licon in a column of height w."""
-    n = int((w - 2 * LIC_ENC_Y + LIC) / LIC_PITCH + 1e-9)
-    span = n * LIC_PITCH - LIC
-    y0 = (w - span) / 2 + LIC / 2
-    return [y0 + i * LIC_PITCH for i in range(n)]
 
 
 class Ports:
@@ -255,49 +220,6 @@ def mos(
         cv.rect("li1", xg - 0.165, yl - 0.165, xg + 0.165, yl + 0.165)
         cv.centred("met1", xg, yl, PAD, PAD)
     return x0 + width
-
-
-def tap_ring(
-    cv: Canvas,
-    kind: str,
-    x0: float,
-    y0: float,
-    x1: float,
-    y1: float,
-    rail_sides: tuple[str, ...],
-) -> None:
-    """Closed tap ring whose *outer* box is (x0,y0)-(x1,y1).
-
-    The ring is tap + li1 with licon at every `LIC_PITCH*2` and mcon only on
-    the sides in `rail_sides` ('b' bottom, 't' top), which also get a met1
-    strip: that strip is the supply rail.
-    """
-    dop = "psdm" if kind == "n" else "nsdm"
-    w = STRIP_W
-    strips = {
-        "b": (x0, y0, x1, y0 + w),
-        "t": (x0, y1 - w, x1, y1),
-        "l": (x0, y0, x0 + w, y1),
-        "r": (x1 - w, y0, x1, y1),
-    }
-    for side, (a, b, c, d) in strips.items():
-        cv.rect("tap", a, b, c, d)
-        cv.rect(dop, a - 0.125, b - 0.125, c + 0.125, d + 0.125)
-        cv.rect("li1", a, b, c, d)
-        horiz = side in "bt"
-        # corner squares belong to the horizontal strips: contacts there once only
-        lo, hi = (a, c) if horiz else (b + w + 0.1, d - w - 0.1)
-        n = int((hi - lo - 2 * 0.1) / (2 * LIC_PITCH))
-        for i in range(n + 1):
-            p = lo + 0.1 + LIC / 2 + i * 2 * LIC_PITCH
-            if p + LIC / 2 > hi - 0.1:
-                break
-            cx, cy = (p, (b + d) / 2) if horiz else ((a + c) / 2, p)
-            cv.centred("licon", cx, cy, LIC, LIC)
-            if side in rail_sides:
-                cv.centred("mcon", cx, cy, LIC, LIC)
-        if side in rail_sides:
-            cv.rect("met1", a, b, c, d)
 
 
 def xhigh_resistor(cv: Canvas, x0: float, y0: float, length: float, legs: int) -> tuple:
@@ -394,7 +316,7 @@ def build() -> Canvas:
     trunk_nets = sorted(nets - {"VSS"})
     n_tr = len(trunk_nets)
 
-    cv = Canvas()
+    cv = Canvas(TOP, L)
     ports = Ports()
 
     # ---------------------------------------------------------------- floorplan
