@@ -1,0 +1,32 @@
+* driver-matching-mismatch -- sky130 FS line driver rise/fall matching and crossover under local device mismatch
+*
+* Circuit body for `klt sim` Monte Carlo (sim/run_mismatch.py). The design netlist
+* (design/netlist/differential_driver.spice) is appended by the runner (mc.json "include") and
+* frozen into the immutable per-campaign snapshot. The request supplies the `*_mm` .lib section
+* (mc_mm_switch=1), .temp, the supply (vsup) and the per-sample seed.
+*
+* Same stimulus and measurements as the signal-quality instance `xa` of sim/driver-signal-quality
+* (DRVEN = OE = 1, TXDP = ctl, TXDM = not ctl, ctl rises at 100 ns and falls at 200 ns with 0.5 ns
+* edges, 50 pF to ground on each line, no resistor; 10 %/90 % thresholds follow the corner supply).
+* The enable/disable (xb, xc) instances are dropped: they carry no graded row and would only cost
+* simulation time on every sample.
+*
+* Negative-control knob, neutral in the nominal campaign. A control campaign replaces exactly the
+* `.param` card below: rload_ohm is a resistor from each line to ground (1e12 = absent). A 330 ohm
+* load slows every rising edge and speeds every falling edge (rise/fall ratios about 1.5); a 180 ohm
+* load collapses the high level and pulls both crossovers below 1.3 V.
+
+.param rload_ohm=1e12
+
+vsup vdd 0 dc 3.3
+
+vctl ctl 0 pulse(0 1 100n 0.5n 0.5n 100n 400n)
+btxdp txdp 0 v='v(vdd)*v(ctl)'
+btxdm txdm 0 v='v(vdd)*(1-v(ctl))'
+xa vdd 0 txdp txdm vdd vdd dp dm differential_driver
+cdp dp 0 50p
+cdm dm 0 50p
+rldp dp 0 'rload_ohm'
+rldm dm 0 'rload_ohm'
+bdpn dpn 0 v='v(dp)/v(vdd)'
+bdmn dmn 0 v='v(dm)/v(vdd)'

@@ -1,0 +1,48 @@
+* dplus-pullup-mismatch -- sky130 trimmed D+ pull-up: does a passing trim code exist under local mismatch?
+*
+* Circuit body for `klt sim` Monte Carlo (sim/run_mismatch.py). The pull-up netlist with the
+* ladder-resistor wrapper (dplus_pullup_mm.spice, generated from design/netlist/dplus_pullup.spice by
+* make_mm_netlist.py) is appended by the runner (mc.json "include") and frozen into the immutable
+* per-campaign snapshot. The request supplies the `*_mm` .lib section (mc_mm_switch=1), .temp, the
+* supply (vsup = the pull-up supply VPU) and the per-sample seed.
+*
+* Row (spec/usb2-phy.md section 6, "FS device D+ pull-up"): 1.5 kohm +/-5 % (1.425-1.575 kohm) to
+* 3.0-3.6 V, trim code selected at test. The host 15 kohm is a testbench LOAD on D+ (DR-0003).
+*
+* One pull-up instance = one die per Monte Carlo sample. The trim code is the DC sweep variable
+* (vcode 0 ... 15, TRIM<i> = bit i of the code, driven 0 / VPU by the B sources below), so all 16
+* codes see the SAME mismatch draw, which is what trim-at-test selects from. (The deterministic
+* record sim/dplus-pullup-tolerance instead uses 16 instances, one per code, which would draw 16
+* different dies here.) R_eff per code = (VPU - V(DP)) / (V(DP) / 15 kohm), as in that record.
+*
+* Mismatch sources:
+*  - MOS: every g5v0d10v5 device (enable, trim inverters, bypass switches) through the `*_mm`
+*    library sections (mc_mm_switch = 1).
+*  - Ladder resistor: the pinned PDK has NO local-mismatch model for sky130_fd_pr__res_generic_po
+*    (its statistics block is empty; only the global rp1 spread exists, off in the `*_mm` sections),
+*    so the ladder spread is an explicit testbench model, NOT a PDK claim: each of the five ladder
+*    resistors draws an independent relative error with sigma = rmm_a / sqrt(W*L) (W, L in um),
+*    Pelgrom form, with rmm_a = 1 %.um an engineering assumption (named below, not derived from
+*    the PDK). R_eff is scaled through the resistor multiplier m = 1/(1 + error).
+*
+* rextra_ohm is the negative-control knob: a 1 mohm series resistor in the nominal campaign; the
+* control campaign replaces exactly that `.param` card with a series resistance that moves every
+* code out of the window.
+
+.param rmm_a=0.01
+.param rextra_ohm=1m
+
+.subckt usb_res_po_mm t1 t2 w=1 l=1
+.param rerr='agauss(0, rmm_a/sqrt(w*l), 1)'
+R0 t1 t2 sky130_fd_pr__res_generic_po w='w' l='l' m='1/(1+rerr)'
+.ends
+
+vsup vdd 0 dc 3.3
+vcode code 0 dc 0
+b0 t0 0 v='v(vdd)*(floor(v(code)+0.25)-2*floor((v(code)+0.25)/2))'
+b1 t1 0 v='v(vdd)*(floor((v(code)+0.25)/2)-2*floor((v(code)+0.25)/4))'
+b2 t2 0 v='v(vdd)*(floor((v(code)+0.25)/4)-2*floor((v(code)+0.25)/8))'
+b3 t3 0 v='v(vdd)*(floor((v(code)+0.25)/8)-2*floor((v(code)+0.25)/16))'
+xpu dpi vdd 0 vdd t0 t1 t2 t3 dplus_pullup
+rx dpi dp 'rextra_ohm'
+rld dp 0 15k

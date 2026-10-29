@@ -20,7 +20,7 @@ from harness import matrix as mx, mismatch as mm, mismatch_lint as ml
 
 SIM = Path(__file__).resolve().parents[1]
 PINS = json.loads((SIM / "pdk-pins.json").read_text())["current"]
-EXPERIMENTS = ("diff-receiver-mismatch", "se-receiver-mismatch")
+EXPERIMENTS = ("diff-receiver-mismatch", "se-receiver-mismatch", "driver-matching-mismatch", "dplus-pullup-mismatch")
 
 
 def sha(b: bytes) -> str:
@@ -44,7 +44,7 @@ def test_committed_specs_are_wellformed(name):
     for c in spec["corners"]:
         assert c["process"].endswith("_mm")
     for rcv in spec["receivers"]:
-        assert set(rcv["limits"]) == set(rcv["measure"])
+        assert set(rcv["limits"]) <= set(rcv["measure"])  # helper measurements (edge times, per-code R) carry no limit
         assert set(rcv["control"]["must_detect"]) <= set(rcv["limits"])
         assert set(rcv["spread_measures"]) <= set(rcv["limits"])
         nominal, control = mm.build_body(exp, rcv, False), mm.build_body(exp, rcv, True)
@@ -56,9 +56,23 @@ def test_committed_specs_are_wellformed(name):
 @pytest.mark.parametrize("name", EXPERIMENTS)
 def test_committed_binding_corners_are_the_45_point_extremes(name):
     spec = mm.load_spec(SIM / name)
-    binding = next(c for c in spec["corners"] if c["id"] == "binding")
-    want = {"diff-receiver-mismatch": ("sf_mm", 100.0, 3.0), "se-receiver-mismatch": ("ff_mm", 100.0, 3.0)}[name]
-    assert (binding["process"], binding["temperature_c"], binding["supply_v"]) == want
+    got = {c["id"]: (c["process"], c["temperature_c"], c["supply_v"]) for c in spec["corners"]}
+    want = {
+        "diff-receiver-mismatch": {"binding": ("sf_mm", 100.0, 3.0)},
+        "se-receiver-mismatch": {"binding": ("ff_mm", 100.0, 3.0)},
+        "driver-matching-mismatch": {"fs100v36": ("fs_mm", 100.0, 3.6), "sf40v36": ("sf_mm", -40.0, 3.6),
+                                     "fs100v30": ("fs_mm", 100.0, 3.0)},
+        "dplus-pullup-mismatch": {"binding": ("ff_mm", 100.0, 3.3)},
+    }[name]
+    for cid, corner in want.items():
+        assert got[cid] == corner
+
+
+def test_pullup_mm_netlist_is_fresh():
+    import subprocess
+    import sys
+    script = SIM / "dplus-pullup-mismatch" / "testbench" / "make_mm_netlist.py"
+    assert subprocess.run([sys.executable, str(script), "--check"]).returncode == 0
 
 
 def test_request_is_batch_staged_mismatch_only():
