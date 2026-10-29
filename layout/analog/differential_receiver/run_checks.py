@@ -169,7 +169,7 @@ def build_meta(reports: dict[str, dict], pdk_root: str, record_id: str, supersed
     native_deck = Path(pdk_root) / "sky130A" / NATIVE_DECK
     erc_cov = erc["erc_coverage"]
     pin = json.loads((REPO_ROOT / "sim" / "pdk-pins.json").read_text(encoding="utf-8"))["current"]
-    inputs = [GDS, GENERATOR, NETLIST, ERC_SPEC, LVS_REQUEST, "sim/pdk-pins.json"]
+    inputs = [GDS, GENERATOR, "layout/analog/gen_common.py", NETLIST, ERC_SPEC, LVS_REQUEST, "sim/pdk-pins.json"]
     return {
         "schema": RECORD_SCHEMA,
         "record_kind": RECORD_KIND,
