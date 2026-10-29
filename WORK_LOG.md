@@ -3,8 +3,19 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-29
+
+- **PR #241**: refactor: share se_receiver dm/dp layout generator
+- **Issue #240** (closed): Consolidate se_receiver_dm/dp gen.py: 302-line near-duplicate generators
+- **PR #239**: refactor: share analog leaf generator helpers in gen_common.py
+- **Issue #238** (closed): Consolidate copy-pasted helpers across five analog layout gen.py files
+
 ### 2026-10-28
 
+- **PR #237**: docs: scope netlist byte-identity claims to one host
+- **Issue #236** (closed): Committed design/netlist/*.spice do not regenerate byte-identically on all hosts (xschem line wrapping)
+- **PR #235**: refactor: export netlists via klt netlist --block instead of raw xschem call
+- **Issue #232** (closed): Replace raw xschem call in design/export_netlist.sh with klt netlist --block
 - **PR #230**: feat: attest analog design sources as 1.analog with klt-based netlist freshness check
 - **Issue #219** (closed): T1 item 1 (design sources, analog partition): attest the five analog leaf schematics + netlists and cite them as 1.analog
 - **PR #227**: feat(layout): add sky130 dplus_pullup layout with DRC/LVS/ERC evidence
