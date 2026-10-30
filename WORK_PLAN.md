@@ -30,7 +30,6 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#220**: T1 items 2-4, 11 (analog layout): lay out the differential_driver leaf with DRC, LVS and ERC supply evidence
-- **#223**: T1 item 6 (Monte Carlo, analog): mismatch campaigns for the driver rise/fall matching and D+ pull-up ±5% rows
 
 ## In Progress
 
@@ -42,7 +41,7 @@ _None._
 
 PRs waiting on Judge (`loom:review-requested`).
 
-_None._
+- **#243**: sim: record D+ pull-up mismatch Monte Carlo; declare driver matching/crossover campaign
 
 ## Approved (Awaiting Merge)
 
@@ -75,9 +74,9 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
 | Important | 2 |
-| Ready (`loom:issue`) | 2 |
+| Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 0 |
+| PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 4 |
 | Architect / Hermit proposals | 1 |
