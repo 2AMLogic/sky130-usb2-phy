@@ -416,9 +416,13 @@ DR-0003 are unchanged.
    corners would break it. At every point at least two codes are in the
    window (minimum `n_in_window` = 2, e.g. `tt` 27 C 3.6 V) and the best code
    is between 1 and 14 (never an end code), and the per-point best resistance
-   is 1467 to 1531 ohm (computed from the stored raw V(DP)). Per-device
-   resistor spread, mismatch and Monte Carlo remain unrun, and the best code is
-   still chosen per point, not as one calibration code.
+   is 1467 to 1531 ohm (computed from the stored raw V(DP)). Local
+   mismatch Monte Carlo is now recorded separately
+   (`sim/dplus-pullup-mismatch/records/20261029-123112-2573ff3.md`: MOS mismatch from the PDK plus an
+   explicit, assumed ladder-resistor spread, because the pinned PDK has no
+   mismatch model for `res_generic_po`); global resistor spread is still the
+   corner axis, and the best code is still chosen per point (per die in the
+   Monte Carlo), not as one calibration code.
 3. **Base value, LSB and bit count re-derived** (not the source's 1000 ohm +
    5 bits). Required covering range: the resistors alone move roughly -19 %
    to +21 % over the sheet spread (0.875 to 1.11) and temperature (0.942 to
@@ -494,7 +498,8 @@ show the spread of a single fixed code, although `R_eff` per code is in the
 record for anyone who wants to compute it). (2) The grid does not exercise
 the resistor sheet-resistance spread (item 2 above; the supplemental 225-point
 record covers the PDK's global resistor sets). (3) Schematic level:
-no mismatch / Monte Carlo, no extracted parasitics, no layout. (4) `VPU` is an
+no mismatch in these corner records (local-mismatch Monte Carlo is in
+`sim/dplus-pullup-mismatch/records/20261029-123112-2573ff3.md`), no extracted parasitics, no layout. (4) `VPU` is an
 input, there is no regulator and no trim storage; nothing here is an
 integrated-PHY claim.
 

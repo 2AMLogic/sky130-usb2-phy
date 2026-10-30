@@ -1,0 +1,296 @@
+{
+  "schema": "sky130-usb2-phy.sim.mismatch/1",
+  "experiment": "dplus-pullup-mismatch",
+  "claim": "Whether a passing trim code exists for the sky130 trimmed D+ pull-up under local mismatch: for each Monte Carlo sample (one die) at least one of the 16 trim codes gives an effective resistance inside 1.425-1.575 kohm with the host 15 kohm load (trim selected at test), against spec/usb2-phy.md section 6 row 'FS device D+ pull-up' (1.5 kohm +/-5 % to 3.0-3.6 V), at tt (27 C, 3.3 V) and at the binding corner of the 45-point record sim/dplus-pullup-tolerance/records/20261020-174332-ca4a45a.md (ff, 100 C, 3.3 V). MOS mismatch comes from the `*_mm` library sections; the pinned PDK has no mismatch model for the ladder resistor (res_generic_po), so the ladder spread is an explicit testbench model with a named assumption, not a PDK claim. Schematic-level, no layout parasitics; not a signoff or catalog-tier claim.",
+  "spec_rows": [
+    "FS device D+ pull-up"
+  ],
+  "corners": [
+    {
+      "id": "tt",
+      "process": "tt_mm",
+      "temperature_c": 27.0,
+      "supply_v": 3.3,
+      "basis": "typical corner with mismatch enabled"
+    },
+    {
+      "id": "binding",
+      "process": "ff_mm",
+      "temperature_c": 100.0,
+      "supply_v": 3.3,
+      "basis": "binding corner of the 45-point record sim/dplus-pullup-tolerance/records/20261020-174332-ca4a45a.md: the largest best-code error (best_err_ohm 27.0493 ohm, best_r_ohm 1527.05) is at ff / 100 C / 3.30 V"
+    }
+  ],
+  "receivers": [
+    {
+      "id": "pu",
+      "netlist": "dplus_pullup_mc_tb.spice",
+      "include": [
+        "dplus_pullup_mm.spice"
+      ],
+      "analysis": {
+        "kind": "dc",
+        "args": "vcode 0 15 1"
+      },
+      "measure": {
+        "vdd_v": {
+          "spice": ".meas dc vdd_v FIND v(vdd) AT=0"
+        },
+        "vdp_c00_v": {
+          "spice": ".meas dc vdp_c00_v FIND v(dp) AT=0"
+        },
+        "vdp_c01_v": {
+          "spice": ".meas dc vdp_c01_v FIND v(dp) AT=1"
+        },
+        "vdp_c02_v": {
+          "spice": ".meas dc vdp_c02_v FIND v(dp) AT=2"
+        },
+        "vdp_c03_v": {
+          "spice": ".meas dc vdp_c03_v FIND v(dp) AT=3"
+        },
+        "vdp_c04_v": {
+          "spice": ".meas dc vdp_c04_v FIND v(dp) AT=4"
+        },
+        "vdp_c05_v": {
+          "spice": ".meas dc vdp_c05_v FIND v(dp) AT=5"
+        },
+        "vdp_c06_v": {
+          "spice": ".meas dc vdp_c06_v FIND v(dp) AT=6"
+        },
+        "vdp_c07_v": {
+          "spice": ".meas dc vdp_c07_v FIND v(dp) AT=7"
+        },
+        "vdp_c08_v": {
+          "spice": ".meas dc vdp_c08_v FIND v(dp) AT=8"
+        },
+        "vdp_c09_v": {
+          "spice": ".meas dc vdp_c09_v FIND v(dp) AT=9"
+        },
+        "vdp_c10_v": {
+          "spice": ".meas dc vdp_c10_v FIND v(dp) AT=10"
+        },
+        "vdp_c11_v": {
+          "spice": ".meas dc vdp_c11_v FIND v(dp) AT=11"
+        },
+        "vdp_c12_v": {
+          "spice": ".meas dc vdp_c12_v FIND v(dp) AT=12"
+        },
+        "vdp_c13_v": {
+          "spice": ".meas dc vdp_c13_v FIND v(dp) AT=13"
+        },
+        "vdp_c14_v": {
+          "spice": ".meas dc vdp_c14_v FIND v(dp) AT=14"
+        },
+        "vdp_c15_v": {
+          "spice": ".meas dc vdp_c15_v FIND v(dp) AT=15"
+        },
+        "r_c00_ohm": {
+          "spice": ".meas dc r_c00_ohm PARAM='(vdd_v-vdp_c00_v)/vdp_c00_v*15000'"
+        },
+        "r_c01_ohm": {
+          "spice": ".meas dc r_c01_ohm PARAM='(vdd_v-vdp_c01_v)/vdp_c01_v*15000'"
+        },
+        "r_c02_ohm": {
+          "spice": ".meas dc r_c02_ohm PARAM='(vdd_v-vdp_c02_v)/vdp_c02_v*15000'"
+        },
+        "r_c03_ohm": {
+          "spice": ".meas dc r_c03_ohm PARAM='(vdd_v-vdp_c03_v)/vdp_c03_v*15000'"
+        },
+        "r_c04_ohm": {
+          "spice": ".meas dc r_c04_ohm PARAM='(vdd_v-vdp_c04_v)/vdp_c04_v*15000'"
+        },
+        "r_c05_ohm": {
+          "spice": ".meas dc r_c05_ohm PARAM='(vdd_v-vdp_c05_v)/vdp_c05_v*15000'"
+        },
+        "r_c06_ohm": {
+          "spice": ".meas dc r_c06_ohm PARAM='(vdd_v-vdp_c06_v)/vdp_c06_v*15000'"
+        },
+        "r_c07_ohm": {
+          "spice": ".meas dc r_c07_ohm PARAM='(vdd_v-vdp_c07_v)/vdp_c07_v*15000'"
+        },
+        "r_c08_ohm": {
+          "spice": ".meas dc r_c08_ohm PARAM='(vdd_v-vdp_c08_v)/vdp_c08_v*15000'"
+        },
+        "r_c09_ohm": {
+          "spice": ".meas dc r_c09_ohm PARAM='(vdd_v-vdp_c09_v)/vdp_c09_v*15000'"
+        },
+        "r_c10_ohm": {
+          "spice": ".meas dc r_c10_ohm PARAM='(vdd_v-vdp_c10_v)/vdp_c10_v*15000'"
+        },
+        "r_c11_ohm": {
+          "spice": ".meas dc r_c11_ohm PARAM='(vdd_v-vdp_c11_v)/vdp_c11_v*15000'"
+        },
+        "r_c12_ohm": {
+          "spice": ".meas dc r_c12_ohm PARAM='(vdd_v-vdp_c12_v)/vdp_c12_v*15000'"
+        },
+        "r_c13_ohm": {
+          "spice": ".meas dc r_c13_ohm PARAM='(vdd_v-vdp_c13_v)/vdp_c13_v*15000'"
+        },
+        "r_c14_ohm": {
+          "spice": ".meas dc r_c14_ohm PARAM='(vdd_v-vdp_c14_v)/vdp_c14_v*15000'"
+        },
+        "r_c15_ohm": {
+          "spice": ".meas dc r_c15_ohm PARAM='(vdd_v-vdp_c15_v)/vdp_c15_v*15000'"
+        },
+        "err_c00_ohm": {
+          "spice": ".meas dc err_c00_ohm PARAM='abs(r_c00_ohm-1500)'"
+        },
+        "err_c01_ohm": {
+          "spice": ".meas dc err_c01_ohm PARAM='abs(r_c01_ohm-1500)'"
+        },
+        "err_c02_ohm": {
+          "spice": ".meas dc err_c02_ohm PARAM='abs(r_c02_ohm-1500)'"
+        },
+        "err_c03_ohm": {
+          "spice": ".meas dc err_c03_ohm PARAM='abs(r_c03_ohm-1500)'"
+        },
+        "err_c04_ohm": {
+          "spice": ".meas dc err_c04_ohm PARAM='abs(r_c04_ohm-1500)'"
+        },
+        "err_c05_ohm": {
+          "spice": ".meas dc err_c05_ohm PARAM='abs(r_c05_ohm-1500)'"
+        },
+        "err_c06_ohm": {
+          "spice": ".meas dc err_c06_ohm PARAM='abs(r_c06_ohm-1500)'"
+        },
+        "err_c07_ohm": {
+          "spice": ".meas dc err_c07_ohm PARAM='abs(r_c07_ohm-1500)'"
+        },
+        "err_c08_ohm": {
+          "spice": ".meas dc err_c08_ohm PARAM='abs(r_c08_ohm-1500)'"
+        },
+        "err_c09_ohm": {
+          "spice": ".meas dc err_c09_ohm PARAM='abs(r_c09_ohm-1500)'"
+        },
+        "err_c10_ohm": {
+          "spice": ".meas dc err_c10_ohm PARAM='abs(r_c10_ohm-1500)'"
+        },
+        "err_c11_ohm": {
+          "spice": ".meas dc err_c11_ohm PARAM='abs(r_c11_ohm-1500)'"
+        },
+        "err_c12_ohm": {
+          "spice": ".meas dc err_c12_ohm PARAM='abs(r_c12_ohm-1500)'"
+        },
+        "err_c13_ohm": {
+          "spice": ".meas dc err_c13_ohm PARAM='abs(r_c13_ohm-1500)'"
+        },
+        "err_c14_ohm": {
+          "spice": ".meas dc err_c14_ohm PARAM='abs(r_c14_ohm-1500)'"
+        },
+        "err_c15_ohm": {
+          "spice": ".meas dc err_c15_ohm PARAM='abs(r_c15_ohm-1500)'"
+        },
+        "emin_c01_ohm": {
+          "spice": ".meas dc emin_c01_ohm PARAM='min(err_c00_ohm,err_c01_ohm)'"
+        },
+        "emin_c02_ohm": {
+          "spice": ".meas dc emin_c02_ohm PARAM='min(emin_c01_ohm,err_c02_ohm)'"
+        },
+        "emin_c03_ohm": {
+          "spice": ".meas dc emin_c03_ohm PARAM='min(emin_c02_ohm,err_c03_ohm)'"
+        },
+        "emin_c04_ohm": {
+          "spice": ".meas dc emin_c04_ohm PARAM='min(emin_c03_ohm,err_c04_ohm)'"
+        },
+        "emin_c05_ohm": {
+          "spice": ".meas dc emin_c05_ohm PARAM='min(emin_c04_ohm,err_c05_ohm)'"
+        },
+        "emin_c06_ohm": {
+          "spice": ".meas dc emin_c06_ohm PARAM='min(emin_c05_ohm,err_c06_ohm)'"
+        },
+        "emin_c07_ohm": {
+          "spice": ".meas dc emin_c07_ohm PARAM='min(emin_c06_ohm,err_c07_ohm)'"
+        },
+        "emin_c08_ohm": {
+          "spice": ".meas dc emin_c08_ohm PARAM='min(emin_c07_ohm,err_c08_ohm)'"
+        },
+        "emin_c09_ohm": {
+          "spice": ".meas dc emin_c09_ohm PARAM='min(emin_c08_ohm,err_c09_ohm)'"
+        },
+        "emin_c10_ohm": {
+          "spice": ".meas dc emin_c10_ohm PARAM='min(emin_c09_ohm,err_c10_ohm)'"
+        },
+        "emin_c11_ohm": {
+          "spice": ".meas dc emin_c11_ohm PARAM='min(emin_c10_ohm,err_c11_ohm)'"
+        },
+        "emin_c12_ohm": {
+          "spice": ".meas dc emin_c12_ohm PARAM='min(emin_c11_ohm,err_c12_ohm)'"
+        },
+        "emin_c13_ohm": {
+          "spice": ".meas dc emin_c13_ohm PARAM='min(emin_c12_ohm,err_c13_ohm)'"
+        },
+        "emin_c14_ohm": {
+          "spice": ".meas dc emin_c14_ohm PARAM='min(emin_c13_ohm,err_c14_ohm)'"
+        },
+        "emin_c15_ohm": {
+          "spice": ".meas dc emin_c15_ohm PARAM='min(emin_c14_ohm,err_c15_ohm)'"
+        },
+        "best_err_ohm": {
+          "spice": ".meas dc best_err_ohm PARAM='emin_c15_ohm'"
+        },
+        "n_in_window": {
+          "spice": ".meas dc n_in_window PARAM='(err_c00_ohm<=75)+(err_c01_ohm<=75)+(err_c02_ohm<=75)+(err_c03_ohm<=75)+(err_c04_ohm<=75)+(err_c05_ohm<=75)+(err_c06_ohm<=75)+(err_c07_ohm<=75)+(err_c08_ohm<=75)+(err_c09_ohm<=75)+(err_c10_ohm<=75)+(err_c11_ohm<=75)+(err_c12_ohm<=75)+(err_c13_ohm<=75)+(err_c14_ohm<=75)+(err_c15_ohm<=75)'"
+        }
+      },
+      "limits": {
+        "best_err_ohm": {
+          "max": 75.0
+        },
+        "n_in_window": {
+          "min": 1
+        }
+      },
+      "control": {
+        "description": "1 kohm in series with the D+ output (deterministic: adds to every code's effective resistance, so no code can reach 1.575 kohm or below) via the testbench rextra_ohm parameter",
+        "replace": [
+          {
+            "find": ".param rextra_ohm=1m\n",
+            "with": ".param rextra_ohm=1000\n"
+          }
+        ],
+        "must_detect": [
+          "best_err_ohm",
+          "n_in_window"
+        ]
+      },
+      "spread_measures": [
+        "best_err_ohm"
+      ]
+    }
+  ],
+  "record": {
+    "netlist_provenance": "schematic-derived netlist: xschem export of design/dplus_pullup.sch (design/netlist/dplus_pullup.spice) with its five res_generic_po instances renamed to the testbench mismatch wrapper (sim/dplus-pullup-mismatch/testbench/dplus_pullup_mm.spice, generated by make_mm_netlist.py) plus the Monte Carlo testbench deck, frozen per campaign; no layout, no parasitic extraction",
+    "statistical_convention": "Monte Carlo of local device mismatch only (monte_carlo.vary = mismatch): n = 400 samples per corner, base seed 166, per-sample seeds derived by `klt sim` (seed contract: sim.md 'Monte Carlo sampling'). Every g5v0d10v5 MOS instance draws independent mismatch (mc_mm_switch = 1 through the `*_mm` library sections). The pinned PDK has NO local-mismatch model for sky130_fd_pr__res_generic_po (empty statistics block; the global rp1 spread is off in the `*_mm` sections), so the ladder resistor spread is the testbench's own model: each of the five ladder resistors draws an independent relative error with sigma = A_R / sqrt(W*L), A_R = 1 %.um (W, L in um), an engineering assumption that is NOT derived from the PDK. Global process spread, including the resistor sheet resistance, is the separate corner axis and is not sampled",
+    "method": [
+      "Stimulus: one pull-up instance per Monte Carlo sample (PU_EN = VPU = vsup), the trim code as the DC sweep variable (vcode 0 ... 15 at 1 step; TRIM<i> = bit i of the code, driven 0 / VPU by B sources; TRIM<i> = 1 shorts ladder segment i, code 0 = maximum resistance), the host 15 kohm from D+ to ground and a 1 mohm series resistor in the nominal campaign. All 16 codes therefore see the same mismatch draw, which is what trim-at-test selects from.",
+      "Measurement per sample: V(DP) per code; R_eff = (VPU - V(DP)) / (V(DP)/15000) per code, as in sim/dplus-pullup-tolerance; `err_cNN_ohm` = |R_eff - 1500|; `best_err_ohm` = the minimum over the 16 codes; `n_in_window` = the number of codes with |R_eff - 1500| <= 75 ohm (inclusive 1.425-1.575 kohm).",
+      "Graded per sample (each its own yield measurement, target_yield 0.99 at 95 % confidence): `best_err_ohm` <= 75 ohm and `n_in_window` >= 1, which are the same event stated twice (a sample passes when some code is inside the window); a sample with no passing code counts as a failing sample. A recorded run in which the yield claim is not supported (including a 'no passing code' outcome) is a FAIL record: the failure is the result, not a waived row.",
+      "Selection limit: the code is chosen per sample (per die, as at test) and per corner; the record does not show that one calibration code survives voltage and temperature after trim at one condition.",
+      "Each corner is its own population (one `klt sim` Monte Carlo request, backend batch, per corner); nothing is pooled across corners. `klt yield-samples` pairs each nominal campaign with its negative-control campaign (same deck, same seeds, 1 kohm in series), and `klt yield` grades the pair.",
+      "Negative control (deterministic): 1 kohm in series with the output adds 1 kohm to every code, so no code can be inside the window and `n_in_window` is 0 on every sample; the yield report must flag both graded measurements `detected`.",
+      "Mismatch activity: a non-zero sample stddev of `best_err_ohm` (yield report `distribution`) is the evidence that the draws reached the circuit; the ladder spread is the testbench model named above, the MOS spread is the PDK's.",
+      "PDK: the pinned open_pdks revision of sim/pdk-pins.json (current pin); each record states the revision and the model library sha256."
+    ],
+    "footer": "Scope: schematic-level statistical evidence for one block against the ratified D+ pull-up resistance row, at the corners named in the record. Local mismatch only: MOS mismatch from the PDK and an explicit, assumed ladder-resistor spread (A_R = 1 %.um); global process spread, including the resistor sheet resistance, is covered by the deterministic corner records; the corner x mismatch combination is limited to the corners named. It does not show that one trim code survives voltage and temperature, and does not claim the pull-up supply, trim storage, layout, DRC/LVS or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance."
+  },
+  "monte_carlo": {
+    "n": 400,
+    "n_control": 50,
+    "seed": 166,
+    "vary": "mismatch"
+  },
+  "yield": {
+    "confidence": 0.95,
+    "target_ci_halfwidth": 0.01,
+    "target_yield": 0.99,
+    "sample_size_justification": "target_yield 0.99 at 95 % two-sided confidence: with zero observed failures the exact (Clopper-Pearson) lower bound reaches 0.99 only for n >= 368 (klt yield `required_n_for_target`), so n = 400 per corner is the smallest round count that can support the claim; the +/-0.01 precision target needs n >= 183. A failing row is not rescued by a larger n: it is recorded as failing."
+  },
+  "batch": {
+    "capacity_wait_s": 900,
+    "max_concurrent_jobs": 2
+  },
+  "remote_hosts": {
+    "nominal": 4,
+    "control": 1
+  }
+}

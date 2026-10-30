@@ -294,6 +294,54 @@
       ]
     },
     {
+      "id": "driver-matching-mismatch",
+      "partition": "analog",
+      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+      "cold_start": "python3 sim/run_mismatch.py driver-matching-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/driver-matching-mismatch/testbench/mc.json",
+          "sha256": "sha256:984705140b976229b805392528a3df131d2635d006044714235b36f7664a1fe0",
+          "role": "Monte Carlo campaign definition"
+        },
+        {
+          "path": "sim/driver-matching-mismatch/testbench/driver_mc_tb.spice",
+          "sha256": "sha256:3104bd80f5ddbb992e3c4bcf563c6675f27a0a715dee28490202e2bf872d3684",
+          "role": "testbench netlist"
+        }
+      ]
+    },
+    {
+      "id": "dplus-pullup-mismatch",
+      "partition": "analog",
+      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+      "cold_start": "python3 sim/run_mismatch.py dplus-pullup-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/dplus-pullup-mismatch/testbench/mc.json",
+          "sha256": "sha256:debcb76824aa7f50e66239a56558df4ae210eeeb7450f1e7dc44ed908fa4abdb",
+          "role": "Monte Carlo campaign definition"
+        },
+        {
+          "path": "sim/dplus-pullup-mismatch/testbench/dplus_pullup_mc_tb.spice",
+          "sha256": "sha256:0a02100d4351258adc61ea6d2f4b66127d3f8ef820ed98d0abc380c34cde897b",
+          "role": "testbench netlist"
+        },
+        {
+          "path": "sim/dplus-pullup-mismatch/testbench/dplus_pullup_mm.spice",
+          "sha256": "sha256:cb5ed63525c3af2f4206b91a818ac9947baad44e225730d3e09d80856234c624",
+          "role": "pull-up netlist with the ladder-resistor mismatch wrapper (generated)"
+        },
+        {
+          "path": "sim/dplus-pullup-mismatch/testbench/make_mm_netlist.py",
+          "sha256": "sha256:fe751035565d6a7d29781c1285f02c97a3723d25b21ed1cb5d5f2511d94182cd",
+          "role": "generator for dplus_pullup_mm.spice"
+        }
+      ]
+    },
+    {
       "id": "smoke-inverter",
       "partition": "analog",
       "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
