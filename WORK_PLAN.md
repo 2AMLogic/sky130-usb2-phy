@@ -41,7 +41,7 @@ _None._
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#243**: sim: record D+ pull-up mismatch Monte Carlo; declare driver matching/crossover campaign
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -76,7 +76,7 @@ Issues carrying `loom:curated`.
 | Important | 2 |
 | Ready (`loom:issue`) | 1 |
 | In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 1 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 4 |
 | Architect / Hermit proposals | 1 |
