@@ -108,3 +108,6 @@ verification/.klt/
 # see docs/environment-setup.md "Agent-session scratch"
 .loom/tmp/
 sim/.work/
+
+# Repo Skills Codex-side machine-local install metadata (never committed)
+.agents/skills/repo/.install-local.json
