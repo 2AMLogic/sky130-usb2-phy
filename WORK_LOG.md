@@ -3,6 +3,10 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-30
+
+- **PR #243**: sim: record D+ pull-up mismatch Monte Carlo; declare driver matching/crossover campaign
+
 ### 2026-10-29
 
 - **PR #241**: refactor: share se_receiver dm/dp layout generator
