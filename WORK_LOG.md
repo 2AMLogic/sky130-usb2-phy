@@ -3,6 +3,10 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-10-31
+
+- **PR #247**: Bump Repo Skills 0.24.7 -> 0.25.1
+
 ### 2026-10-30
 
 - **PR #243**: sim: record D+ pull-up mismatch Monte Carlo; declare driver matching/crossover campaign
