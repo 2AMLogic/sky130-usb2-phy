@@ -23,13 +23,12 @@ _None._
 `loom:important`; taken before unlabelled work.
 
 - **#132**: Worker klt tool venv still lacks cocotb_tools: pre-PR gate cannot pass on fleet hosts (recurrence of #94)
-- **#220**: T1 items 2-4, 11 (analog layout): lay out the differential_driver leaf with DRC, LVS and ERC supply evidence
 
 ## Ready
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#220**: T1 items 2-4, 11 (analog layout): lay out the differential_driver leaf with DRC, LVS and ERC supply evidence
+_None._
 
 ## In Progress
 
@@ -55,7 +54,6 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#220**: T1 items 2-4, 11 (analog layout): lay out the differential_driver leaf with DRC, LVS and ERC supply evidence *(curated)*
 - **#223**: T1 item 6 (Monte Carlo, analog): mismatch campaigns for the driver rise/fall matching and D+ pull-up ±5% rows *(curated)*
 
 ## Proposed (Architect / Hermit)
@@ -66,6 +64,7 @@ Issues carrying `loom:curated`.
 
 - **#23**: Track the gap to T1 sim-validated / bronze (klayout-tools design-evidence tiers)
 - **#105**: Digital T1 items 3, 4, 11 (and 5): place and route the real UTMI datapath and commit DRC, LVS, ERC and timing evidence
+- **#105**: Digital T1 items 3, 4, 11 (and 5): place and route the real UTMI datapath and commit DRC, LVS, ERC and timing evidence
 
 ## Backlog Balance
 
@@ -73,12 +72,12 @@ Issues carrying `loom:curated`.
 |------|-------|
 | Operator merge-risk holds | 0 |
 | Very important | 0 |
-| Important | 2 |
-| Ready (`loom:issue`) | 1 |
+| Important | 1 |
+| Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
-| Curated | 4 |
+| Curated | 3 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
