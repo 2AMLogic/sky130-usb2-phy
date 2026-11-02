@@ -183,11 +183,16 @@ The driver (issue #220) follows the conventions above; what is new:
   (89/44), and a met4 strap from a via3 on the `capm` down to the net's trunk.
 * **Generic poly resistor** (`res_generic_po`): poly bar under the `poly_res`
   marker only (no `urpm`), contacted heads outside the marker.
-* **LVS is not a match today.** The PDK's `sky130.lvs` extracts a MIM as
-  `sky130_fd_pr__model__cap_mim` but its `convert_subckts` device list does not
-  contain the xschem export's `sky130_fd_pr__cap_mim_m3_1`, so the reference
-  loses the four caps (and merges the nets they bridge) while the layout has
-  four unmatched capacitors. The other 76 devices and all 8 pins pair. The
-  committed `lvs-report.json` says `mismatch`; no record is minted until it
-  matches (`run_checks.py --record` refuses a failing run).
+* **LVS needs a derived reference for the MIM caps.** The PDK's `sky130.lvs`
+  extracts a MIM as `sky130_fd_pr__model__cap_mim` but its `convert_subckts`
+  device list does not contain the xschem export's `sky130_fd_pr__cap_mim_m3_1`,
+  so reading `design/netlist/differential_driver.spice` directly drops the four
+  caps from the reference (klayout-tools#4519 now makes that loud). `run_checks.py`
+  therefore writes `lvs-reference.spice`: the design netlist with only those four
+  lines rewritten to the extracted model as two-terminal `C` elements with
+  `A = W*L` and `P = 2*(W+L)` in micrometres. `design/` is not edited and the
+  runset is not changed. With it the report is `match` (80/80 devices, 8/8 pins,
+  0 mismatches); `power_connectivity` is `unchecked` (the runset's extraction
+  carries no instance-level power pins). A failing LVS still makes
+  `run_checks.py --record` refuse.
 

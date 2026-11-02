@@ -9,7 +9,9 @@ Five steps, every one driven through `klt` (never a raw `klayout`):
   1. `gen.py --check`  the committed GDS is what the generator emits.
   2. `klt drc`         klt's curated sky130 deck          -> drc-report.json
   3. `klt drc`         the PDK-native sky130A_mr.drc deck -> drc-native-report.json
-  4. `klt lvs`         the PDK's sky130.lvs runset vs design/netlist/differential_driver.spice
+  4. `klt lvs`         the PDK's sky130.lvs runset vs lvs-reference.spice, which is
+                       design/netlist/differential_driver.spice with only the MIM cap lines
+                       rewritten for the runset's reader (see derive_lvs_reference)
                                                           -> lvs-report.json
   5. `klt erc`         supply islands + well/substrate ties -> erc-supply-report.json
 
@@ -55,6 +57,7 @@ NETLIST = f"design/netlist/{BLOCK}.spice"
 GENERATOR = f"{REL}/gen.py"
 ERC_SPEC = f"{REL}/erc-supply-spec.json"
 LVS_REQUEST = f"{REL}/request-lvs.json"
+LVS_REFERENCE = f"{REL}/lvs-reference.spice"
 
 REPORTS = {
     "drc_curated": "drc-report.json",
@@ -105,6 +108,51 @@ def klt(args: list[str], env: dict[str, str], out: Path) -> tuple[int, dict]:
     return proc.returncode, json.loads(proc.stdout)
 
 
+# The xschem export names the MIM cap `sky130_fd_pr__cap_mim_m3_1` with W/L in micrometres.
+# `sky130.lvs` extracts the layout MIM as `sky130_fd_pr__model__cap_mim` (A and P parameters,
+# C disabled in its MIMCap class) and only converts `X` calls whose model is in its own
+# DEVICE_LIST, which lacks the xschem name, so the reference reader silently drops the four
+# caps (klayout-tools#4519 made that loud; pairing them is the part left to the caller).
+# The derived reference below rewrites exactly those lines, and nothing else, into the form
+# the runset's reader pairs: a two-terminal `C` element of the extracted model with A = W*L
+# and P = 2*(W+L) in micrometre units (the reader applies the same 1e12 / 1e6 scale it
+# applies to the layout side under `scale=true`). design/ is never edited.
+MIM_SCHEMATIC_MODEL = "sky130_fd_pr__cap_mim_m3_1"
+MIM_EXTRACTED_MODEL = "sky130_fd_pr__model__cap_mim"
+MIM_FF_PER_UM2 = 2.0  # the runset's own extraction constant (capacitor(..., 2e-15, MIMCap))
+
+
+def derive_lvs_reference() -> str:
+    """The reference netlist with only the MIM cap lines rewritten for sky130.lvs's reader."""
+    src_path = REPO_ROOT / NETLIST
+    out: list[str] = []
+    caps = 0
+    for line in src_path.read_text(encoding="utf-8").splitlines():
+        if MIM_SCHEMATIC_MODEL not in line.split():
+            out.append(line)
+            continue
+        tok = line.split()
+        if len(tok) < 4 or not tok[0].startswith("XC") or tok[3] != MIM_SCHEMATIC_MODEL:
+            raise SystemExit(f"unrecognised MIM cap line in {NETLIST}: {line!r}")
+        params = dict(t.split("=", 1) for t in tok[4:])
+        if float(params.get("m", "1")) != 1 or float(params.get("MF", "1")) != 1:
+            raise SystemExit(f"MIM cap with a multiplier cannot be folded into A/P: {line!r}")
+        w, l = float(params["W"]), float(params["L"])
+        out.append(
+            f"{tok[0][1:]} {tok[1]} {tok[2]} {MIM_EXTRACTED_MODEL} "
+            f"C={w * l * MIM_FF_PER_UM2 * 1e-3:.4g} A={w * l:.6g} P={2 * (w + l):.6g}"
+        )
+        caps += 1
+    if caps == 0 or MIM_SCHEMATIC_MODEL in "\n".join(out):
+        raise SystemExit(f"{NETLIST}: expected MIM cap lines to rewrite, rewrote {caps}")
+    header = (
+        f"* Derived by {GENERATOR.rsplit('/', 1)[0]}/run_checks.py from {NETLIST} ({sha256_file(src_path)}).\n"
+        f"* Only the {caps} {MIM_SCHEMATIC_MODEL} lines differ: rewritten to {MIM_EXTRACTED_MODEL} with A/P\n"
+        "* (um units) so sky130.lvs's reference reader keeps them. Do not edit by hand.\n"
+    )
+    return header + "\n".join(out) + "\n"
+
+
 def run_all(env: dict[str, str], pdk_root: str) -> tuple[dict[str, dict], list[str]]:
     """Run steps 1-5. Returns ({stage: report}, [failure messages])."""
     failures: list[str] = []
@@ -133,6 +181,7 @@ def run_all(env: dict[str, str], pdk_root: str) -> tuple[dict[str, dict], list[s
         failures.append(f"native DRC status {rep.get('status')!r} (rc={rc})")
 
     log("  [4/5] klt lvs, PDK runset sky130.lvs")
+    (REPO_ROOT / LVS_REFERENCE).write_text(derive_lvs_reference(), encoding="utf-8")
     request = json.loads((REPO_ROOT / LVS_REQUEST).read_text(encoding="utf-8"))
     request.pop("_comment", None)
     request["layout"]["file"] = str(REPO_ROOT / request["layout"]["file"])
@@ -170,7 +219,7 @@ def build_meta(reports: dict[str, dict], pdk_root: str, record_id: str, supersed
     native_deck = Path(pdk_root) / "sky130A" / NATIVE_DECK
     erc_cov = erc["erc_coverage"]
     pin = json.loads((REPO_ROOT / "sim" / "pdk-pins.json").read_text(encoding="utf-8"))["current"]
-    inputs = [GDS, GENERATOR, "layout/analog/gen_common.py", NETLIST, ERC_SPEC, LVS_REQUEST, "sim/pdk-pins.json"]
+    inputs = [GDS, GENERATOR, "layout/analog/gen_common.py", NETLIST, LVS_REFERENCE, ERC_SPEC, LVS_REQUEST, "sim/pdk-pins.json"]
     return {
         "schema": RECORD_SCHEMA,
         "record_kind": RECORD_KIND,

@@ -2,7 +2,7 @@
   "schema_version": 2,
   "engine": "klayout-runset",
   "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-220/layout/analog/differential_driver/differential_driver.gds",
-  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-220/design/netlist/differential_driver.spice",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-220/layout/analog/differential_driver/lvs-reference.spice",
   "top": "differential_driver",
   "reference_top": "differential_driver",
   "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
@@ -13,7 +13,7 @@
   },
   "options": {},
   "hints_applied": null,
-  "status": "mismatch",
+  "status": "match",
   "power_connectivity": {
     "status": "unchecked",
     "reason": "no subcircuit instance in the runset's extracted netlist declares a power/ground-named pin -- the extraction carries no instance-level power connectivity to check",
@@ -32,6 +32,7 @@
     "schema_version": 1,
     "known": true,
     "checked": [
+      "SKY130_FD_PR__MODEL__CAP_MIM",
       "SKY130_FD_PR__NFET_G5V0D10V5",
       "SKY130_FD_PR__PFET_G5V0D10V5",
       "SKY130_FD_PR__RES_GENERIC_PO",
@@ -557,6 +558,7 @@
         "sky130_fd_pr__res_xhigh_po_5p73"
       ],
       "reference": [
+        "SKY130_FD_PR__MODEL__CAP_MIM",
         "SKY130_FD_PR__NFET_G5V0D10V5",
         "SKY130_FD_PR__PFET_G5V0D10V5",
         "SKY130_FD_PR__RES_GENERIC_PO",
@@ -572,6 +574,7 @@
         "sky130_fd_pr__res_xhigh_po_1p41"
       ],
       "reference": [
+        "SKY130_FD_PR__MODEL__CAP_MIM",
         "SKY130_FD_PR__NFET_G5V0D10V5",
         "SKY130_FD_PR__PFET_G5V0D10V5",
         "SKY130_FD_PR__RES_GENERIC_PO",
@@ -693,31 +696,24 @@
       "SKY130_FD_PR__PFET_G5V0D10V5": 36,
       "SKY130_FD_PR__NFET_G5V0D10V5": 37,
       "SKY130_FD_PR__RES_XHIGH_PO_1P41": 1,
+      "SKY130_FD_PR__MODEL__CAP_MIM": 4,
       "SKY130_FD_PR__RES_GENERIC_PO": 2
     }
   },
-  "mismatch_count": 52,
-  "error_count": 52,
-  "category_counts": {
-    "device.property": 24,
-    "device.unmatched": 4,
-    "net.unmatched": 24
-  },
-  "category_error_counts": {
-    "device.property": 24,
-    "device.unmatched": 4,
-    "net.unmatched": 24
-  },
+  "mismatch_count": 0,
+  "error_count": 0,
+  "category_counts": {},
+  "category_error_counts": {},
   "counts": {
     "nets": {
       "layout": 47,
-      "reference": 43,
-      "matched": 31
+      "reference": 47,
+      "matched": 47
     },
     "devices": {
       "layout": 80,
-      "reference": 76,
-      "matched": 52
+      "reference": 80,
+      "matched": 80
     },
     "pins": {
       "layout": 8,
@@ -838,13 +834,13 @@
     "klayout_binary": "/usr/bin/klayout",
     "netgen_binary": null,
     "layout_sha256": "2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
-    "reference_sha256": "bed3319d65789db0a7d1a14831e113eb957cd1998d3cc58d4dc539dd5ea2fdd0",
+    "reference_sha256": "c71adad726f05f6b3bf3ef1c0fd1cb79e7c1e3ab3b248e8ba3afc05ab9270548",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.8.1.dev604+g4f345a577997",
-    "klt_git_commit": "4f345a577997d2c31d4fa55e0092efbb3ee24f41",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@4f345a577997d2c31d4fa55e0092efbb3ee24f41",
+    "klt_version": "0.8.1.dev1080+ge2dd61498b57",
+    "klt_git_commit": "e2dd61498b57b345e043750f89a3a544d68542f7",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@e2dd61498b57b345e043750f89a3a544d68542f7",
     "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
@@ -865,1242 +861,11 @@
       },
       "content_hash": "sha256:5b4ede4bdb4744b60e42c9b29baa93f40bb24430fb8f3a48a276a712a492ac38",
       "klayout_application_version": "0.28.16",
-      "exit_status": 1,
+      "exit_status": 0,
       "engine_error_lines": []
     }
   },
-  "mismatches": [
-    {
-      "category": "device.unmatched",
-      "severity": "error",
-      "description": "layout device '78' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
-      "side": "layout",
-      "net": null,
-      "device": {
-        "layout": "78",
-        "reference": null,
-        "class": "sky130_fd_pr__model__cap_mim"
-      },
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.unmatched",
-      "severity": "error",
-      "description": "layout device '80' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
-      "side": "layout",
-      "net": null,
-      "device": {
-        "layout": "80",
-        "reference": null,
-        "class": "sky130_fd_pr__model__cap_mim"
-      },
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.unmatched",
-      "severity": "error",
-      "description": "layout device '77' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
-      "side": "layout",
-      "net": null,
-      "device": {
-        "layout": "77",
-        "reference": null,
-        "class": "sky130_fd_pr__model__cap_mim"
-      },
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.unmatched",
-      "severity": "error",
-      "description": "layout device '79' (class 'sky130_fd_pr__model__cap_mim') has no counterpart",
-      "side": "layout",
-      "net": null,
-      "device": {
-        "layout": "79",
-        "reference": null,
-        "class": "sky130_fd_pr__model__cap_mim"
-      },
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '56' / 'N_KINVN_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "56",
-        "reference": "N_KINVN_DP",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 1000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 1000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '72' / 'N_KINVN_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "72",
-        "reference": "N_KINVN_DM",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 1000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 1000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '55' / 'N_KREPN_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "55",
-        "reference": "N_KREPN_DP",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '71' / 'N_KREPN_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "71",
-        "reference": "N_KREPN_DM",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '50' / 'N_NOFF_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "50",
-        "reference": "N_NOFF_DP",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 20000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 20000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '66' / 'N_NOFF_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "66",
-        "reference": "N_NOFF_DM",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 20000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 20000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '57' / 'N_OUT_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "57",
-        "reference": "N_OUT_DP",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 260000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 260000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '73' / 'N_OUT_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "73",
-        "reference": "N_OUT_DM",
-        "class": "sky130_fd_pr__nfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 260000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 260000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '17' / 'P_KINVN_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "17",
-        "reference": "P_KINVN_DM",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 2000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 2000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '33' / 'P_KINVN_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "33",
-        "reference": "P_KINVN_DP",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 2000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 2000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '18' / 'P_KICK1N_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "18",
-        "reference": "P_KICK1N_DP",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '19' / 'P_KICK2N_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "19",
-        "reference": "P_KICK2N_DM",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '34' / 'P_KICK1N_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "34",
-        "reference": "P_KICK1N_DM",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '35' / 'P_KICK2N_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "35",
-        "reference": "P_KICK2N_DP",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 4000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '12' / 'P_NSW_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "12",
-        "reference": "P_NSW_DP",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 8000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 8000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '28' / 'P_NSW_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "28",
-        "reference": "P_NSW_DM",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 8000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 8000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '20' / 'P_OUT_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "20",
-        "reference": "P_OUT_DP",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 800000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 800000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '36' / 'P_OUT_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "36",
-        "reference": "P_OUT_DM",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 500000.0,
-          "W": 800000000.0
-        },
-        "reference_parameters": {
-          "L": 500000.0,
-          "W": 800000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '16' / 'P_KBIASN_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "16",
-        "reference": "P_KBIASN_DP",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 1000000.0,
-          "W": 8000000.0
-        },
-        "reference_parameters": {
-          "L": 1000000.0,
-          "W": 8000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '32' / 'P_KBIASN_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "32",
-        "reference": "P_KBIASN_DM",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 1000000.0,
-          "W": 8000000.0
-        },
-        "reference_parameters": {
-          "L": 1000000.0,
-          "W": 8000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '13' / 'P_NSRC_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "13",
-        "reference": "P_NSRC_DM",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 1000000.0,
-          "W": 64000000.0
-        },
-        "reference_parameters": {
-          "L": 1000000.0,
-          "W": 64000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '29' / 'P_NSRC_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "29",
-        "reference": "P_NSRC_DP",
-        "class": "sky130_fd_pr__pfet_g5v0d10v5"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 1000000.0,
-          "W": 64000000.0
-        },
-        "reference_parameters": {
-          "L": 1000000.0,
-          "W": 64000000.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '74' / 'SER_DP' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "74",
-        "reference": "SER_DP",
-        "class": "sky130_fd_pr__res_generic_po"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 10800000.0,
-          "W": 20000000.0
-        },
-        "reference_parameters": {
-          "R": 0.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "devices '75' / 'SER_DM' were paired but do not compare equal",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "75",
-        "reference": "SER_DM",
-        "class": "sky130_fd_pr__res_generic_po"
-      },
-      "property": null,
-      "details": {
-        "layout_parameters": {
-          "L": 10800000.0,
-          "W": 20000000.0
-        },
-        "reference_parameters": {
-          "R": 0.0
-        }
-      },
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'KNX_DM' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "KNX_DM"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'KNX_DP' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "KNX_DP"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'KSNB_DM' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "KSNB_DM"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'KSNB_DP' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "KSNB_DP"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'KSN_DM' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "KSN_DM"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'KSN_DP' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "KSN_DP"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'XN_DM' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "XN_DM"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "reference net 'XN_DP' has no counterpart",
-      "side": "reference",
-      "net": {
-        "layout": null,
-        "reference": "XN_DP"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$7' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$7",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$12' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$12",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$21' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$21",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$23' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$23",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$24' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$24",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$30' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$30",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$32' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$32",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$33' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$33",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$38' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$38",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$40' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$40",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$42' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$42",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "layout net '$43' has no counterpart",
-      "side": "layout",
-      "net": {
-        "layout": "$43",
-        "reference": null
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "nets '$29' / 'NG_DM,OUTI_DM,PG_DM' were paired but their connectivity differs",
-      "side": "both",
-      "net": {
-        "layout": "$29",
-        "reference": "NG_DM,OUTI_DM,PG_DM"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "nets '$20' / 'NG_DP,OUTI_DP,PG_DP' were paired but their connectivity differs",
-      "side": "both",
-      "net": {
-        "layout": "$20",
-        "reference": "NG_DP,OUTI_DP,PG_DP"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "nets 'VDD' / 'VDD' were paired but their connectivity differs",
-      "side": "both",
-      "net": {
-        "layout": "VDD",
-        "reference": "VDD"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "net.unmatched",
-      "severity": "error",
-      "description": "nets 'VSS' / 'VSS' were paired but their connectivity differs",
-      "side": "both",
-      "net": {
-        "layout": "VSS",
-        "reference": "VSS"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": {
-        "layout": "differential_driver",
-        "reference": "DIFFERENTIAL_DRIVER"
-      },
-      "instance": null,
-      "subcircuit": null
-    }
-  ],
+  "mismatches": [],
   "net_correspondence": [
     {
       "layout": "DM",
@@ -2133,6 +898,16 @@
       "pin": false
     },
     {
+      "layout": "\\$40",
+      "reference": "KNX_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$38",
+      "reference": "KNX_DP",
+      "pin": false
+    },
+    {
       "layout": "\\$11",
       "reference": "KPX_DM",
       "pin": false
@@ -2140,6 +915,26 @@
     {
       "layout": "\\$6",
       "reference": "KPX_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$32",
+      "reference": "KSNB_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$23",
+      "reference": "KSNB_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$12",
+      "reference": "KSN_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$7",
+      "reference": "KSN_DP",
       "pin": false
     },
     {
@@ -2183,6 +978,16 @@
       "pin": false
     },
     {
+      "layout": "\\$30",
+      "reference": "NG_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$21",
+      "reference": "NG_DP",
+      "pin": false
+    },
+    {
       "layout": "\\$9",
       "reference": "NONB_DM",
       "pin": false
@@ -2196,6 +1001,16 @@
       "layout": "OE",
       "reference": "OE",
       "pin": true
+    },
+    {
+      "layout": "\\$33",
+      "reference": "OUTI_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$24",
+      "reference": "OUTI_DP",
+      "pin": false
     },
     {
       "layout": "\\$25",
@@ -2215,6 +1030,16 @@
     {
       "layout": "\\$17",
       "reference": "PA_DP",
+      "pin": false
+    },
+    {
+      "layout": "\\$29",
+      "reference": "PG_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$20",
+      "reference": "PG_DP",
       "pin": false
     },
     {
@@ -2245,6 +1070,26 @@
     {
       "layout": "\\$2",
       "reference": "VBP",
+      "pin": false
+    },
+    {
+      "layout": "VDD",
+      "reference": "VDD",
+      "pin": true
+    },
+    {
+      "layout": "VSS",
+      "reference": "VSS",
+      "pin": true
+    },
+    {
+      "layout": "\\$43",
+      "reference": "XN_DM",
+      "pin": false
+    },
+    {
+      "layout": "\\$42",
+      "reference": "XN_DP",
       "pin": false
     },
     {
