@@ -12,6 +12,9 @@
     "  scale=true            the reference writes L/W in micrometres with no unit suffix, which the",
     "                        SPICE reader stores as metres; the runset scales the layout side by",
     "                        1e6 to match (klayout-tools#3989).",
+    "reference: lvs-reference.spice is written by run_checks.py from design/netlist/differential_driver.spice.",
+    "  Only the four MIM cap lines change (model name, A/P in um units; see derive_lvs_reference),",
+    "  because sky130.lvs's reader drops the xschem cap model. Everything else is the design netlist.",
     "  thr=2                 runset thread count; this host is shared and the repo's rule is to stay",
     "                        at or below 2."
   ],
@@ -22,7 +25,7 @@
     "top": "differential_driver"
   },
   "reference": {
-    "netlist": "design/netlist/differential_driver.spice",
+    "netlist": "layout/analog/differential_driver/lvs-reference.spice",
     "top": "differential_driver"
   },
   "deck_file": "$PDK_ROOT/sky130A/libs.tech/klayout/lvs/sky130.lvs",
