@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-11-02
+
+- **PR #249**: feat: pair MIM caps in driver LVS reference and mint record
+- **Issue #220** (closed): T1 items 2-4, 11 (analog layout): lay out the differential_driver leaf with DRC, LVS and ERC supply evidence
+
 ### 2026-10-31
 
 - **PR #247**: Bump Repo Skills 0.24.7 -> 0.25.1
