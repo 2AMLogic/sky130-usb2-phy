@@ -64,7 +64,6 @@ Issues carrying `loom:curated`.
 
 - **#23**: Track the gap to T1 sim-validated / bronze (klayout-tools design-evidence tiers)
 - **#105**: Digital T1 items 3, 4, 11 (and 5): place and route the real UTMI datapath and commit DRC, LVS, ERC and timing evidence
-- **#105**: Digital T1 items 3, 4, 11 (and 5): place and route the real UTMI datapath and commit DRC, LVS, ERC and timing evidence
 
 ## Backlog Balance
 
