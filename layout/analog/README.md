@@ -31,6 +31,17 @@ layout/analog/<block>/gen.py --check` for all five leaves. Each `gen.py` keeps
 its own layer table, `TOP` and `build()`, except the two se_receiver leaves
 (below).
 
+## Shared check runner: `run_checks_common.py`
+
+The DRC / LVS / ERC runner and the record writer live once in
+`run_checks_common.py` (same #238 ruling: shared *code*, per-leaf *outputs*). Each
+`<block>/run_checks.py` is a thin entry point holding only a `LeafConfig` (block,
+issue, supply-net pair, record prose, extra provenance inputs) and, for
+`differential_driver`, its `derive_lvs_reference` hook. The command
+`python3 layout/analog/<block>/run_checks.py [--record]` is unchanged, and the
+runner's path is deliberately not in a record's `provenance.inputs`. A change to the
+runner must leave every leaf's reports byte-identical for unchanged inputs.
+
 Deliberate leaf-local variants, not yet reconciled into the shared helpers:
 
 - `differential_driver/gen.py` keeps its own `Ports` and `mos` (per-gate
