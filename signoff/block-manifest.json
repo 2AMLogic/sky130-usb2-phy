@@ -10,6 +10,96 @@
       "file": "signoff/evidence/item-1-analog-sources.json",
       "content_hash": "sha256:3e4d1f4d3f5be7651afa5de2298e67c3d9f75d154eee125feb8793a8d0796a94"
     },
+    "2.analog": {
+      "file": "signoff/evidence/item-2-analog-layout.json",
+      "content_hash": "sha256:5dadc686a6c59000fd56929d7d5a61a9f96d1f328e276317a81f3f887f9615cb"
+    },
+    "3.analog": [
+      {
+        "file": "flow/analog-layout-differential_driver/artifacts/20261102-172701-73c0a85-differential_driver/drc-report.json",
+        "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0"
+      },
+      {
+        "file": "flow/analog-layout-differential_receiver/artifacts/20261029-014419-ee156a8-differential_receiver/drc-report.json",
+        "content_hash": "sha256:3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540"
+      },
+      {
+        "file": "flow/analog-layout-dplus_pullup/artifacts/20261029-014427-ee156a8-dplus_pullup/drc-report.json",
+        "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dm/artifacts/20261029-065008-a2fd0d3-se_receiver_dm/drc-report.json",
+        "content_hash": "sha256:ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dp/artifacts/20261029-065033-a2fd0d3-se_receiver_dp/drc-report.json",
+        "content_hash": "sha256:5f93831299c35f9033cb73edffbaeaf008b58d51bb6e8984c60537a21473fe9f"
+      }
+    ],
+    "4.analog": [
+      {
+        "file": "flow/analog-layout-differential_driver/artifacts/20261102-172701-73c0a85-differential_driver/lvs-report.json",
+        "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0"
+      },
+      {
+        "file": "flow/analog-layout-differential_receiver/artifacts/20261029-014419-ee156a8-differential_receiver/lvs-report.json",
+        "content_hash": "sha256:3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540"
+      },
+      {
+        "file": "flow/analog-layout-dplus_pullup/artifacts/20261029-014427-ee156a8-dplus_pullup/lvs-report.json",
+        "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dm/artifacts/20261029-065008-a2fd0d3-se_receiver_dm/lvs-report.json",
+        "content_hash": "sha256:ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dp/artifacts/20261029-065033-a2fd0d3-se_receiver_dp/lvs-report.json",
+        "content_hash": "sha256:5f93831299c35f9033cb73edffbaeaf008b58d51bb6e8984c60537a21473fe9f"
+      }
+    ],
+    "11.analog": [
+      {
+        "file": "flow/analog-layout-differential_driver/artifacts/20261102-172701-73c0a85-differential_driver/erc-supply-report.json",
+        "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0"
+      },
+      {
+        "file": "flow/analog-layout-differential_receiver/artifacts/20261029-014419-ee156a8-differential_receiver/erc-supply-report.json",
+        "content_hash": "sha256:3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540"
+      },
+      {
+        "file": "flow/analog-layout-dplus_pullup/artifacts/20261029-014427-ee156a8-dplus_pullup/erc-supply-report.json",
+        "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dm/artifacts/20261029-065008-a2fd0d3-se_receiver_dm/erc-supply-report.json",
+        "content_hash": "sha256:ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dp/artifacts/20261029-065033-a2fd0d3-se_receiver_dp/erc-supply-report.json",
+        "content_hash": "sha256:5f93831299c35f9033cb73edffbaeaf008b58d51bb6e8984c60537a21473fe9f"
+      },
+      {
+        "file": "flow/analog-layout-differential_driver/artifacts/20261102-172701-73c0a85-differential_driver/lvs-report.json",
+        "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0"
+      },
+      {
+        "file": "flow/analog-layout-differential_receiver/artifacts/20261029-014419-ee156a8-differential_receiver/lvs-report.json",
+        "content_hash": "sha256:3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540"
+      },
+      {
+        "file": "flow/analog-layout-dplus_pullup/artifacts/20261029-014427-ee156a8-dplus_pullup/lvs-report.json",
+        "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dm/artifacts/20261029-065008-a2fd0d3-se_receiver_dm/lvs-report.json",
+        "content_hash": "sha256:ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb"
+      },
+      {
+        "file": "flow/analog-layout-se_receiver_dp/artifacts/20261029-065033-a2fd0d3-se_receiver_dp/lvs-report.json",
+        "content_hash": "sha256:5f93831299c35f9033cb73edffbaeaf008b58d51bb6e8984c60537a21473fe9f"
+      }
+    ],
     "8": {
       "file": "signoff/evidence/characterization-report.json",
       "content_hash": "sha256:169ffd1146b6aa92c38f62ce920507a124d79fd94d06b53d492e9765d7a046a1"
@@ -20,7 +110,7 @@
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:b7887c9f6eb70c4dabe0cb0911ff09b4e279074254e3e3243852bf6c7048a4d4"
+      "content_hash": "sha256:0e2f8e046047136ae1b1b5e0d56ae637909043006beed3191e4bab6a8d489218"
     },
     "6.digital": {
       "not_applicable": {

@@ -53,6 +53,20 @@ def tree(tmp_path, monkeypatch):
         report = REAL_ROOT / cite["file"]
         for src in (report, report.parent / json.loads(report.read_text())["samples"]):
             shutil.copy(src, _mk(tmp_path / src.relative_to(REAL_ROOT)))
+    # Native analog citations (items 3, 4, 11): the cited envelopes, the leaf
+    # records dirs (for the latest-record check) and each LVS reference netlist.
+    for key in check.NATIVE_CITATIONS:
+        for cite in manifest["evidence"][key]:
+            envelope_path = REAL_ROOT / cite["file"]
+            shutil.copy(envelope_path, _mk(tmp_path / cite["file"]))
+            if envelope_path.name == "lvs-report.json":
+                ref = check._repo_rel(json.loads(envelope_path.read_text())["reference"])
+                shutil.copy(REAL_ROOT / ref, _mk(tmp_path / ref))
+    for leaf in check.NATIVE_LEAVES:
+        for record in (REAL_ROOT / f"flow/analog-layout-{leaf}/records").glob("2*.md"):
+            _mk(tmp_path / record.relative_to(REAL_ROOT)).touch()
+        gds = f"layout/analog/{leaf}/{leaf}.gds"
+        shutil.copy(REAL_ROOT / gds, _mk(tmp_path / gds))
     shutil.copy(REAL_ROOT / "spec" / "usb2-phy.md", _mk(tmp_path / "spec" / "usb2-phy.md"))
     shutil.copy(REAL_ROOT / "docs" / "characterization.md", _mk(tmp_path / "docs" / "characterization.md"))
     # klt resolves a `scope: repo` input path against the repo root it finds
@@ -249,3 +263,40 @@ def test_grader_refuses_a_scan_word_in_a_statement_class(tree):
     )
     row = [i for i in json.loads(proc.stdout)["items"] if i["id"] == 6 and i["partition"] == "digital"][0]
     assert row["status"] != "not_applicable"
+
+
+# --- native analog citations (items 3, 4, 11) and the item-2 layout inventory
+
+
+def test_native_citations_pass_on_the_real_tree(tree):
+    check, _ = tree
+    assert check.check_native_citations(manifest_for(check))
+
+
+@pytest.mark.parametrize("leaf", ["differential_driver", "se_receiver_dp"])
+def test_a_one_byte_leaf_gds_change_fails_the_native_gate(tree, leaf, capsys):
+    check, root = tree
+    gds = root / f"layout/analog/{leaf}/{leaf}.gds"
+    data = bytearray(gds.read_bytes())
+    data[-1] ^= 0x01
+    gds.write_bytes(bytes(data))
+    assert not check.check_native_citations(manifest_for(check))
+    assert f"{leaf}.gds changed since the envelope was produced" in capsys.readouterr().err
+    # The same edit also trips the item-2 inventory (the GDS is a member).
+    assert not check.check_inventory_members()
+
+
+def test_a_changed_lvs_reference_netlist_fails_the_native_gate(tree, capsys):
+    check, root = tree
+    with (root / "design/netlist/se_receiver_dm.spice").open("a") as handle:
+        handle.write("* mutated\n")
+    assert not check.check_native_citations(manifest_for(check))
+    assert "reference netlist design/netlist/se_receiver_dm.spice" in capsys.readouterr().err
+
+
+def test_a_missing_leaf_citation_fails_the_native_gate(tree, capsys):
+    check, _ = tree
+    manifest = manifest_for(check)
+    manifest["evidence"]["3.analog"].pop()
+    assert not check.check_native_citations(manifest)
+    assert "se_receiver_dp" in capsys.readouterr().err

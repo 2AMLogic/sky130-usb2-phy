@@ -1,0 +1,77 @@
+{
+  "schema": "sky130-usb2-phy.signoff.inventory/1",
+  "t1_item": 2,
+  "note": "Analog layout for T1 item 2: the five leaf GDS streams under layout/analog/ and the generator for each. Plain versioned file: the bound artifact of signoff/evidence/item-2-analog-layout.json. Not in this repo: the PLL (consumed by pinned reference to 2AMLogic/sky130-pll through reuse.lock.json) and the squelch detector (undecided, DR-0003 Decision 2 pending ratification), so no layout of either is listed.",
+  "artifacts": [
+    {
+      "id": "differential_driver",
+      "what": "differential_driver: committed GDS and the generator that produces it (flow/analog-layout-differential_driver/records/ attests regenerated_identical)",
+      "members": [
+        {
+          "path": "layout/analog/differential_driver/differential_driver.gds",
+          "sha256": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0"
+        },
+        {
+          "path": "layout/analog/differential_driver/gen.py",
+          "sha256": "sha256:8b39ac2fb7730adfef548ad255061487308ec8fa319ac3491e685ae54306068d"
+        }
+      ]
+    },
+    {
+      "id": "differential_receiver",
+      "what": "differential_receiver: committed GDS and the generator that produces it (flow/analog-layout-differential_receiver/records/ attests regenerated_identical)",
+      "members": [
+        {
+          "path": "layout/analog/differential_receiver/differential_receiver.gds",
+          "sha256": "sha256:3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540"
+        },
+        {
+          "path": "layout/analog/differential_receiver/gen.py",
+          "sha256": "sha256:0db2a433e568f6ef1946b12b66b4ecba60f0da02d7bd360f9426a979a3b0e718"
+        }
+      ]
+    },
+    {
+      "id": "dplus_pullup",
+      "what": "dplus_pullup: committed GDS and the generator that produces it (flow/analog-layout-dplus_pullup/records/ attests regenerated_identical)",
+      "members": [
+        {
+          "path": "layout/analog/dplus_pullup/dplus_pullup.gds",
+          "sha256": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4"
+        },
+        {
+          "path": "layout/analog/dplus_pullup/gen.py",
+          "sha256": "sha256:8e280557699ad6a57f98497506cf401e74ac75537775039e66848c508913fb01"
+        }
+      ]
+    },
+    {
+      "id": "se_receiver_dm",
+      "what": "se_receiver_dm: committed GDS and the generator that produces it (flow/analog-layout-se_receiver_dm/records/ attests regenerated_identical)",
+      "members": [
+        {
+          "path": "layout/analog/se_receiver_dm/se_receiver_dm.gds",
+          "sha256": "sha256:ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb"
+        },
+        {
+          "path": "layout/analog/se_receiver_dm/gen.py",
+          "sha256": "sha256:5be14faadc06770af5b904f083a828326ad5c96a98429a5d2d503325fb9c1a3e"
+        }
+      ]
+    },
+    {
+      "id": "se_receiver_dp",
+      "what": "se_receiver_dp: committed GDS and the generator that produces it (flow/analog-layout-se_receiver_dp/records/ attests regenerated_identical)",
+      "members": [
+        {
+          "path": "layout/analog/se_receiver_dp/se_receiver_dp.gds",
+          "sha256": "sha256:5f93831299c35f9033cb73edffbaeaf008b58d51bb6e8984c60537a21473fe9f"
+        },
+        {
+          "path": "layout/analog/se_receiver_dp/gen.py",
+          "sha256": "sha256:ce4144a6a1778c74637d9f5a96d97a2c19b29c89c1ae97efc14371458852fcd6"
+        }
+      ]
+    }
+  ]
+}

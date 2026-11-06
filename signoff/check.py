@@ -11,7 +11,7 @@ manifest citation is a claim about *that* evidence file against *that* input
 revision, and the moment either moves without the claim moving with it, the
 committed verdict is a statement about a tree that no longer exists.
 
-This script is what stops that. Six distinct checks, because `klt signoff`
+This script is what stops that. Seven distinct checks, because `klt signoff`
 alone cannot cover all of them:
 
 1. **The grader is the pinned released wheel.** `klt` on PATH must be the
@@ -51,11 +51,11 @@ alone cannot cover all of them:
    a citation going stale, a check starting to fail, or the T1 checklist
    itself growing an item all do.
 
-Future native citations must grow their own gate here: `klt` through 0.5.0
-does not re-hash the artifact behind a *native* envelope either (`input_verified`
-arrives upstream in klayout-tools#2196), so a manifest that starts citing
-`klt drc`/`lvs`/`pex` output must add a repo-side re-hash of the cited input
-artifact to check 2 before such a citation can be trusted to not rot.
+Native citations (`klt drc`/`lvs`/`erc` envelopes for the analog leaves, items
+3, 4 and 11) are re-hashed by `check_native_citations`: `klt` through 0.8.0
+does not open the artifact behind a *native* envelope either (`input_verified`
+arrives upstream in klayout-tools#2196), so the leaf GDS and the LVS reference
+netlist are re-hashed here against what each envelope recorded.
 
 Pure stdlib; no PDK, no simulator, no Icarus. Only `klt` on PATH.
 """
@@ -65,6 +65,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -90,6 +91,12 @@ CHARACTERIZATION_ENVELOPE = "signoff/evidence/characterization-report.json"
 # check_inventory_members. Item 1 (digital and analog) is not here: its envelope is
 # produced by `klt signoff --attest` (see ATTESTED), not rewritten by --regen.
 ANCHORED = {
+    "2.analog": (
+        "signoff/inventory/item-2-analog-layout.json",
+        "signoff/evidence/item-2-analog-layout.json",
+        "the five analog leaf GDS streams under layout/analog/ and the "
+        "generator of each are committed, with the pinned stream hashes",
+    ),
     "9": (
         "signoff/inventory/item-9-testbenches.json",
         "signoff/evidence/item-9-testbenches.json",
@@ -406,6 +413,135 @@ def check_attested(manifest: dict) -> bool:
     return ok
 
 
+# Native-envelope citations (klt drc / lvs / erc output) for the analog
+# partition: manifest key -> what the cited envelope kind must record. Each
+# key cites one envelope per analog leaf (the leaves are the partition), taken
+# from that leaf's latest flow/analog-layout-<leaf>/artifacts/<record>/.
+# Item 11 cites the leaf's ERC supply report AND its LVS report.
+NATIVE_LEAVES = (
+    "differential_driver",
+    "differential_receiver",
+    "dplus_pullup",
+    "se_receiver_dm",
+    "se_receiver_dp",
+)
+NATIVE_CITATIONS = {
+    "3.analog": ("drc-report.json",),
+    "4.analog": ("lvs-report.json",),
+    "11.analog": ("erc-supply-report.json", "lvs-report.json"),
+}
+
+
+def _repo_rel(path: str) -> str | None:
+    """Repo-relative form of a path a native envelope recorded.
+
+    `klt lvs` records the absolute path of the worktree it ran in, which is
+    not this checkout, so the stable suffix under layout/ or design/ is used.
+    """
+    if not path:
+        return None
+    if not Path(path).is_absolute():
+        return path
+    match = re.search(r"/((?:layout|design)/.+)$", path)
+    return match.group(1) if match else None
+
+
+def _native_inputs(envelope: dict, name: str) -> list[tuple[str, str | None, str]]:
+    """(repo path, hash the envelope recorded, role) of each input artifact."""
+    prov_hash = ((envelope.get("provenance") or {}).get("input") or {}).get(
+        "content_hash"
+    )
+    if name == "lvs-report.json":
+        env = envelope.get("environment") or {}
+        return [
+            (
+                _repo_rel(envelope.get("layout", "")) or "",
+                "sha256:" + str(env.get("layout_sha256")),
+                "layout",
+            ),
+            (
+                _repo_rel(envelope.get("reference", "")) or "",
+                "sha256:" + str(env.get("reference_sha256")),
+                "reference netlist",
+            ),
+        ]
+    layout = envelope.get("file") or {}
+    path = layout.get("path") if isinstance(layout, dict) else layout
+    return [(_repo_rel(str(path or "")) or "", prov_hash, "layout")]
+
+
+def check_native_citations(manifest: dict) -> bool:
+    """Every cited native envelope's input artifacts still hash as recorded.
+
+    `klt signoff` (through 0.8.0) compares the manifest pin to the envelope's
+    own recorded hash and never opens the layout or reference netlist behind a
+    native envelope, so this re-hashes them: the leaf GDS (all three envelope
+    kinds) and the LVS reference netlist. It also requires the citation to name
+    each analog leaf exactly once, for the leaf's latest record.
+    """
+    ok = True
+    for key, names in NATIVE_CITATIONS.items():
+        cited = manifest["evidence"].get(key)
+        if not isinstance(cited, list):
+            fail(f"signoff/block-manifest.json: {key} must cite a list of envelopes")
+            ok = False
+            continue
+        by_leaf: dict[str, set[str]] = {leaf: set() for leaf in NATIVE_LEAVES}
+        bad = False
+        for cite in cited:
+            rel = str(cite.get("file", ""))
+            match = re.fullmatch(
+                r"flow/analog-layout-([a-z_]+)/artifacts/([^/]+)/([^/]+)", rel
+            )
+            if not match or match[1] not in by_leaf or match[3] not in names:
+                fail(f"{key}: {rel!r} is not a cited leaf envelope of {names}")
+                bad = True
+                continue
+            leaf, record, name = match.groups()
+            by_leaf[leaf].add(name)
+            records = sorted(
+                p.stem
+                for p in (REPO_ROOT / f"flow/analog-layout-{leaf}/records").glob("2*.md")
+            )
+            if not records or record != records[-1]:
+                fail(f"{key}: {rel} is not the latest record of {leaf} ({records[-1:]})")
+                bad = True
+            path = REPO_ROOT / rel
+            try:
+                envelope = json.loads(path.read_text())
+            except (OSError, ValueError) as exc:
+                fail(f"{rel}: unreadable ({exc})")
+                bad = True
+                continue
+            pinned = ((envelope.get("provenance") or {}).get("input") or {}).get(
+                "content_hash"
+            )
+            if cite.get("content_hash") != pinned:
+                fail(f"{key}: manifest pins {cite.get('content_hash')} but {rel} records {pinned}")
+                bad = True
+            for src, recorded, role in _native_inputs(envelope, name):
+                src_path = REPO_ROOT / src
+                if not src or not src_path.is_file():
+                    fail(f"{rel}: {role} {src!r} does not exist")
+                    bad = True
+                elif sha256_file(src_path) != recorded:
+                    fail(
+                        f"{rel}: its {role} {src} changed since the envelope was "
+                        f"produced (recorded {recorded}); the citation is stale.\n"
+                        "     Re-run the leaf's checks and commit a new flow/ record "
+                        "(records are append-only), then cite it."
+                    )
+                    bad = True
+        for leaf, got in by_leaf.items():
+            if got != set(names):
+                fail(f"{key}: leaf {leaf} cites {sorted(got)}, wants {sorted(names)}")
+                bad = True
+        if not bad:
+            print(f"ok   {key}: {len(cited)} native envelopes re-hash their inputs")
+        ok = ok and not bad
+    return ok
+
+
 def expected_item9_files(root: Path) -> set[str]:
     """Every testbench file the item 9 claim says the inventory lists."""
     found = set()
@@ -451,7 +587,7 @@ def check_anchored_envelopes(manifest: dict) -> bool:
             continue
         bound = ((envelope.get("provenance") or {}).get("input") or {}).get("path")
         bound = bound.get("path") if isinstance(bound, dict) else bound
-        if envelope.get("t1_item") != int(item_id) or bound != inventory:
+        if envelope.get("t1_item") != int(item_id.split(".")[0]) or bound != inventory:
             fail(
                 f"{envelope_rel}: must declare t1_item {item_id} and bind "
                 f"provenance.input.path {inventory!r}"
@@ -668,7 +804,7 @@ def refresh_anchored() -> None:
         envelope = {
             "schema_version": 1,
             "kind": "generic",
-            "t1_item": int(item_id),
+            "t1_item": int(item_id.split(".")[0]),
             "status": "pass",
             "summary": (
                 f"T1 item {item_id}: {claim}. The audited artifact is {inventory}; "
@@ -879,6 +1015,7 @@ def main(argv: list[str] | None = None) -> int:
     ok = check_item6_binding(manifest) and ok
     ok = check_item6_analog(manifest) and ok
     ok = check_attested(manifest) and ok
+    ok = check_native_citations(manifest) and ok
 
     stdout, report, ran = run_grader()
     if not ran:

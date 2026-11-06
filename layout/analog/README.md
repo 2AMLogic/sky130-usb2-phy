@@ -9,12 +9,13 @@ conventions**. The two single-ended receivers differ only in the input and
 output pin names. Each directory owns its outputs (GDS, reports, request and
 spec files); the generator helpers are shared in `gen_common.py` (see below).
 
-**This directory anchors no sign-off claim yet.** The analog rows of
-`signoff/signoff-report.json` cover the whole analog partition, so items 2
-(layout), 3 (DRC), 4 (LVS) and the supply half of 11 stay unmet until every
-leaf has evidence like `differential_receiver`'s. Nothing here is cited from
-`signoff/block-manifest.json`. No layout here is post-layout verified (item 7
-is not started) and none is matched-layout or density closed.
+**This directory's frozen records are cited from `signoff/block-manifest.json`.**
+All five leaves have DRC, LVS and ERC records, cited for T1 item 2 (layout,
+`met`) and items 3, 4 and 11 (analog). Items 3, 4 and 11 still read `unmet` as
+graded by klt 0.8.0 (it takes one native envelope per item, and item 11 is
+gated on item 4); the reasons are quoted in `signoff/README.md`. No layout here
+is post-layout verified (item 7 is not started) and none is matched-layout or
+density closed.
 
 Everything is re-derived for sky130 from the committed netlists. A gf180
 placement plan is source evidence for *topology*, never geometry
