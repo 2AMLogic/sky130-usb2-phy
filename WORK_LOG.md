@@ -3,6 +3,11 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+### 2026-11-06
+
+- **PR #256**: feat(signoff): cite analog leaf DRC/LVS/ERC evidence and re-hash native inputs
+- **Issue #255** (closed): Cite the five analog leaves' DRC/LVS/ERC evidence as T1 items 2-4 and 11 (analog)
+
 ### 2026-11-02
 
 - **PR #249**: feat: pair MIM caps in driver LVS reference and mint record
