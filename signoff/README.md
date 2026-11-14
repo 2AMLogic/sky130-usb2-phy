@@ -131,12 +131,28 @@ Two more gaps are deliberate disclosures rather than silent assumptions:
 ## How to re-run the grading
 
 `klt signoff --manifest` is PDK-free — it grades committed JSON envelopes,
-it does not run the gates — so grading runs anywhere:
+it does not run the gates — so grading runs anywhere. Provision the pinned
+wheel in a **throwaway venv**, not host-wide: shared/fleet workers forbid
+host-wide installs, and `uv venv` ships no `pip`, so `python -m pip` fails
+inside it — install via `uv pip --python`. Read the version from
+`signoff/toolchain.json` so this recipe survives every future re-pin:
 
 ```bash
-pip install klayout-tools==0.8.0          # the pinned released wheel
-python3 signoff/check.py                  # the gate: re-grade + drift check
-python3 signoff/check.py --regen          # refresh pins + rewrite the report
+VER=$(python3 -c 'import json;print(json.load(open("signoff/toolchain.json"))["klt"]["package_version"])')
+uv venv /tmp/signoff-grader
+uv pip install --python /tmp/signoff-grader/bin/python "klayout-tools==$VER"
+PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py           # the gate: re-grade + drift check
+PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py --regen   # refresh pins + rewrite the report
+```
+
+The re-hash half of the gate needs no grader at all: `--pins-only` runs the
+eight stdlib re-hash checks with no `klt` on PATH — the cheap
+"did I just stale a pin?" check to run before opening a PR. On failure it
+names the stale member and prints the refresh recipe above; only the `--regen`
+refresh itself needs the pinned wheel:
+
+```bash
+python3 signoff/check.py --pins-only   # re-hash checks only, grader-free
 ```
 
 CI (`signoff` job in `.github/workflows/ci.yml`) runs the gate on every PR

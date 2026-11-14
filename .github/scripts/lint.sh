@@ -44,6 +44,12 @@ if ! python3 scripts/check_artifact_manifests.py; then
 fi
 
 echo
+echo "== Signoff pin freshness: signoff/check.py --pins-only (grader-free) =="
+if ! python3 signoff/check.py --pins-only; then
+  STATUS=1
+fi
+
+echo
 echo "== Evidence-record lint self-tests: flow/tests/ + sim/tests/ =="
 if ! command -v python3 >/dev/null 2>&1; then
   echo "ERROR: python3 not found" >&2

@@ -26,6 +26,10 @@ plus an analog front end — so both flows apply.
   `2AMLogic/klayout-tools` describing the tool gap generically — that tracker
   is scoped to the tool, so keep design-specific detail (spec values, this
   repo's content) out of it and describe the gap, not the design.
+- **Hash-pinned files**: some repo files (`README.md` among them) are
+  hash-pinned by `signoff/`. Run `python3 signoff/check.py --pins-only`
+  before opening any PR (needs no klt); if it fails, re-pin with
+  `python3 signoff/check.py --regen` under the pinned grader (recipe: `signoff/README.md`).
 - **Verification is the product**: no claim without a testbench. PVT corners
   on every recorded analog result; recorded results are append-only evidence.
 - Spec changes go through `spec/` with a decision record; agents do not relax
