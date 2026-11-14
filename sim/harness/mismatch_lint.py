@@ -9,6 +9,11 @@ hashes against the klt reports, the negative-control deck against the nominal de
 declared replacement, the executed-PDK identity, the pairing hashes in each sample set, and
 the grading of every `klt yield` report (`mismatch.grade`). A PASS record cannot survive any
 of these; a FAIL record must state its problems.
+
+Campaign and yield completeness is checked against the corners the record *declares it covers*
+(`evidence.json` `corners`), not the full declared matrix, so a `--corner`-scoped run can land
+one corner per record. That declaration is checked against the frozen `mc.json` and fails
+closed (`covered_corners`): there is no way to declare less coverage than was run and pass.
 """
 
 from __future__ import annotations
@@ -67,6 +72,39 @@ def check_record(exp_dir: Path, rec: Path) -> list[str]:
     return problems
 
 
+def covered_corners(rid: str, m: dict, declared: dict[str, dict]) -> tuple[dict[str, dict] | None, list[str]]:
+    """The corners a record claims to cover, checked against the frozen mc.json.
+
+    A run scoped with `--corner` records a subset of the declared corners, so completeness is
+    derived from this declaration rather than from the full matrix. That only holds if the
+    declaration itself cannot be fudged, so this **fails closed**: a missing, empty or
+    malformed `corners` list, a corner the frozen mc.json does not declare, a duplicate, or a
+    covered corner whose definition differs from the frozen one all return `None` (no coverage
+    could be established) instead of an empty set, which would make an empty record lint clean.
+
+    Returns `(covered by id, problems)`; `covered` is None when the declaration is unusable.
+    """
+    corners = m.get("corners")
+    if not isinstance(corners, list) or not corners:
+        return None, [f"{rid}: evidence.json must declare the corners it covers in a non-empty "
+                      f"`corners` list; got {corners!r}"]
+    out: dict[str, dict] = {}
+    for c in corners:
+        if not isinstance(c, dict) or not isinstance(c.get("id"), str):
+            return None, [f"{rid}: evidence.json `corners` entry {c!r} is not a corner declaration"]
+        cid = c["id"]
+        if cid in out:
+            return None, [f"{rid}: evidence.json declares covered corner {cid!r} more than once"]
+        if cid not in declared:
+            return None, [f"{rid}: evidence.json covers corner {cid!r}, which the frozen mc.json "
+                          f"does not declare (declared: {sorted(declared)})"]
+        if c != declared[cid]:
+            return None, [f"{rid}: evidence.json covered corner {cid!r} differs from the corner the "
+                          f"frozen mc.json declares"]
+        out[cid] = c
+    return out, []
+
+
 def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
     """(criteria failures re-derived from the raw files, structural problems with the evidence)."""
     bad: list[str] = []
@@ -80,11 +118,15 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
         bad.append(f"{rid}: evidence.json monte_carlo differs from the frozen mc.json")
     if not (isinstance(mc.get("seed"), int) and mc.get("vary") == "mismatch" and mc.get("n", 0) >= 2):
         bad.append(f"{rid}: monte_carlo must record an integer seed, vary 'mismatch' and n >= 2")
+    covered, cov_bad = covered_corners(rid, m, corners)
+    if covered is None:
+        return None, bad + cov_bad
     failing: list[str] = []
-    want = {(r, c, k) for r in rcvs for c in corners for k in ("nominal", "control")}
+    want = {(r, c, k) for r in rcvs for c in covered for k in ("nominal", "control")}
     got = {(c["receiver"], c["corner"], c["kind"]) for c in m.get("campaigns", [])}
     if want != got:
-        bad.append(f"{rid}: campaigns {sorted(got)} != declared receivers x corners x (nominal, control)")
+        bad.append(f"{rid}: campaigns {sorted(got)} != declared receivers x covered corners "
+                   f"{sorted(covered)} x (nominal, control)")
     bodies: dict[tuple, str] = {}
     for c in m.get("campaigns", []):
         stem = c["stem"]
@@ -141,8 +183,9 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
             if derived != body:
                 bad.append(f"{rid}: {r}-{cn}: control deck is not the nominal deck plus the declared skew")
     ys = {(y["receiver"], y["corner"]): y for y in m.get("yields", [])}
-    if set(ys) != {(r, c) for r in rcvs for c in corners}:
-        failing.append(f"yield reports present for {sorted(ys)}, expected every (receiver, corner)")
+    if set(ys) != {(r, c) for r in rcvs for c in covered}:
+        failing.append(f"yield reports present for {sorted(ys)}, expected every (receiver, corner) "
+                       f"over the covered corners {sorted(covered)}")
     for (r, cn), y in ys.items():
         rcv, corner = rcvs.get(r), corners.get(cn)
         if rcv is None or corner is None:
