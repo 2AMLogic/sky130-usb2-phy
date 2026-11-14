@@ -18,6 +18,7 @@ from dataclasses import dataclass
 
 from . import pid, stuffing
 from . import packets
+from .bits import bits_to_bytes
 from .linestate import LineState
 
 RANDOM_SEED = 20260807
@@ -46,6 +47,35 @@ class Scenario:
     fields: dict  # the correct packets.parse() result for `states`
     payload: object  # bytes, or None for token/handshake scenarios
     provenance: str
+
+
+def byte_stream_for_scenario(scenario):
+    """The UTMI byte stream for a `Scenario`: PID + type-specific fields +
+    CRC, not yet bit-stuffed or NRZI-encoded.
+
+    This is *both* what the link controller hands to `DataOut`
+    (spec/decision-records/0001's port table: "byte to transmit, not yet
+    NRZI-encoded or bit-stuffed") and what `DataIn` must deliver on
+    receive (SYNC is consumed by SOP lock and never delivered; EOP is not
+    part of the bit-stuffed stream -- see `rtl/usb_rx_framer.v`'s header).
+    One helper for both ends of the loopback, and shared across
+    testbenches rather than re-derived in each (issue #275).
+
+    Reconstructed generically from `scenario.fields`
+    (== `packets.parse(scenario.states)`) so it works for token, data and
+    handshake scenarios alike. Returns `bytes`; a caller comparing against
+    a monitor that collects `list[int]` must convert that side (e.g.
+    `bytes(rx.bytes)`).
+    """
+    fields = scenario.fields
+    raw = packets.raw_field_bits(
+        fields["pid"],
+        addr=fields.get("addr"),
+        endp=fields.get("endp"),
+        frame_number=fields.get("frame_number"),
+        payload=scenario.payload,
+    )
+    return bits_to_bytes(raw)
 
 
 def _build_token(pid_name, addr, endp):
