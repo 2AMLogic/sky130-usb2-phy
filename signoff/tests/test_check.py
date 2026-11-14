@@ -343,10 +343,11 @@ def test_pins_only_is_not_readme_special_cased(tree, capsys):
     assert "signoff/toolchain.json" in capsys.readouterr().err
 
 
-def test_pins_only_and_regen_are_mutually_exclusive(tree):
+def test_pins_only_and_regen_are_mutually_exclusive(tree, capsys):
     """--pins-only --regen must exit non-zero with an explicit error, never
     silently preferring one flag."""
     check, _ = tree
     with pytest.raises(SystemExit) as excinfo:
         check.main(["--pins-only", "--regen"])
     assert excinfo.value.code != 0
+    assert "mutually exclusive" in capsys.readouterr().err
