@@ -23,11 +23,10 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 
-from . import artifact_manifest as am, matrix as mx, results as rs
+from . import append_only as ao, artifact_manifest as am, matrix as mx, results as rs
 from .integrity import (  # noqa: F401  (re-exported for callers and tests)
     NO_SUPERSESSION_RE, RECORD_ID_RE, check_record_header, load_json, parse_fields, sha256_file)
 
@@ -39,30 +38,19 @@ MANIFEST_CITE_RE = re.compile(r"(manifests/artifacts/[\w.-]+\.manifest\.json) \(
 STORED_ROW_RE = re.compile(r"^\| `([^`]+)` \| (\d+) \| `([0-9a-f]{64})` \|$", re.MULTILINE)
 
 
-def _git(repo: Path, *args: str):
-    return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True)
-
-
 def check_append_only(repo: Path, base_ref: str) -> list[str]:
-    """Only additions are allowed under sim/*/{records,netlist-snapshots,corners,campaigns}/."""
-    if not base_ref:
-        return ["append-only: no base ref given (set FLOW_LINT_BASE_REF or pass --base-ref)"]
-    if _git(repo, "rev-parse", "--verify", "--quiet", f"{base_ref}^{{commit}}").returncode != 0:
-        return [f"append-only: base ref {base_ref!r} is not available in this checkout "
-                "(fetch full history); the required check cannot be skipped"]
-    mb = _git(repo, "merge-base", base_ref, "HEAD")
-    if mb.returncode != 0 or not mb.stdout.strip():
-        return [f"append-only: no merge base between {base_ref!r} and HEAD (shallow clone?)"]
-    diff = _git(repo, "diff", "--name-status", "--no-renames", mb.stdout.strip(), "--", "sim", "manifests")
-    if diff.returncode != 0:
-        return [f"append-only: git diff failed: {diff.stderr.strip()}"]
-    problems = []
-    for line in diff.stdout.splitlines():
-        status, _, path = line.partition("\t")
-        if EVIDENCE_PATH_RE.match(path) and status != "A":
-            problems.append(f"append-only: {path} was {'deleted' if status == 'D' else 'modified'}"
-                            f" ({status}) relative to {base_ref}; evidence is append-only -- mint a new record")
-    return problems
+    """Only additions are allowed under sim/*/{records,netlist-snapshots,corners,campaigns}/.
+
+    A thin naming of the shared rule: merge-base diff, fail-closed on an
+    unresolvable base ref. `flow/check_records.py` calls the same
+    implementation (issue #276), so the two evidence lints cannot disagree
+    about what "append-only" means.
+    """
+    mb, problems = ao.resolve_merge_base(repo, base_ref)
+    if mb is not None:
+        problems = ao.check_paths_append_only(
+            repo, mb, ("sim", "manifests"), EVIDENCE_PATH_RE.match, base_ref)
+    return [f"append-only: {problem}" for problem in problems]
 
 
 def check_stored_summary(text: str, ident: str, repo: Path) -> list[str]:
