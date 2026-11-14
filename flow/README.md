@@ -256,14 +256,29 @@ Enforced in two layers, because either alone is insufficient:
    record is missing (deletion) or its hash has changed (edit), and if a
    record exists on disk with no manifest line (an unverifiable record).
    Works offline, with no git.
-2. **A base-ref comparison** — every record blob present in `origin/main`
-   must be byte-identical in the working tree, and no manifest line present
-   in the base may be removed or rewritten. This closes the hole layer 1
-   cannot: an edit that also re-stamps the manifest. The base ref is not
-   writable from a PR, so the comparison cannot be laundered.
+2. **A base-ref comparison** — every record blob present at
+   `merge-base(origin/main, HEAD)` must be byte-identical in the working tree,
+   and no manifest line present there may be removed or rewritten. This closes
+   the hole layer 1 cannot: an edit that also re-stamps the manifest. The base
+   ref is not writable from a PR, so the comparison cannot be laundered.
+
+Two properties of layer 2 are deliberate, and `sim/harness/append_only.py` is
+the single implementation of them that both this lint and the analog evidence
+lint (`sim/check_records.py`) call, so the two cannot drift apart:
+
+- **The comparison point is the merge base, not the base-ref tip.** The
+  question layer 2 asks is "what did *this* branch do to the evidence?", so
+  records that landed on `origin/main` after the branch point are not
+  deletions. This is what makes `npm run lint` meaningful in a worktree cut
+  before the last evidence commit.
+- **An unresolvable base ref fails.** A shallow clone, or a `$BASE_REF` that
+  does not exist, is a finding — never a silent skip, which would present a
+  check that *could not run* as one that passed. `--no-git` is the only way to
+  opt out, it is explicit, and it says so in the report (layer 1 still runs).
 
 CI runs both. Layer 2 needs real history, which is why the `flow-records` job
-checks out with `fetch-depth: 0`.
+checks out with `fetch-depth: 0` — and now, if that ever regresses, the lint
+fails instead of quietly dropping the check.
 
 ## Required fields
 
