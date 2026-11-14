@@ -8,15 +8,22 @@ PDK, designed by AI agents driving
 open-source flow — cocotb + Icarus and Yosys/OpenROAD on the digital side,
 xschem + ngspice on the analog side.
 
-**Status: digital UTMI-side RTL implemented; physical implementation pending.**
+**Status: digital UTMI-side RTL implemented and cocotb-verified; the five
+analog leaves are drawn and DRC/LVS/ERC-recorded; no post-layout evidence
+anywhere, and no PHY-level assembly.**
 The full-speed receive and transmit paths (bit sync, NRZI encode/decode,
 (de)stuffing, framing, UTMI CDC) are implemented and verified under cocotb. A
 design-anchored synthesis experiment and gate-level netlist now exist for the
 real `usb_utmi_top`, with the disclosed combinational-loop and gate-level-test
 limitations recorded in the characterization report; real-UTMI place-and-route
 remains pending. The FS line driver, differential and single-ended receivers,
-and trimmed D+ pull-up now have schematic-level sky130 simulation evidence.
-See the scope note below for the coverage limits.
+and trimmed D+ pull-up have schematic-level sky130 simulation evidence, and
+each of those five leaves now has committed GDS with a clean `klt drc` record,
+a matching `klt lvs` record and a `clean_partial` `klt erc` record. No leaf has
+parasitic extraction or post-layout re-simulation, so every circuit result in
+this repo is schematic-level. See the scope note below for the coverage limits,
+and [`signoff/README.md`](signoff/README.md) for the machine-graded T1 verdict
+(9 of 22 rows `met` as read from `signoff/signoff-report.json` on 2026-11-14).
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -44,17 +51,36 @@ pull-up, and a digital UTMI layer.
   [`docs/porting-plan.md`](docs/porting-plan.md). All four block ports are
   merged, with schematic-level evidence over the 45-corner MOS PVT grid;
   differential sensitivity covers three common-mode points (135 combinations).
-  Driver signal-quality and static results pass all 45 corners. Layout,
-  mismatch and integrated PHY behavior remain unverified. The D+ pull-up
+  Driver signal-quality and static results pass all 45 corners. The D+ pull-up
   additionally passes 225 MOS/resistor/capacitor corner combinations, selecting
   a trim code per point. The receivers also pass the supplemental 225-point
   global resistor/capacitor-set sweep (675 point/common-mode combinations for
-  differential sensitivity). The driver's supplemental static sweep fails the
-  unchanged 28–44 ohm output-resistance bound at 27 of 225 points; its
-  signal-quality sweep remains incomplete because of the batch job time cap
-  (#135). Disabled-pad behavior above the I/O supply (#130) remains open.
-  See [`design/README.md`](design/README.md)
-  for the per-block results and limitations.
+  differential sensitivity). Two supplemental 225-point driver sweeps are
+  **complete runs that fail** — recorded failures, not missing coverage: the
+  static sweep violates the unchanged 28–44 ohm output-resistance bound at 27
+  of 225 points (198/225 pass, 68 problems, both sides of the bound), and the
+  signal-quality sweep passes 223 of 225 points with 4 problems at the
+  remaining 2 — crossover voltage above the unchanged 2.0 V maximum at `fs_ll`
+  and `fs_hl`, 100 C, 3.6 V (record `20261016-184100-59ec9c0`, run as 8 shard
+  jobs). Disabled-pad behaviour above the I/O supply is recorded engineering
+  data against no ratified limit; an envelope and a 10 uA in-rail budget are
+  *proposed* in
+  [`spec/decision-records/0006-disabled-pad-leakage-envelope.md`](spec/decision-records/0006-disabled-pad-leakage-envelope.md)
+  (status: proposed, awaiting operator ratification) over the case table in
+  [`docs/disabled-pad-envelope-study.md`](docs/disabled-pad-envelope-study.md).
+
+  **Layout, mismatch and integrated PHY behaviour — the partial state, not one
+  word.** *Layout:* each of the five leaves has committed GDS with a clean
+  `klt drc` record (0 violations), a matching `klt lvs` record and a
+  `clean_partial` `klt erc` record; **no** leaf has parasitic extraction or
+  post-layout re-simulation (#281), so every result above stays
+  schematic-level. *Mismatch:* committed Monte Carlo records exist for the
+  differential receiver, both single-ended receivers and the D+ pull-up trim,
+  while `sim/driver-matching-mismatch/` is **declared but not run** — a
+  testbench and no `records/` — leaving spec rows 6-06 and 6-14 uncovered
+  (#223). *Integrated PHY behaviour:* genuinely unverified; `usb_utmi_top`
+  place-and-route has not run. See [`design/README.md`](design/README.md) for
+  the per-block results and limitations.
 - **PLL** — not designed here: consumed by pinned reference to
   [`sky130-pll`](https://github.com/2AMLogic/sky130-pll)
   (see [`reuse.lock.json`](reuse.lock.json)).
@@ -91,8 +117,12 @@ Maturity ladder: spec ratified → UTMI RTL verified → analog blocks available
 → assembly → DRC/LVS-clean → shuttle seat → measured silicon. **Current
 position: spec ratified, FS receive/transmit RTL implemented and
 cocotb-verified, and the real `usb_utmi_top` has a design-anchored
-synthesis-only record and committed gate-level netlist. P&R/STA/LVS/DRC have
-still been run only for the toolchain-plumbing stub, not the real UTMI RTL.**
+synthesis-only record and committed gate-level netlist. On the digital side,
+P&R/STA/LVS/DRC have still been run only for the toolchain-plumbing stub, not
+the real UTMI RTL. On the analog side the five ported leaves are DRC-clean,
+LVS-matching and ERC-`clean_partial`, but no leaf is parasitic-extracted and
+nothing is assembled, so the "DRC/LVS-clean" rung is reached per leaf and not
+for the PHY.**
 
 ## Characterization
 
@@ -111,9 +141,12 @@ spec/          ratified spec + decision records
 rtl/           UTMI-side Verilog sources
 verification/  cocotb testbenches
 flow/          synthesis + P&R recipes (Yosys, OpenROAD), driven through klt
-design/        analog schematics + derived netlists (differential receiver)
+design/        analog schematics + derived netlists (five ported leaves:
+               FS driver, differential receiver, two SE receivers, D+ pull-up)
 sim/           analog simulation harness, testbenches + PVT corner results
-layout/        GDS + DRC/LVS reports (klayout-tools driven)
+layout/        GDS + DRC/LVS/ERC reports (klayout-tools driven); analog/ holds
+               the five leaf layouts and their generators
+signoff/       machine-graded T1 verdict of record (klt signoff --manifest)
 measurements/  silicon characterization (empty until tape-out)
 ```
 
