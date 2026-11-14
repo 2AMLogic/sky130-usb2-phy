@@ -72,6 +72,29 @@ def build(pid_name, *, addr=None, endp=None, frame_number=None, payload=None):
     return wrap_stuffed(stuffing.stuff(raw))
 
 
+def raw_mode_expected(payload_bytes):
+    """The `LineState` sequence for the bit-stuffing/NRZI **bypass** mode
+    (`OpMode == 2'b10`, spec/decision-records/0001 Decision 4) -- the
+    transparent-mode counterpart of `build()` above.
+
+    SYNC is still normally NRZI-encoded: it is PHY-generated framing, not
+    link-controller payload (see `rtl/usb_tx_framer.v`'s header comment).
+    The body bits are placed directly onto the line (bit value == J/K
+    level, no NRZI transform and no bit-stuffing), and EOP is unaffected
+    by `OpMode`.
+
+    Shared here rather than rebuilt per testbench so the serializer-level
+    (`test_usb_tx.py`) and top-level (`test_usb_utmi_top.py`) bypass-mode
+    checks cannot drift apart about what raw mode means (issue #275).
+    """
+    sync_states = [
+        level_to_state(level)
+        for level in nrzi.encode(bits_of_byte(pid.SYNC_BYTE), start_level=1)
+    ]
+    body_states = [level_to_state(bit) for bit in bytes_to_bits(payload_bytes)]
+    return sync_states + body_states + list(EOP_STATES)
+
+
 def parse(states):
     """Parse a full `LineState` sequence (SYNC..EOP) back into fields.
 

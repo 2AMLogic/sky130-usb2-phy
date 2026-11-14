@@ -76,11 +76,7 @@ from cocotb.triggers import ClockCycles, NextTimeStep, ReadOnly, RisingEdge, Tim
 
 from monitors import Monitor, RxMonitor
 from usbfs import packets, scenarios
-from usbfs.bits import bits_of_byte, bits_to_bytes, bytes_to_bits
-from usbfs.linestate import from_dpdm, level_to_state
-from usbfs.nrzi import encode as nrzi_encode
-from usbfs.packets import EOP_STATES
-from usbfs.pid import SYNC_BYTE
+from usbfs.linestate import from_dpdm
 from usbfs.transceiver import IdealTransceiver
 
 # 144 MHz / 30 MHz, in whole picoseconds: neither period is an integer
@@ -158,48 +154,6 @@ async def _tick144(dut):
     afterwards) -- same convention as `test_usb_tx.py`."""
     await RisingEdge(dut.clk_144)
     await ReadOnly()
-
-
-# ---------------------------------------------------------------------------
-# Reference-model helpers (everything expected comes from `usbfs`).
-# ---------------------------------------------------------------------------
-
-
-def _byte_stream_for_scenario(scenario):
-    """The UTMI byte stream for a `usbfs.scenarios.Scenario`: PID +
-    type-specific fields + CRC, not yet bit-stuffed or NRZI-encoded.
-
-    This is *both* what the link controller hands to `DataOut` (decision
-    record #9's port table: "byte to transmit, not yet NRZI-encoded or
-    bit-stuffed") and what `DataIn` must deliver on receive (SYNC is
-    consumed by SOP lock and never delivered; EOP is not part of the
-    bit-stuffed stream -- see `rtl/usb_rx_framer.v`'s header). One helper
-    for both ends of the loopback, built from `usbfs.packets` rather than
-    re-derived here."""
-    fields = scenario.fields
-    raw = packets.raw_field_bits(
-        fields["pid"],
-        addr=fields.get("addr"),
-        endp=fields.get("endp"),
-        frame_number=fields.get("frame_number"),
-        payload=scenario.payload,
-    )
-    return list(bits_to_bytes(raw))
-
-
-def _raw_mode_expected(payload_bytes):
-    """Expected line states under `OpMode == 2'b10` (bit-stuffing and NRZI
-    both disabled for the packet body). SYNC is PHY-generated framing, not
-    link-controller payload, so it stays normally NRZI-encoded -- see
-    `rtl/usb_tx_framer.v`'s header. Built from `usbfs.nrzi` /
-    `usbfs.linestate` / `usbfs.packets.EOP_STATES`, the same construction
-    `test_usb_tx.py` uses for the serializer-level version of this check."""
-    sync_states = [
-        level_to_state(level)
-        for level in nrzi_encode(bits_of_byte(SYNC_BYTE), start_level=1)
-    ]
-    body_states = [level_to_state(bit) for bit in bytes_to_bits(payload_bytes)]
-    return sync_states + body_states + list(EOP_STATES)
 
 
 # ---------------------------------------------------------------------------
@@ -324,7 +278,7 @@ async def _run_loopback(dut, scenario, settle_utmi_cycles=60):
     wire.start()
     rx.start()
     try:
-        data_bytes = _byte_stream_for_scenario(scenario)
+        data_bytes = scenarios.byte_stream_for_scenario(scenario)
         send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes))
         observed = await _collect_tx_line_states(dut)
         await send
@@ -351,7 +305,7 @@ def _make_loopback_test(name, builder):
             f"disagrees with the scenario's own fields"
         )
         # (c) the bytes re-emerged on the UTMI RX ports, byte-exact
-        assert rx.bytes == data_bytes, (
+        assert bytes(rx.bytes) == data_bytes, (
             f"{name}: loopback byte mismatch, got {rx.bytes!r}"
         )
         assert not rx.saw_error, f"{name}: unexpected RxError on a clean loopback"
@@ -396,7 +350,7 @@ def _make_tx_only_test(name, builder):
     async def _test(dut):
         await _start_test(dut)
         scenario = builder()
-        data_bytes = _byte_stream_for_scenario(scenario)
+        data_bytes = scenarios.byte_stream_for_scenario(scenario)
         send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes))
         observed = await _collect_tx_line_states(dut)
         await send
@@ -434,7 +388,7 @@ def _make_rx_only_test(name, builder):
             await ClockCycles(dut.clk_utmi, 40)
         finally:
             rx.stop()
-        assert rx.bytes == _byte_stream_for_scenario(scenario), (
+        assert bytes(rx.bytes) == scenarios.byte_stream_for_scenario(scenario), (
             f"{name}: RX byte mismatch, got {rx.bytes!r}"
         )
         assert not rx.saw_error, f"{name}: unexpected RxError"
@@ -481,7 +435,7 @@ async def test_opmode_bypass_at_top_ports(dut):
     observed = await _collect_tx_line_states(dut)
     await send
 
-    assert observed == _raw_mode_expected(bytes(payload_bytes))
+    assert observed == packets.raw_mode_expected(bytes(payload_bytes))
 
     # `_collect_tx_line_states()` leaves this coroutine parked in the
     # ReadOnly phase; step to a writable one before restoring `OpMode`.
@@ -505,7 +459,7 @@ async def test_opmode_non_driving_at_top_ports(dut):
     permanently off could not pass."""
     await _start_test(dut)
     scenario = scenarios.stuff_before_eop_payload()
-    data_bytes = _byte_stream_for_scenario(scenario)
+    data_bytes = scenarios.byte_stream_for_scenario(scenario)
 
     dut.OpMode.value = 0b01
     await ClockCycles(dut.clk_utmi, 4)
@@ -535,7 +489,7 @@ async def test_opmode_non_driving_at_top_ports(dut):
     await ClockCycles(dut.clk_utmi, 4)
     data_bytes, observed, rx2 = await _run_loopback(dut, scenario)
     assert observed == scenario.states
-    assert rx2.bytes == data_bytes
+    assert bytes(rx2.bytes) == data_bytes
 
 
 @cocotb.test()
@@ -547,7 +501,7 @@ async def test_suspendm_disables_the_line_drivers(dut):
     positive-control pairing."""
     await _start_test(dut)
     scenario = scenarios.all_zeros_payload()
-    data_bytes = _byte_stream_for_scenario(scenario)
+    data_bytes = scenarios.byte_stream_for_scenario(scenario)
 
     dut.SuspendM.value = 0
     await ClockCycles(dut.clk_utmi, 4)
@@ -662,7 +616,7 @@ async def test_txready_is_exactly_one_utmi_cycle_per_byte(dut):
     interval (20 UTMI cycles)."""
     await _start_test(dut)
     scenario = scenarios.all_zeros_payload()
-    data_bytes = _byte_stream_for_scenario(scenario)
+    data_bytes = scenarios.byte_stream_for_scenario(scenario)
 
     ack_times = []
     send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes, ack_times=ack_times))
@@ -710,7 +664,7 @@ async def test_negative_control_over_advancing_link_corrupts_packet(dut):
     construction."""
     await _start_test(dut)
     scenario = scenarios.max_length_bulk_payload()
-    data_bytes = _byte_stream_for_scenario(scenario)
+    data_bytes = scenarios.byte_stream_for_scenario(scenario)
 
     wire = LoopbackWire(dut)
     rx = RxMonitor(dut)
@@ -729,7 +683,7 @@ async def test_negative_control_over_advancing_link_corrupts_packet(dut):
         "negative control did not fail: an over-advancing link produced the "
         "reference packet anyway"
     )
-    assert rx.bytes != data_bytes, (
+    assert bytes(rx.bytes) != data_bytes, (
         "negative control did not fail: the loopback still delivered the "
         "reference byte stream"
     )
@@ -739,4 +693,4 @@ async def test_negative_control_over_advancing_link_corrupts_packet(dut):
     await _start_test(dut)
     data_bytes, observed, rx2 = await _run_loopback(dut, scenario)
     assert observed == scenario.states
-    assert rx2.bytes == data_bytes
+    assert bytes(rx2.bytes) == data_bytes
