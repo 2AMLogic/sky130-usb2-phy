@@ -9,7 +9,7 @@
       "members": [
         {
           "path": "README.md",
-          "sha256": "sha256:97f815cec72acfc43fc5088044f9498f4380fac4a5b2d2353e69afebe47ae035"
+          "sha256": "sha256:06d2ecdd6d3da2acb2880bcfeebc248262fadb12dbcf28341157516c4d1ed4ca"
         }
       ]
     },
@@ -78,7 +78,7 @@
         },
         {
           "path": "signoff/toolchain.json",
-          "sha256": "sha256:498fae7106a7c692fa3a368ea67f8c271112c48905d5d2b08735d4e6dde0f7e6"
+          "sha256": "sha256:e5d6e0fee92f9dd13fc235383d9e0626bbadd35b8d930889aa6e76b120994583"
         }
       ]
     }
