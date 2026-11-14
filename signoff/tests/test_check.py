@@ -75,6 +75,9 @@ def tree(tmp_path, monkeypatch):
     monkeypatch.setattr(check, "REPO_ROOT", tmp_path)
     monkeypatch.setattr(check, "SIGNOFF_DIR", tmp_path / "signoff")
     monkeypatch.setattr(check, "MANIFEST", tmp_path / "signoff" / "block-manifest.json")
+    # check_generic_envelopes globs this constant (derived from the real root
+    # at import time); main()-level tests need it pointed at the copy too.
+    monkeypatch.setattr(check, "EVIDENCE_DIR", tmp_path / "signoff" / "evidence")
     return check, tmp_path
 
 
@@ -300,3 +303,51 @@ def test_a_missing_leaf_citation_fails_the_native_gate(tree, capsys):
     manifest["evidence"]["3.analog"].pop()
     assert not check.check_native_citations(manifest)
     assert "se_receiver_dp" in capsys.readouterr().err
+
+
+# --- --pins-only: the grader-free half of the gate
+
+
+def test_pins_only_passes_without_klt_on_path(tree, monkeypatch, capsys):
+    """--pins-only is genuinely toolchain-free: with nothing findable on
+    PATH it must still run the re-hash checks and pass a fresh tree, i.e.
+    it must not trip the main() klt-on-PATH guard."""
+    check, _ = tree
+    monkeypatch.setattr(check.shutil, "which", lambda name: None)
+    assert check.main(["--pins-only"]) == 0
+    assert "pins-only" in capsys.readouterr().out
+
+
+def test_pins_only_fails_on_a_mutated_pinned_member_and_prints_the_recipe(
+    tree, capsys
+):
+    """One appended byte to README.md reds --pins-only, names the stale
+    member and prints the grader-free refresh recipe -- no second lookup."""
+    check, root = tree
+    with (root / "README.md").open("a") as handle:
+        handle.write("\n")
+    assert check.main(["--pins-only"]) == 1
+    err = capsys.readouterr().err
+    assert "README.md" in err
+    assert "uv venv /tmp/signoff-grader" in err
+    assert "--regen" in err
+
+
+def test_pins_only_is_not_readme_special_cased(tree, capsys):
+    """Any pinned member moving fails the mode, not just README.md (here:
+    signoff/toolchain.json, an item-10 inventory member)."""
+    check, root = tree
+    with (root / "signoff" / "toolchain.json").open("a") as handle:
+        handle.write("\n")
+    assert check.main(["--pins-only"]) == 1
+    assert "signoff/toolchain.json" in capsys.readouterr().err
+
+
+def test_pins_only_and_regen_are_mutually_exclusive(tree, capsys):
+    """--pins-only --regen must exit non-zero with an explicit error, never
+    silently preferring one flag."""
+    check, _ = tree
+    with pytest.raises(SystemExit) as excinfo:
+        check.main(["--pins-only", "--regen"])
+    assert excinfo.value.code != 0
+    assert "mutually exclusive" in capsys.readouterr().err
