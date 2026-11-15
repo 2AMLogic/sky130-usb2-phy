@@ -16,19 +16,6 @@
       "media_type": "text/plain"
     },
     {
-      "sha256": "b256406be243cfc3b95e8a1afc23446fc93951d449143363d25f8d5f2ab17bc2",
-      "size": 1642,
-      "kind": "evidence",
-      "producer": {
-        "tool": "klt",
-        "version": "0.9.2.dev1029+g76f47afa48f1",
-        "loom.repo": "2AMLogic/sky130-usb2-phy",
-        "commit": "f76df6388866802fcf9796555b6a1b5feb4208a7"
-      },
-      "uri": "artifact:evidence/2AMLogic__sky130-usb2-phy/b2/b256406be243cfc3b95e8a1afc23446fc93951d449143363d25f8d5f2ab17bc2",
-      "name": "diff-receiver-pex/20261115-051001-f76df63/diff_receiver_pex_tb.spice"
-    },
-    {
       "sha256": "ece059b506393f2b325440344247f723a68d49f0794922bde397710deaf79007",
       "size": 2531,
       "kind": "evidence",
