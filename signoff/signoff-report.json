@@ -574,7 +574,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:400272f9393a04067e86dc2c50db0e2b5e3fdb73b82b80d1d374e8d61775027b",
+        "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -583,7 +583,7 @@
             "path": "signoff/inventory/item-9-testbenches.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:400272f9393a04067e86dc2c50db0e2b5e3fdb73b82b80d1d374e8d61775027b",
+          "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
           "input_verified": true,
           "summary": "T1 item 9: every cocotb suite in verification/ and every analog testbench under sim/*/testbench/ is committed, with its cold-start invocation and the pinned PDK revision. The audited artifact is signoff/inventory/item-9-testbenches.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-9-testbenches.json"
@@ -605,7 +605,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:400272f9393a04067e86dc2c50db0e2b5e3fdb73b82b80d1d374e8d61775027b",
+        "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -614,7 +614,7 @@
             "path": "signoff/inventory/item-9-testbenches.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:400272f9393a04067e86dc2c50db0e2b5e3fdb73b82b80d1d374e8d61775027b",
+          "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
           "input_verified": true,
           "summary": "T1 item 9: every cocotb suite in verification/ and every analog testbench under sim/*/testbench/ is committed, with its cold-start invocation and the pinned PDK revision. The audited artifact is signoff/inventory/item-9-testbenches.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-9-testbenches.json"
@@ -636,7 +636,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:022554a4b8e51cdb221c5c2d275f353934c94607e3d347b2d3f50b61445cd979",
+        "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -645,7 +645,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:022554a4b8e51cdb221c5c2d275f353934c94607e3d347b2d3f50b61445cd979",
+          "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
@@ -667,7 +667,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:022554a4b8e51cdb221c5c2d275f353934c94607e3d347b2d3f50b61445cd979",
+        "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -676,7 +676,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:022554a4b8e51cdb221c5c2d275f353934c94607e3d347b2d3f50b61445cd979",
+          "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
