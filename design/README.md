@@ -537,8 +537,10 @@ device was re-derived for sky130. Nothing from the gf180 evidence (record
 `20260817-203552-a408cb6`, four FAIL rows) is a sky130 claim; the four rows
 were re-measured.
 
-**Status: schematic level only** (no layout, no parasitics, no mismatch, no
-passive-process spread, no level shifter). Evidence: "What the grids show"
+**Status: schematic level only** (no layout, no parasitics, no passive-process
+spread, no level shifter; local device mismatch is evidenced only at the `sf40v36`
+Monte Carlo corner so far — recorded as FAIL, see `sim/driver-matching-mismatch/records/`;
+`tt`, `fs100v36`, `fs100v30` not yet run). Evidence: "What the grids show"
 below. Regenerate the netlist with `design/export_netlist.sh
 differential_driver`; two consecutive exports on that host are byte-identical to the
 committed `design/netlist/differential_driver.spice` (xschem 3.4.4, installed
@@ -689,7 +691,9 @@ mismatch`, version check `warn`; the same skew as #111). Each record's
 Margins are thin in two places: crossover 6.7 mV below 2.0 V at the
 fast-P/slow-N, hot, high-supply corner, and matching 0.9279 at `fs_100c_3.00v`
 (bound 0.9). Mismatch and passive spread, which are not in the grid, could
-move both; the PASS is for the deterministic grid only. The four rows that
+move both — and mismatch does: the `sf40v36` Monte Carlo record fails all four
+rise/fall ratios against the 1.1 bound; the PASS is for the deterministic grid
+only. The four rows that
 failed in gf180 pass here; that is a sky130 measurement, not an inference from
 gf180.
 
@@ -720,8 +724,10 @@ release at 209.9-226.4 ns after the 200 ns edge, enabled current 33-59 mA
 to 3.0 mA (`ff_-40c_3.60v`) during the transition; static supply current
 150.8-254.7 uA (bias network).
 
-**Limits of these PASSes.** (1) Schematic level: no mismatch / Monte Carlo, no
-extracted parasitics, no layout, no pad or ESD. (2) The grid does not
+**Limits of these PASSes.** (1) Schematic level: mismatch / Monte Carlo only
+partially evidenced — the `sf40v36` corner is recorded as FAIL (mismatch moves
+the rise/fall ratios out of 0.9-1.1); `tt`, `fs100v36`, `fs100v30` are declared
+but not yet run. No extracted parasitics, no layout, no pad or ESD. (2) The grid does not
 exercise resistor or MIM capacitor process spread (item 2 above); both are in
 the edge rate and the output resistance. (3) The load for VOH/VOL awaits DR-0004
 ratification. (4) The harness job ran on a fleet runner older than the client.
