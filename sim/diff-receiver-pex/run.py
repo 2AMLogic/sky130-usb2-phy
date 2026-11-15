@@ -15,7 +15,10 @@ The equivalence gate compares every delta[] row's schematic_value with the commi
 record's report (sim/diff-receiver-sensitivity/corners/20261020-172719-ca4a45a/
 report.json) at relative deviation <= 1e-6 and exits 3 on any mismatch: the deck
 restructure (in-deck DUT .include, pin order shim) is trusted only while the
-schematic leg reproduces the committed numbers.
+schematic leg reproduces the committed numbers. The gate also fails (exit 3)
+unless the envelope's status is `pass` and its delta carries exactly
+corners x measurements distinct rows: absent, partial or duplicated data must
+fail the run, not pass it vacuously.
 """
 
 import argparse
@@ -62,10 +65,33 @@ def check_equivalence(envelope: dict) -> tuple[bool, list[dict]]:
     for corner in ref["corners"]:
         for m in corner["measurements"]:
             committed[(corner["corner_id"], m["name"])] = m.get("value")
+    tb = json.loads(TB.read_text())
+    expected_rows = len(tb["corners"]["units"]) * len(tb["measurements"])
     rows = []
     ok = True
-    for row in envelope.get("delta", []):
+    if envelope.get("status") != "pass":
+        ok = False
+        rows.append({"corner_id": "-", "measurement": "(envelope)",
+                     "committed": None, "schematic": None,
+                     "verdict": f"envelope status {envelope.get('status')!r} != 'pass'"})
+    delta = envelope.get("delta") or []
+    if len(delta) != expected_rows:
+        ok = False
+        rows.append({"corner_id": "-", "measurement": "(envelope)",
+                     "committed": None, "schematic": None,
+                     "verdict": f"delta has {len(delta)} rows, expected {expected_rows} "
+                                "(corners x measurements from testbench/tb.json)"})
+    seen = set()
+    for row in delta:
         key = (row["corner_id"], row["spec_row"])
+        if key in seen:
+            ok = False
+            rows.append({"corner_id": row["corner_id"], "measurement": row["spec_row"],
+                         "committed": committed.get(key),
+                         "schematic": row.get("schematic_value"),
+                         "verdict": "duplicate delta row"})
+            continue
+        seen.add(key)
         want = committed.get(key)
         got = row.get("schematic_value")
         if want is None:
