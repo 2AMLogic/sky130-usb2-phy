@@ -55,6 +55,9 @@ from check_records import (  # noqa: E402  (path set above on purpose)
     sha256_file,
 )
 
+sys.path.insert(0, str(REPO_ROOT / "sim" / "harness"))
+import pdk_pin  # noqa: E402  (path set above on purpose; the shared pinned-PDK search, #304)
+
 RECORD_SCHEMA = "usb2phy.flow.record/1"
 EXPERIMENT = "smoke-utmi_stub"
 
@@ -127,23 +130,9 @@ def run_klt(
     return envelope
 
 
-PDK_PIN_FILE = REPO_ROOT / "sim" / "corners.json"
-
-
 def pinned_open_pdks_commit() -> str:
-    """The open_pdks revision this repo pins (single source: sim/corners.json)."""
-    return json.loads(PDK_PIN_FILE.read_text())["pdk"]["open_pdks_commit"]
-
-
-def tree_open_pdks_commit(root: str, pdk: str) -> str:
-    """The open_pdks revision in `<root>/<pdk>/SOURCES`, or "unknown" (never matches the pin)."""
-    sources = Path(root) / pdk / "SOURCES"
-    if sources.is_file():
-        for line in sources.read_text().splitlines():
-            parts = line.split()
-            if len(parts) >= 2 and parts[0] == "open_pdks":
-                return parts[1]
-    return "unknown"
+    """The open_pdks revision this repo pins (single source: sim/corners.json; shared read: `pdk_pin`)."""
+    return pdk_pin.pinned_open_pdks_commit()
 
 
 def resolve_pdk_root(env: dict[str, str]) -> str | None:
@@ -183,13 +172,9 @@ def resolve_pdk_root(env: dict[str, str]) -> str | None:
             log("    (workaround for klayout-tools#1868 -- see flow/README.md)")
     if not root:
         return None
-    pin, found = pinned_open_pdks_commit(), tree_open_pdks_commit(root, pdk)
-    if found != pin:
-        raise StageError(
-            f"PDK {pdk} under {root} is open_pdks {found}, but this repo pins open_pdks {pin} "
-            "(sim/corners.json); install the pinned revision with ciel under ~/.ciel or point "
-            "PDK_ROOT at it -- see docs/environment-setup.md"
-        )
+    # The shared revision check (sim/harness/pdk_pin.py): refuses a tree not at the sim pin,
+    # naming both revisions.
+    pdk_pin.check_pin(Path(root) / pdk, name=pdk, error=StageError)
     return root
 
 

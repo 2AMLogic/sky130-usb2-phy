@@ -16,7 +16,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import HARNESS_VERSION, evidence_store as es, matrix as mx, results as rs
+from . import HARNESS_VERSION, evidence_store as es, matrix as mx, pdk_pin, results as rs
 from .integrity import sha256_bytes, sha256_file  # noqa: F401  (re-exported)
 from .evidence_store import StoreUnavailable  # noqa: F401  (re-exported for the CLI)
 
@@ -28,34 +28,15 @@ class RunError(RuntimeError):
     pass
 
 
-def pdk_roots() -> list[Path]:
-    """PDK search roots in order: explicit `$PDK_ROOT`, then ciel's `~/.ciel`, then system paths."""
-    import os
-
-    roots = []
-    if os.environ.get("PDK_ROOT"):
-        roots.append(Path(os.environ["PDK_ROOT"]))
-    roots += [Path("~/.ciel").expanduser(), Path("/usr/share/pdk"), Path("/usr/local/share/pdk"),
-              Path("/opt/pdk")]
-    return roots
-
-
 def find_pdk_dir(name: str) -> Path | None:
-    for root in pdk_roots():
-        if (root / name / "libs.tech" / "ngspice").is_dir():
-            return root / name
-    return None
+    """The installed `<name>` tree with an ngspice library dir, or None (shared search: `pdk_pin`)."""
+    hit = pdk_pin.search_tree(name, pdk_pin.ngspice_tree)
+    return hit[1] if hit else None
 
 
 def pdk_open_pdks_commit(pdk: Path) -> str:
-    """The open_pdks revision in the tree's `SOURCES` file, or "unknown" (which never matches a pin)."""
-    sources = pdk / "SOURCES"
-    if sources.is_file():
-        for line in sources.read_text().splitlines():
-            parts = line.split()
-            if len(parts) >= 2 and parts[0] == "open_pdks":
-                return parts[1]
-    return "unknown"
+    """The open_pdks revision in the tree's `SOURCES` file, or "unknown" (shared parse: `pdk_pin`)."""
+    return pdk_pin.open_pdks_commit(pdk)
 
 
 def lib_sections(lib_path: Path) -> set[str]:
@@ -104,14 +85,10 @@ def section_evidence(lib: Path, sections) -> tuple[dict, list[str]]:
 
 def check_env(matrix: mx.Matrix) -> dict:
     """Confirm, on this host, the PDK, model library and corner sections."""
-    pdk = find_pdk_dir(matrix.pdk["name"])
-    if pdk is None:
-        raise RunError(f"{matrix.pdk['name']} not found (set PDK_ROOT or install it under ~/.ciel: see docs/environment-setup.md)")
-    commit = pdk_open_pdks_commit(pdk)
-    if commit != matrix.pdk["open_pdks_commit"]:
-        raise RunError(f"PDK at {pdk} is open_pdks {commit}, but the pin in sim/corners.json is "
-                       f"open_pdks {matrix.pdk['open_pdks_commit']}; install the pinned revision under "
-                       "~/.ciel or point PDK_ROOT at it")
+    _, pdk, _, _ = pdk_pin.resolve_pinned_tree(
+        matrix.pdk["name"], pdk_pin.ngspice_tree,
+        pin=matrix.pdk["open_pdks_commit"], error=RunError,
+    )
     lib = pdk / matrix.pdk["lib"]
     if not lib.is_file():
         raise RunError(f"model library missing: {lib}")

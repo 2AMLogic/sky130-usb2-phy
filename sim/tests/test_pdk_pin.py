@@ -4,11 +4,14 @@ Fake PDK trees in tmp dirs stand in for the installed ones; nothing needs klt, n
 """
 
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
-from harness import matrix as mx, runner
+from harness import matrix as mx, pdk_pin, runner
 
 SIM = Path(__file__).resolve().parents[1]
 NEW = "f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
@@ -94,3 +97,50 @@ def test_known_pins_by_record_date():
     # a mixed identity (one field from each pin) or an unknown one is rejected
     assert mx.pin_problem({"open_pdks_commit": NEW, "lib_sha256": "0" * 64}, "20261020-000000-abcdef0")
     assert mx.pin_problem({"open_pdks_commit": "deadbeef", "lib_sha256": LIB_SHA}, "20261010-072418-0d51889")
+
+
+# ---- the shared pinned-PDK module (`pdk_pin`) and the netlist-export shim over it
+
+SHIM = SIM.parent / "sim" / "harness" / "pdk_pin.py"
+
+
+def add_xschemrc(pdk: Path) -> Path:
+    rc = pdk / "libs.tech" / "xschem" / "xschemrc"
+    rc.parent.mkdir(parents=True)
+    rc.write_text("# xschemrc\n")
+    return rc
+
+
+def run_shim(env_overrides: dict[str, str]) -> subprocess.CompletedProcess:
+    """Run the shim with the ambient PDK_ROOT scrubbed, then `env_overrides` applied."""
+    env = {k: v for k, v in os.environ.items() if k != "PDK_ROOT"}
+    env.update(env_overrides)
+    return subprocess.run([sys.executable, str(SHIM)], capture_output=True, text=True, env=env)
+
+
+def test_xschem_marker_accepts_only_a_tree_with_the_rcfile(home):
+    pdk = fake_tree(home / ".ciel", NEW)
+    assert pdk_pin.xschem_rcfile(pdk) is None
+    rc = add_xschemrc(pdk)
+    assert pdk_pin.xschem_rcfile(pdk) == rc
+
+
+def test_netlist_shim_prints_the_pinned_xschemrc(home):
+    rc = add_xschemrc(fake_tree(home / ".ciel", NEW))
+    out = run_shim({"HOME": str(home)})
+    assert out.returncode == 0
+    assert out.stdout.strip() == str(rc)
+
+
+def test_netlist_shim_refuses_a_stale_pdk_root_naming_both_revisions(home, tmp_path):
+    stale = tmp_path / "stale"
+    add_xschemrc(fake_tree(stale, OLD))
+    out = run_shim({"HOME": str(home), "PDK_ROOT": str(stale)})
+    assert out.returncode != 0
+    assert OLD in out.stderr and NEW in out.stderr
+
+
+def test_netlist_shim_fails_when_no_tree_exists(home):
+    out = run_shim({"HOME": str(home)})
+    assert out.returncode != 0
+    assert "sky130A not found" in out.stderr
