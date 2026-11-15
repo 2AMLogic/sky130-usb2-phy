@@ -19,11 +19,13 @@ limitations recorded in the characterization report; real-UTMI place-and-route
 remains pending. The FS line driver, differential and single-ended receivers,
 and trimmed D+ pull-up have schematic-level sky130 simulation evidence, and
 each of those five leaves now has committed GDS with a clean `klt drc` record,
-a matching `klt lvs` record and a `clean_partial` `klt erc` record. No leaf has
-parasitic extraction or post-layout re-simulation, so every circuit result in
-this repo is schematic-level. See the scope note below for the coverage limits,
-and [`signoff/README.md`](signoff/README.md) for the machine-graded T1 verdict
-(9 of 22 rows `met` as read from `signoff/signoff-report.json` on 2026-11-14).
+a matching `klt lvs` record and a `clean_partial` `klt erc` record — leaf-level
+only, and the graded T1 rows for those three checks are still `unmet`. No leaf
+has parasitic extraction or post-layout re-simulation, so every circuit result
+in this repo is schematic-level. See the scope note below for the coverage
+limits, and [`signoff/README.md`](signoff/README.md) for the machine-graded T1
+verdict (9 of 22 rows `met` as read from `signoff/signoff-report.json` on
+2026-11-14).
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -51,7 +53,23 @@ pull-up, and a digital UTMI layer.
   [`docs/porting-plan.md`](docs/porting-plan.md). All four block ports are
   merged, with schematic-level evidence over the 45-corner MOS PVT grid;
   differential sensitivity covers three common-mode points (135 combinations).
-  Driver signal-quality and static results pass all 45 corners. The D+ pull-up
+  Driver signal-quality and static results pass all 45 corners. All five
+  leaves now have committed layout: the GDS streams and their generators are
+  pinned by hash (T1 item 2.analog reads `pass`), and each leaf's latest
+  frozen record reads DRC `clean`, LVS `match` and supply-ERC `clean_partial`.
+  Those three checks are **not** signed off: T1 items 3, 4 and 11 (analog)
+  all grade `unmet` in the committed report. Two separate reasons, and only
+  one of them is about the design. Items 3 and 4 were refused for the
+  grader's shape — one native envelope per item, and five leaves are not one
+  partition
+  ([klayout-tools#5044](https://github.com/2AMLogic/klayout-tools/issues/5044),
+  fixed upstream 2026-11-06 but not yet in a released wheel, so the pinned
+  grader still renders `invalid_evidence`). Behind that, item 4 has a real
+  blocker — `runset_unrecognised_device`: the sky130 runset declares device
+  classes no layout device uses — and item 11 is gated on item 4. The reports
+  also disclose their own gaps: LVS `power_connectivity` is `unchecked`, ERC
+  antenna levels are `pass_partial`, and each DRC report lists layers present
+  in the stream with no rules. The D+ pull-up
   additionally passes 225 MOS/resistor/capacitor corner combinations, selecting
   a trim code per point. The receivers also pass the supplemental 225-point
   global resistor/capacitor-set sweep (675 point/common-mode combinations for

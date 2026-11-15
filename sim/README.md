@@ -298,6 +298,27 @@ Choices worth knowing:
 - `--from-work <dir>` grades and records a batch-set that already finished (for example when the
   harness stopped after the fleet did its work) without resubmitting; it byte-compares the requests and
   decks with what `mc.json` generates and the record says it was collected that way.
+- `--corner <id>` (repeatable) runs and **records** only the corners it names, so a campaign too big
+  for one session lands one corner per record (`--corner tt` on `driver-matching-mismatch` is 4
+  requests instead of 16). This is sound because `mc.json`'s statistical convention already makes each
+  (receiver, corner) its own population with nothing pooled across corners: a corner-scoped record is
+  a complete claim about the corners it covers and says nothing about the rest. What makes that
+  readable rather than a loophole:
+  - the record declares its coverage (`evidence.json` `corners`), and **Corners run** says "covers N
+    of the M corner(s) mc.json declares", naming the corners it makes no claim about, so a partial
+    record cannot be skim-read as a full one;
+  - `mismatch_lint` derives campaign and yield completeness from that declaration instead of the full
+    matrix, and checks the declaration against the frozen `mc.json` — an undeclared corner id, an
+    altered corner definition under a declared id, a duplicate, and a **missing or empty** declaration
+    are all rejected, so the lint cannot be satisfied by declaring less coverage than was run;
+  - coverage is only the corner axis. Row coverage for sign-off is still decided by the manifest
+    `spec_rows` citations (`signoff/README.md` item 6), so a partial record cannot flip a row to `met`.
+  - an unknown id is an error naming the declared ids, and a repeated id selects once.
+
+  Note `run_corners.py --corner` (the PVT runner) means something different and has the opposite
+  recordability: there it is a `--no-write` debug subset of *process sections*. Here it selects by
+  **corner id** from `mc.json` and is recordable. `--only` is the `run_mismatch.py` flag that stays
+  unrecordable; it narrows campaign stems *within* the selected corners and never widens them.
 
 The D+ and D- receivers are identical netlists and both campaigns use seed 166, so their sample sets are
 numerically identical: one population counted for two receivers, not two independent draws (the record says so).
@@ -346,8 +367,17 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   0.9278). Two receivers because no single deterministic control degrades both rows while keeping every
   measurement measurable (a 330 ohm load moves the ratios to about 1.5 but leaves the crossovers at about 1.44 V; a
   180 ohm load moves both crossovers to 1.26 V but the 90 % level is never reached). Sizing: a 100-sample shard of
-  this transient took about an hour on the fleet, so `mc.json` shards the nominal campaigns 8 ways. Reproduce with
-  `python3 sim/run_mismatch.py driver-matching-mismatch --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3`.
+  this transient took about an hour on the fleet, so `mc.json` shards the nominal campaigns 8 ways. All 16 requests
+  at once need more fleet time than one session holds, so run it **one corner per record** with `--corner`
+  (each run is 4 requests; the record names the corners it covers and claims nothing about the others):
+
+  ```bash
+  python3 sim/run_mismatch.py driver-matching-mismatch --corner tt \
+      --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
+  # then fs100v36, sf40v36, fs100v30 the same way (#223's children)
+  ```
+
+  Dropping `--corner` runs and records all four corners in one pass, as the other experiments do.
 
 ## dplus-pullup-tolerance
 
