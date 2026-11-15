@@ -218,6 +218,44 @@ against client 0.7.0 (its provenance line shows the client; `report.json` has
 returned finite `.meas` values in the raw logs, and a re-run is due once the
 runner image is updated (klayout-tools #2851, #2948, #2917, under Known limits).
 
+## diff-receiver-pex
+
+Post-layout (parasitic-extraction) evidence for the differential receiver, and
+the repo's first `klt pex` bench (#281). One `klt pex` call runs **two legs**
+from the same request (`testbench/tb.json`, the sensitivity bench's
+measurements, analysis and checks): a schematic leg and an extracted leg of the
+committed leaf GDS (`layout/analog/differential_receiver/
+differential_receiver.gds`). The DUT is reached through exactly one in-deck
+`.include` in `testbench/diff_receiver_pex_tb.spice` -- `klt pex` requires the
+deck itself to carry the DUT reference and refuses a request-level `include`
+array. On the schematic leg that `.include` names
+`testbench/differential_receiver_pex_dut.spice`, a shim equal to
+`design/netlist/differential_receiver.spice` except that the `.subckt` pin
+order is reordered to the extracted header's, so one positional instance line
+serves both legs. Electrical identity is not assumed: `run.py`'s equivalence
+gate requires the run's schematic leg to reproduce the committed 45-point
+sensitivity report
+(`diff-receiver-sensitivity/corners/20261020-172719-ca4a45a/report.json`) at
+relative deviation <= 1e-6, an envelope status of `pass`, and a delta of
+exactly corners x measurements distinct rows.
+
+Cold start:
+
+```bash
+python3 sim/diff-receiver-pex/run.py --dry-run    # pre-flight, no extraction
+python3 sim/diff-receiver-pex/run.py              # batch run, equivalence gate, staging
+```
+
+The default grid is a deliberate two-corner subset (`tt_27c_3.30v` plus
+`sf_100c_3.00v`, the binding corner of the committed 45-point record), not the
+frozen matrix: a subset cannot be committed as `corners.json`
+(`sim/harness/matrix.py` approves only `pvt45-mos` and `pvt225-mos-rc`), so raw
+evidence lives in the fleet artifact store (manifest under
+`manifests/artifacts/`, fetch with `klt artifact get`; no `corners/` directory
+is committed), staged with `python3 sim/run_store_evidence.py
+diff-receiver-pex <stage-dir>` into `campaigns/`, with records under
+`diff-receiver-pex/records/`.
+
 ## se-receiver-dp-thresholds, se-receiver-dm-thresholds
 
 The sky130 single-ended D+ / D- receivers (`design/se_receiver_dp.sch`,
