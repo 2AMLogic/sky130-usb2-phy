@@ -539,8 +539,10 @@ were re-measured.
 
 **Status: schematic level only** (no layout, no parasitics, no level shifter,
 no passive-process spread; local device mismatch is Monte-Carlo-recorded at
-`tt` only — `sim/driver-matching-mismatch/records/20261115-040553-f76df63.md`,
-the other corners outstanding). Evidence: "What the grids show"
+`tt` — `sim/driver-matching-mismatch/records/20261115-040553-f76df63.md` —
+and at `fs100v30`, where the matching row FAILs under mismatch —
+`sim/driver-matching-mismatch/records/20261115-141134-38bdad2.md`; corners
+`fs100v36` and `sf40v36` outstanding). Evidence: "What the grids show"
 below. Regenerate the netlist with `design/export_netlist.sh
 differential_driver`; two consecutive exports on that host are byte-identical to the
 committed `design/netlist/differential_driver.spice` (xschem 3.4.4, installed
@@ -693,8 +695,12 @@ fast-P/slow-N, hot, high-supply corner, and matching 0.9279 at `fs_100c_3.00v`
 (bound 0.9). Mismatch and passive spread, which are not in the grid, could
 move both; the PASS is for the deterministic grid only. Mismatch is now
 measured at `tt` (six graded rows, all PASS:
-`sim/driver-matching-mismatch/records/20261115-040553-f76df63.md`); the
-thin-margin corners themselves (`fs100v36`, `sf40v36`, `fs100v30`) are still
+`sim/driver-matching-mismatch/records/20261115-040553-f76df63.md`) and at
+`fs100v30`, the thinnest low-side matching margin: the four ratios' mismatch
+tails cross the 0.9 bound there (3-4 of 400 samples per ratio, worst 0.8755;
+crossover still PASSes —
+`sim/driver-matching-mismatch/records/20261115-141134-38bdad2.md`); the
+thin-margin corners `fs100v36` and `sf40v36` are still
 unrecorded, and passive spread is unsimulated. The four rows that
 failed in gf180 pass here; that is a sky130 measurement, not an inference from
 gf180.
@@ -727,9 +733,11 @@ to 3.0 mA (`ff_-40c_3.60v`) during the transition; static supply current
 150.8-254.7 uA (bias network).
 
 **Limits of these PASSes.** (1) Schematic level: no extracted parasitics, no
-layout, no pad or ESD; mismatch / Monte Carlo recorded at `tt` only
-(`sim/driver-matching-mismatch/records/20261115-040553-f76df63.md`), not at
-the thin-margin corners. (2) The grid does not
+layout, no pad or ESD; mismatch / Monte Carlo recorded at `tt`
+(`sim/driver-matching-mismatch/records/20261115-040553-f76df63.md`) and at
+`fs100v30`, where the matching row FAILs under mismatch
+(`sim/driver-matching-mismatch/records/20261115-141134-38bdad2.md`), not at
+`fs100v36` / `sf40v36`. (2) The grid does not
 exercise resistor or MIM capacitor process spread (item 2 above); both are in
 the edge rate and the output resistance. (3) The load for VOH/VOL awaits DR-0004
 ratification. (4) The harness job ran on a fleet runner older than the client.
