@@ -72,7 +72,7 @@ sim/
   corners-resistor-sets.json   the supplemental 225-point resistor-set matrix (id pvt225-mos-rc)
   run_corners.py               runner (stdlib only): --list, --check-env, <experiment>
   check_records.py             toolchain-free record lint (also run by `npm run lint`)
-  harness/                     matrix.py results.py runner.py evidence_lint.py
+  harness/                     matrix.py results.py runner.py evidence_lint.py append_only.py
   tests/                       toolchain-free tests (pytest)
   <experiment-slug>/           e.g. smoke-inverter
     testbench/                 tb.json (analysis, measurements, harness bounds) + netlist body
@@ -156,7 +156,10 @@ python3 and git. It fails on:
 
 - any file under `sim/*/records/`, `netlist-snapshots/`, `corners/`, `campaigns/` that is
   modified, deleted or renamed relative to the merge base with the base ref
-  (new files are fine); an unresolvable base ref also **fails**;
+  (new files are fine); an unresolvable base ref also **fails**. That posture
+  — merge base, fail closed — lives in `harness/append_only.py`, which
+  `flow/check_records.py` calls for the digital-flow evidence too, so one rule
+  has one implementation (issue #276);
 - missing record fields, an id/filename mismatch, a snapshot or evidence
   directory no record cites, a missing or hash-mismatched referenced file;
 - a `PASS` record whose raw envelope does not re-derive as a complete grid:

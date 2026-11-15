@@ -52,6 +52,16 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 FLOW_DIR = REPO_ROOT / "flow"
 
+# The append-only base-ref rule has one implementation for every evidence tree
+# in this repo (issue #276); `sim/harness/` is where this repo keeps the shared
+# evidence machinery, as scripts/check_artifact_manifests.py does too.
+# Appended, never inserted at the front: `sim/` has a `check_records.py` of its
+# own, and putting it ahead of this file's own directory would shadow this
+# module for anything that imports it by name.
+sys.path.append(str(REPO_ROOT / "sim"))
+
+from harness import append_only as ao  # noqa: E402
+
 RECORD_SCHEMA = "usb2phy.flow.record/1"
 
 # OpenSTA reports 1e+39 when a design has no constrained timing path at all.
@@ -521,101 +531,65 @@ def check_append_only_manifest(
         )
 
 
-def git_available(base_ref: str) -> bool:
-    try:
-        subprocess.run(
-            ["git", "-C", str(REPO_ROOT), "rev-parse", "--verify", "--quiet", base_ref],
-            check=True,
-            capture_output=True,
-        )
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return False
-    return True
+def check_append_only_base_ref(
+    flow_dir: Path,
+    experiments: list[str],
+    base_ref: str,
+    findings: Findings,
+    repo_root: Path = REPO_ROOT,
+) -> str:
+    """Layer 2: the real append-only enforcement, compared against a base ref.
 
+    The manifest alone (layer 1) cannot stop an edit that also rewrites the
+    manifest line, because both are writable from the branch under review. The
+    base ref is not, so comparing against it can -- and that comparison is
+    `sim/harness/append_only.py`, the one implementation both of this repo's
+    evidence lints call (issue #276). Two consequences worth stating, because
+    this layer used to get both wrong:
 
-def git_show(base_ref: str, rel_path: str) -> bytes | None:
-    result = subprocess.run(
-        ["git", "-C", str(REPO_ROOT), "show", f"{base_ref}:{rel_path}"],
-        capture_output=True,
-    )
-    if result.returncode != 0:
-        return None
-    return result.stdout
+    * It diffs `merge-base(base_ref, HEAD)`, so a worktree merely *behind* the
+      base ref is not accused of deleting the records that landed after its
+      branch point.
+    * An unresolvable base ref is a finding, not a skip. `--no-git` is the only
+      way to opt out, and it says so in the report.
 
-
-def git_ls_records(base_ref: str, rel_dir: str) -> list[str]:
-    result = subprocess.run(
-        ["git", "-C", str(REPO_ROOT), "ls-tree", "-r", "--name-only", base_ref, rel_dir],
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        return []
-    return [line for line in result.stdout.splitlines() if line.endswith(".md")]
-
-
-def check_append_only_git(records_dir: Path, base_ref: str, findings: Findings) -> str:
-    """The real append-only enforcement: compare against a base ref.
-
-    The manifest alone cannot stop an edit that also rewrites the manifest
-    line. Comparing every record blob that exists in the base ref against the
-    working tree can, because the base ref is not writable from this PR.
+    Returns a one-line status for the report; findings go to `findings`.
     """
-    if not git_available(base_ref):
-        return f"skipped (base ref {base_ref!r} not available in this checkout)"
+    if not flow_dir.is_relative_to(repo_root):
+        findings.add(
+            "append-only",
+            f"--flow-dir {flow_dir} is outside the git repo at {repo_root}, so the base-ref "
+            "comparison cannot run -- pass --no-git if that is deliberate",
+        )
+        return "not run (flow dir is outside the repo)"
 
-    rel_dir = records_dir.relative_to(REPO_ROOT).as_posix()
-    base_records = git_ls_records(base_ref, rel_dir)
-    for rel_path in base_records:
-        base_blob = git_show(base_ref, rel_path)
-        if base_blob is None:
-            continue
-        live = REPO_ROOT / rel_path
-        if not live.exists():
-            findings.add(
-                "append-only",
-                f"{rel_path} exists in {base_ref} but has been deleted -- "
-                "records are append-only",
-            )
-            continue
-        if live.read_bytes() != base_blob:
-            findings.add(
-                "append-only",
-                f"{rel_path} differs from {base_ref} -- an existing record was edited; "
-                "mint a new record with `supersedes` instead",
-            )
+    merge_base, problems = ao.resolve_merge_base(repo_root, base_ref)
+    if merge_base is None:
+        for problem in problems:
+            findings.add("append-only", problem)
+        return "not run (the base ref could not be resolved -- see the findings)"
 
-    # The manifest itself is append-only in the weaker sense that lines may be
-    # added but never removed or rewritten.
-    rel_manifest = (records_dir / "MANIFEST.sha256").relative_to(REPO_ROOT).as_posix()
-    base_manifest = git_show(base_ref, rel_manifest)
-    if base_manifest is not None:
-        live_manifest = records_dir / "MANIFEST.sha256"
-        base_entries = {}
-        for line in base_manifest.decode("utf-8").splitlines():
-            parts = line.split()
-            if len(parts) == 2 and not line.startswith("#"):
-                base_entries[parts[1]] = parts[0]
-        live_entries = {}
-        if live_manifest.exists():
-            for line in live_manifest.read_text(encoding="utf-8").splitlines():
-                parts = line.split()
-                if len(parts) == 2 and not line.startswith("#"):
-                    live_entries[parts[1]] = parts[0]
-        for name, digest in sorted(base_entries.items()):
-            if name not in live_entries:
-                findings.add(
-                    "append-only",
-                    f"MANIFEST.sha256: entry for {name} present in {base_ref} was removed",
-                )
-            elif live_entries[name] != digest:
-                findings.add(
-                    "append-only",
-                    f"MANIFEST.sha256: entry for {name} was rewritten "
-                    f"({digest} -> {live_entries[name]})",
-                )
+    flow_rel = flow_dir.relative_to(repo_root).as_posix()
+    record_re = re.compile(rf"^{re.escape(flow_rel)}/[^/]+/records/.*\.md$")
+    pathspec = [f"{flow_rel}/{experiment}/records" for experiment in experiments]
 
-    return f"compared {len(base_records)} record(s) against {base_ref}"
+    # Every record blob must be byte-identical; the manifest is the one file
+    # that legitimately grows, so it gets the line-level assertion instead.
+    problems = ao.check_paths_append_only(
+        repo_root, merge_base, pathspec, record_re.match, base_ref
+    )
+    for experiment in experiments:
+        problems += ao.check_manifest_append_only(
+            repo_root, merge_base, f"{flow_rel}/{experiment}/records/MANIFEST.sha256", base_ref
+        )
+
+    for problem in problems:
+        findings.add("append-only", problem)
+    return (
+        f"{len(problems)} finding(s) against merge-base({base_ref}, HEAD) = {merge_base[:7]}"
+        if problems
+        else f"clean against merge-base({base_ref}, HEAD) = {merge_base[:7]}"
+    )
 
 
 # --------------------------------------------------------------------------
@@ -1566,7 +1540,6 @@ def lint_experiment(
     experiment: str,
     committed: list[str],
     coverage: dict,
-    args,
     findings: Findings,
 ) -> int:
     """Lint one experiment's records; returns the number of records found."""
@@ -1582,11 +1555,7 @@ def lint_experiment(
         findings.add("records", f"{records_dir} contains no records")
 
     check_append_only_manifest(records_dir, record_paths, findings)
-    if args.no_git:
-        git_status = "skipped (--no-git)"
-    else:
-        git_status = check_append_only_git(records_dir, args.base_ref, findings)
-    print(f"  append-only  : {experiment}: {len(record_paths)} record(s); git {git_status}")
+    print(f"  append-only  : {experiment}: {len(record_paths)} record(s) checked against MANIFEST.sha256")
 
     parsed: list[tuple[Path, dict]] = []
     for path in record_paths:
@@ -1635,12 +1604,15 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
     parser.add_argument(
         "--base-ref",
         default="origin/main",
-        help="git ref to enforce the append-only rule against (default: origin/main)",
+        help="git ref to enforce the append-only rule against, via "
+        "merge-base(<ref>, HEAD) (default: origin/main). An unresolvable ref "
+        "fails -- the check is never silently skipped",
     )
     parser.add_argument(
         "--no-git",
         action="store_true",
-        help="skip the git-based append-only comparison (manifest check still runs)",
+        help="deliberately skip the base-ref append-only comparison, layer 2 "
+        "(layer 1, the MANIFEST.sha256 check, still runs)",
     )
     parser.add_argument(
         "--klt-check",
@@ -1675,6 +1647,14 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
         ) or ["smoke-utmi_stub"]
     print(f"  experiment   : {', '.join(experiments)}")
 
+    if args.no_git:
+        base_ref_status = "skipped (--no-git); layer 1 (MANIFEST.sha256) still runs"
+    else:
+        base_ref_status = check_append_only_base_ref(
+            flow_dir, experiments, args.base_ref, findings
+        )
+    print(f"  base ref     : {base_ref_status}")
+
     n_requests = check_requests(flow_dir, findings, experiments)
     check_corner_requests_agree(flow_dir, corners, findings)
     print(f"  requests     : {n_requests} committed request document(s) validated")
@@ -1682,7 +1662,7 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
     total_records = 0
     for experiment in experiments:
         total_records += lint_experiment(
-            flow_dir, experiment, committed, coverage, args, findings
+            flow_dir, experiment, committed, coverage, findings
         )
         if not (flow_dir / experiment / "records").is_dir():
             print()
