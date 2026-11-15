@@ -9,7 +9,7 @@
       "members": [
         {
           "path": "README.md",
-          "sha256": "sha256:10dac0ade4e017c572b132a2d2e8b4b919b2ff1c632550b7e674579babd1bc97"
+          "sha256": "sha256:3360f6ca200652b8354e887d911a0cc0534e44a753db5583c245c0e5e54203fc"
         }
       ]
     },
@@ -29,7 +29,7 @@
       "members": [
         {
           "path": ".github/workflows/ci.yml",
-          "sha256": "sha256:c0af4249b261eea165b0d52f2aed41e556d7cd0243afcfdf66beb3ceadc053d1"
+          "sha256": "sha256:2df5ccc9069edb0ee448adb8a266340e90b65a3fe07c225d2cd332a8adf8d4d5"
         }
       ]
     },
@@ -50,7 +50,7 @@
     },
     {
       "id": "ci-evidence-lint",
-      "what": "CI command: npm run lint -> flow/check_records.py + sim/check_records.py (append-only, well-formed evidence formats)",
+      "what": "CI command: npm run lint -> flow/check_records.py + sim/check_records.py via the shared sim/harness/append_only.py (append-only, well-formed evidence formats)",
       "command": "npm run lint",
       "members": [
         {
@@ -59,11 +59,15 @@
         },
         {
           "path": "flow/check_records.py",
-          "sha256": "sha256:386c78752a43ec1133829e3e85a003e7091531c514a8a6826908e13fd0803f26"
+          "sha256": "sha256:6d6fc3e3a429138ccf9664c885b349868e1d3a76bd3c2353919c76736196256c"
         },
         {
           "path": "sim/check_records.py",
           "sha256": "sha256:fe364e30f10a679567ae5a8a24ede67a6ecdb7f946993ff0cbb9ad9f5d5c0983"
+        },
+        {
+          "path": "sim/harness/append_only.py",
+          "sha256": "sha256:a6b386a86e2aa07aa952204208f12b18f6f230436b18e2bfcd88a64399ee67be"
         }
       ]
     },

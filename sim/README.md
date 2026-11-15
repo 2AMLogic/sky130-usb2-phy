@@ -72,7 +72,7 @@ sim/
   corners-resistor-sets.json   the supplemental 225-point resistor-set matrix (id pvt225-mos-rc)
   run_corners.py               runner (stdlib only): --list, --check-env, <experiment>
   check_records.py             toolchain-free record lint (also run by `npm run lint`)
-  harness/                     matrix.py results.py runner.py evidence_lint.py
+  harness/                     matrix.py results.py runner.py evidence_lint.py append_only.py
   tests/                       toolchain-free tests (pytest)
   <experiment-slug>/           e.g. smoke-inverter
     testbench/                 tb.json (analysis, measurements, harness bounds) + netlist body
@@ -156,7 +156,10 @@ python3 and git. It fails on:
 
 - any file under `sim/*/records/`, `netlist-snapshots/`, `corners/`, `campaigns/` that is
   modified, deleted or renamed relative to the merge base with the base ref
-  (new files are fine); an unresolvable base ref also **fails**;
+  (new files are fine); an unresolvable base ref also **fails**. That posture
+  — merge base, fail closed — lives in `harness/append_only.py`, which
+  `flow/check_records.py` calls for the digital-flow evidence too, so one rule
+  has one implementation (issue #276);
 - missing record fields, an id/filename mismatch, a snapshot or evidence
   directory no record cites, a missing or hash-mismatched referenced file;
 - a `PASS` record whose raw envelope does not re-derive as a complete grid:
@@ -214,6 +217,44 @@ against client 0.7.0 (its provenance line shows the client; `report.json` has
 `runner_compatibility: mismatch`, version check `warn`); all 45 corners
 returned finite `.meas` values in the raw logs, and a re-run is due once the
 runner image is updated (klayout-tools #2851, #2948, #2917, under Known limits).
+
+## diff-receiver-pex
+
+Post-layout (parasitic-extraction) evidence for the differential receiver, and
+the repo's first `klt pex` bench (#281). One `klt pex` call runs **two legs**
+from the same request (`testbench/tb.json`, the sensitivity bench's
+measurements, analysis and checks): a schematic leg and an extracted leg of the
+committed leaf GDS (`layout/analog/differential_receiver/
+differential_receiver.gds`). The DUT is reached through exactly one in-deck
+`.include` in `testbench/diff_receiver_pex_tb.spice` -- `klt pex` requires the
+deck itself to carry the DUT reference and refuses a request-level `include`
+array. On the schematic leg that `.include` names
+`testbench/differential_receiver_pex_dut.spice`, a shim equal to
+`design/netlist/differential_receiver.spice` except that the `.subckt` pin
+order is reordered to the extracted header's, so one positional instance line
+serves both legs. Electrical identity is not assumed: `run.py`'s equivalence
+gate requires the run's schematic leg to reproduce the committed 45-point
+sensitivity report
+(`diff-receiver-sensitivity/corners/20261020-172719-ca4a45a/report.json`) at
+relative deviation <= 1e-6, an envelope status of `pass`, and a delta of
+exactly corners x measurements distinct rows.
+
+Cold start:
+
+```bash
+python3 sim/diff-receiver-pex/run.py --dry-run    # pre-flight, no extraction
+python3 sim/diff-receiver-pex/run.py              # batch run, equivalence gate, staging
+```
+
+The default grid is a deliberate two-corner subset (`tt_27c_3.30v` plus
+`sf_100c_3.00v`, the binding corner of the committed 45-point record), not the
+frozen matrix: a subset cannot be committed as `corners.json`
+(`sim/harness/matrix.py` approves only `pvt45-mos` and `pvt225-mos-rc`), so raw
+evidence lives in the fleet artifact store (manifest under
+`manifests/artifacts/`, fetch with `klt artifact get`; no `corners/` directory
+is committed), staged with `python3 sim/run_store_evidence.py
+diff-receiver-pex <stage-dir>` into `campaigns/`, with records under
+`diff-receiver-pex/records/`.
 
 ## se-receiver-dp-thresholds, se-receiver-dm-thresholds
 
@@ -360,9 +401,19 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   `testbench/make_mm_netlist.py`; a test checks it is current). Result: a passing code exists in 400/400 samples at
   both corners (see the record for the numbers); the control (1 kohm in series) is `detected`. The result
   depends on the assumed A_R; global sheet-resistance spread is in the 225-point record, not here.
-- **`driver-matching-mismatch`** (declared and tested; recorded at `tt` only — record
-  `20261115-040553-f76df63`: PASS, both receivers, controls `detected`; `fs100v36`, `sf40v36` and `fs100v30`
-  are still unrecorded, one corner per record; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
+- **`driver-matching-mismatch`** (declared and tested, **partially recorded**, one corner per record:
+  `tt` is recorded as PASS — record `20261115-040553-f76df63`, both receivers, controls `detected`;
+  `sf40v36` is run and recorded as FAIL (`records/20261115-064022-f76df63.md`) —
+  mismatch puts 11-13 % of samples' rise/fall ratios above the 1.1 bound, far short of the 0.99 yield target (empirical
+  yield 0.87-0.90), and the 180 ohm crossover control lands just inside 1.3-2.0 V at this corner, so its verdict is
+  `not_detected`;
+  `fs100v36` is run and recorded as match PASS / xover FAIL (`records/20261115-172039-45b6298.md`) —
+  the mismatch tail pushes about a third of samples' crossovers past the 2.0 V bound (empirical yield
+  0.6675 / 0.655 against the 0.99 target), exactly where the 7 mV deterministic margin sits, and the
+  180 ohm crossover control cannot pull the crossover below 1.3 V at 3.6 V, so its verdict is
+  `not_detected`; the FAIL is recorded as evidence, not waived;
+  `fs100v30` not yet recorded: the run needs more fleet time
+  than one builder session; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
   the crossover voltage (1.3-2.0 V; graded because the 45-point record leaves 7 mV at fs / 100 C / 3.6 V). Corners:
   `tt`, `fs100v36` (crossover binding), `sf40v36` (high-side ratio, 1.0772) and `fs100v30` (low-side ratio,
   0.9278). Two receivers because no single deterministic control degrades both rows while keeping every

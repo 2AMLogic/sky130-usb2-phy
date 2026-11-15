@@ -9,8 +9,9 @@ open-source flow — cocotb + Icarus and Yosys/OpenROAD on the digital side,
 xschem + ngspice on the analog side.
 
 **Status: digital UTMI-side RTL implemented and cocotb-verified; the five
-analog leaves are drawn and DRC/LVS/ERC-recorded; no post-layout evidence
-anywhere, and no PHY-level assembly.**
+analog leaves are drawn and DRC/LVS/ERC-recorded; no cited post-layout
+evidence (the first `klt pex` leaf record is committed but deliberately
+uncited — see the scope note), and no PHY-level assembly.**
 The full-speed receive and transmit paths (bit sync, NRZI encode/decode,
 (de)stuffing, framing, UTMI CDC) are implemented and verified under cocotb. A
 design-anchored synthesis experiment and gate-level netlist now exist for the
@@ -20,12 +21,15 @@ remains pending. The FS line driver, differential and single-ended receivers,
 and trimmed D+ pull-up have schematic-level sky130 simulation evidence, and
 each of those five leaves now has committed GDS with a clean `klt drc` record,
 a matching `klt lvs` record and a `clean_partial` `klt erc` record — leaf-level
-only, and the graded T1 rows for those three checks are still `unmet`. No leaf
-has parasitic extraction or post-layout re-simulation, so every circuit result
-in this repo is schematic-level. See the scope note below for the coverage
+only, and the graded T1 rows for those three checks are still `unmet`. One
+leaf (the differential receiver) has the repo's first committed post-layout
+record — a `klt pex` re-run of its sensitivity bench, deliberately uncited
+(item 7 takes a single citation and one leaf is not the partition); the other
+four leaves have no parasitic extraction or post-layout re-simulation, so
+every other circuit result in this repo is schematic-level. See the scope note below for the coverage
 limits, and [`signoff/README.md`](signoff/README.md) for the machine-graded T1
 verdict (9 of 22 rows `met` as read from `signoff/signoff-report.json` on
-2026-11-14).
+2026-11-15).
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -79,7 +83,7 @@ pull-up, and a digital UTMI layer.
   of 225 points (198/225 pass, 68 problems, both sides of the bound), and the
   signal-quality sweep passes 223 of 225 points with 4 problems at the
   remaining 2 — crossover voltage above the unchanged 2.0 V maximum at `fs_ll`
-  and `fs_hl`, 100 C, 3.6 V (record `20261016-184100-59ec9c0`, run as 8 shard
+  and `fs_hl`, 100 C, 3.6 V (record `20261016-184100-59ec9c0`, run as 8 batch
   jobs). Disabled-pad behaviour above the I/O supply is recorded engineering
   data against no ratified limit; an envelope and a 10 uA in-rail budget are
   *proposed* in
@@ -90,13 +94,17 @@ pull-up, and a digital UTMI layer.
   **Layout, mismatch and integrated PHY behaviour — the partial state, not one
   word.** *Layout:* each of the five leaves has committed GDS with a clean
   `klt drc` record (0 violations), a matching `klt lvs` record and a
-  `clean_partial` `klt erc` record; **no** leaf has parasitic extraction or
-  post-layout re-simulation (#281), so every result above stays
+  `clean_partial` `klt erc` record; the differential receiver additionally has
+  the repo's first committed `klt pex` record (deliberately uncited — item 7
+  takes a single citation and one leaf is not the partition), and the other
+  four leaves have no parasitic extraction or post-layout re-simulation (#281),
+  so every result above stays
   schematic-level. *Mismatch:* committed Monte Carlo records exist for the
   differential receiver, both single-ended receivers and the D+ pull-up trim,
-  while `sim/driver-matching-mismatch/` is **declared but not run** — a
-  testbench and no `records/` — leaving spec rows 6-06 and 6-14 uncovered
-  (#223). *Integrated PHY behaviour:* genuinely unverified; `usb_utmi_top`
+  and `sim/driver-matching-mismatch/` has three of its four declared corners
+  recorded as stored evidence (not yet cited by the manifest) — leaving spec
+  rows 6-06 and 6-14 formally uncovered (#223). *Integrated PHY behaviour:*
+  genuinely unverified; `usb_utmi_top`
   place-and-route has not run. See [`design/README.md`](design/README.md) for
   the per-block results and limitations.
 - **PLL** — not designed here: consumed by pinned reference to
