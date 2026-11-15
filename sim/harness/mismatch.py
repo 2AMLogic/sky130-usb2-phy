@@ -43,6 +43,26 @@ def load_spec(exp_dir: Path) -> dict:
     return spec
 
 
+def select_corners(spec: dict, corner_ids: list[str] | None) -> list[dict]:
+    """The corners one run covers: every corner the spec declares, or the subset named by id.
+
+    Unlike `--only` (a no-write debugging subset of individual campaigns), a corner subset is
+    *recordable*: `mc.json`'s own statistical convention makes each (receiver, corner) its own
+    Monte Carlo population with nothing pooled across corners, so a record that declares the
+    corners it covers is a complete claim about those corners and silent about the rest. Spec
+    order is preserved and a repeated id selects once; an unknown id is an error.
+    """
+    declared = {c["id"]: c for c in spec["corners"]}
+    if not corner_ids:
+        return list(spec["corners"])
+    unknown = sorted({c for c in corner_ids if c not in declared})
+    if unknown:
+        raise MismatchError(f"{spec.get('experiment', '?')}: unknown corner id(s) {unknown}; "
+                            f"mc.json declares {sorted(declared)}")
+    want = set(corner_ids)
+    return [c for c in spec["corners"] if c["id"] in want]
+
+
 def build_body(exp_dir: Path, rcv: dict, control: bool) -> bytes:
     """The testbench deck plus the included design netlists; the control applies its replacements."""
     tb_dir = exp_dir / "testbench"
@@ -218,15 +238,18 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> subprocess.Compl
 
 def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str | None,
         max_in_flight: int, record: bool, only: list[str] | None = None, supersedes: str = "",
-        capacity_retries: int = 0, from_work: list[Path] | None = None) -> int:
-    if record:
-        es.preflight()  # fail closed before submitting the grid: recorded bytes go to the artifact store only
+        capacity_retries: int = 0, from_work: list[Path] | None = None,
+        corner_ids: list[str] | None = None) -> int:
     exp_dir = mx.SIM_DIR / experiment
     spec = load_spec(exp_dir)
+    # reject a bad corner selection from the committed spec alone, before anything needs the store
+    covered = select_corners(spec, corner_ids)
+    if record:
+        es.preflight()  # fail closed before submitting the grid: recorded bytes go to the artifact store only
     matrix = mx.load_by_id(mx.LEGACY_ID)
     env_info = runner.check_env(matrix)
     lib = Path(env_info["lib"])
-    missing = [c["process"] for c in spec["corners"] if c["process"] not in runner.lib_sections(lib)]
+    missing = [c["process"] for c in covered if c["process"] not in runner.lib_sections(lib)]
     if missing:
         raise MismatchError(f"{lib} has no .lib section(s) {missing}")
     if record and only:
@@ -238,7 +261,7 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
     work.mkdir(parents=True, exist_ok=True)
     campaigns = []
     for rcv in spec["receivers"]:
-        for corner in spec["corners"]:
+        for corner in covered:
             for kind in ("nominal", "control"):
                 stem = campaign_stem(rcv["id"], corner["id"], kind)
                 if only and rcv["id"] not in only and stem not in only:
@@ -248,7 +271,10 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
                 request = build_request(spec, rcv, corner, kind == "control", f"{stem}.spice", runner_version_check)
                 (work / f"{stem}.request.json").write_text(json.dumps(request, indent=2) + "\n")
                 campaigns.append({"receiver": rcv["id"], "corner": corner["id"], "kind": kind, "stem": stem})
-    print(f"experiment {experiment}: {len(campaigns)} campaign request(s), backend batch, "
+    scope = (f"all {len(spec['corners'])} declared corner(s)" if len(covered) == len(spec["corners"])
+             else f"{len(covered)} of {len(spec['corners'])} declared corner(s) "
+                  f"({', '.join(c['id'] for c in covered)})")
+    print(f"experiment {experiment}: {len(campaigns)} campaign request(s) over {scope}, backend batch, "
           f"record {rid if record else '(none)'}")
 
     if from_work:
@@ -325,15 +351,16 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
         if not record:
             return 2
     return _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, problems, record, supersedes,
-                             [d.name for d in from_work] if from_work else None)
+                             [d.name for d in from_work] if from_work else None, covered)
 
 
 def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, problems, record, supersedes,
-                      collected_from=None) -> int:
+                      collected_from=None, covered=None) -> int:
+    covered = list(spec["corners"]) if covered is None else covered
     yields = []
     cpath = {(c["receiver"], c["corner"], c["kind"]): c for c in campaigns}
     for rcv in spec["receivers"]:
-        for corner in spec["corners"]:
+        for corner in covered:
             nom, ctl = cpath.get((rcv["id"], corner["id"], "nominal")), cpath.get((rcv["id"], corner["id"], "control"))
             if not nom or not ctl or not nom["report"] or not ctl["report"]:
                 continue
@@ -362,7 +389,9 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
                            "samples": f"{stem}.samples.json", "limits": f"{stem}.limits.json",
                            "yield": f"{stem}.yield.json", "measurements": digest})
             print(f"  {stem:<16} yield status {yld.get('status')}; problems {len(probs)}")
-    expected = len(spec["receivers"]) * len(spec["corners"])
+    # the covered corners, not every declared one: a corner-scoped run is complete when every
+    # (receiver, covered corner) population is graded, and the record declares that coverage
+    expected = len(spec["receivers"]) * len(covered)
     if len(yields) != expected:
         problems.append(f"{len(yields)} of {expected} (receiver, corner) yield reports were produced")
     status = "PASS" if not problems else "FAIL"
@@ -403,7 +432,9 @@ def _grade_and_record(spec, exp_dir, work, rid, now, klt, env_info, campaigns, p
         "git": git, "klt_version": runner.tool_version([klt, "--version"]), "pdk": pdk_ident,
         "collected_from_batch_set": collected_from,
         "monte_carlo": spec["monte_carlo"], "yield": spec["yield"],
-        "corners": spec["corners"], "campaigns": camp_rows, "yields": yields,
+        # the corners this record covers (a subset of the frozen mc.json's when the run was
+        # scoped with --corner); mismatch_lint derives campaign/yield completeness from it
+        "corners": covered, "campaigns": camp_rows, "yields": yields,
         "files": {n: sha256_bytes(d) for n, d in sorted(files.items())},
     }
     mbytes = (json.dumps(manifest, indent=2, sort_keys=True) + "\n").encode()
@@ -431,19 +462,27 @@ def render_record(spec: dict, rid: str, m: dict, manifest_sha: str, supersedes: 
     mc, y = m["monte_carlo"], m["yield"]
     corners = "; ".join(f"{c['id']}: {c['process']} / {c['temperature_c']:g} C / {c['supply_v']:g} V" for c in m["corners"])
     jobs = sorted({j for c in m["campaigns"] for j in c["job_ids"]})
+    # state the coverage in the record text: a corner-scoped record must not be skim-read as full
+    declared_ids = [c["id"] for c in spec["corners"]]
+    covered_ids = [c["id"] for c in m["corners"]]
+    uncovered = [c for c in declared_ids if c not in covered_ids]
+    coverage = (f"covers all {len(declared_ids)} corner(s) mc.json declares" if not uncovered
+                else f"covers {len(covered_ids)} of the {len(declared_ids)} corner(s) mc.json declares and "
+                     f"makes no claim about {', '.join(f'`{c}`' for c in uncovered)}")
+    scoped = f" -- this record {coverage}" if uncovered else ""
     lines = [
         f"# {m['experiment']} -- {rid}", "",
         f"- **Record ID**: {rid}",
         f"- **Status**: {m['status']}",
         f"- **Claim**: {spec['claim']}",
         f"- **Netlist provenance**: {meta['netlist_provenance']}",
-        f"- **Corners run**: {corners} (each corner a separate Monte Carlo population; basis for the binding corner in the Method section)",
+        f"- **Corners run**: {corners} ({coverage}; each corner a separate Monte Carlo population; basis for the binding corner in the Method section)",
         f"- **Statistical convention**: {meta['statistical_convention']}",
         f"- **Monte Carlo**: seed {mc['seed']}, vary {mc['vary']}, n = {mc['n']} per corner per receiver, "
         f"n = {mc['n_control']} per negative-control campaign; confidence {y['confidence']}, "
         f"target_yield {y['target_yield']}, target CI half-width {y['target_ci_halfwidth']}; {y['sample_size_justification']}",
         f"- **Result**: {m['status']} -- " + ("every row measurement meets its yield claim, with a sufficient sample size and a detected negative control"
-                                            if m["status"] == "PASS" else f"{len(m['problems'])} problem(s), listed under Failures; the failure is evidence, not a waived result"),
+                                            if m["status"] == "PASS" else f"{len(m['problems'])} problem(s), listed under Failures; the failure is evidence, not a waived result") + scoped,
         (f"- **Links**: {rel}/testbench/, {rel}/campaigns/{rid}/ (evidence.json sha256 `{manifest_sha}`)")
         if stored is None else
         (f"- **Links**: {rel}/testbench/, {es.manifest_rel(m['experiment'], rid)} (manifest sha256 `{stored[0]}`)"),

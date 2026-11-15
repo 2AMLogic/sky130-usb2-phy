@@ -246,7 +246,8 @@ def build_tree(tmp_path, tweak=None):
     files.update({"r-tt.samples.json": json.dumps(samples).encode(), "r-tt.limits.json": json.dumps(limits).encode(),
                   "r-tt.yield.json": json.dumps(yld).encode()})
     manifest = {"schema": mm.EVIDENCE_SCHEMA, "record_id": RID, "experiment": "x-mismatch", "status": "PASS",
-                "problems": [], "pdk": pdk, "monte_carlo": spec["monte_carlo"], "campaigns": campaigns,
+                "problems": [], "pdk": pdk, "monte_carlo": spec["monte_carlo"], "corners": spec["corners"],
+                "campaigns": campaigns,
                 "yields": [{"receiver": "r", "corner": "tt", "yield_status": yld["status"], "samples": "r-tt.samples.json",
                             "limits": "r-tt.limits.json", "yield": "r-tt.yield.json", "measurements": digest}]}
     write_tree(exp, cdir, files, manifest)
@@ -358,6 +359,121 @@ def test_fail_record_must_state_its_problems(tmp_path):
 
 def test_committed_mismatch_records_pass_the_lint():
     assert ml.lint_all(SIM) == []
+
+
+# ------------------------------------------------- corner-scoped runs and records (--corner, #268)
+
+SECOND = {"id": "binding", "process": "ff_mm", "temperature_c": 100.0, "supply_v": 3.0, "basis": "b2"}
+
+
+def declare_two_corners(spec, files, samples, yld):
+    """Frozen mc.json declares tt + binding; the record (built for tt only) covers tt alone."""
+    frozen = json.loads(files["mc.json"])
+    frozen["corners"].append(copy.deepcopy(SECOND))
+    files["mc.json"] = json.dumps(frozen).encode()
+
+
+def test_select_corners_scopes_by_id_preserving_spec_order():
+    spec = mm.load_spec(SIM / "driver-matching-mismatch")
+    assert [c["id"] for c in mm.select_corners(spec, None)] == [c["id"] for c in spec["corners"]]
+    assert [c["id"] for c in mm.select_corners(spec, ["tt"])] == ["tt"]
+    # a repeated id selects once, and the result follows mc.json order, not the flag order
+    assert [c["id"] for c in mm.select_corners(spec, ["tt", "tt"])] == ["tt"]
+    assert [c["id"] for c in mm.select_corners(spec, ["fs100v30", "tt"])] == ["tt", "fs100v30"]
+    # --corner tt is 2 receivers x 1 corner x (nominal, control) = 4 requests, not 16
+    assert len(spec["receivers"]) * len(mm.select_corners(spec, ["tt"])) * 2 == 4
+    assert len(spec["receivers"]) * len(mm.select_corners(spec, None)) * 2 == 16
+
+
+def test_bogus_corner_id_errors_naming_the_declared_ids():
+    spec = mm.load_spec(SIM / "driver-matching-mismatch")
+    with pytest.raises(mm.MismatchError) as exc:
+        mm.select_corners(spec, ["tt", "nope"])
+    assert "nope" in str(exc.value) and "fs100v36" in str(exc.value)
+    # and through the CLI, without needing klt, the PDK or the artifact store
+    import run_mismatch
+    assert run_mismatch.main(["driver-matching-mismatch", "--corner", "nope", "--no-write"]) == 3
+
+
+def test_a_corner_scoped_record_passes_the_lint(tmp_path):
+    assert lint(build_tree(tmp_path, declare_two_corners)) == []
+
+
+def test_a_corner_scoped_record_names_the_corners_it_covers():
+    spec = synth_spec()
+    spec["corners"].append(copy.deepcopy(SECOND))
+    m = {"experiment": "x", "status": "PASS", "problems": [], "corners": [spec["corners"][0]],
+         "monte_carlo": spec["monte_carlo"], "yield": spec["yield"], "campaigns": [], "yields": [],
+         "klt_version": "k", "started_utc": "t", "author": "a", "git": {"head": "h", "dirty": False},
+         "pdk": {"name": "sky130A", "open_pdks_commit": "c", "lib_sha256": "s"}}
+    partial = mm.render_record(spec, RID, m, "0" * 64)
+    assert "covers 1 of the 2 corner(s) mc.json declares" in partial
+    assert "makes no claim about `binding`" in partial
+    # a full-coverage record says so instead, and never claims a corner it did not run
+    m["corners"] = spec["corners"]
+    full = mm.render_record(spec, RID, m, "0" * 64)
+    assert "covers all 2 corner(s) mc.json declares" in full and "makes no claim" not in full
+
+
+def test_a_record_covering_an_undeclared_corner_is_rejected(tmp_path):
+    def tw(spec, files, samples, yld):
+        spec["corners"].append(copy.deepcopy(SECOND))  # into the manifest only; mc.json is frozen above
+    probs = lint(build_tree(tmp_path, tw))
+    assert any("covers corner 'binding', which the frozen mc.json does not declare" in p for p in probs)
+
+
+def test_a_covered_corner_whose_definition_differs_is_rejected(tmp_path):
+    def tw(spec, files, samples, yld):
+        spec["corners"][0]["temperature_c"] = 85.0  # same id, altered corner, after mc.json was frozen
+    probs = lint(build_tree(tmp_path, tw))
+    assert any("covered corner 'tt' differs from the corner the frozen mc.json declares" in p for p in probs)
+
+
+@pytest.mark.parametrize("value", [None, [], "tt", [{"process": "tt_mm"}]])
+def test_a_missing_or_empty_coverage_declaration_is_rejected(tmp_path, value):
+    """Fail closed: no coverage declaration must never read as 'no campaigns expected'."""
+    exp = build_tree(tmp_path)
+    cdir = exp / "campaigns" / RID
+    m = json.loads((cdir / "evidence.json").read_text())
+    if value is None:
+        del m["corners"]
+    else:
+        m["corners"] = value
+    files = {p.name: p.read_bytes() for p in cdir.iterdir() if p.name != "evidence.json"}
+    write_tree(exp, cdir, files, m)
+    probs = lint(exp)
+    assert probs and any("corners" in p for p in probs), probs
+    # the record must not lint clean, and must not be read as a complete zero-corner claim
+    assert not any("expected every (receiver, corner)" in p for p in probs)
+
+
+def test_a_corner_scoped_record_still_demands_every_covered_campaign(tmp_path):
+    """Scoping coverage must not let a record drop a campaign inside the corners it does claim."""
+    def tw(spec, files, samples, yld):
+        declare_two_corners(spec, files, samples, yld)
+    exp = build_tree(tmp_path, tw)
+    cdir = exp / "campaigns" / RID
+    m = json.loads((cdir / "evidence.json").read_text())
+    m["campaigns"] = [c for c in m["campaigns"] if c["kind"] != "control"]
+    files = {p.name: p.read_bytes() for p in cdir.iterdir() if p.name != "evidence.json"}
+    write_tree(exp, cdir, files, m)
+    assert any("x (nominal, control)" in p for p in lint(exp))
+
+
+def test_only_still_cannot_be_recorded_and_does_not_widen_the_corner_scope(monkeypatch):
+    """--only stays a no-write debugging subset; --corner is the recordable one."""
+    monkeypatch.setattr(mm.es, "preflight", lambda: None)
+    monkeypatch.setattr(mm.runner, "check_env", lambda m: {"lib": "x"})
+    monkeypatch.setattr(mm.runner, "lib_sections", lambda lib: ["tt_mm", "fs_mm", "sf_mm", "ff_mm"])
+    monkeypatch.setattr(mm, "_run", lambda *a, **k: pytest.fail("submitted a request"))
+    for corners in (None, ["tt"]):  # the refusal is unchanged, with or without a corner scope
+        with pytest.raises(mm.MismatchError, match="a subset run cannot be recorded"):
+            mm.run("driver-matching-mismatch", "klt", None, None, 4, True, ["match"], corner_ids=corners)
+    # --only narrows campaign stems within the selected corners; it names no corner of its own
+    spec = mm.load_spec(SIM / "driver-matching-mismatch")
+    stems = [mm.campaign_stem(r["id"], c["id"], k) for r in spec["receivers"]
+             for c in mm.select_corners(spec, ["tt"]) for k in ("nominal", "control")]
+    assert stems == ["match-tt-nominal", "match-tt-control", "xover-tt-nominal", "xover-tt-control"]
 
 
 def to_stored(tmp_path, tweak=None):

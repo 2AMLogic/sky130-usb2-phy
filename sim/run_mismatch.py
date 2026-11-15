@@ -4,6 +4,7 @@
     python3 sim/run_mismatch.py --list
     python3 sim/run_mismatch.py diff-receiver-mismatch --klt /path/to/klt-with-yield/bin/klt
     python3 sim/run_mismatch.py se-receiver-mismatch --klt ... --no-write     # grade, do not record
+    python3 sim/run_mismatch.py driver-matching-mismatch --corner tt --klt ...  # record one corner
 
 Every campaign goes to the batch fleet through `klt sim --batch-set`; a backend error fails the
 run, there is no local fallback. `klt yield` needs the klt_yield_native extension: point --klt at
@@ -35,8 +36,15 @@ def main(argv=None) -> int:
                     help="grade and record the output of batch-set(s) that already finished (previous "
                          "sim/.work/<experiment>/<id> directories, later ones win for a campaign they complete) "
                          "instead of submitting again")
+    ap.add_argument("--corner", action="append", metavar="ID", dest="corner",
+                    help="corner id declared by mc.json (repeatable): run and RECORD only these corners, so a "
+                         "multi-corner campaign can land one corner per record. Each (receiver, corner) is its "
+                         "own population, so the record is a complete claim about the corners it names and says "
+                         "nothing about the rest. Unlike run_corners.py --corner (a --no-write debug subset of "
+                         "process sections), this is recordable")
     ap.add_argument("--only", nargs="+", help="subset: receiver id(s) and/or campaign stem(s) such as dp-tt-nominal "
-                    "(e.g. to resubmit one request after a Spot reclaim); cannot be recorded, use --from-work")
+                    "(e.g. to resubmit one request after a Spot reclaim); cannot be recorded, use --from-work. "
+                    "Narrows within --corner; it never widens the corner selection")
     ap.add_argument("--no-write", action="store_true", help="grade but do not record evidence")
     ap.add_argument("--klt-runner-version-check", choices=("enforce", "warn"), default=None,
                     help="batch only: how to treat fleet-runner/client klt version skew (default enforce)")
@@ -57,7 +65,7 @@ def main(argv=None) -> int:
             return 3
         return mismatch.run(args.experiment, args.klt, args.hosts, args.klt_runner_version_check,
                             args.max_in_flight, not args.no_write, args.only, args.supersedes,
-                            args.capacity_retries, args.from_work)
+                            args.capacity_retries, args.from_work, corner_ids=args.corner)
     except es.StoreUnavailable as exc:
         print(f"error: artifact store unavailable, nothing was recorded: {exc}", file=sys.stderr)
         return 4
