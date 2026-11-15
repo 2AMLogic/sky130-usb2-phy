@@ -124,9 +124,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # The append-only check compares every record present in the base ref
-      # against the working tree, so the base ref's history must be present --
-      # a default shallow clone would silently degrade that check to a skip.
+      # The append-only check compares the working tree against the merge
+      # base with $FLOW_LINT_BASE_REF, so that history must be present. Both
+      # evidence lints fail closed on a base ref they cannot resolve, so a
+      # default shallow clone breaks this job loudly rather than degrading the
+      # check to a skip -- which is the point (see flow/README.md).
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -141,8 +143,8 @@ jobs:
 
       # Resolve the ref the append-only rule is enforced against. On a PR that
       # is the base branch as GitHub reports it; on a push to main it is the
-      # commit before the push. Fetched explicitly so `git show <ref>:<path>`
-      # can read the base ref's record blobs.
+      # commit before the push. Fetched explicitly so `git merge-base <ref>
+      # HEAD` can resolve: both lints fail if it cannot.
       - name: Resolve the append-only base ref
         run: |
           if [ -n "${{ github.base_ref }}" ]; then
