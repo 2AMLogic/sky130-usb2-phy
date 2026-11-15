@@ -407,7 +407,12 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   mismatch puts 11-13 % of samples' rise/fall ratios above the 1.1 bound, far short of the 0.99 yield target (empirical
   yield 0.87-0.90), and the 180 ohm crossover control lands just inside 1.3-2.0 V at this corner, so its verdict is
   `not_detected`;
-  `fs100v36`, `fs100v30` not yet recorded: the run needs more fleet time
+  `fs100v36` is run and recorded as match PASS / xover FAIL (`records/20261115-172039-45b6298.md`) —
+  the mismatch tail pushes about a third of samples' crossovers past the 2.0 V bound (empirical yield
+  0.6675 / 0.655 against the 0.99 target), exactly where the 7 mV deterministic margin sits, and the
+  180 ohm crossover control cannot pull the crossover below 1.3 V at 3.6 V, so its verdict is
+  `not_detected`; the FAIL is recorded as evidence, not waived;
+  `fs100v30` not yet recorded: the run needs more fleet time
   than one builder session; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
   the crossover voltage (1.3-2.0 V; graded because the 45-point record leaves 7 mV at fs / 100 C / 3.6 V). Corners:
   `tt`, `fs100v36` (crossover binding), `sf40v36` (high-side ratio, 1.0772) and `fs100v30` (low-side ratio,
