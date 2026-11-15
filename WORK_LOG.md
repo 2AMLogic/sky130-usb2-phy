@@ -8,6 +8,10 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-15
+
+- **PR #298**: feat(signoff): grader-free --pins-only mode makes pin staleness locally detectable
+
 ### 2026-11-14
 
 - **PR #290**: feat(sim): scope a mismatch record to a declared subset of corners (--corner)
