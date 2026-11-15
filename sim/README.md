@@ -361,8 +361,9 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   both corners (see the record for the numbers); the control (1 kohm in series) is `detected`. The result
   depends on the assumed A_R; global sheet-resistance spread is in the 225-point record, not here.
 - **`driver-matching-mismatch`** (declared and tested, **partially recorded**: `sf40v36` is run and recorded as FAIL —
-  mismatch puts most samples' rise/fall ratios outside 0.9-1.1 (empirical yield 0.87-0.90), and the 180 ohm crossover
-  control lands just inside 1.3-2.0 V at this corner, so its verdict is `not_detected`;
+  mismatch puts 11-13 % of samples' rise/fall ratios above the 1.1 bound, far short of the 0.99 yield target (empirical
+  yield 0.87-0.90), and the 180 ohm crossover control lands just inside 1.3-2.0 V at this corner, so its verdict is
+  `not_detected`;
   `records/20261115-064022-f76df63.md`. `tt`, `fs100v36`, `fs100v30` not yet recorded: the run needs more fleet time
   than one builder session; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
   the crossover voltage (1.3-2.0 V; graded because the 45-point record leaves 7 mV at fs / 100 C / 3.6 V). Corners:
