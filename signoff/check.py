@@ -39,9 +39,10 @@ alone cannot cover all of them:
    envelope and manifest pins. Item 1 (digital) is cited through a
    `klt signoff --attest` envelope instead; `check_attested` re-hashes the
    files that envelope recorded (re-attest to refresh it).
-4. **The item-6 digital statement is bound to the spec.** The grader hashes
-   the rows file and the statement but never opens `spec/usb2-phy.md`; this
-   re-hashes the markdown against the rows file's recorded source.
+4. **The spec-bound row files are bound to the spec.** The grader hashes
+   the rows files and statements but never opens `spec/usb2-phy.md`; this
+   re-hashes the markdown against each recorded source (the item-6 digital
+   statement, the item-6 analog statistical rows, the item-5 analog row set).
 5. **The grader itself runs clean.** Exit 0 (`tier: "T1"`) or 3 (`tier: null`,
    at least one item unmet) are both fine -- an all-`unmet` report is a
    correct result. Exit 1/2 mean the manifest is malformed,
@@ -133,6 +134,16 @@ ITEM6_STATEMENT = "signoff/evidence/item-6-digital-not-applicable.json"
 # hash exactly as ITEM6_SPEC does; the manifest's row set must equal its ids.
 ITEM6_ANALOG_KEY = "6.analog"
 ITEM6_ANALOG_SPEC = "signoff/spec/analog-statistical-rows.json"
+# Item 5 (analog): the full analog-partition row set of section 6 is declared
+# under `spec_rows."5.analog"` (evidenced rows bare, uncovered rows with a
+# `gap` reason) and the committed 45-point `klt sim` corner reports are cited
+# against the rows they measured. ITEM5_ANALOG_SPEC records the markdown's
+# hash exactly as the item-6 files do; the manifest's row set must equal its
+# ids. Unlike a `klt yield` citation, the pin here is the sha256 of the cited
+# report.json itself -- a corner report carries its own provenance and names
+# no separate samples document.
+ITEM5_ANALOG_KEY = "5.analog"
+ITEM5_ANALOG_SPEC = "signoff/spec/analog-rows.json"
 
 # Citations produced by `klt signoff --attest` (klt >= 0.8.0, newer than the
 # 0.7.0 grader): manifest key -> (inventory, envelope). The inventory carries
@@ -961,12 +972,69 @@ def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
     return ok
 
 
-def refresh_item6() -> None:
-    """--regen: re-pin the item-6 citation to the current rows file and statement.
+def check_item5_analog(manifest: dict, root: Path | None = None) -> bool:
+    """The item-5 analog row set and its 45-point corner citations are bound.
 
-    The spec-markdown hash inside the rows file is deliberately NOT refreshed:
-    re-pinning it is the human act of re-reading the spec and re-accounting
-    for its rows, not a derivation.
+    Re-hashes the spec markdown against the analog rows file, requires the
+    manifest's declared `spec_rows."5.analog"` to equal that file's ids, and
+    requires every cited `klt sim` corner report to name only declared rows
+    and to still hash (the report itself) to the manifest's pin.
+    """
+    root = root or REPO_ROOT
+    try:
+        spec = json.loads((root / ITEM5_ANALOG_SPEC).read_text())
+    except (OSError, ValueError) as exc:
+        fail(f"item 5 (analog): rows file unreadable ({exc})")
+        return False
+    ok = _check_spec_hash(spec, ITEM5_ANALOG_SPEC, root, "analog")
+    spec_ids = sorted(r.get("id") for r in spec.get("rows", []))
+    declared = sorted(
+        r.get("id") for r in (manifest.get("spec_rows") or {}).get(ITEM5_ANALOG_KEY, [])
+    )
+    if declared != spec_ids:
+        fail(
+            f"signoff/block-manifest.json: spec_rows.{ITEM5_ANALOG_KEY} must equal the "
+            f"rows of {ITEM5_ANALOG_SPEC}; missing {sorted(set(spec_ids) - set(declared))}, "
+            f"extra {sorted(set(declared) - set(spec_ids))}"
+        )
+        ok = False
+    citations = (manifest["evidence"].get(ITEM5_ANALOG_KEY)) or []
+    if not isinstance(citations, list) or not citations:
+        fail(f"signoff/block-manifest.json: {ITEM5_ANALOG_KEY} must cite the committed klt sim corner reports")
+        return False
+    for cite in citations:
+        rel = cite.get("file", "")
+        undeclared = sorted(set(cite.get("rows", [])) - set(spec_ids))
+        if not cite.get("rows") or undeclared:
+            fail(f"{rel}: must cite declared rows only; undeclared {undeclared or 'none cited'}")
+            ok = False
+        path = root / rel
+        if not path.is_file():
+            fail(f"{rel}: cited corner report is missing from the tree")
+            ok = False
+            continue
+        actual = sha256_file(path)
+        if actual != cite.get("content_hash"):
+            fail(
+                f"{rel}: pinned to {cite.get('content_hash')} but the report now "
+                f"hashes to {actual}.\n"
+                "     The cited report changed; recorded results are append-only. "
+                "Restore it, or re-pin deliberately (python3 signoff/check.py --regen)."
+            )
+            ok = False
+    if ok:
+        print(f"ok   {ITEM5_ANALOG_SPEC}: bound to {spec['source']['file']}; {len(citations)} corner reports cited against {len(spec_ids)} declared rows")
+    return ok
+
+
+def refresh_item6() -> None:
+    """--regen: re-pin the item-6 and item-5 analog citations to the tree.
+
+    Re-pins each cited `klt yield` report via its samples document and each
+    cited item-5 `klt sim` corner report directly. The spec-markdown hash
+    inside either rows file is deliberately NOT refreshed: re-pinning it is
+    the human act of re-reading the spec and re-accounting for its rows, not
+    a derivation.
     """
     manifest = json.loads(MANIFEST.read_text())
     entry = (manifest["evidence"].get(ITEM6_KEY) or {}).get("not_applicable")
@@ -977,6 +1045,10 @@ def refresh_item6() -> None:
         pin = yield_samples_pin(REPO_ROOT, cite["file"])
         if pin is not None:
             cite["content_hash"] = pin
+    for cite in manifest["evidence"].get(ITEM5_ANALOG_KEY) or []:
+        path = REPO_ROOT / cite["file"]
+        if path.is_file():
+            cite["content_hash"] = sha256_file(path)
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
 
 
@@ -1012,7 +1084,7 @@ def print_pins_refresh_recipe() -> None:
 
 
 def run_rehash_checks(manifest: dict) -> bool:
-    """The eight stdlib re-hash checks -- the grader-free half of the gate.
+    """The nine stdlib re-hash checks -- the grader-free half of the gate.
 
     Shared by the default path and --pins-only so the two can never drift
     into checking different things.
@@ -1023,6 +1095,7 @@ def run_rehash_checks(manifest: dict) -> bool:
     ok = check_anchored_envelopes(manifest) and ok
     ok = check_item6_binding(manifest) and ok
     ok = check_item6_analog(manifest) and ok
+    ok = check_item5_analog(manifest) and ok
     ok = check_attested(manifest) and ok
     ok = check_native_citations(manifest) and ok
     return ok
