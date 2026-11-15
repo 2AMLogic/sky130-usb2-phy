@@ -360,8 +360,9 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   `testbench/make_mm_netlist.py`; a test checks it is current). Result: a passing code exists in 400/400 samples at
   both corners (see the record for the numbers); the control (1 kohm in series) is `detected`. The result
   depends on the assumed A_R; global sheet-resistance spread is in the 225-point record, not here.
-- **`driver-matching-mismatch`** (declared and tested, **not yet recorded**: the run needs more fleet time than one
-  builder session; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
+- **`driver-matching-mismatch`** (declared and tested; recorded at `tt` only — record
+  `20261115-040553-f76df63`: PASS, both receivers, controls `detected`; `fs100v36`, `sf40v36` and `fs100v30`
+  are still unrecorded, one corner per record; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
   the crossover voltage (1.3-2.0 V; graded because the 45-point record leaves 7 mV at fs / 100 C / 3.6 V). Corners:
   `tt`, `fs100v36` (crossover binding), `sf40v36` (high-side ratio, 1.0772) and `fs100v30` (low-side ratio,
   0.9278). Two receivers because no single deterministic control degrades both rows while keeping every
