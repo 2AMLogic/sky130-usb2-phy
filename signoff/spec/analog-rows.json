@@ -1,0 +1,90 @@
+{
+  "status": "ratified",
+  "source": {
+    "file": "spec/usb2-phy.md",
+    "content_hash": "sha256:b80cbc2207d251bc6240fbd0a8f3dd4af25534c4b7de78398868c4b0c4f4e634"
+  },
+  "note": "All sixteen interface-requirement rows of the analog table in section 6 of the ratified spec/usb2-phy.md (Ratified 2026-08-05), selected by hand. Row ids are `6-NN`, NN being the 1-based position of the row in that table, which has no id column (counted 2026-11-14); inserting or reordering table rows renumbers them, which the repo-side gate (signoff/check.py) catches by re-hashing the source. Namespace: this file claims the analog partition's rows only. signoff/spec/digital-rows.json claims the digital side of the two control-interface rows under slug ids (driver-control-interface for 6-08, pullup-control-interface for 6-16) and lists the rest of section 6 under excluded; the two files do not collide. This file claims only the analog side of 6-08 (the drive-enable/OE behaviour the driver testbenches exercise) and treats 6-16 as an analog-side gap: its committed evidence is the UTMI-owned digital side, not an analog-side measurement.",
+  "rows": [
+    {
+      "id": "6-01",
+      "spec_section": "6",
+      "requirement": "PLL: reference input 12 MHz +/-0.25% (2500 ppm) crystal/resonator"
+    },
+    {
+      "id": "6-02",
+      "spec_section": "6",
+      "requirement": "PLL: output jitter (cycle-to-cycle, feeding oversampling clock) < 5% of one bit period (< 4.17 ns at 144 MHz, 12x oversampling of 12 Mbps)"
+    },
+    {
+      "id": "6-03",
+      "spec_section": "6",
+      "requirement": "PLL: oversampling ratio delivered to bit/edge sync logic 12x minimum"
+    },
+    {
+      "id": "6-04",
+      "spec_section": "6",
+      "requirement": "Current-mode drivers: output voltage swing, static - VOH 2.8-3.6 V (1.5 kOhm pull-up to 3.6 V), VOL 0.0-0.3 V"
+    },
+    {
+      "id": "6-05",
+      "spec_section": "6",
+      "requirement": "Current-mode drivers: driver output resistance 28-44 Ohm"
+    },
+    {
+      "id": "6-06",
+      "spec_section": "6",
+      "requirement": "Current-mode drivers: rise/fall time 4-20 ns (10%-90%), matched to within 10% rise vs. fall"
+    },
+    {
+      "id": "6-07",
+      "spec_section": "6",
+      "requirement": "Current-mode drivers: output signal crossover voltage 1.3-2.0 V"
+    },
+    {
+      "id": "6-08",
+      "spec_section": "6",
+      "requirement": "Current-mode drivers: control interface from UTMI layer - differential drive enable, output enable (OE), TxD+/TxD- data lines (analog side of the interface)"
+    },
+    {
+      "id": "6-09",
+      "spec_section": "6",
+      "requirement": "Differential receivers: differential input sensitivity |(D+) - (D-)| > 200 mV"
+    },
+    {
+      "id": "6-10",
+      "spec_section": "6",
+      "requirement": "Differential receivers: common-mode input range 0.8-2.5 V"
+    },
+    {
+      "id": "6-11",
+      "spec_section": "6",
+      "requirement": "Differential receivers: single-ended receiver thresholds VIH > 2.0 V, VIL < 0.8 V"
+    },
+    {
+      "id": "6-12",
+      "spec_section": "6",
+      "requirement": "Squelch / envelope detector: squelch detection threshold (differential envelope) 100-200 mV"
+    },
+    {
+      "id": "6-13",
+      "spec_section": "6",
+      "requirement": "Squelch / envelope detector: output interface to UTMI layer - single-bit SQUELCH/LineState status, sampled at the oversampling clock rate"
+    },
+    {
+      "id": "6-14",
+      "spec_section": "6",
+      "requirement": "Pull-up/pull-down and termination: FS device D+ pull-up 1.5 kOhm +/-5% to internally regulated 3.0-3.6 V"
+    },
+    {
+      "id": "6-15",
+      "spec_section": "6",
+      "requirement": "Pull-up/pull-down and termination: downstream port pull-downs 15 kOhm +/-5% on each of D+/D-"
+    },
+    {
+      "id": "6-16",
+      "spec_section": "6",
+      "requirement": "Pull-up/pull-down and termination: control interface from UTMI layer - single-bit pull-up enable/disable, driven during reset/attach/suspend sequencing"
+    }
+  ]
+}

@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 
+from conftest import meas, synthetic_report
 from harness import evidence_lint as lint, matrix as mx, results as rs, runner
 
 SIM = Path(__file__).resolve().parents[1]
@@ -39,23 +40,9 @@ def good_values(vdd):
 
 
 def report(tamper=None):
-    corners = []
-    for p, t, v in MATRIX.points():
-        vals = good_values(v)
-        corners.append({
-            "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
-            "temperature_c": float(t), "status": "pass",
-            "measurements": [{"name": n, "value": x * (-1.0 if n.startswith("isup") else 1.0), "status": "pass"}
-                             for n, x in vals.items()],
-            "artifacts": {"log": None}})
-    rep = {"status": "pass", "corners": corners, "environment": {"remote": {"job_id": "j"}}}
-    if tamper:
-        tamper(rep)
-    return rep
-
-
-def meas(rep, idx, name):
-    return next(m for m in rep["corners"][idx]["measurements"] if m["name"] == name)
+    def values_for(p, t, v):
+        return {n: x * (-1.0 if n.startswith("isup") else 1.0) for n, x in good_values(v).items()}
+    return synthetic_report(MATRIX, values_for, tamper=tamper)
 
 
 def problems_of(tamper=None):

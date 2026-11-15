@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pytest
 
+from conftest import RL, meas, synthetic_report, v_of
 from harness import evidence_lint as lint, matrix as mx, results as rs, runner, trim
 
 SIM = Path(__file__).resolve().parents[1]
@@ -24,12 +25,6 @@ EXP = SIM / "dplus-pullup-tolerance"
 MATRIX = mx.load()
 TB = json.loads((EXP / "testbench/tb.json").read_text())
 CFG = TB["trim"]
-RL = 15000.0
-
-
-def v_of(r, vpu):
-    """V(DP) for an effective pull-up resistance r into the 15 kohm host load."""
-    return vpu * RL / (RL + r)
 
 
 def codes_to_r(base=1900.0, step=52.0):
@@ -50,30 +45,14 @@ def good_values(vpu, rs_=None, tc=1.0):
 
 
 def report(tamper=None, per_corner=None):
-    corners = []
-    for p, t, v in MATRIX.points():
+    def values_for(p, t, v):
         # shift the ladder with temperature so the harness-integrity spread check is met
         scale = 1.0 + (t - 27.0) * 0.0009
         vals = good_values(v, [r * scale for r in codes_to_r(1950.0)])
         if per_corner:
             vals.update(per_corner(p, t, v) or {})
-        raw = {n: x for n, x in vals.items()}
-        for m in TB["measure"].values():
-            pass
-        corners.append({
-            "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
-            "temperature_c": float(t), "status": "pass",
-            "measurements": [{"name": n, "value": x / float(TB["measure"][n].get("scale", 1.0)),
-                              "status": "pass"} for n, x in raw.items()],
-            "artifacts": {"log": None}})
-    rep = {"status": "pass", "corners": corners, "environment": {"remote": {"job_id": "j"}}}
-    if tamper:
-        tamper(rep)
-    return rep
-
-
-def meas(rep, idx, name):
-    return next(m for m in rep["corners"][idx]["measurements"] if m["name"] == name)
+        return {n: x / float(TB["measure"][n].get("scale", 1.0)) for n, x in vals.items()}
+    return synthetic_report(MATRIX, values_for, tamper=tamper)
 
 
 def evaluate(rep):
@@ -255,8 +234,6 @@ def test_failure_names_corner_id_and_value():
 
 
 def test_flat_resistance_across_the_grid_is_flagged():
-    def flat(r):
-        pass
     rep = report(per_corner=lambda p, t, v: {f"vdp_c{k:02d}_v": v_of(1900.0 - 52 * k, v) for k in range(16)})
     _, probs = evaluate(rep)
     assert any("r_c00_ohm spread" in p for p in probs), probs
