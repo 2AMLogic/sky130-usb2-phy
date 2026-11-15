@@ -154,11 +154,11 @@
     },
     "9": {
       "file": "signoff/evidence/item-9-testbenches.json",
-      "content_hash": "sha256:400272f9393a04067e86dc2c50db0e2b5e3fdb73b82b80d1d374e8d61775027b"
+      "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6"
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",
-      "content_hash": "sha256:75db8fbfe3fc5949d6fb1f658972663bb95781645829dd56f1c87da3dbdd8416"
+      "content_hash": "sha256:910ca60019ec6e864922ff061191f2eb8e1d7dd6a6ccb865de2bed479bb4e83d"
     },
     "6.digital": {
       "not_applicable": {

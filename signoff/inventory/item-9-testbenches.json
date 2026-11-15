@@ -137,6 +137,30 @@
       ]
     },
     {
+      "id": "diff-receiver-pex",
+      "partition": "analog",
+      "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics",
+      "cold_start": "python3 sim/diff-receiver-pex/run.py",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/diff-receiver-pex/testbench/tb.json",
+          "sha256": "sha256:5f764427e60e8d1e57ee27237b275f6b95ad0decb0a7fead08c07413626b0224",
+          "role": "klt sim request (2 corners: tt_27c_3.30v, sf_100c_3.00v) driving both klt pex legs"
+        },
+        {
+          "path": "sim/diff-receiver-pex/testbench/diff_receiver_pex_tb.spice",
+          "sha256": "sha256:b256406be243cfc3b95e8a1afc23446fc93951d449143363d25f8d5f2ab17bc2",
+          "role": "testbench netlist (sensitivity body with the in-deck DUT .include klt pex swaps)"
+        },
+        {
+          "path": "sim/diff-receiver-pex/testbench/differential_receiver_pex_dut.spice",
+          "sha256": "sha256:ece059b506393f2b325440344247f723a68d49f0794922bde397710deaf79007",
+          "role": "schematic-leg DUT shim (design/netlist/differential_receiver.spice with the .subckt declaration pin order matched to the extracted header)"
+        }
+      ]
+    },
+    {
       "id": "diff-receiver-mismatch",
       "partition": "analog",
       "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
