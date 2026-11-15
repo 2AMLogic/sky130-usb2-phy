@@ -39,3 +39,55 @@ def _guard(real):
             raise AssertionError("a test reached the real `klt artifact put`")
         return real(cmd, *a, **k)
     return run
+
+
+# ---- synthetic `klt sim` report builders shared by the analog self-tests ----
+# One pinned envelope shape: when the report `klt sim` emits gains or renames a
+# field, this is the single place to update.
+
+RL = 15000.0  # the full-speed host load a D+ pull-up drives (ohm)
+
+
+def v_of(r, vpu):
+    """V(DP) for an effective pull-up resistance r into the 15 kohm host load."""
+    return vpu * RL / (RL + r)
+
+
+def meas(rep, idx, name):
+    """The measurement entry `name` in corner `idx` of a synthetic report."""
+    return next(m for m in rep["corners"][idx]["measurements"] if m["name"] == name)
+
+
+def corner_envelope(point, measurements, *, status="pass"):
+    """One `klt sim` corner envelope; `measurements` is the per-corner {name: value} dict."""
+    p, t, v = point
+    return {
+        "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
+        "temperature_c": float(t), "status": status,
+        "measurements": [{"name": n, "value": x, "status": "pass"} for n, x in measurements.items()],
+        "artifacts": {"log": None},
+    }
+
+
+def full_environment(matrix):
+    """The environment block a real batch run stamps (engine version, job id, PDK hashes)."""
+    return {"engine_version": "46", "remote": {"job_id": "klt-sim-test"},
+            "models_lib_sha256": matrix.pdk["lib_sha256"], "netlist_sha256": "x"}
+
+
+def full_provenance(matrix):
+    """The provenance block a real batch run stamps."""
+    return {"pdk": {"version": "open_pdks " + matrix.pdk["open_pdks_commit"]}}
+
+
+def synthetic_report(matrix, values_for, *, tamper=None, environment=None, provenance=None):
+    """A full synthetic `klt sim` report over `matrix`; `values_for(p, t, v)` returns each
+    corner's {name: value} dict, already scaled the way the block's testbench expects."""
+    corners = [corner_envelope(pt, values_for(*pt)) for pt in matrix.points()]
+    rep = {"status": "pass", "corners": corners,
+           "environment": environment or {"remote": {"job_id": "j"}}}
+    if provenance:
+        rep["provenance"] = provenance
+    if tamper:
+        tamper(rep)
+    return rep
