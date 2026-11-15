@@ -1,6 +1,9 @@
 {
-  "schema_version": 1,
-  "file": "layout/analog/differential_receiver/differential_receiver.gds",
+  "schema_version": 2,
+  "file": {
+    "path": "layout/analog/differential_receiver/differential_receiver.gds",
+    "scope": "repo"
+  },
   "spec": "layout/analog/differential_receiver/erc-supply-spec.json",
   "pdk": "sky130",
   "findings_only": false,
@@ -480,10 +483,20 @@
       "erc.net_connectivity:[\"VSS\"]"
     ],
     "skipped": [],
-    "inapplicable": [],
+    "inapplicable": [
+      {
+        "id": "erc.supply_short",
+        "missing": [
+          "--deck naming the PDK family, so the isolation layers can be measured",
+          "or assert ties[].isolation_boxes"
+        ],
+        "reason": "substrate_isolation_undecidable"
+      }
+    ],
     "unknown": [],
     "nothing_checked": false,
     "nothing_checked_reasons": [],
+    "missing_tie_checked": true,
     "checked_by_assertion": [],
     "checked_by_well_assertion": [
       "erc.missing_tie:[\"psub_vss\"]"
@@ -499,8 +512,10 @@
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.7.1.dev2419+ga7dfbc5ce95d",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev3+gd5d57daf9a14",
+    "klt_git_commit": "d5d57daf9a145961ea01f5f891e4d87c0d435807",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@d5d57daf9a145961ea01f5f891e4d87c0d435807",
+    "klayout_version": "0.30.13",
     "pdk": {
       "name": "sky130",
       "source": "built-in",
