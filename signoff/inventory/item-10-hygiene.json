@@ -55,7 +55,7 @@
       "members": [
         {
           "path": ".github/scripts/lint.sh",
-          "sha256": "sha256:35bcf6afa85300f097263da7231b42050fceeeac15295bc31aebf43f8685804f"
+          "sha256": "sha256:f4a88e061ab79337c0b98e81dd95f45f7d1b72b71676984ea18cfb7739909517"
         },
         {
           "path": "flow/check_records.py",
@@ -74,7 +74,7 @@
       "members": [
         {
           "path": "signoff/check.py",
-          "sha256": "sha256:8876d45412304134d84856ae2897035a992f76afb38ebc0246069487e4fc5b66"
+          "sha256": "sha256:c236595a9987f67869135c1084a37ed9515bca158fbebf52f982a21c525427c8"
         },
         {
           "path": "signoff/toolchain.json",

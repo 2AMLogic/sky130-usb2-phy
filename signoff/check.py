@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Re-grade this block against the klayout-tools T1 checklist, and fail on rot.
 
-    python3 signoff/check.py            # the gate CI runs
-    python3 signoff/check.py --regen    # rewrite signoff/signoff-report.json
+    python3 signoff/check.py              # the gate CI runs
+    python3 signoff/check.py --regen      # rewrite signoff/signoff-report.json
+    python3 signoff/check.py --pins-only  # the re-hash checks only, no klt
 
 `signoff/block-manifest.json` is this block's machine-readable T1 claim and
 `signoff/signoff-report.json` is the verdict `klt signoff --manifest` rendered
@@ -57,7 +58,15 @@ does not open the artifact behind a *native* envelope either (`input_verified`
 arrives upstream in klayout-tools#2196), so the leaf GDS and the LVS reference
 netlist are re-hashed here against what each envelope recorded.
 
-Pure stdlib; no PDK, no simulator, no Icarus. Only `klt` on PATH.
+`--pins-only` runs exactly the re-hash half of the gate -- the eight checks
+above that need nothing but the stdlib -- and skips the grader-dependent
+steps (toolchain pin, `klt signoff`, stale/drift comparison). It exists
+because those re-hash checks are the ones a routine edit stales: it answers
+"did I just stale a pin?" in seconds, with no pinned wheel provisioned,
+instead of that question waiting for the heavyweight `signoff` CI job.
+
+Pure stdlib; no PDK, no simulator, no Icarus. Only `klt` on PATH -- and
+`--pins-only` runs without even that (see below).
 """
 
 from __future__ import annotations
@@ -971,6 +980,54 @@ def refresh_item6() -> None:
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
 
 
+def pinned_grader_version() -> str:
+    """The grader to install for a re-pin, read from the pin so the recipe
+    printed below survives every future re-pin instead of rotting on one
+    hardcoded version string."""
+    try:
+        return json.loads(TOOLCHAIN.read_text())["klt"]["package_version"]
+    except (OSError, ValueError, KeyError):
+        return GRADER_PACKAGE_VERSION
+
+
+def print_pins_refresh_recipe() -> None:
+    """Print how to provision the pinned grader and re-pin.
+
+    A red re-hash check already names the stale member; this closes the
+    follow-up "and how do I refresh it?" without a second lookup. Same
+    throwaway-venv recipe as signoff/README.md's "How to re-run the grading"
+    -- the only form that works on a shared worker where host-wide installs
+    are off-limits.
+    """
+    ver = pinned_grader_version()
+    sys.stderr.write(
+        "     To refresh the pins, run --regen under the pinned grader:\n"
+        "       uv venv /tmp/signoff-grader\n"
+        f'       uv pip install --python /tmp/signoff-grader/bin/python "klayout-tools=={ver}"\n'
+        "       # (uv venv ships no pip; python -m pip fails in it)\n"
+        '       PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py --regen\n'
+        '       PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py   # must be rc 0\n'
+        "     (full recipe and caveats: signoff/README.md)\n"
+    )
+
+
+def run_rehash_checks(manifest: dict) -> bool:
+    """The eight stdlib re-hash checks -- the grader-free half of the gate.
+
+    Shared by the default path and --pins-only so the two can never drift
+    into checking different things.
+    """
+    ok = check_generic_envelopes(manifest)
+    ok = check_inventory_members() and ok
+    ok = check_item9_complete() and ok
+    ok = check_anchored_envelopes(manifest) and ok
+    ok = check_item6_binding(manifest) and ok
+    ok = check_item6_analog(manifest) and ok
+    ok = check_attested(manifest) and ok
+    ok = check_native_citations(manifest) and ok
+    return ok
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument(
@@ -981,18 +1038,37 @@ def main(argv: list[str] | None = None) -> int:
             "of comparing against it"
         ),
     )
+    parser.add_argument(
+        "--pins-only",
+        action="store_true",
+        help=(
+            "run only the stdlib re-hash checks and skip every grader-dependent "
+            "step: answers 'did I just stale a pin?' with no klt on PATH"
+        ),
+    )
     args = parser.parse_args(argv)
 
-    if shutil.which("klt") is None:
-        fail(
-            "klt is not on PATH. Install the pinned grader:\n"
-            f"       pip install klayout-tools=={GRADER_PACKAGE_VERSION}\n"
-            "     (see signoff/toolchain.json for why this pin is what CI "
-            "also installs)"
+    if args.pins_only and args.regen:
+        parser.error(
+            "--pins-only and --regen are mutually exclusive: --pins-only runs "
+            "without the pinned grader, --regen rewrites pins and the report "
+            "with it. Run them separately."
         )
-        return 1
 
-    ok = check_toolchain_pin()
+    if not args.pins_only:
+        if shutil.which("klt") is None:
+            fail(
+                "klt is not on PATH. Install the pinned grader:\n"
+                f"       pip install klayout-tools=={GRADER_PACKAGE_VERSION}\n"
+                "     (see signoff/toolchain.json for why this pin is what CI "
+                "also installs); or run the grader-free subset as "
+                "`python3 signoff/check.py --pins-only`"
+            )
+            return 1
+        ok = check_toolchain_pin()
+    else:
+        ok = True
+
     manifest = load_manifest()
 
     if args.regen and manifest is not None:
@@ -1008,14 +1084,15 @@ def main(argv: list[str] | None = None) -> int:
     if manifest is None:
         return 1
 
-    ok = check_generic_envelopes(manifest) and ok
-    ok = check_inventory_members() and ok
-    ok = check_item9_complete() and ok
-    ok = check_anchored_envelopes(manifest) and ok
-    ok = check_item6_binding(manifest) and ok
-    ok = check_item6_analog(manifest) and ok
-    ok = check_attested(manifest) and ok
-    ok = check_native_citations(manifest) and ok
+    if args.pins_only:
+        ok = run_rehash_checks(manifest)
+        if ok:
+            print("ok   pins-only: no pinned member has moved (grader-free)")
+        else:
+            print_pins_refresh_recipe()
+        return 0 if ok else 1
+
+    ok = run_rehash_checks(manifest) and ok
 
     stdout, report, ran = run_grader()
     if not ran:
