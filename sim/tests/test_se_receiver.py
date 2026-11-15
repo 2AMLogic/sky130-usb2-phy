@@ -13,6 +13,7 @@ from pathlib import Path
 
 import pytest
 
+from conftest import meas, synthetic_report
 from harness import matrix as mx, results as rs, runner
 
 SIM = Path(__file__).resolve().parents[1]
@@ -31,21 +32,7 @@ def good_values(vdd):
 
 
 def report(tamper=None):
-    corners = []
-    for p, t, v in MATRIX.points():
-        corners.append({
-            "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
-            "temperature_c": float(t), "status": "pass",
-            "measurements": [{"name": n, "value": x, "status": "pass"} for n, x in good_values(v).items()],
-            "artifacts": {"log": None}})
-    rep = {"status": "pass", "corners": corners, "environment": {"remote": {"job_id": "j"}}}
-    if tamper:
-        tamper(rep)
-    return rep
-
-
-def meas(rep, idx, name):
-    return next(m for m in rep["corners"][idx]["measurements"] if m["name"] == name)
+    return synthetic_report(MATRIX, lambda p, t, v: good_values(v), tamper=tamper)
 
 
 def set_both(idx, value):

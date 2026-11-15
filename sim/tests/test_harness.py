@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from conftest import full_environment, full_provenance, synthetic_report
 from harness import evidence_lint as lint, matrix as mx, results as rs, runner
 
 SIM = Path(__file__).resolve().parents[1]
@@ -56,25 +57,12 @@ def test_duplicate_or_dropped_tuple_is_rejected():
     assert any("differ" in p for p in mx.check_request(req, MATRIX))
 
 
-def fake_report(points=None, tamper=None):
-    corners = []
-    for p, t, v in points or MATRIX.points():
-        meas = {"voh_v": v, "vol_v": 1e-9, "vm_v": v * (0.45 + 0.01 * MATRIX.process.index(p)), "isup_ua": 50.0}
-        corners.append({
-            "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
-            "temperature_c": float(t), "status": "pass",
-            "measurements": [{"name": n, "value": x * (-1e-6 if n == "isup_ua" else 1.0), "status": "pass"}
-                             for n, x in meas.items()],
-            "artifacts": {"log": None},
-        })
-    report = {"status": "pass", "corners": corners,
-              "environment": {"engine_version": "46", "remote": {"job_id": "klt-sim-test"},
-                              "models_lib_sha256": MATRIX.pdk["lib_sha256"],
-                              "netlist_sha256": "x"},
-              "provenance": {"pdk": {"version": "open_pdks " + MATRIX.pdk["open_pdks_commit"]}}}
-    if tamper:
-        tamper(report)
-    return report
+def fake_report(tamper=None):
+    def values_for(p, t, v):
+        vals = {"voh_v": v, "vol_v": 1e-9, "vm_v": v * (0.45 + 0.01 * MATRIX.process.index(p)), "isup_ua": 50.0}
+        return {n: x * (-1e-6 if n == "isup_ua" else 1.0) for n, x in vals.items()}
+    return synthetic_report(MATRIX, values_for, tamper=tamper,
+                            environment=full_environment(MATRIX), provenance=full_provenance(MATRIX))
 
 
 def test_complete_report_passes():

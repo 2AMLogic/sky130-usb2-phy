@@ -15,6 +15,7 @@ from pathlib import Path
 
 import pytest
 
+from conftest import RL, full_environment, full_provenance, synthetic_report, v_of
 from harness import evidence_lint as lint, matrix as mx, results as rs, runner
 
 SIM = Path(__file__).resolve().parents[1]
@@ -23,7 +24,6 @@ TB = json.loads((EXP / "testbench/tb.json").read_text())
 LEGACY = mx.load()
 RES = mx.load_by_id(mx.RESISTOR_SETS_ID)
 VTB = rs.resolve_tb(TB, "resistor-sets")
-RL = 15000.0
 
 
 def test_resistor_matrix_is_225_unique_points_over_25_sections():
@@ -160,32 +160,17 @@ def test_variant_selects_the_matrix_and_cannot_relax_a_bound():
 
 # ---- mocked batch run of the variant, and the lint
 
-def v_of(r, vpu):
-    return vpu * RL / (RL + r)
-
-
 def fake_report(matrix, tamper=None):
-    rep_corners = []
-    for p, t, v in matrix.points():
+    def values_for(p, t, v):
         _, res, _ = mx.SECTION_MAP[p]
         rscale = {"typical": 1.0, "low": 0.9, "high": 1.1}[res] * (1.0 + (t - 27.0) * 0.0009)
         vals = {f"vdp_c{k:02d}_v": v_of((1950.0 - 52.0 * k) * rscale, v) for k in range(16)}
         vals.update({"voff_d1_v": 2e-6, "voff_d0_v": 2e-6, "ioff_d1_na": 0.1, "ioff_d0_na": 0.1,
                      "ioff_dz_na": 0.1, "ioff_dh_na": -0.001, "isup_d1_na": 0.1, "isup_d0_na": 0.1,
                      "isup_dz_na": 0.1, "isup_dh_na": 0.01})
-        rep_corners.append({
-            "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
-            "temperature_c": float(t), "status": "pass",
-            "measurements": [{"name": n, "value": x / float(TB["measure"][n].get("scale", 1.0)), "status": "pass"}
-                             for n, x in vals.items()],
-            "artifacts": {"log": None}})
-    rep = {"status": "pass", "corners": rep_corners,
-           "environment": {"engine_version": "46", "remote": {"job_id": "klt-sim-test"},
-                           "models_lib_sha256": matrix.pdk["lib_sha256"], "netlist_sha256": "x"},
-           "provenance": {"pdk": {"version": "open_pdks " + matrix.pdk["open_pdks_commit"]}}}
-    if tamper:
-        tamper(rep)
-    return rep
+        return {n: x / float(TB["measure"][n].get("scale", 1.0)) for n, x in vals.items()}
+    return synthetic_report(matrix, values_for, tamper=tamper,
+                            environment=full_environment(matrix), provenance=full_provenance(matrix))
 
 
 def test_good_225_report_passes_and_missing_resistor_set_fails():
