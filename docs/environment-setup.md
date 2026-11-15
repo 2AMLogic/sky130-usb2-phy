@@ -138,6 +138,21 @@ uv pip install --python .loom/tmp/venv314/bin/python cocotb   # the §3 command,
 rm -rf .loom/tmp/venv314 .loom/tmp/uv-python .loom/tmp/uv-cache   # scratch, never evidence
 ```
 
+### 3.2 Related: `signoff` grading needs its own pinned `klt` venv
+
+The verification harness above runs on whatever `klt` the machine has. The
+signoff gate (`python3 signoff/check.py`, see [`signoff/README.md`](../signoff/README.md))
+is stricter: it hard-fails unless the `klt` on `PATH` is the *released
+registry wheel* pinned in `signoff/toolchain.json` — the shared fleet `klt`
+(`~/.local/bin/klt`, a git snapshot with `is_release false`) and a one-shot
+`uvx --from …` invocation both fail it. Build the throwaway venv the same way
+as the cocotb environment above (never host-wide, never over the shared tool)
+and run the gate through it — the version-agnostic recipe and its caveats
+(wrong-grader false drift, the `uvx` trap, the grader-free `--pins-only`
+half) live in `signoff/README.md` §
+[How to re-run the grading](../signoff/README.md#how-to-re-run-the-grading);
+one recipe, one home, not duplicated here.
+
 ## 4. Install a working Yosys via `yowasp-yosys` (not `apt install yosys`)
 
 **Do not rely on Ubuntu noble's `apt install yosys`** — it installs
