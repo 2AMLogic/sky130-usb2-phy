@@ -87,6 +87,28 @@ def test_matching_revision_passes_the_revision_check(home, monkeypatch):
     assert "no .lib section" in str(exc.value)
 
 
+def write_approved_sections(lib: Path) -> None:
+    """Give the fake library the exact `.lib` sections check_env's approved map expects."""
+    lines = []
+    for s in sorted(LEGACY.process):
+        lines.append(f".lib {s}")
+        lines += [f".include {t}" for t in runner.expected_includes(s)]
+        lines.append(".endl")
+    (lib.parent / lib.name).write_text("\n".join(lines) + "\n")
+
+
+def test_check_env_success_returns_the_pinned_commit(home):
+    pdk = fake_tree(home / ".ciel", NEW)
+    write_approved_sections(pdk / "libs.tech" / "ngspice" / "sky130.lib.spice")
+    env = runner.check_env(LEGACY)
+    # the regression this test exists for: check_env dropped the shared helper's revision
+    # binding and raised NameError here on every successful call
+    assert env["open_pdks_commit"] == NEW
+    assert env["path"] == str(pdk)
+    assert set(env["sections_present"]) == set(LEGACY.process)
+    assert set(env["sections"]) == set(LEGACY.process)
+
+
 def test_known_pins_by_record_date():
     cur = {"open_pdks_commit": NEW, "lib_sha256": LIB_SHA}
     old = {"open_pdks_commit": OLD, "lib_sha256": LIB_SHA}

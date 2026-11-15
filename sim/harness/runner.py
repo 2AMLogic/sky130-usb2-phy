@@ -85,7 +85,7 @@ def section_evidence(lib: Path, sections) -> tuple[dict, list[str]]:
 
 def check_env(matrix: mx.Matrix) -> dict:
     """Confirm, on this host, the PDK, model library and corner sections."""
-    _, pdk, _, _ = pdk_pin.resolve_pinned_tree(
+    _, pdk, commit, _ = pdk_pin.resolve_pinned_tree(
         matrix.pdk["name"], pdk_pin.ngspice_tree,
         pin=matrix.pdk["open_pdks_commit"], error=RunError,
     )
