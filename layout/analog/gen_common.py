@@ -2,14 +2,20 @@
 
 Operator ruling 2026-10-29 (#238): the generator helpers that were copy-pasted
 into each leaf live here, one copy, so a fix to `mos` or `tap_ring` is made
-once. The leaf directories still own their outputs: each `gen.py` keeps its
-own layer table, `TOP`, GDS, and block-specific `build()`, and `gen.py --check`
-still compares sha256 of the regenerated stream against the committed GDS, so
-sharing code does not weaken reproducibility.
+once — and, in the ruling's words, this module "reconciles the mos/resistor
+variants explicitly". The leaf directories still own their outputs: each
+`gen.py` keeps its `TOP`, GDS, and block-specific `build()`, and `gen.py
+--check` still compares sha256 of the regenerated stream against the committed
+GDS, so sharing code does not weaken reproducibility.
+
+Shared here: the sky130A drawn-layer table `L`, the `--check` / `-o` GDS CLI
+(`run_gds`, with the per-leaf `--help` description passed in), and the two
+poly-resistor builders `xhigh_resistor` (serpentine `res_xhigh_po`, carrying
+the two-leg `urpm.width.1` marker guard) and `res_generic_po` (straight bar).
 
 Variants that genuinely differ stay in their leaf and are named in
 `layout/analog/README.md`: `differential_driver`'s `Ports`/`mos` (per-gate
-length, supply asserts, landing kinds) and the `resistor` family.
+length, supply asserts, landing kinds; reconciliation is tracked as #274).
 
 `klayout.db` only, no timestamps. A change here must leave every committed GDS
 byte-identical (`gen.py --check` for all five leaves).
@@ -17,7 +23,12 @@ byte-identical (`gen.py --check` for all five leaves).
 
 from __future__ import annotations
 
+import argparse
+import hashlib
+import sys
+import tempfile
 from pathlib import Path
+from typing import Callable
 
 import klayout.db as db
 
@@ -33,6 +44,39 @@ GC_Y = 0.35  # gate licon bottom, above diff edge
 POLY_TOP = 0.60  # poly end above the diff edge on the contact side
 PAD = 0.35  # met1 / met2 landing pad edge
 STRIP_W = 0.29  # tap strip width (rails, guard rings)
+
+# --- sky130A drawn-layer table (GDS layer/datatype) --------------------------
+# The driver's superset: `via3`, `met4` and `capm` (its MIM cap) exist in every
+# leaf's namespace, and klayout writes no bytes for a layer holding no shapes,
+# so the extra entries are output-neutral for the other four leaves (#293).
+L = {
+    "nwell": (64, 20),
+    "diff": (65, 20),
+    "tap": (65, 44),
+    "poly": (66, 20),
+    "licon": (66, 44),
+    "li1": (67, 20),
+    "mcon": (67, 44),
+    "met1": (68, 20),
+    "via1": (68, 44),
+    "met2": (69, 20),
+    "via2": (69, 44),
+    "met3": (70, 20),
+    "via3": (70, 44),
+    "met4": (71, 20),
+    "nsdm": (93, 44),
+    "psdm": (94, 20),
+    "npc": (95, 20),
+    "hvi": (75, 20),
+    "urpm": (79, 20),
+    "capm": (89, 44),
+    "poly_res": (66, 13),
+    "met1_label": (68, 5),
+    "met3_label": (70, 5),
+}
+
+XHIGH_W = 1.41  # sky130_fd_pr__res_xhigh_po_1p41 body width
+XHIGH_GAP = 0.50  # poly space between serpentine legs
 
 
 def snap(v: float) -> float:
@@ -199,3 +243,117 @@ def tap_ring(
                 cv.centred("mcon", cx, cy, LIC, LIC)
         if side in rail_sides:
             cv.rect("met1", a, b, c, d)
+
+
+def xhigh_resistor(
+    cv: Canvas, x0: float, y0: float, length: float, legs: int
+) -> tuple[tuple[float, float], tuple[float, float], float]:
+    """Serpentine sky130_fd_pr__res_xhigh_po_1p41, centreline length `length`, `legs` legs.
+
+    Both terminal heads are at the top, outside the `poly_res` marker, so the
+    SKY130 runset sees exactly two terminals. Returns the (x, y) centre of each
+    head's met1 pad and the x of the right edge of the body.
+    """
+    w = XHIGH_W
+    pitch = w + XHIGH_GAP
+    n = legs
+    # centreline: n legs of `leg` + (n-1) links of `pitch`
+    leg = snap((length - (n - 1) * pitch) / n)
+    # leg centreline x_i; vertical centreline from yb to yt
+    xs = [x0 + w / 2 + i * pitch for i in range(n)]
+    yb = y0 + w / 2
+    yt = yb + leg
+    region = db.Region()
+    for x in xs:
+        region.insert(db.DBox(x - w / 2, yb - w / 2, x + w / 2, yt + w / 2).to_itype(DBU))
+    for i in range(n - 1):
+        y = yb if i % 2 == 0 else yt
+        region.insert(db.DBox(xs[i] - w / 2, y - w / 2, xs[i + 1] + w / 2, y + w / 2).to_itype(DBU))
+    region.merge()
+    # The first and last leg are free at the top: trim them to the centreline
+    # end so area / width is the centreline length (mitred corners count once).
+    for x in (xs[0], xs[-1]):
+        region -= db.Region(db.DBox(x - w / 2, yt, x + w / 2, yt + w / 2).to_itype(DBU))
+    area_um2 = region.area() * DBU * DBU
+    cv.cell.shapes(cv.idx["poly"]).insert(region)
+    # With two legs there is no top link: the marker ends at the head edge, or the gap
+    # between the two cut-outs would leave a sliver narrower than urpm.width.1.
+    marker = db.Region(db.DBox(x0, y0, xs[-1] + w / 2, yt + (0 if n == 2 else w / 2)).to_itype(DBU))
+    for x in (xs[0], xs[-1]):
+        marker -= db.Region(db.DBox(x - w / 2 - 0.01, yt, x + w / 2 + 0.01, yt + w).to_itype(DBU))
+    cv.cell.shapes(cv.idx["poly_res"]).insert(marker)
+    cv.cell.shapes(cv.idx["urpm"]).insert(marker)
+    # heads above the marker edge (marker top == yt): poly contact pads
+    head_pads = []
+    for x in (xs[0], xs[-1]):
+        cv.rect("poly", x - w / 2, yt, x + w / 2, yt + 0.5)
+        yl = yt + 0.25
+        for k in range(4):
+            cx = x + (k - 1.5) * LIC_PITCH
+            cv.centred("licon", cx, yl, LIC, LIC)
+            cv.centred("mcon", cx, yl, LIC, LIC)
+        cv.rect("npc", x - w / 2 + 0.1, yl - 0.185, x + w / 2 - 0.1, yl + 0.185)
+        cv.rect("li1", x - 0.64, yl - 0.165, x + 0.64, yl + 0.165)
+        cv.rect("met1", x - 0.66, yl - 0.175, x + 0.66, yl + 0.175)
+        head_pads.append((x, yl))
+    cv.rect("psdm", x0 - 0.3, 0.3, xs[-1] + w / 2 + 0.3, yt + 0.5 + 0.3)
+    print(f"xhigh resistor body area {area_um2:.3f} um2 -> L = {area_um2 / w:.3f} um (target {length})", file=sys.stderr)
+    return head_pads[0], head_pads[1], xs[-1] + w / 2 + 0.3
+
+
+def res_generic_po(
+    cv: Canvas,
+    ports: Ports,
+    x0: float,
+    y0: float,
+    w: float,
+    length: float,
+    nets: tuple[str, str],
+    head_ys: list[float],
+    pad_hw: float,
+    port_y: float,
+    kind: str,
+) -> float:
+    """sky130_fd_pr__res_generic_po: a poly bar `length` (x) by `w` (y) under the
+    `poly_res` marker, a contacted poly head on each end outside the marker.
+
+    `x0` is the marker's left edge; the heads extend 0.8 um past it each side.
+    `head_ys` are the head-contact centres as offsets from `y0`; `pad_hw` is
+    the met1 pad's x half-width; the landing pads are (xh, y0 + `port_y`,
+    `kind`). Returns the x of the right edge of the right head.
+    """
+    head = 0.8  # poly head length beyond the marker
+    cv.rect("poly", x0 - head, y0, x0 + length + head, y0 + w)
+    cv.rect("poly_res", x0, y0, x0 + length, y0 + w)
+    for xh, net in ((x0 - head / 2, nets[0]), (x0 + length + head / 2, nets[1])):
+        for y in head_ys:
+            cv.centred("licon", xh, y0 + y, LIC, LIC)
+            cv.centred("mcon", xh, y0 + y, LIC, LIC)
+        cv.rect("npc", xh - 0.185, y0 + head_ys[0] - 0.185, xh + 0.185, y0 + head_ys[-1] + 0.185)
+        cv.rect("li1", xh - 0.165, y0 + head_ys[0] - 0.165, xh + 0.165, y0 + head_ys[-1] + 0.165)
+        cv.rect("met1", xh - pad_hw, y0 + head_ys[0] - 0.175, xh + pad_hw, y0 + head_ys[-1] + 0.175)
+        ports.add(net, xh, y0 + port_y, kind)
+    return x0 + length + head
+
+
+def run_gds(gds: Path, build: Callable[[], Canvas], description: str) -> int:
+    """The `--check` / `-o` GDS-writer CLI shared by every leaf generator.
+
+    The description is a parameter: each leaf passes its own docstring's first
+    line, so `--help` stays per leaf instead of resolving to this module's.
+    """
+    ap = argparse.ArgumentParser(description=description)
+    ap.add_argument("--check", action="store_true", help="compare, do not write")
+    ap.add_argument("-o", "--output", type=Path, default=gds)
+    args = ap.parse_args()
+    cv = build()
+    if args.check:
+        with tempfile.TemporaryDirectory(prefix="gen-check-") as scratch:
+            tmp = Path(scratch) / gds.name
+            cv.write(tmp)
+            same = hashlib.sha256(tmp.read_bytes()).hexdigest() == hashlib.sha256(gds.read_bytes()).hexdigest()
+        print("reproducible" if same else "DIFFERS from committed stream")
+        return 0 if same else 1
+    cv.write(args.output)
+    print(f"wrote {args.output} sha256={hashlib.sha256(args.output.read_bytes()).hexdigest()}")
+    return 0
