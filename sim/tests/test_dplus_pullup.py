@@ -297,6 +297,22 @@ def test_record_discloses_selection_limits_and_resistor_corner_mapping():
     assert "## Per-corner selection" in rec and rec.count("| `") >= 45
 
 
+def test_record_zero_measurement_run_keeps_detail_headings_with_note_and_no_tables():
+    m = {"experiment": "dplus-pullup-tolerance", "status": "FAIL",
+         "results": [{"corner_id": mx.corner_id(*p), "status": "error", "measurements": {}}
+                     for p in MATRIX.points()],
+         "axes": {"process": list(MATRIX.process), "temperature_c": list(MATRIX.temperature_c),
+                  "supply_v": list(MATRIX.supply_v)},
+         "problems": ["batch refused the job before any corner simulated"],
+         "backend": "batch", "job_id": "", "klt_version": "k", "engine_version": "46",
+         "pdk": {}, "git": {"head": "h", "dirty": False}, "started_utc": "t", "author": "a"}
+    rec = runner.render_record("20260101-000000-abcdef0", m, "0" * 64,
+                               {"claim": TB["claim"], "supersedes": "", "record_meta": TB["record"]})
+    assert "## Measurement ranges over the grid" in rec and "## Per-corner selection" in rec
+    assert rec.count("No corner produced a measurement") == 2
+    assert "|---|" not in rec and rec.count("| `") == 0
+
+
 # ---- committed evidence and the record lint
 
 RECORDS = sorted((EXP / "records").glob("*.md"))
