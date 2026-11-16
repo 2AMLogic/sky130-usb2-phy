@@ -65,8 +65,8 @@ grader that said otherwise would be lying.
 
 | Item (partition) | Verdict | Why — and what would change it |
 |---|---|---|
-| 1 — Design sources (analog) | **`met`** | Cites [`evidence/item-1-analog-sources.json`](evidence/item-1-analog-sources.json) under `"1.analog"`: an artifact-anchored envelope produced by `klt signoff --attest 1` (klt 0.8.0) over [`inventory/item-1-analog-sources.json`](inventory/item-1-analog-sources.json) — the five leaf schematics `design/{differential_driver,differential_receiver,dplus_pullup,se_receiver_dm,se_receiver_dp}.sch` and their five derived `design/netlist/*.spice`, each netlist with a freshness check, [`design/check_netlist.py`](../design/check_netlist.py) (15/15 checks passed). **Disclosed, not omitted:** it asserts the sources exist and the netlists match a fresh `klt netlist --block` export; it does **not** assert any analog spec row is met. `klt netlist --check` alone reports all five netlists drifted (the committed files carry `design/export_netlist.sh`'s header, real `.subckt` wrapper, repo-relative `sch_path`, and different `+` line wrapping), so the checker normalises exactly those and compares everything else; a one-character edit to a netlist fails it (tested). Like the digital check it is `local_only` (needs xschem and the pinned PDK) and `check.py` re-hashes the envelope's files instead. **Not in the partition's in-tree sources:** the PLL (pinned reference to `2AMLogic/sky130-pll`, `reuse.lock.json`) and the squelch detector (undecided, DR-0003 Decision 2 pending ratification) — if the grader's analog partition later requires either, this row is the one that changes. Refresh after a schematic change: `design/export_netlist.sh <cell>` where xschem is permitted, then `uvx --from "klayout-tools==0.8.0" klt signoff --attest 1 --inventory signoff/inventory/item-1-analog-sources.json -o signoff/evidence/item-1-analog-sources.json`, update the manifest pin, `python3 signoff/check.py --regen`. |
-| 1 — Design sources (digital) | **`met`** | Cites [`evidence/item-1-digital-sources.json`](evidence/item-1-digital-sources.json) under the partition-qualified key `"1.digital"`: an artifact-anchored envelope produced by `klt signoff --attest 1` (klt 0.8.0) over [`inventory/item-1-digital-sources.json`](inventory/item-1-digital-sources.json) — the 12 `rtl/usb_*.v` files and the synthesis request (each recorded by content hash in the envelope), plus the derived `design/netlist/usb_utmi_top.v` with its declared freshness check, `klt synthesize flow/request-synth-usb_utmi_top.json --pdk sky130A --check <newest synthesize-report.json>`. **Disclosed, not omitted:** this asserts the sources exist, are current, and that the netlist's freshness check passed. It does **not** assert any spec row is met or that synthesis is timing-clean. Cheap-mode `--check` re-hashes the request's RTL and the liberty against the report's recorded provenance; per its help text it does not open the netlist file itself, so a hand-edited netlist would not fail it (not tested); `--rerun` (full mode, re-runs Yosys) is the stronger check and was not run. The freshness command is `local_only` (needs the PDK), so `check.py` (grader 0.7.0, which lacks `--attest`) re-hashes the envelope's recorded files instead and does not re-run it. Refresh after any RTL change: `uvx --from "klayout-tools==0.8.0" klt signoff --attest 1 --inventory signoff/inventory/item-1-digital-sources.json -o signoff/evidence/item-1-digital-sources.json`, then `python3 signoff/check.py --regen`. |
+| 1 — Design sources (analog) | **`met`** | Cites [`evidence/item-1-analog-sources.json`](evidence/item-1-analog-sources.json) under `"1.analog"`: an artifact-anchored envelope produced by `klt signoff --attest 1` (klt 0.8.0) over [`inventory/item-1-analog-sources.json`](inventory/item-1-analog-sources.json) — the five leaf schematics `design/{differential_driver,differential_receiver,dplus_pullup,se_receiver_dm,se_receiver_dp}.sch` and their five derived `design/netlist/*.spice`, each netlist with a freshness check, [`design/check_netlist.py`](../design/check_netlist.py) (15/15 checks passed). **Disclosed, not omitted:** it asserts the sources exist and the netlists match a fresh `klt netlist --block` export; it does **not** assert any analog spec row is met. `klt netlist --check` alone reports all five netlists drifted (the committed files carry `design/export_netlist.sh`'s header, real `.subckt` wrapper, repo-relative `sch_path`, and different `+` line wrapping), so the checker normalises exactly those and compares everything else; a one-character edit to a netlist fails it (tested). Like the digital check it is `local_only` (needs xschem and the pinned PDK) and `check.py` re-hashes the envelope's files instead. **Not in the partition's in-tree sources:** the PLL (pinned reference to `2AMLogic/sky130-pll`, `reuse.lock.json`) and the squelch detector (undecided, DR-0003 Decision 2 pending ratification) — if the grader's analog partition later requires either, this row is the one that changes. Refresh after a schematic change: `design/export_netlist.sh <cell>` where xschem is permitted, then `uvx --from "klayout-tools==0.8.0" klt signoff --attest 1 --inventory signoff/inventory/item-1-analog-sources.json -o signoff/evidence/item-1-analog-sources.json`, update the manifest pin, `python3 signoff/check.py --regen` — run that `--regen` only with the pinned grader on `PATH` (the venv-on-`PATH` form from [How to re-run the grading](#how-to-re-run-the-grading); a bare `--regen` under the shared `klt` commits the wrong grader's report, and `uvx` alone does not cover it). |
+| 1 — Design sources (digital) | **`met`** | Cites [`evidence/item-1-digital-sources.json`](evidence/item-1-digital-sources.json) under the partition-qualified key `"1.digital"`: an artifact-anchored envelope produced by `klt signoff --attest 1` (klt 0.8.0) over [`inventory/item-1-digital-sources.json`](inventory/item-1-digital-sources.json) — the 12 `rtl/usb_*.v` files and the synthesis request (each recorded by content hash in the envelope), plus the derived `design/netlist/usb_utmi_top.v` with its declared freshness check, `klt synthesize flow/request-synth-usb_utmi_top.json --pdk sky130A --check <newest synthesize-report.json>`. **Disclosed, not omitted:** this asserts the sources exist, are current, and that the netlist's freshness check passed. It does **not** assert any spec row is met or that synthesis is timing-clean. Cheap-mode `--check` re-hashes the request's RTL and the liberty against the report's recorded provenance; per its help text it does not open the netlist file itself, so a hand-edited netlist would not fail it (not tested); `--rerun` (full mode, re-runs Yosys) is the stronger check and was not run. The freshness command is `local_only` (needs the PDK), so `check.py` (grader 0.7.0, which lacks `--attest`) re-hashes the envelope's recorded files instead and does not re-run it. Refresh after any RTL change: `uvx --from "klayout-tools==0.8.0" klt signoff --attest 1 --inventory signoff/inventory/item-1-digital-sources.json -o signoff/evidence/item-1-digital-sources.json`, then `python3 signoff/check.py --regen` — run that `--regen` only with the pinned grader on `PATH` (the venv-on-`PATH` form from [How to re-run the grading](#how-to-re-run-the-grading); a bare `--regen` under the shared `klt` commits the wrong grader's report, and `uvx` alone does not cover it). |
 | 2 — Layout (analog) | **`met`** | Cites [`evidence/item-2-analog-layout.json`](evidence/item-2-analog-layout.json) under `"2.analog"`: an artifact-anchored generic envelope (`t1_item: 2`) pinning [`inventory/item-2-analog-layout.json`](inventory/item-2-analog-layout.json), which lists the committed GDS of each leaf (`differential_driver`, `differential_receiver`, `dplus_pullup`, `se_receiver_dm`, `se_receiver_dp`) and its generator `layout/analog/<leaf>/gen.py`, each with its sha256. This is the only form klt 0.8.0 accepts for a set of layouts: item 2 takes one citation, and a list of native envelopes is `invalid_evidence`. **Disclosed, not omitted:** it asserts the streams and generators are committed and current; the *reproducibly generated* half rests on each leaf's `flow/analog-layout-<leaf>/records/` entry (`reproducibility.regenerated_identical: true`), which the tool does not re-run (the envelope carries no regeneration claim). **Not in the partition's in-tree layout:** the PLL (a pinned reference to `2AMLogic/sky130-pll`, `reuse.lock.json`) and the squelch detector (undecided, DR-0003 Decision 2 pending ratification) have no layout here, and neither is cited. Items 3, 4 and 11 below cover the five leaves only, not a placed-and-routed PHY top. `check.py` re-hashes every listed file, so a one-byte GDS change fails the gate. |
 | 2 — Layout (digital) | `unmet` / `no_evidence` | `layout/utmi_stub.gds` is the stub's output, not the block's; nothing to cite for the real datapath until it is routed. |
 | 3 — DRC clean (analog) | `unmet` / `invalid_evidence` | The manifest cites, under `"3.analog"`, the `drc-report.json` of the latest frozen record of each leaf (`flow/analog-layout-<leaf>/artifacts/<record>/`): all five read `status: clean`, `violation_count: 0`, deck `sky130`. **As graded by klt 0.8.0 the item is `unmet`:** the grader accepts one native envelope for item 3 and renders a list of five `invalid_evidence` (probe: citing a single leaf's report alone grades `met`, but one leaf is not the partition, so that is deliberately not committed). The reason is the grader's shape, not a DRC finding; the gap is filed upstream as klayout-tools#5044. **Coverage gaps are the envelopes' own and are not hidden by `clean`:** each report's `coverage` block lists layers in the stream without rules (e.g. `66/13`, `68/5`, `70/5` for `se_receiver_dm`), skipped rules and unmodeled deck rules; read them in the cited reports. **Not in the partition's in-tree layout:** the PLL (a pinned reference to `2AMLogic/sky130-pll`, `reuse.lock.json`) and the squelch detector (undecided, DR-0003 Decision 2 pending ratification) have no layout here, and neither is cited. Items 3, 4 and 11 below cover the five leaves only, not a placed-and-routed PHY top. `check.py` re-hashes each cited leaf GDS against the envelope's recorded `content_hash`. |
@@ -148,11 +148,54 @@ PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py           # the ga
 PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py --regen   # refresh pins + rewrite the report
 ```
 
+**Recognise a *wrong* grader before believing any output.** There are three
+ways to get a confidently-wrong result here, and the checker's own FAIL text
+warns about none of them:
+
+- **The false-drift trap — the one that manufactures a defect report.** With a
+  non-pinned `klt` on `PATH`, `python3 signoff/check.py` emits *two* FAILs:
+  the expected `the klt on PATH is not the pinned grading build`, **and**
+  `signoff/signoff-report.json no longer matches what the current tree grades
+  to`, itemised to the row level. That second FAIL reads exactly like evidence
+  rot in this repository, and it is not: `main()` runs `check_toolchain_pin()`
+  and still falls through to the drift check on the wrong grader's output, and
+  a same-version git snapshot is known to grade differently from the registry
+  wheel ([klayout-tools#2216](https://github.com/2AMLogic/klayout-tools/issues/2216)).
+  Re-run inside the venv before believing any drift — and **never
+  `python3 signoff/check.py --regen` from a failed identity check**:
+  `--regen` writes `signoff-report.json` regardless of the pin verdict, so
+  running it under the wrong grader commits that grader's verdict as the
+  report of record.
+- **`uvx --from "klayout-tools==$VER" klt …` alone does not satisfy the
+  gate.** The checker resolves the grader through `PATH` only —
+  `shutil.which("klt")` and the `klt version --format json` subprocess inside
+  `check_toolchain_pin()` — so a one-shot `uvx` wrapper satisfies only the
+  single command it wraps, while `check.py` still sees whatever `klt` is on
+  `PATH`. The venv-prepended-to-`PATH` form in the recipe above is
+  load-bearing, not a style preference.
+- **Never install over the shared fleet tool.** On a shared worker,
+  `~/.local/bin/klt` is deliberately a git snapshot (`is_release false`) that
+  other fleet sweeps depend on; host-wide installs are forbidden by worker
+  policy. The `pip install klayout-tools==…` line that the gate's own FAIL
+  message prints (`check_toolchain_pin()` and the `klt`-not-on-`PATH` branch
+  of `main()`) is **not** the instruction to follow on a shared worker —
+  provision the throwaway venv above instead.
+
+**Where the pin lives: three files that move together.** A re-pin updates
+`signoff/toolchain.json`, the `GRADER_PACKAGE_VERSION`/`GRADER_GIT_TAG`
+constants in `signoff/check.py`, and the `pip install` in
+`.github/workflows/ci.yml`'s `signoff` job as one change —
+`check_toolchain_pin()` fails if the first two disagree, so half a re-pin is
+worse than none.
+
 The re-hash half of the gate needs no grader at all: `--pins-only` runs the
 eight stdlib re-hash checks with no `klt` on PATH — the cheap
-"did I just stale a pin?" check to run before opening a PR. On failure it
-names the stale member and prints the refresh recipe above; only the `--regen`
-refresh itself needs the pinned wheel:
+"did I just stale a pin?" check to run before opening a PR (this is the
+pre-PR instruction in `CLAUDE.md`). It cannot be combined with `--regen` —
+the checker rejects that pair outright, because one runs without the pinned
+grader and the other rewrites the report with it. On failure it names the
+stale member and prints the refresh recipe above; only the `--regen` refresh
+itself needs the pinned wheel:
 
 ```bash
 python3 signoff/check.py --pins-only   # re-hash checks only, grader-free
@@ -165,4 +208,7 @@ changed (today: `docs/characterization.md`) fails CI instead of silently
 rotting. The fix is always the same one-liner — `python3 signoff/check.py
 --regen` — **after** re-reading what changed and updating the envelope's
 summary and this README's disclosed verdict if the content moved; the prose
-and the report are one artifact, not two.
+and the report are one artifact, not two. The one exception is the
+wrong-grader case above: a drift FAIL that arrives *together with* the
+grader-identity FAIL is not drift at all, and `--regen` is forbidden until
+the pinned venv is on `PATH` and the identity check passes.
