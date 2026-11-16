@@ -10,6 +10,22 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-15
 
+- **PR #314**: sim: record driver-matching-mismatch fs100v36 corner (match PASS, xover FAIL); state partial driver coverage
+- **PR #305**: sim: record driver-matching-mismatch sf40v36 corner (FAIL); state partial driver coverage
+- **PR #303**: feat(sim): first klt pex report on the differential_receiver leaf (36/36 rows pass, bodies biased)
+- **PR #302**: sim: record driver-matching-mismatch tt corner (PASS); state partial coverage
+- **PR #301**: feat(sim): render a one-line note instead of empty detail tables when no corner measured
+- **PR #300**: test: share one synthetic klt-report builder across the sim/tests analog modules
+- **PR #299**: signoff: declare the item-5 analog row set with cited 45-point envelopes
+- **PR #287**: refactor(lint): share one merge-base, fail-closed append-only check between both evidence lints
+- **Issue #289** (closed): Deduplicate the synthetic klt-report builders in sim/tests: five hand-rolled copies of one corner envelope, one carrying a dead no-op loop
+- **Issue #283** (closed): Simplify record rendering: skip the per-corner and measurement-range tables when no corner produced a measurement
+- **Issue #281** (closed): T1 item 7 (post-layout verification, analog): first klt pex report on the differential_receiver leaf
+- **Issue #280** (closed): T1 item 5 (corner verification, analog): declare the analog row set and cite the committed klt sim corner envelopes
+- **Issue #276** (closed): Remove the duplicate append-only base-ref check in flow/check_records.py: it disagrees with sim/harness/evidence_lint.py and is wrong both ways
+- **Issue #272** (closed): sim/driver-matching-mismatch: run and record the sf40v36 corner (thinnest high-side matching margin, 1.0772)
+- **Issue #271** (closed): sim/driver-matching-mismatch: run and record the fs100v36 corner (thinnest crossover margin, ~7 mV)
+- **Issue #269** (closed): sim/driver-matching-mismatch: run and record the tt corner (Monte Carlo mismatch, driver rise/fall matching + crossover)
 - **PR #298**: feat(signoff): grader-free --pins-only mode makes pin staleness locally detectable
 
 ### 2026-11-14

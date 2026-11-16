@@ -1,3 +1,4 @@
+* Derived by sim/make_se_receiver_tb.py; do not edit by hand.
 * se-receiver-mismatch (D+) -- sky130 single-ended D+ receiver switching threshold under local device mismatch
 *
 * Circuit body for `klt sim` Monte Carlo (sim/run_mismatch.py). The design netlist

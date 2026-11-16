@@ -72,6 +72,7 @@ sim/
   corners-resistor-sets.json   the supplemental 225-point resistor-set matrix (id pvt225-mos-rc)
   run_corners.py               runner (stdlib only): --list, --check-env, <experiment>
   check_records.py             toolchain-free record lint (also run by `npm run lint`)
+  make_se_receiver_tb.py       shared source rendering the se-receiver dp/dm testbench inputs (--check)
   harness/                     matrix.py results.py runner.py evidence_lint.py append_only.py
   tests/                       toolchain-free tests (pytest)
   <experiment-slug>/           e.g. smoke-inverter
@@ -280,6 +281,13 @@ Records: `se-receiver-dp-thresholds/records/`, `se-receiver-dm-thresholds/record
 No Monte Carlo is run; each record says so. Both ran on fleet runner klt
 0.5.0 against client 0.7.0 with the version check in `warn` mode, as above.
 
+The D+ / D- pair is not hand-synchronised: `sim/make_se_receiver_tb.py` renders
+both `tb.json` files and all four `se_rx_*_tb.spice` decks (these two and the
+two `se-receiver-mismatch` Monte Carlo decks) from one per-leaf parameterisation.
+The threshold decks cross-reference their *sibling* experiment, so the pair is
+not a token substitution of one file. `--check` (run by `sim/tests`) fails if a
+committed copy is edited by hand.
+
 ## diff-receiver-mismatch, se-receiver-mismatch (Monte Carlo, T1 item 6)
 
 The statistical evidence for the two receiver rows that mismatch limits by construction
@@ -401,7 +409,7 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   `testbench/make_mm_netlist.py`; a test checks it is current). Result: a passing code exists in 400/400 samples at
   both corners (see the record for the numbers); the control (1 kohm in series) is `detected`. The result
   depends on the assumed A_R; global sheet-resistance spread is in the 225-point record, not here.
-- **`driver-matching-mismatch`** (declared and tested, **partially recorded**, one corner per record:
+- **`driver-matching-mismatch`** (declared and tested, recorded one corner per record — all four corners:
   `tt` is recorded as PASS — record `20261115-040553-f76df63`, both receivers, controls `detected`;
   `sf40v36` is run and recorded as FAIL (`records/20261115-064022-f76df63.md`) —
   mismatch puts 11-13 % of samples' rise/fall ratios above the 1.1 bound, far short of the 0.99 yield target (empirical
@@ -412,8 +420,10 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   0.6675 / 0.655 against the 0.99 target), exactly where the 7 mV deterministic margin sits, and the
   180 ohm crossover control cannot pull the crossover below 1.3 V at 3.6 V, so its verdict is
   `not_detected`; the FAIL is recorded as evidence, not waived;
-  `fs100v30` not yet recorded: the run needs more fleet time
-  than one builder session; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
+  `fs100v30` is run and recorded as match FAIL / xover PASS (`records/20261115-141134-38bdad2.md`) —
+  the mismatch tail of all four rise/fall ratios crosses the 0.9 lower bound (3-4 of 400 samples per
+  ratio, worst 0.8755) while both crossover rows PASS with empirical yield 1; the FAIL is recorded as
+  evidence, not waived). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
   the crossover voltage (1.3-2.0 V; graded because the 45-point record leaves 7 mV at fs / 100 C / 3.6 V). Corners:
   `tt`, `fs100v36` (crossover binding), `sf40v36` (high-side ratio, 1.0772) and `fs100v30` (low-side ratio,
   0.9278). Two receivers because no single deterministic control degrades both rows while keeping every

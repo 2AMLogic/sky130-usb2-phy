@@ -26,22 +26,16 @@ share a y-range within spacing -- there is no placement search):
 
 from __future__ import annotations
 
-import argparse
-import hashlib
 import math
 import re
 import sys
-import tempfile
 from pathlib import Path
-
-import klayout.db as db
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from gen_common import (  # noqa: E402
-    DBU,
     GC_Y,
+    L,
     LIC,
-    LIC_PITCH,
     PAD,
     POLY_ENDCAP,
     POLY_TOP,
@@ -49,8 +43,10 @@ from gen_common import (  # noqa: E402
     STRIP_W,
     Canvas,
     contacts_y,
-    snap,
+    res_generic_po,
+    run_gds,
     tap_ring,
+    xhigh_resistor,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -60,33 +56,6 @@ NETLIST = REPO / "design" / "netlist" / "differential_driver.spice"
 TOP = "differential_driver"
 
 
-# --- sky130A drawn-layer table (GDS layer/datatype) -------------------------
-L = {
-    "nwell": (64, 20),
-    "diff": (65, 20),
-    "tap": (65, 44),
-    "poly": (66, 20),
-    "licon": (66, 44),
-    "li1": (67, 20),
-    "mcon": (67, 44),
-    "met1": (68, 20),
-    "via1": (68, 44),
-    "met2": (69, 20),
-    "via2": (69, 44),
-    "met3": (70, 20),
-    "via3": (70, 44),
-    "met4": (71, 20),
-    "nsdm": (93, 44),
-    "psdm": (94, 20),
-    "npc": (95, 20),
-    "hvi": (75, 20),
-    "urpm": (79, 20),
-    "capm": (89, 44),
-    "poly_res": (66, 13),
-    "met1_label": (68, 5),
-    "met3_label": (70, 5),
-}
-
 # --- drawn dimensions, um (all on the 0.005 grid) ---------------------------
 V1 = 0.15  # via1 edge
 V2 = 0.20  # via2 edge
@@ -95,8 +64,6 @@ TRUNK_W = 0.40  # met3 trunk width
 TRUNK_PITCH = 0.70  # met3 trunk pitch
 V2_PAD = 0.38  # met2 pad around via2 (0.09 enclosure on the sides)
 M4_W = 0.40  # met4 strip / pad width
-RES_W = 1.41  # sky130_fd_pr__res_xhigh_po_1p41 body width
-RES_GAP = 0.50  # poly space between serpentine legs
 FINGER_MAX = 10.0  # widest single finger, um
 MIM_ENC = 0.14  # met3 bottom plate enclosure of capm
 MIM_VIA_IN = 0.50  # via3 centre inset from the capm corner
@@ -222,74 +189,6 @@ def mos(
     return x0 + width
 
 
-def xhigh_resistor(cv: Canvas, x0: float, y0: float, length: float, legs: int) -> tuple:
-    """Serpentine sky130_fd_pr__res_xhigh_po_1p41, centreline length `length`.
-
-    Both terminal heads are at the top, outside the `poly_res` marker, so the
-    SKY130 runset sees exactly two terminals. Returns the (x, y) centre of each
-    head's met1 pad.
-    """
-    w = RES_W
-    pitch = w + RES_GAP
-    n = legs
-    leg = snap((length - (n - 1) * pitch) / n)
-    xs = [x0 + w / 2 + i * pitch for i in range(n)]
-    yb = y0 + w / 2
-    yt = yb + leg
-    region = db.Region()
-    for x in xs:
-        region.insert(db.DBox(x - w / 2, yb - w / 2, x + w / 2, yt + w / 2).to_itype(DBU))
-    for i in range(n - 1):
-        y = yb if i % 2 == 0 else yt
-        region.insert(db.DBox(xs[i] - w / 2, y - w / 2, xs[i + 1] + w / 2, y + w / 2).to_itype(DBU))
-    region.merge()
-    # The first and last leg are free at the top: trim them to the centreline
-    # end so area / width is the centreline length (mitred corners count once).
-    for x in (xs[0], xs[-1]):
-        region -= db.Region(db.DBox(x - w / 2, yt, x + w / 2, yt + w / 2).to_itype(DBU))
-    area_um2 = region.area() * DBU * DBU
-    cv.cell.shapes(cv.idx["poly"]).insert(region)
-    marker = db.Region(db.DBox(x0, y0, xs[-1] + w / 2, yt + w / 2).to_itype(DBU))
-    for x in (xs[0], xs[-1]):
-        marker -= db.Region(db.DBox(x - w / 2 - 0.01, yt, x + w / 2 + 0.01, yt + w).to_itype(DBU))
-    cv.cell.shapes(cv.idx["poly_res"]).insert(marker)
-    cv.cell.shapes(cv.idx["urpm"]).insert(marker)
-    head_pads = []
-    for x in (xs[0], xs[-1]):
-        cv.rect("poly", x - w / 2, yt, x + w / 2, yt + 0.5)
-        yl = yt + 0.25
-        for k in range(4):
-            cx = x + (k - 1.5) * LIC_PITCH
-            cv.centred("licon", cx, yl, LIC, LIC)
-            cv.centred("mcon", cx, yl, LIC, LIC)
-        cv.rect("npc", x - w / 2 + 0.1, yl - 0.185, x + w / 2 - 0.1, yl + 0.185)
-        cv.rect("li1", x - 0.64, yl - 0.165, x + 0.64, yl + 0.165)
-        cv.rect("met1", x - 0.66, yl - 0.175, x + 0.66, yl + 0.175)
-        head_pads.append((x, yl))
-    cv.rect("psdm", x0 - 0.3, 0.3, xs[-1] + w / 2 + 0.3, yt + 0.5 + 0.3)
-    print(f"xhigh resistor body area {area_um2:.3f} um2 -> L = {area_um2 / w:.3f} um (target {length})", file=sys.stderr)
-    return head_pads[0], head_pads[1], xs[-1] + w / 2 + 0.3
-
-
-def generic_poly_resistor(cv: Canvas, ports: Ports, x0: float, y0: float, w: float, length: float, nets: tuple[str, str]) -> float:
-    """sky130_fd_pr__res_generic_po: a poly bar `length` (x) by `w` (y) under the
-    `poly_res` marker, a contacted poly head on each end outside the marker.
-    Returns the x of the right edge of the right head."""
-    head = 0.8  # poly head length beyond the marker
-    cv.rect("poly", x0 - head, y0, x0 + length + head, y0 + w)
-    cv.rect("poly_res", x0, y0, x0 + length, y0 + w)
-    for xh, net in ((x0 - head / 2, nets[0]), (x0 + length + head / 2, nets[1])):
-        ys = [y0 + y for y in contacts_y(w)]
-        for y in ys:
-            cv.centred("licon", xh, y, LIC, LIC)
-            cv.centred("mcon", xh, y, LIC, LIC)
-        cv.rect("npc", xh - 0.185, ys[0] - 0.185, xh + 0.185, ys[-1] + 0.185)
-        cv.rect("li1", xh - 0.165, ys[0] - 0.165, xh + 0.165, ys[-1] + 0.165)
-        cv.rect("met1", xh - 0.145, ys[0] - 0.175, xh + 0.145, ys[-1] + 0.175)
-        ports.add(net, xh, ys[0], "m1")
-    return x0 + length + head
-
-
 def mim_cap(cv: Canvas, ports: Ports, x0: float, y0: float, side: float, bot_net: str, top_net: str) -> float:
     """sky130_fd_pr__cap_mim_m3_1: met3 bottom plate, capm, met4 top contact.
     `side` x `side` um capm. The bottom plate takes a via2 landing, the top
@@ -378,7 +277,9 @@ def build() -> Canvas:
             bot, top = (b, a) if b.startswith("OUTI") else (a, b)
             mx = mim_cap(cv, ports, mx, my, side, bot, top) + 3.0
         for r in (r for r in sers if r["name"].endswith(half)):
-            mx = generic_poly_resistor(cv, ports, mx + 1.0, my, r["p"]["w"], r["p"]["l"], tuple(r["nodes"])) + 4.0
+            rys = contacts_y(r["p"]["w"])
+            mx = res_generic_po(cv, ports, mx + 1.0, my, r["p"]["w"], r["p"]["l"], tuple(r["nodes"]),
+                                rys, 0.145, rys[0], "m1") + 4.0
     mid_x1 = mx
 
     # ---------------------------------------------------------------- PMOS row
@@ -430,23 +331,5 @@ def build() -> Canvas:
     return cv
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true", help="compare, do not write")
-    ap.add_argument("-o", "--output", type=Path, default=GDS)
-    args = ap.parse_args()
-    cv = build()
-    if args.check:
-        with tempfile.TemporaryDirectory(prefix="gen-check-") as scratch:
-            tmp = Path(scratch) / GDS.name
-            cv.write(tmp)
-            same = hashlib.sha256(tmp.read_bytes()).hexdigest() == hashlib.sha256(GDS.read_bytes()).hexdigest()
-        print("reproducible" if same else "DIFFERS from committed stream")
-        return 0 if same else 1
-    cv.write(args.output)
-    print(f"wrote {args.output} sha256={hashlib.sha256(args.output.read_bytes()).hexdigest()}")
-    return 0
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(run_gds(GDS, build, __doc__.splitlines()[0]))
