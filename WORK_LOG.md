@@ -10,6 +10,18 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-16
 
+- **PR #365**: ci: enforce analog GDS reproducibility in the signoff job
+- **PR #364**: lint: check stored records' degraded-mode coverage clause for internal consistency only
+- **PR #360**: docs: drop stale restated headline from flow/README.md characterization pointer
+- **PR #359**: refactor: delete unread MANIFEST_GLOB and IDLE_STATE constants
+- **PR #357**: refactor: remove dead record_kind() and INVENTORY_DIR, re-pin item 10
+- **PR #340**: refactor: draw differential_receiver through the shared receiver generator
+- **Issue #363** (closed): CI never regenerates the analog leaf GDS: gen.py --check is the only reproducibility oracle and runs by hand
+- **Issue #358** (closed): flow/README.md still restates the retired 'zero spec rows have design-anchored evidence' characterization headline
+- **Issue #336** (closed): Fold differential_receiver/gen.py build() into the shared receiver generator (~100 duplicated lines)
+- **Issue #329** (closed): stored_coverage's clause check couples a landed record's lint verdict to later testbench/mc.json edits
+- **Issue #319** (closed): Remove two dead module-level symbols in hash-pinned files: record_kind() and INVENTORY_DIR (carries the item-10 re-pin)
+- **Issue #295** (closed): Remove four dead module-level symbols that each shadow a fact the live code re-states inline
 - **PR #356**: docs: restate signoff item 8 disclosure to match characterization headline
 - **PR #355**: signoff: accept artifact-store-resolved item-6 yield citations in check.py
 - **Issue #335** (closed): signoff/README.md item 8 row still paraphrases characterization's old 'zero spec rows' headline
