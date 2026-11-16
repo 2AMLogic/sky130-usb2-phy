@@ -412,6 +412,10 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   0.6675 / 0.655 against the 0.99 target), exactly where the 7 mV deterministic margin sits, and the
   180 ohm crossover control cannot pull the crossover below 1.3 V at 3.6 V, so its verdict is
   `not_detected`; the FAIL is recorded as evidence, not waived;
+  at both of those corners the 180 ohm crossover control lands inside the window, so the row has no
+  working sensitivity control there — `spec/decision-records/0008-xover-negative-control-load.md`
+  measures the load dependence at all four corners and proposes re-deriving the control at 100 ohm,
+  pending operator ratification;
   `fs100v30` not yet recorded: the run needs more fleet time
   than one builder session; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
   the crossover voltage (1.3-2.0 V; graded because the 45-point record leaves 7 mV at fs / 100 C / 3.6 V). Corners:
