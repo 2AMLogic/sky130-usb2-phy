@@ -42,12 +42,23 @@ RESISTORS = (("XR2", 14.0, 2), ("XR1", 19.0, 2), ("XRBIAS", 140.0, 14))
 RES_SPACE = 1.2  # poly space between neighbouring resistors
 
 
-def build(top: str, din: str, rxout: str) -> Canvas:
-    """Draw the receiver leaf `top` with input net `din` and output net `rxout`."""
+# The differential receiver's bias is a single XRBIAS (no VREF divider), drawn beside the
+# NMOS row ahead of the PMOS row instead of east of the n-well.
+BIAS_ONLY = (("XRBIAS", 140.0, 14),)
+
+
+def build(top: str, din: str, rxout: str, vref: str = "VREF", *, differential: bool = False) -> Canvas:
+    """Draw the receiver leaf `top` with input net `din` and output net `rxout`.
+
+    The single-ended leaves tie the second input to a VREF divider (three resistors, east of the
+    n-well). With `differential` the second input `vref` is a pin (DM) and the lone bias
+    resistor sits beside the NMOS row; that floorplan is a different shape order and a
+    0.005 um different ring margin, kept so the committed GDS stays byte-identical.
+    """
     # Nets that are cell pins. Only these are labelled: the SKY130 LVS runset turns
     # every labelled net into a circuit pin, so labelling internal nets would give
-    # the layout ten pins against the schematic's four.
-    pin_nets = {din, rxout, "VDD", "VSS"}
+    # the layout ten pins against the schematic's four (five for the differential leaf).
+    pin_nets = {din, rxout, "VDD", "VSS"} | ({vref} if differential else set())
     cv = Canvas(top, L)
     ports = Ports()
 
@@ -79,13 +90,43 @@ def build(top: str, din: str, rxout: str) -> Canvas:
     x = mos(
         cv, ports, "n", x, N_DIFF_Y, 10.0,
         ["LOADDIODE", "TAIL", "AMPOUT", "TAIL", "LOADDIODE"],
-        [din, "VREF", "VREF", din], "VSS", rail_top_n,
+        [din, vref, vref, din], "VSS", rail_top_n,
     ) + gap
     # MN_B1: W2 m1. D=BUF1 G=AMPOUT.
     x = mos(cv, ports, "n", x, N_DIFF_Y, 2.0, ["VSS", "BUF1"], ["AMPOUT"], "VSS", rail_top_n) + gap
     # MN_B2: W5 m1. D=RXOUT G=BUF1.
     x = mos(cv, ports, "n", x, N_DIFF_Y, 5.0, ["VSS", rxout], ["BUF1"], "VSS", rail_top_n)
     n_x1 = x
+
+    # ---------------------------------------------------------------- resistor
+    # Terminal nets (left head, right head) per netlist instance. R2 and R1 share VREF
+    # on adjacent heads; the VREF trunk joins them to the input pair's gates.
+    res_nets = {"XR2": ("VSS", "VREF"), "XR1": ("VREF", "VDD"), "XRBIAS": ("IBIASN", "VDD")}
+    vdd_heads: list[tuple[float, float]] = []
+
+    def draw_resistors(res_x0: float) -> float:
+        """Draw the resistor block from `res_x0`; return the ring's east edge."""
+        rx = res_x0
+        for name, res_l, legs in BIAS_ONLY if differential else RESISTORS:
+            head_l, head_r, _ = xhigh_resistor(cv, rx, N_DIFF_Y, res_l, legs)
+            for head, net in zip((head_l, head_r), res_nets[name]):
+                if net == "VDD":
+                    vdd_heads.append(head)
+                elif net == "VSS":
+                    # met1 drop on the resistor's left, straight down to the VSS rail strip
+                    hx, hy = head
+                    cv.rect("met1", rx - 0.5, N_RING_Y0, rx - 0.21, hy + 0.175)
+                    cv.rect("met1", rx - 0.5, hy - 0.175, hx - 0.4, hy + 0.175)
+                else:
+                    ports.add(net, head[0], head[1], "n")
+            rx = head_r[0] + 0.705 + RES_SPACE
+        res_x1 = rx - RES_SPACE + (0.295 if differential else 0.3)
+        ring_x1 = res_x1 + 0.8
+        tap_ring(cv, "n", 0.0, N_RING_Y0, ring_x1, N_RING_Y1, ("b",))
+        return ring_x1
+
+    if differential:
+        ring_x1 = draw_resistors(n_x1 + 1.5)
 
     # ---------------------------------------------------------------- PMOS row
     p_diff_y = P_DIFF_TOP - 10.0
@@ -104,7 +145,7 @@ def build(top: str, din: str, rxout: str) -> Canvas:
 
     # Shift the PMOS row until no PMOS landing column's met2 vertical comes
     # within met2 space of an NMOS one that shares channel y-range.
-    nets_order = ["IBIASN", "TAIL", "LOADDIODE", "AMPOUT", "BUF1", din, "VREF", rxout]
+    nets_order = ["IBIASN", "TAIL", "LOADDIODE", "AMPOUT", "BUF1", din, vref, rxout]
     ty_of = {n: CH_Y0 + 0.6 + i * TRUNK_PITCH for i, n in enumerate(nets_order)}
 
     def conflicts(a_, b_) -> bool:
@@ -130,34 +171,13 @@ def build(top: str, din: str, rxout: str) -> Canvas:
     tap_ring(cv, "p", nw_x0, P_RING_Y0, nw_x1 - 0.5, P_RING_Y1, ("t",))
     cv.rect("nwell", nw_x0 - 0.5, NW_Y0, nw_x1, NW_Y1)
 
-    # ---------------------------------------------------------------- resistor
-    # Terminal nets (left head, right head) per netlist instance. R2 and R1 share VREF
-    # on adjacent heads; the VREF trunk joins them to the input pair's gates.
-    res_nets = {"XR2": ("VSS", "VREF"), "XR1": ("VREF", "VDD"), "XRBIAS": ("IBIASN", "VDD")}
-    res_x0 = nw_x1 + 1.5  # right of the n-well: the VDD drops run up its east side
-    rx = res_x0
-    vdd_heads: list[tuple[float, float]] = []
-    for name, res_l, legs in RESISTORS:
-        head_l, head_r, _ = xhigh_resistor(cv, rx, N_DIFF_Y, res_l, legs)
-        for head, net in zip((head_l, head_r), res_nets[name]):
-            if net == "VDD":
-                vdd_heads.append(head)
-            elif net == "VSS":
-                # met1 drop on the resistor's left, straight down to the VSS rail strip
-                hx, hy = head
-                cv.rect("met1", rx - 0.5, N_RING_Y0, rx - 0.21, hy + 0.175)
-                cv.rect("met1", rx - 0.5, hy - 0.175, hx - 0.4, hy + 0.175)
-            else:
-                ports.add(net, head[0], head[1], "n")
-        rx = head_r[0] + 0.705 + RES_SPACE
-    res_x1 = rx - RES_SPACE + 0.3
-
-    ring_x1 = res_x1 + 0.8
-    tap_ring(cv, "n", 0.0, N_RING_Y0, ring_x1, N_RING_Y1, ("b",))
+    if not differential:
+        res_x0 = nw_x1 + 1.5  # right of the n-well: the VDD drops run up its east side
+        ring_x1 = draw_resistors(res_x0)
 
     cv.rect("hvi", -0.4, N_RING_Y0 - 0.4, max(ring_x1, nw_x1) + 0.4, NW_Y1 + 0.4)
     # VDD feeder: rail extended past the well, then down to the resistor's far head.
-    assert min(h[0] for h in vdd_heads) - 0.7 > nw_x1, "VDD drops must clear the n-well"
+    assert differential or min(h[0] for h in vdd_heads) - 0.7 > nw_x1, "VDD drops must clear the n-well"
     cv.rect("met1", nw_x1 - 0.5 - 0.1, P_RAIL_Y, max(h[0] for h in vdd_heads) + 0.145, P_RAIL_Y + STRIP_W)
     for hb_x, hb_y in vdd_heads:
         cv.rect("met1", hb_x - 0.145, hb_y - 0.175, hb_x + 0.145, P_RAIL_Y + STRIP_W)
@@ -186,10 +206,10 @@ def build(top: str, din: str, rxout: str) -> Canvas:
     return cv
 
 
-def run(leaf: str, din: str, rxout: str, here: Path) -> int:
-    """Command-line entry shared by the dm/dp leaf generators."""
+def run(leaf: str, din: str, rxout: str, here: Path, vref: str = "VREF", *, differential: bool = False) -> int:
+    """Command-line entry shared by the receiver leaf generators."""
     return run_gds(
         here / f"{leaf}.gds",
-        lambda: build(leaf, din, rxout),
+        lambda: build(leaf, din, rxout, vref, differential=differential),
         f"Generate layout/analog/{leaf}/{leaf}.gds.",
     )

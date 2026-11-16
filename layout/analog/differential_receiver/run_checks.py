@@ -30,6 +30,7 @@ CONFIG = LeafConfig(
         "device classes carry B / W -- so the 11 matched devices include their bulk nets."
     ),
     doc=__doc__,
+    inputs_after_common=["layout/analog/gen_se_receiver.py"],
 )
 
 
