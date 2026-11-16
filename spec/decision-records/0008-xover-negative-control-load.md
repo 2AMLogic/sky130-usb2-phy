@@ -172,7 +172,16 @@ work, per the operator's pick among the options above).
   substitution value itself), and line 175 (the `record.method` bullet that
   restates the control and its "about 1.26 V" expectation);
   `driver_mc_tb.spice` lines 15-17 (the negative-control-knob comment
-  describing the 180 ohm load). The stored records are untouched: each froze
+  describing the 180 ohm load); and `sim/README.md`'s `driver-matching-mismatch`
+  campaign bullet (line numbers as of `5e15b4d`, 2026-11-16 — they drift, so
+  re-grep `180 ohm`): the "proposes re-deriving the control at 100 ohm,
+  **pending operator ratification**" wording (line 456 — "pending" drops once
+  this record is ratified) and the live-fact sentence "a 180 ohm load moves
+  both crossovers to 1.26 V but the 90 % level is never reached" (line 465 —
+  the "about 1.26 V" figure is the `tt` value; the measured controls at
+  `sf40v36` / `fs100v36` land at 1.3317 V / 1.4551 V). The bullet's other
+  180 ohm sentences are statements about the landed per-corner records and
+  stay true as written. The stored records are untouched: each froze
   its own deck and `mc.json` by digest and remains valid evidence of what it
   ran against.
 - **What ratification enables**: the implementing PR re-derives the control
