@@ -24,7 +24,6 @@ Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a h
 
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates
 - **#270**: signoff item-10 README pin goes stale on every automated Guide README edit (3rd recurrence of #180/#181)
-- **#278**: Re-pin the signoff grader from klt 0.8.0 to the 0.9.1 release and regrade
 
 ## Ready
 
@@ -38,6 +37,8 @@ Human-approved issues ready for implementation (`loom:issue`).
 - **#329**: stored_coverage's clause check couples a landed record's lint verdict to later testbench/mc.json edits
 - **#331**: T1 item 6 (analog): cite the driver-matching and D+ pull-up klt yield reports in the manifest (6-06, 6-14)
 - **#335**: signoff/README.md item 8 row still paraphrases characterization's old 'zero spec rows' headline
+- **#348**: signoff/check.py's pins-refresh hint still prints the venv-bin PATH form that signoff/README.md now forbids
+- **#349**: npm run check:all cannot complete on fleet workers whose host python3 has no pytest
 
 ## In Progress
 
@@ -45,7 +46,6 @@ Issues currently being built (`loom:building`).
 
 - **#275**: Deduplicate the raw-mode / byte-stream reference helpers duplicated across two TX testbenches
 - **#336**: Fold differential_receiver/gen.py build() into the shared receiver generator (~100 duplicated lines)
-- **#338**: signoff: the throwaway-grader-venv recipe makes `npm run check:all`'s pytest leg unrunnable
 
 ## PRs Awaiting Review
 
@@ -67,7 +67,6 @@ Issues carrying `loom:curated`.
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
 - **#270**: signoff item-10 README pin goes stale on every automated Guide README edit (3rd recurrence of #180/#181) *(curated)*
 - **#274**: Deduplicate analog device geometry: differential_driver/gen.py keeps a second copy of gen_common's Ports and mos *(curated)*
-- **#278**: Re-pin the signoff grader from klt 0.8.0 to the 0.9.1 release and regrade *(curated)*
 - **#295**: Remove four dead module-level symbols that each shadow a fact the live code re-states inline *(curated)*
 - **#313**: signoff/README.md item 6 overstates the record lint: 'sample_size.verdict other than insufficient is required' holds only for PASS records *(curated)*
 - **#319**: Remove two dead module-level symbols in hash-pinned files: record_kind() and INVENTORY_DIR (carries the item-10 re-pin) *(curated)*
@@ -75,12 +74,12 @@ Issues carrying `loom:curated`.
 - **#329**: stored_coverage's clause check couples a landed record's lint verdict to later testbench/mc.json edits *(curated)*
 - **#331**: T1 item 6 (analog): cite the driver-matching and D+ pull-up klt yield reports in the manifest (6-06, 6-14) *(curated)*
 - **#335**: signoff/README.md item 8 row still paraphrases characterization's old 'zero spec rows' headline *(curated)*
-- **#338**: signoff: the throwaway-grader-venv recipe makes `npm run check:all`'s pytest leg unrunnable *(curated)*
+- **#348**: signoff/check.py's pins-refresh hint still prints the venv-bin PATH form that signoff/README.md now forbids *(curated)*
+- **#349**: npm run check:all cannot complete on fleet workers whose host python3 has no pytest *(curated)*
 
 ## Proposed (Architect / Hermit)
 
 - **#339**: Deduplicate analog layout generators: conflicts() and net-routing loop copied into three gen files *(hermit)*
-- **#344**: Deduplicate the run-manifest literal in sim/tests render_record tests (four hand-written copies) *(hermit)*
 
 ## Epics
 
@@ -93,12 +92,12 @@ Issues carrying `loom:curated`.
 |------|-------|
 | Operator merge-risk holds | 1 |
 | Very important | 1 |
-| Important | 3 |
-| Ready (`loom:issue`) | 8 |
-| In Progress (`loom:building`) | 3 |
+| Important | 2 |
+| Ready (`loom:issue`) | 10 |
+| In Progress (`loom:building`) | 2 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 1 |
 | Curated | 13 |
-| Architect / Hermit proposals | 2 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
