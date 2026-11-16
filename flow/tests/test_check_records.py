@@ -1006,8 +1006,25 @@ def synth_record(sandbox: Path) -> Path:
     return records[-1]
 
 
-def mutate_synth(sandbox: Path, mutate) -> check_records.Findings:
-    path = synth_record(sandbox)
+def superseded_synth_record(sandbox: Path) -> Path:
+    """A record another record supersedes.
+
+    Rule 8e's hash check exempts exactly one artifact of a superseded
+    record -- the netlist: a superseded record is frozen evidence of what
+    an earlier revision produced, so its netlist hash may drift from the
+    file on disk without being a finding. A supersession test must
+    therefore corrupt a superseded record; mutating the standing record
+    would leave the exemption unexercised.
+    """
+    records = sorted((sandbox / "utmi-top" / "records").glob("*.md"))
+    superseded_ids = check_records.superseded_record_ids([read_meta(p) for p in records])
+    superseded = [p for p in records if p.stem in superseded_ids]
+    assert superseded, "fixture has no superseded utmi-top record to corrupt"
+    return superseded[0]
+
+
+def mutate_synth(sandbox: Path, mutate, record=None) -> check_records.Findings:
+    path = synth_record(sandbox) if record is None else record
     meta = read_meta(path)
     mutate(meta)
     write_meta(path, meta)
@@ -1142,6 +1159,32 @@ def test_changed_artifact_hash_fails(synth_sandbox: Path):
         meta["provenance"]["artifacts"][0]["content_hash"] = "sha256:" + "0" * 64
 
     assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, stale))
+
+
+def test_superseded_record_netlist_hash_drift_is_exempt(synth_sandbox: Path):
+    record = superseded_synth_record(synth_sandbox)
+
+    def stale(meta):
+        netlist_path = meta["stages"]["synthesize"]["netlist"]["path"]
+        for entry in meta["provenance"]["artifacts"]:
+            if entry["path"] == netlist_path:
+                entry["content_hash"] = "sha256:" + "0" * 64
+                return
+
+    assert "synthesis-only" not in checks_in(mutate_synth(synth_sandbox, stale, record))
+
+
+def test_superseded_record_non_netlist_artifact_hash_drift_still_fails(synth_sandbox: Path):
+    record = superseded_synth_record(synth_sandbox)
+
+    def stale(meta):
+        netlist_path = meta["stages"]["synthesize"]["netlist"]["path"]
+        for entry in meta["provenance"]["artifacts"]:
+            if entry["path"] != netlist_path:
+                entry["content_hash"] = "sha256:" + "0" * 64
+                return
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, stale, record))
 
 
 def test_missing_synthesis_envelope_artifact_fails(synth_sandbox: Path):
