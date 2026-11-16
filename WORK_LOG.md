@@ -8,8 +8,17 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-16
+
+- **PR #310**: refactor(flow): share one provenance hash-verification helper across the three record checks
+- **PR #317**: refactor(analog): consolidate the layer table, GDS CLI and poly-resistor builders into gen_common
+- **PR #312**: refactor: consolidate the four pinned-PDK root searches into sim/harness/pdk_pin.py
+- **PR #309**: sim: record driver-matching-mismatch fs100v30 corner (match FAIL, xover PASS)
+- **PR #320**: sim: render the se_receiver dp/dm testbench inputs from one shared source
+
 ### 2026-11-15
 
+- **PR #308**: docs(signoff): document the three wrong-grader traps in the re-grading recipe
 - **PR #314**: sim: record driver-matching-mismatch fs100v36 corner (match PASS, xover FAIL); state partial driver coverage
 - **PR #305**: sim: record driver-matching-mismatch sf40v36 corner (FAIL); state partial driver coverage
 - **PR #303**: feat(sim): first klt pex report on the differential_receiver leaf (36/36 rows pass, bodies biased)
