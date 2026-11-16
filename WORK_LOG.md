@@ -10,6 +10,14 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-16
 
+- **PR #351**: docs(signoff): attribute current item 3/6 grades to klt 0.9.1
+- **PR #350**: test: share one run-manifest builder for record-render tests
+- **PR #346**: signoff: re-pin grading klt from 0.8.0 to the 0.9.1 release and regrade
+- **PR #342**: docs(signoff): run every check:all leg via a klt-only wrapper dir on PATH
+- **Issue #347** (closed): signoff/README.md still attributes current rows to klt 0.8.0 after the 0.9.1 re-pin
+- **Issue #344** (closed): Deduplicate the run-manifest literal in sim/tests render_record tests (four hand-written copies)
+- **Issue #338** (closed): signoff: the throwaway-grader-venv recipe makes `npm run check:all`'s pytest leg unrunnable
+- **Issue #278** (closed): Re-pin the signoff grader from klt 0.8.0 to the 0.9.1 release and regrade
 - **PR #341**: docs: repoint disabled-pad above-VDD tracker from closed #130 to DR-0006
 - **Issue #334** (closed): design/README.md cites closed #130 as the tracker for the disabled-pad above-VDD current
 - **PR #333**: test: pin rule 8e superseded-netlist exemption via superseded-record selector
