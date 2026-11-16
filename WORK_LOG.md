@@ -10,6 +10,32 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-16
 
+- **PR #341**: docs: repoint disabled-pad above-VDD tracker from closed #130 to DR-0006
+- **Issue #334** (closed): design/README.md cites closed #130 as the tracker for the disabled-pad above-VDD current
+- **PR #333**: test: pin rule 8e superseded-netlist exemption via superseded-record selector
+- **PR #332**: fix: pass --no-provenance-header to klt netlist in checker and exporter
+- **PR #328**: runner: share one snapshot-body format; pex bench writes its own snapshot
+- **PR #327**: docs(sim): point the klt yield recipe at the PyPI klayout-tools[yield] extra
+- **PR #324**: docs(spec): add DR 0008 proposing a 100 ohm xover negative-control load
+- **Issue #323** (closed): Lock in the superseded-netlist hash exemption at check_synthesis_only's call site with a test
+- **PR #321**: lint: check corner coverage on the stored-evidence mismatch record path
+- **Issue #316** (closed): sim/README.md:318 is stale: klt_yield_native IS on PyPI (klt-yield-native 0.1.0, 2026-11-05)
+- **Issue #315** (closed): diff-receiver-pex: the pex snapshot convention re-triggers the artifact-manifest gate on every re-run, and freezes a deck with no device cards
+- **Issue #311** (closed): design/check_netlist.py reports STALE for every cell on this host (klt/xschem build drift vs the committed netlists)
+- **Issue #307** (closed): sim/driver-matching-mismatch: the 180 ohm xover negative control does not trip at sf40v36 (min 1.3035 V vs the 1.3 V floor)
+- **Issue #304** (closed): Consolidate the four copies of the pinned-PDK root search and open_pdks revision check
+- **Issue #297** (closed): Consolidate the four divergent sha256_file helpers behind one explicit digest contract
+- **PR #294**: docs: sync signoff and root README prose to the committed signoff report
+- **Issue #293** (closed): Deduplicate the analog layout generators: the sky130 layer table, the GDS CLI epilogue and the poly-resistor builders are copied per block
+- **Issue #292** (closed): Corner-coverage declaration is unchecked on the artifact-store record path
+- **PR #291**: build: drop the stale `test` script and add the signoff gate to `check:all`
+- **Issue #288** (closed): Deduplicate the se_receiver dp/dm testbench specs: the two are one token substitution apart
+- **Issue #286** (closed): Deduplicate the three provenance hash-verification loops in flow/check_records.py
+- **Issue #282** (closed): Remove the stale `npm test` script and widen `check:all`: both report green for a suite they do not run
+- **Issue #279** (closed): signoff/README.md and README.md contradict the committed signoff report (stale analog rows, "6 of 22", #130)
+- **Issue #273** (closed): sim/driver-matching-mismatch: run and record the fs100v30 corner (thinnest low-side matching margin, 0.9278)
+- **Issue #223** (closed): T1 item 6 (Monte Carlo, analog): mismatch campaigns for the driver rise/fall matching and D+ pull-up ±5% rows
+- **Issue #128** (closed): docs(signoff): "How to re-run the grading" never warns about the three wrong-grader traps (false drift, uvx, shared klt) — recipe itself landed in #298
 - **PR #310**: refactor(flow): share one provenance hash-verification helper across the three record checks
 - **PR #317**: refactor(analog): consolidate the layer table, GDS CLI and poly-resistor builders into gen_common
 - **PR #312**: refactor: consolidate the four pinned-PDK root searches into sim/harness/pdk_pin.py
