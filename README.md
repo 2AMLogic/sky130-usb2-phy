@@ -29,7 +29,7 @@ four leaves have no parasitic extraction or post-layout re-simulation, so
 every other circuit result in this repo is schematic-level. See the scope note below for the coverage
 limits, and [`signoff/README.md`](signoff/README.md) for the machine-graded T1
 verdict (9 of 22 rows `met` as read from `signoff/signoff-report.json` on
-2026-11-15).
+2026-11-16).
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -97,13 +97,13 @@ pull-up, and a digital UTMI layer.
   `clean_partial` `klt erc` record; the differential receiver additionally has
   the repo's first committed `klt pex` record (deliberately uncited — item 7
   takes a single citation and one leaf is not the partition), and the other
-  four leaves have no parasitic extraction or post-layout re-simulation (#281),
-  so every result above stays
+  four leaves have no parasitic extraction or post-layout re-simulation (the
+  roadmap *Next* item), so every result above stays
   schematic-level. *Mismatch:* committed Monte Carlo records exist for the
   differential receiver, both single-ended receivers and the D+ pull-up trim,
   and `sim/driver-matching-mismatch/` has all four of its declared corners
   recorded as stored evidence (not yet cited by the manifest) — leaving spec
-  rows 6-06 and 6-14 formally uncovered (#223). *Integrated PHY behaviour:*
+  rows 6-06 and 6-14 formally uncovered (#331). *Integrated PHY behaviour:*
   genuinely unverified; `usb_utmi_top`
   place-and-route has not run. See [`design/README.md`](design/README.md) for
   the per-block results and limitations.
