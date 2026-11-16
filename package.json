@@ -5,8 +5,7 @@
   "scripts": {
     "worktree:return": "./.loom/scripts/worktree-return.sh",
     "check:ci": "./scripts/check-ci.sh",
-    "check:all": "npm run lint && ./scripts/check-ci.sh",
-    "test": "python3 -m pytest verification/test_usbfs_model.py -v",
+    "check:all": "npm run lint && python3 signoff/check.py && python3 -m pytest signoff/tests -q && ./scripts/check-ci.sh",
     "lint": "./.github/scripts/lint.sh"
   }
 }
