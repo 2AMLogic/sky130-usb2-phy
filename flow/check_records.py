@@ -367,6 +367,51 @@ def sha256_file(path: Path) -> str:
     return "sha256:" + digest.hexdigest()
 
 
+def check_hashed_entries(
+    entries: list,
+    record_name: str,
+    field: str,
+    tag: str,
+    findings: Findings,
+    *,
+    exempt=None,
+) -> None:
+    """Verify each `{path, content_hash}` provenance entry against the tree.
+
+    The one hash loop every record kind shares: a malformed entry, a vanished
+    file, or a hash mismatch is reported under `tag`, with `field` named so
+    the operator knows which provenance list to fix. `exempt(rel_path)`
+    suppresses only the mismatch finding (e.g. a superseded record's frozen
+    netlist); the file must exist either way.
+    """
+    noun = {"inputs": "input", "artifacts": "artifact"}[field]
+    for entry in entries:
+        if not isinstance(entry, dict) or "path" not in entry or "content_hash" not in entry:
+            findings.add(
+                tag,
+                f"{record_name}: provenance.{field} entry must carry `path` and `content_hash`: "
+                f"{entry!r}",
+            )
+            continue
+        rel = entry["path"]
+        target = REPO_ROOT / rel
+        if not target.exists():
+            findings.add(
+                tag,
+                f"{record_name}: provenance {noun} {rel} no longer exists -- "
+                "the record cites a file that is gone",
+            )
+            continue
+        actual = sha256_file(target)
+        if actual != entry["content_hash"] and not (exempt and exempt(rel)):
+            findings.add(
+                tag,
+                f"{record_name}: provenance {noun} {rel} has changed since this record was "
+                f"written (recorded {entry['content_hash']}, now {actual}) -- "
+                "the record is stale; re-run the flow and mint a new record",
+            )
+
+
 def dotted_get(data, path: str):
     """Fetch `a.b.c` out of nested dicts. Raises KeyError if any hop is absent."""
     node = data
@@ -683,30 +728,7 @@ def check_freshness(
     inputs = meta.get("provenance", {}).get("inputs")
     if not isinstance(inputs, list):
         return
-    for entry in inputs:
-        if not isinstance(entry, dict) or "path" not in entry or "content_hash" not in entry:
-            findings.add(
-                "freshness",
-                f"{path.name}: provenance.inputs entry must carry `path` and `content_hash`: "
-                f"{entry!r}",
-            )
-            continue
-        target = REPO_ROOT / entry["path"]
-        if not target.exists():
-            findings.add(
-                "freshness",
-                f"{path.name}: provenance input {entry['path']} no longer exists -- "
-                "the record cites a file that is gone",
-            )
-            continue
-        actual = sha256_file(target)
-        if actual != entry["content_hash"]:
-            findings.add(
-                "freshness",
-                f"{path.name}: provenance input {entry['path']} has changed since this "
-                f"record was written (recorded {entry['content_hash']}, now {actual}) -- "
-                "the record is stale; re-run the flow and mint a new record",
-            )
+    check_hashed_entries(inputs, path.name, "inputs", "freshness", findings)
 
 
 # --------------------------------------------------------------------------
@@ -1141,27 +1163,14 @@ def check_synthesis_only(
                 f"{name}: provenance.artifacts does not include the synthesize-report.json "
                 "envelope",
             )
-        for entry in artifacts:
-            if not isinstance(entry, dict) or "path" not in entry or "content_hash" not in entry:
-                findings.add(
-                    "synthesis-only",
-                    f"{name}: provenance.artifacts entry needs `path` and `content_hash`: "
-                    f"{entry!r}",
-                )
-                continue
-            target = REPO_ROOT / entry["path"]
-            if not target.exists():
-                findings.add(
-                    "synthesis-only", f"{name}: artifact {entry['path']} does not exist"
-                )
-            elif (
-                sha256_file(target) != entry["content_hash"]
-                and not (is_superseded and entry["path"] == netlist_path)
-            ):
-                findings.add(
-                    "synthesis-only",
-                    f"{name}: artifact {entry['path']} does not match its recorded hash",
-                )
+        check_hashed_entries(
+            artifacts,
+            name,
+            "artifacts",
+            "synthesis-only",
+            findings,
+            exempt=lambda rel: is_superseded and rel == netlist_path,
+        )
 
 
 # --------------------------------------------------------------------------
@@ -1359,15 +1368,7 @@ def check_analog_layout(
         missing = sorted(set(ANALOG_REPORT_NAMES) - names)
         if missing:
             findings.add(tag, f"{name}: provenance.artifacts omits report(s) {missing}")
-        for entry in artifacts:
-            if not isinstance(entry, dict) or "path" not in entry or "content_hash" not in entry:
-                findings.add(tag, f"{name}: provenance.artifacts entry needs `path` and `content_hash`: {entry!r}")
-                continue
-            target = REPO_ROOT / entry["path"]
-            if not target.exists():
-                findings.add(tag, f"{name}: artifact {entry['path']} does not exist")
-            elif sha256_file(target) != entry["content_hash"]:
-                findings.add(tag, f"{name}: artifact {entry['path']} does not match its recorded hash")
+        check_hashed_entries(artifacts, name, "artifacts", tag, findings)
 
     gaps = meta.get("tool_gaps")
     if not isinstance(gaps, list) or not all(isinstance(g, str) and g.startswith("https://") for g in gaps):
