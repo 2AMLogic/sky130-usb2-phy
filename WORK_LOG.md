@@ -10,6 +10,9 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-16
 
+- **PR #356**: docs: restate signoff item 8 disclosure to match characterization headline
+- **PR #355**: signoff: accept artifact-store-resolved item-6 yield citations in check.py
+- **Issue #335** (closed): signoff/README.md item 8 row still paraphrases characterization's old 'zero spec rows' headline
 - **PR #351**: docs(signoff): attribute current item 3/6 grades to klt 0.9.1
 - **PR #350**: test: share one run-manifest builder for record-render tests
 - **PR #346**: signoff: re-pin grading klt from 0.8.0 to the 0.9.1 release and regrade

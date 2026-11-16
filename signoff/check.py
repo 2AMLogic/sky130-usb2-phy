@@ -144,6 +144,11 @@ ITEM6_ANALOG_SPEC = "signoff/spec/analog-statistical-rows.json"
 ITEM5_ANALOG_KEY = "5.analog"
 ITEM5_ANALOG_SPEC = "signoff/spec/analog-rows.json"
 
+# Artifact-store-resolved item-6 citations (issue #331): the store manifests
+# recording the driver-matching and pull-up yield bytes live here, committed
+# while the bytes themselves stay in the fleet store (manifests/artifacts/README.md).
+STORE_MANIFEST_DIR = "manifests/artifacts"
+
 # Citations produced by `klt signoff --attest` (klt >= 0.8.0, newer than the
 # 0.7.0 grader): manifest key -> (inventory, envelope). The inventory carries
 # no per-file hashes; the envelope's `present` checks record them, so
@@ -918,6 +923,34 @@ def yield_samples_pin(root: Path, report_rel: str) -> str | None:
     return sha256_file(path) if path.is_file() else None
 
 
+def store_yield_samples_pin(root: Path, manifest_rel: str, member: str) -> str | None:
+    """The pin for an artifact-store-resolved `klt yield` citation.
+
+    The driver-matching and pull-up yield bytes live in the fleet artifact
+    store, not git; the committed `manifests/artifacts/*.manifest.json` is
+    the only in-tree record of them. The pin is therefore structural: the
+    store manifest must be committed and readable, it must list the named
+    `*.yield.json` entry, and the paired `*.samples.json` entry supplies the
+    pin exactly as :func:`yield_samples_pin` derives it from the bytes
+    themselves. Byte-level verification of those members happens when the
+    store is read (`klt artifact get`/`verify` re-hash every fetched object
+    against these recorded sha256s); it is not available offline.
+    """
+    prefix = f"{STORE_MANIFEST_DIR}/"
+    if not manifest_rel.startswith(prefix) or not member.endswith(".yield.json"):
+        return None
+    try:
+        entries = json.loads((root / manifest_rel).read_text())["entries"]
+        by_name = {e["name"]: e for e in entries if isinstance(e, dict)}
+        by_name[member]["sha256"]  # the yield entry must exist and be shaped
+        samples = by_name[member[: -len(".yield.json")] + ".samples.json"]["sha256"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    if not isinstance(samples, str) or not samples:
+        return None
+    return f"sha256:{samples.removeprefix('sha256:')}"
+
+
 def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
     """The item-6 analog row set and its yield citations are bound to the tree.
 
@@ -925,6 +958,15 @@ def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
     manifest's declared `spec_rows."6.analog"` to equal that file's ids, and
     requires every cited `klt yield` report to name only declared rows and to
     still hash (via its samples document) to the manifest's pin.
+
+    Two citation shapes are accepted. A committed-report citation (`file`)
+    is re-hashed from the bytes in the tree, exactly as the grader does. A
+    store-resolved citation (`artifact_manifest` + `artifact_member`) pins
+    the samples document structurally through the committed store manifest
+    (`store_yield_samples_pin`): its bytes are not in git, so the check
+    verifies the manifest and both entries are present and consistent and
+    that the pin equals the manifest's recorded samples sha256 -- the byte
+    re-hash happens when the store is read, never here.
     """
     root = root or REPO_ROOT
     try:
@@ -949,11 +991,45 @@ def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
         fail(f"signoff/block-manifest.json: {ITEM6_ANALOG_KEY} must cite the committed klt yield reports")
         return False
     for cite in citations:
-        rel = cite.get("file", "")
+        has_file = isinstance(cite.get("file"), str) and bool(cite["file"])
+        has_store = bool(cite.get("artifact_manifest")) and bool(cite.get("artifact_member"))
+        if has_file == has_store:
+            fail(
+                "a 6.analog citation must name either a committed report ('file') "
+                "or an artifact-store manifest and member ('artifact_manifest' + "
+                "'artifact_member'), never both or neither"
+            )
+            ok = False
+            continue
+        rel = cite["file"] if has_file else f"{cite['artifact_manifest']}#{cite['artifact_member']}"
         undeclared = sorted(set(cite.get("rows", [])) - set(spec_ids))
         if not cite.get("rows") or undeclared:
             fail(f"{rel}: must cite declared rows only; undeclared {undeclared or 'none cited'}")
             ok = False
+        if has_store:
+            if not isinstance(cite.get("content_hash"), str) or not cite["content_hash"]:
+                fail(f"{rel}: a store-resolved citation must pin its samples document's content_hash")
+                ok = False
+                continue
+            actual = store_yield_samples_pin(
+                root, cite["artifact_manifest"], cite["artifact_member"]
+            )
+            if actual is None:
+                fail(
+                    f"{rel}: the artifact-store manifest or the yield/samples "
+                    "entries it must name is unreadable or inconsistent"
+                )
+                ok = False
+            elif actual != cite["content_hash"]:
+                fail(
+                    f"{rel}: pinned to {cite['content_hash']} but the store manifest "
+                    f"records {actual} for its samples document.\n"
+                    "     The store manifests are append-only: cite the entry that "
+                    "was produced, or re-pin deliberately "
+                    "(python3 signoff/check.py --regen)."
+                )
+                ok = False
+            continue
         actual = yield_samples_pin(root, rel)
         if actual is None:
             fail(f"{rel}: report or the samples document it names is unreadable")
@@ -1030,7 +1106,9 @@ def refresh_item6() -> None:
     """--regen: re-pin the item-6 and item-5 analog citations to the tree.
 
     Re-pins each cited `klt yield` report via its samples document and each
-    cited item-5 `klt sim` corner report directly. The spec-markdown hash
+    cited item-5 `klt sim` corner report directly. A store-resolved citation
+    re-pins from its committed store manifest (offline; the manifest's
+    recorded samples sha256 is the pin). The spec-markdown hash
     inside either rows file is deliberately NOT refreshed: re-pinning it is
     the human act of re-reading the spec and re-accounting for its rows, not
     a derivation.
@@ -1041,7 +1119,12 @@ def refresh_item6() -> None:
         for part, rel in (("spec", ITEM6_SPEC), ("statement", ITEM6_STATEMENT)):
             entry[part] = {"file": rel, "content_hash": sha256_file(REPO_ROOT / rel)}
     for cite in manifest["evidence"].get(ITEM6_ANALOG_KEY) or []:
-        pin = yield_samples_pin(REPO_ROOT, cite["file"])
+        if cite.get("artifact_manifest") and cite.get("artifact_member"):
+            pin = store_yield_samples_pin(
+                REPO_ROOT, cite["artifact_manifest"], cite["artifact_member"]
+            )
+        else:
+            pin = yield_samples_pin(REPO_ROOT, cite["file"])
         if pin is not None:
             cite["content_hash"] = pin
     for cite in manifest["evidence"].get(ITEM5_ANALOG_KEY) or []:
