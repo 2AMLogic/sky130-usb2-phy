@@ -29,7 +29,7 @@
       "members": [
         {
           "path": ".github/workflows/ci.yml",
-          "sha256": "sha256:863d0be451f8bff9b7f215943fa4681a20f06d294ac429aeff847b1dfc7946d6"
+          "sha256": "sha256:57bbc0fa0e6f9677b977cdfdb4c1d1ad8ef9d5f2d1d63a76ac178005c784ab15"
         }
       ]
     },
