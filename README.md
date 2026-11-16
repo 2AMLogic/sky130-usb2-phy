@@ -101,7 +101,7 @@ pull-up, and a digital UTMI layer.
   so every result above stays
   schematic-level. *Mismatch:* committed Monte Carlo records exist for the
   differential receiver, both single-ended receivers and the D+ pull-up trim,
-  and `sim/driver-matching-mismatch/` has three of its four declared corners
+  and `sim/driver-matching-mismatch/` has all four of its declared corners
   recorded as stored evidence (not yet cited by the manifest) — leaving spec
   rows 6-06 and 6-14 formally uncovered (#223). *Integrated PHY behaviour:*
   genuinely unverified; `usb_utmi_top`
