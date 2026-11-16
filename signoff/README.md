@@ -178,7 +178,8 @@ host-wide installs, and `uv venv` ships no `pip`, so `python -m pip` fails
 inside it — install via `uv pip --python`. Read the version from
 `signoff/toolchain.json` so this recipe survives every future re-pin. Two
 rules make the *same* `PATH` serve both the grading gate and every leg of
-`npm run check:all` (issue #338):
+`npm run check:all` (issue #338), and a third covers the hosts those two
+cannot (issue #349):
 
 - **Put only a `klt` symlink on `PATH` — never the venv's `bin/`.**
   `check.py` resolves the grader through `shutil.which("klt")`, so the
@@ -196,7 +197,16 @@ rules make the *same* `PATH` serve both the grading gate and every leg of
   *test* dependency of cocotb, which the grader makes no promise to
   keep, and it leaves `python3` as the host interpreter the rest of the
   repo's tooling assumes — whose pytest is already a hard requirement of
-  leg 1 (`.github/scripts/lint.sh` fails closed without it).
+  leg 1 (`.github/scripts/lint.sh` fails closed without it). That hard
+  requirement is also this form's boundary: on a host whose `python3`
+  carries no pytest, the wrapper form cannot complete `check:all`
+  legs 1 and 3, and extending the wrapper directory with a symlink to
+  the venv's `python3` does **not** rescue it — CPython resolves the
+  symlink chain down to the base interpreter before searching for
+  `pyvenv.cfg`, so the venv never activates (`sys.prefix` resolves to
+  the base install and `import pytest` fails even with pytest installed
+  in the venv; measured 2026-11-16, issue #349). On such a host use the
+  venv-bin form below.
 - **Install the `[functional-verification]` extra into that venv.** Leg 4
   (`scripts/check-ci.sh`) drives the cocotb testbenches through the same
   `klt` the `PATH` selects, and `klt functional-verification` imports
@@ -206,22 +216,52 @@ rules make the *same* `PATH` serve both the grading gate and every leg of
   directly; see the *Install cocotb into klt's own tool venv* step of
   `.github/workflows/ci.yml`). The extra does not disturb the grading
   identity: same registry wheel, same `git_tag`, `is_release` still true.
+- **No pytest in the host `python3`? Run `check:all` with the venv's
+  `bin/` first.** Legs 1 and 3 of `check:all` need pytest in whichever
+  interpreter `PATH` selects — under the wrapper form that is the host
+  `python3`, which a shared worker may not carry (fleet workers have
+  drifted apart: some have pytest 9.1.1 in the user site, some have
+  none at all, and worker rules forbid installing into either; issue
+  #349). The measured form for such a host: install pytest into the
+  same grader venv — `uv pip install --python <venv>/bin/python pytest`,
+  **explicitly**, so the legs do not rest on the extra's
+  transitive cocotb dependency, which the grader makes no promise to
+  keep — then prepend the venv's `bin/` for the `check:all` run. The
+  venv's own `python3` activates its venv normally (a real venv
+  interpreter finds the `pyvenv.cfg` beside it, unlike the wrapper
+  symlink measured above), so pytest resolves; being a venv interpreter
+  it also ignores user site-packages (`site.ENABLE_USER_SITE` is
+  `False`), so the run cannot be silently rescued by whatever the host
+  happens to carry. Leg 2's grader-identity check is untouched: the
+  `klt` that `PATH` selects is the same pinned wheel from the same
+  venv. This is the one documented exception to the first rule — and
+  neither form modifies the shared tool: `~/.local/bin/klt` (deliberately
+  a git snapshot, `is_release` false) is only ever *shadowed* for the
+  duration of a run, never overwritten.
 
 ```bash
 VER=$(python3 -c 'import json;print(json.load(open("signoff/toolchain.json"))["klt"]["package_version"])')
 uv venv /tmp/signoff-grader
 uv pip install --python /tmp/signoff-grader/bin/python "klayout-tools[functional-verification]==$VER"
+uv pip install --python /tmp/signoff-grader/bin/python pytest    # explicit: legs 1+3 must not rest on cocotb's transitive dep
 mkdir -p /tmp/signoff-grader-bin && ln -sfn /tmp/signoff-grader/bin/klt /tmp/signoff-grader-bin/klt
 PATH="/tmp/signoff-grader-bin:$PATH" python3 signoff/check.py            # the gate: re-grade + drift check
 PATH="/tmp/signoff-grader-bin:$PATH" python3 signoff/check.py --regen    # refresh pins + rewrite the report
-PATH="/tmp/signoff-grader-bin:$PATH" npm run check:all                   # lint + gate + signoff tests + cocotb
+PATH="/tmp/signoff-grader-bin:$PATH" npm run check:all                   # host python3 has pytest
+PATH="/tmp/signoff-grader/bin:$PATH" npm run check:all                   # host python3 has NO pytest: venv-bin form (issue #349)
 ```
 
 So `npm run check:all` needs exactly this from `PATH`: the pinned grader
-`klt` resolving first, the host `python3` (with pytest) still resolving
-for `python3`, and `iverilog` for the cocotb leg — then all four legs run
+`klt` resolving first, a `python3` **with pytest** resolving for
+`python3`, and `iverilog` for the cocotb leg — then all four legs run
 and the chain exits 0 on a clean tree, with no host-wide install anywhere
-(verified on a fleet worker, 2026-11-16, main @ `80e896f`).
+(verified on a fleet worker, 2026-11-16, main @ `80e896f`). Under the
+wrapper form the `python3` is the host's, so pytest must already be
+there; on a host whose `python3` has no pytest, the venv-bin form above
+is the supported alternative — the venv interpreter carries the explicit
+pytest install and ignores user site-packages, so it works precisely
+where the wrapper form cannot (measured end to end on a fleet worker,
+2026-11-16, issue #349).
 
 **Recognise a *wrong* grader before believing any output.** There are three
 ways to get a confidently-wrong result here, and the checker's own FAIL text
