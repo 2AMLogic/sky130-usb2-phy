@@ -490,6 +490,21 @@ def test_vanished_input_fails(sandbox: Path):
     assert "freshness" in checks_in(findings), findings.items
 
 
+def test_malformed_input_entry_fails(sandbox: Path):
+    target = standing_record(sandbox)
+    meta = read_meta(target)
+    meta["provenance"]["inputs"].append({"path": "rtl/usb_rx_cdc.v"})
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "freshness" in checks_in(findings), findings.items
+    assert any(
+        "must carry `path` and `content_hash`" in message for _, message in findings.items
+    ), findings.items
+
+
 def test_superseded_record_is_exempt_from_freshness(sandbox: Path):
     """A frozen record is not retro-failed when a committed input changes.
 
@@ -1144,6 +1159,28 @@ def test_changed_artifact_hash_fails(synth_sandbox: Path):
     assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, stale))
 
 
+def test_malformed_artifact_entry_fails(synth_sandbox: Path):
+    def malformed(meta):
+        meta["provenance"]["artifacts"].append({"path": "design/netlist/usb_utmi_top.v"})
+
+    findings = mutate_synth(synth_sandbox, malformed)
+    assert "synthesis-only" in checks_in(findings)
+    assert any(
+        "must carry `path` and `content_hash`" in message for _, message in findings.items
+    ), findings.items
+
+
+def test_vanished_artifact_fails(synth_sandbox: Path):
+    def vanish(meta):
+        meta["provenance"]["artifacts"].append(
+            {"path": "design/netlist/vanished.v", "content_hash": "sha256:" + "2" * 64}
+        )
+
+    findings = mutate_synth(synth_sandbox, vanish)
+    assert "synthesis-only" in checks_in(findings)
+    assert any("no longer exists" in message for _, message in findings.items), findings.items
+
+
 def test_missing_synthesis_envelope_artifact_fails(synth_sandbox: Path):
     def drop(meta):
         meta["provenance"]["artifacts"] = [
@@ -1283,6 +1320,42 @@ def test_analog_record_with_changed_gds_goes_stale(analog_sandbox: Path):
         meta["provenance"]["inputs"][0]["content_hash"] = "sha256:" + "0" * 64
 
     assert "freshness" in checks_in(mutate_analog(analog_sandbox, corrupt))
+
+
+def test_analog_malformed_artifact_entry_fails(analog_sandbox: Path):
+    def malformed(meta):
+        meta["provenance"]["artifacts"].append(
+            {"path": "flow/analog-layout-differential_receiver/artifacts/gone.json"}
+        )
+
+    findings = mutate_analog(analog_sandbox, malformed)
+    assert "analog-layout" in checks_in(findings)
+    assert any(
+        "must carry `path` and `content_hash`" in message for _, message in findings.items
+    ), findings.items
+
+
+def test_analog_vanished_artifact_fails(analog_sandbox: Path):
+    def vanish(meta):
+        meta["provenance"]["artifacts"].append(
+            {
+                "path": "flow/analog-layout-differential_receiver/artifacts/gone.json",
+                "content_hash": "sha256:" + "2" * 64,
+            }
+        )
+
+    findings = mutate_analog(analog_sandbox, vanish)
+    assert "analog-layout" in checks_in(findings)
+    assert any("no longer exists" in message for _, message in findings.items), findings.items
+
+
+def test_changed_analog_artifact_hash_fails(analog_sandbox: Path):
+    def stale(meta):
+        meta["provenance"]["artifacts"][0]["content_hash"] = "sha256:" + "0" * 64
+
+    findings = mutate_analog(analog_sandbox, stale)
+    assert "analog-layout" in checks_in(findings)
+    assert any("is stale" in message for _, message in findings.items), findings.items
 
 
 def test_analog_record_id_must_end_in_its_block(analog_sandbox: Path):
