@@ -30,7 +30,10 @@ passed in) and the poly-resistor builders `xhigh_resistor` and `res_generic_po`
 ruling 2026-10-29 (#238) allowed shared *code* while outputs stay per leaf, and
 asked that the module "reconcile the mos/resistor variants explicitly". A change
 there must leave every committed GDS byte-identical: run `python3
-layout/analog/<block>/gen.py --check` for all five leaves. Each `gen.py` keeps
+layout/analog/<block>/gen.py --check` for all five leaves — CI-enforced: the
+`signoff` job of `.github/workflows/ci.yml` globs `layout/analog/*/gen.py` and
+runs `--check` on each under the pinned grader, so drift fails the PR. Each
+`gen.py` keeps
 its own `TOP` and `build()`, except the two se_receiver leaves (below).
 
 ## Shared check runner: `run_checks_common.py`

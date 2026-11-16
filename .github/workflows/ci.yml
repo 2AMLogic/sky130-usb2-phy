@@ -18,7 +18,13 @@ name: CI
 #                    with the pinned released `klt` and fails on any drift
 #                    from the committed signoff/signoff-report.json, so a
 #                    manifest citation whose underlying artifact has changed
-#                    fails the PR instead of silently rotting.
+#                    fails the PR instead of silently rotting. The same job
+#                    also re-runs every analog leaf generator's `gen.py
+#                    --check` (issue #363): the committed GDS must be
+#                    byte-reproducible from its `layout/analog/<leaf>/gen.py`
+#                    under the same pinned grader, so a generator drift
+#                    fails the PR instead of silently diverging from the
+#                    hash-pinned layout evidence.
 #
 # They are deliberately separate: the evidence lint and the signoff gate must
 # stay green (and stay fast) even when the heavy toolchain job is slow or its
@@ -192,6 +198,24 @@ jobs:
 
       - name: Re-grade the block manifest; require the committed report to match
         run: python3 signoff/check.py
+
+      # The committed analog GDS must stay byte-reproducible from its
+      # generator under this same pinned grader (layout/analog/README.md,
+      # "Shared generator helpers"): `gen.py --check` re-emits the stream and
+      # compares sha256 with the committed file, so a hand-edited GDS or a
+      # generator drift fails here instead of silently diverging from the
+      # hash-pinned layout evidence (issue #363). Discovered by glob so a
+      # sixth leaf is covered automatically; the explicit loop status (not
+      # just errexit) runs every leaf and fails the step if any drifted.
+      - name: Re-generate the analog GDS leaves; require byte-identical output
+        run: |
+          status=0
+          for g in layout/analog/*/gen.py; do
+            echo "::group::$g --check"
+            python3 "$g" --check || status=1
+            echo "::endgroup::"
+          done
+          exit "$status"
 
       # Negative controls: mutating a file an items-9/10 inventory lists must
       # fail the gate, and moving the bound inventory must grade stale.
