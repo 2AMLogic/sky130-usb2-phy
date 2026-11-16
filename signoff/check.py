@@ -168,8 +168,8 @@ RAN_CLEAN = (0, 3)
 
 # The grading build identity, asserted two ways (see check 1 above). Keep in
 # sync with signoff/toolchain.json and the `signoff` CI job's pip pin.
-GRADER_PACKAGE_VERSION = "0.8.0"
-GRADER_GIT_TAG = "v0.8.0"
+GRADER_PACKAGE_VERSION = "0.9.1"
+GRADER_GIT_TAG = "v0.9.1"
 
 
 def fail(msg: str) -> None:

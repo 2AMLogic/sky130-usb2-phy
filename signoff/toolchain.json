@@ -21,7 +21,7 @@
     "-- observed live for 0.5.0 (klayout-tools#2216) -- and the committed",
     "signoff-report.json is only byte-reproducible when graded with the",
     "distribution it was committed from. signoff/check.py asserts the full",
-    "build identity (git_tag v0.8.0, is_release true) before grading.",
+    "build identity (git_tag v0.9.1, is_release true) before grading.",
     "",
     "0.8.0 (issue #208) adds the item-6 `not_applicable` outcome for a digital",
     "partition (klayout-tools#2865); 0.7.0 could not grade it. 0.7.0 bundled the 11-item checklist and grades item 11 and the",
@@ -31,14 +31,30 @@
     "--attest` (klayout-tools#2844) is not in a released wheel, so the envelopes",
     "under signoff/evidence/ for items 9 and 10 are hand-rolled over the",
     "committed inventories in signoff/inventory/; a later re-pin can run",
-    "--attest over the same inventory files."
+    "--attest over the same inventory files.",
+    "",
+    "0.9.1 (issue #278) grades item 4 analog differently: the five-citation",
+    "list under \"4.analog\" moves from `invalid_evidence` to",
+    "`runset_unrecognised_device` — the sky130 runset's unused device classes",
+    "become the graded reason for the whole partition instead of the citation",
+    "shape. Mechanism observed, not changelogged: the bundled item-4 checklist",
+    "text gains \"(or, per cell, a list of reports — all must pass)\", but the",
+    "klayout-tools CHANGELOG (0.9.0, 0.9.1, Unreleased) names no corresponding",
+    "entry, and upstream #5044 (per-cell envelope sets for items 2-4) closed",
+    "2026-11-06, one day after the 0.9.1 tag — 0.9.1 is NOT credited with that",
+    "fix. Every other row is unchanged: no row flips to or from `met`,",
+    "t1_met_count stays 9/22 and item 3 analog stays `invalid_evidence` (so the",
+    "#5044 fix this pin does not carry is still the item-3 blocker). The",
+    "report's `build.grading_ruleset_id` and `source_doc_content_hash` and 12",
+    "items' bundled checklist `text` fields move with the wheel; that is",
+    "re-pin drift, not evidence drift."
   ],
   "klt": {
-    "package_version": "0.8.0",
-    "install": "pip install klayout-tools==0.8.0",
+    "package_version": "0.9.1",
+    "install": "pip install klayout-tools==0.9.1",
     "release": {
-      "package_version": "0.8.0",
-      "git_tag": "v0.8.0",
+      "package_version": "0.9.1",
+      "git_tag": "v0.9.1",
       "is_release": true
     }
   }
