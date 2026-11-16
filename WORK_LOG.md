@@ -10,6 +10,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-16
 
+- **PR #368**: docs: distinguish grader from CI in signoff item-2 regeneration disclosure
+- **Issue #366** (closed): signoff/README.md item 2 still discloses analog regeneration as not re-run; PR #365 made it CI-enforced
 - **PR #365**: ci: enforce analog GDS reproducibility in the signoff job
 - **PR #364**: lint: check stored records' degraded-mode coverage clause for internal consistency only
 - **PR #360**: docs: drop stale restated headline from flow/README.md characterization pointer
