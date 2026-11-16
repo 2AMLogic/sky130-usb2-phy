@@ -10,6 +10,9 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-16
 
+- **PR #330**: chore(loom): resync installed Loom to v0.19.1302
+- **PR #369**: docs: scope signoff item-6 record-lint sample-size rule to PASS records
+- **Issue #313** (closed): signoff/README.md item 6 overstates the record lint: 'sample_size.verdict other than insufficient is required' holds only for PASS records
 - **PR #368**: docs: distinguish grader from CI in signoff item-2 regeneration disclosure
 - **Issue #366** (closed): signoff/README.md item 2 still discloses analog regeneration as not re-run; PR #365 made it CI-enforced
 - **PR #365**: ci: enforce analog GDS reproducibility in the signoff job
