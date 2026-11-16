@@ -63,6 +63,13 @@ by (leaf, input net, output net); the layer table and the resistor builders
 come from `gen_common.py`. Each leaf's `gen.py` is a thin entry point and both
 records pin both modules as provenance inputs (#240, #293).
 
+`differential_receiver` is the same drawing with its second input (`DM`) a pin
+instead of the VREF divider: `build(..., differential=True)` draws the lone
+`XRBIAS` beside the NMOS row ahead of the PMOS row, where the single-ended
+leaves put three resistors east of the n-well. The shape order and a 0.005 um
+ring margin differ between the two modes on purpose, so the committed GDS of
+all three leaves stays byte-identical (#336).
+
 ## What a leaf directory contains
 
 | File | What it is |
