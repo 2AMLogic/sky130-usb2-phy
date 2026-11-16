@@ -17,8 +17,6 @@ class LineState(Enum):
     SE1 = "SE1"
 
 
-IDLE_STATE = LineState.J
-
 _STATE_TO_DPDM = {
     LineState.J: (1, 0),
     LineState.K: (0, 1),

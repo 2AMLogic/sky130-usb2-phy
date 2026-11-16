@@ -30,7 +30,6 @@ PRODUCER = ("tool", "version", "loom.repo", "commit")
 SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 URI_RE = re.compile(r"^artifact:([^/\s]\S*)$")
 FORBIDDEN_RE = re.compile(r"s3://|arn:aws:|https?://|X-Amz-", re.IGNORECASE)
-MANIFEST_GLOB = "manifests/artifacts/*.manifest.json"
 
 
 def entry_problems(entry) -> list[str]:
