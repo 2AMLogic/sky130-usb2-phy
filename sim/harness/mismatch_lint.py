@@ -102,8 +102,10 @@ def stored_coverage(fields: dict, rid: str, exp_dir: Path, repo: Path) -> list[s
     exists for: a manifest showing corners the record does not claim to cover. When the manifest's
     mc.json sha256 equals the live `testbench/mc.json` the two specs are byte-identical and the
     corner definitions are compared; when they differ the frozen spec is out of reach and the
-    check degrades to ids plus the record's own coverage clause (see sim/README.md), never
-    silently claiming full confidence.
+    check degrades to ids plus the record's own coverage clause, cross-checked for internal
+    consistency only: a degraded record's corner count `M` is taken on the record's word, because
+    nothing committed records the frozen corner set (see sim/README.md) — never silently
+    claiming full confidence.
     """
     cite = el.MANIFEST_CITE_RE.search(fields.get("Links", ""))
     if cite is None:
@@ -155,10 +157,11 @@ def stored_coverage(fields: dict, rid: str, exp_dir: Path, repo: Path) -> list[s
     mc_entries = [e for e in data["entries"] if isinstance(e, dict)
                   and (e.get("name") or "").rsplit("/", 1)[-1] == "mc.json"]
     shas = sorted({e["sha256"] for e in mc_entries if isinstance(e.get("sha256"), str)})
+    byte_exact = len(shas) == 1 and shas[0] == sha256_file(exp_dir / "testbench" / "mc.json")
     if len(shas) != 1:
         bad.append(f"{rid}: the cited manifest has no single mc.json object; which spec the campaign "
                    f"froze cannot be established")
-    elif shas[0] == sha256_file(exp_dir / "testbench" / "mc.json"):
+    elif byte_exact:
         for cid, seg in declared.items():
             d = CORNERS_RUN_DEF_RE.match(seg)
             if d is None:
@@ -173,24 +176,46 @@ def stored_coverage(fields: dict, rid: str, exp_dir: Path, repo: Path) -> list[s
         fval = fields.get(fname, "")
         all_m, some_m = COVERS_ALL_RE.search(fval), COVERS_SOME_RE.search(fval)
         claim = NO_CLAIM_RE.search(fval)
+        degraded = " (frozen mc.json differs from live; clause checked for internal consistency only)"
         if all_m:
             total = int(all_m.group(1))
-            if total != len(corners) or uncovered:
+            if byte_exact:
+                if total != len(corners) or uncovered:
+                    bad.append(f"{rid}: {fname} claims full coverage of {total} corner(s) but the record "
+                               f"declares {len(declared)} of the {len(corners)} the live mc.json declares")
+            elif total != len(declared):
                 bad.append(f"{rid}: {fname} claims full coverage of {total} corner(s) but the record "
-                           f"declares {len(declared)} of the {len(corners)} the live mc.json declares")
+                           f"declares {len(declared)} of them{degraded}")
             if claim:
                 names = set(re.findall(r"`([A-Za-z0-9_]+)`", claim.group(1)))
                 bad.append(f"{rid}: {fname} claims full coverage but also makes no claim about {sorted(names)}")
         elif some_m:
             n, total = int(some_m.group(1)), int(some_m.group(2))
-            if total != len(corners) or n != len(declared) or n >= total:
+            if byte_exact:
+                if total != len(corners) or n != len(declared) or n >= total:
+                    bad.append(f"{rid}: {fname} claims {n} of the {total} corner(s) but the record declares "
+                               f"{len(declared)} of the {len(corners)} the live mc.json declares")
+                else:
+                    names = set(re.findall(r"`([A-Za-z0-9_]+)`", claim.group(1))) if claim else set()
+                    if names != uncovered:
+                        bad.append(f"{rid}: {fname} makes no claim about {sorted(names)} but the declared "
+                                   f"coverage leaves {sorted(uncovered)} uncovered")
+            elif n != len(declared) or n >= total:
                 bad.append(f"{rid}: {fname} claims {n} of the {total} corner(s) but the record declares "
-                           f"{len(declared)} of the {len(corners)} the live mc.json declares")
+                           f"{len(declared)} of them{degraded}")
             else:
-                names = set(re.findall(r"`([A-Za-z0-9_]+)`", claim.group(1))) if claim else set()
-                if names != uncovered:
-                    bad.append(f"{rid}: {fname} makes no claim about {sorted(names)} but the declared "
-                               f"coverage leaves {sorted(uncovered)} uncovered")
+                raw = re.findall(r"`([A-Za-z0-9_]+)`", claim.group(1)) if claim else []
+                names = set(raw)
+                if len(raw) > len(names):
+                    bad.append(f"{rid}: {fname} makes no claim about {sorted(names)} but names a corner "
+                               f"more than once{degraded}")
+                overlap = sorted(names & set(declared))
+                if overlap:
+                    bad.append(f"{rid}: {fname} makes no claim about {overlap} but Corners run declares "
+                               f"it covered{degraded}")
+                if len(names) != total - n:
+                    bad.append(f"{rid}: {fname} makes no claim about {sorted(names)} but the clause leaves "
+                               f"{total - n} corner(s) unclaimed{degraded}")
     return bad
 
 
