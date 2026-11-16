@@ -335,6 +335,91 @@ def test_stored_coverage_clause_disagreeing_with_declaration_is_rejected(tmp_pat
                for p in problems), problems
 
 
+def test_stored_degraded_mode_ignores_a_corner_added_to_the_live_spec_after_mint(tmp_path):
+    exp = make_exp(tmp_path, spec4())
+    frozen = (exp / "testbench/mc.json").read_bytes()
+    msha = write_manifest(tmp_path, f"x-mismatch-{RID}.manifest.json",
+                          [entry(f"x-mismatch/{RID}/mc.json", frozen),
+                           *campaign_entries(RID, ["tt"])])
+    spec = json.loads((exp / "testbench/mc.json").read_text())
+    spec["corners"].append({"id": "ss125v30", "process": "ss_mm", "temperature_c": 125.0,
+                            "supply_v": 3.0, "basis": "b"})
+    (exp / "testbench/mc.json").write_text(json.dumps(spec))
+    clause = ("covers 1 of the 4 corner(s) mc.json declares and makes no claim about "
+              "`binding`, `fs100v36`, `sf40v36`")
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run=f"tt: tt_mm / 27 C / 3.3 V ({clause})",
+                                          result=f"PASS -- ok -- this record {clause}"), RID, exp, tmp_path)
+    assert problems == [], problems
+
+
+def test_stored_degraded_mode_full_coverage_clause_is_internal_only(tmp_path):
+    exp = make_exp(tmp_path, spec4())
+    msha = write_manifest(tmp_path, f"x-mismatch-{RID}.manifest.json",
+                          [entry(f"x-mismatch/{RID}/mc.json", b"frozen-but-different"),
+                           *campaign_entries(RID, ["tt"])])
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run="tt: tt_mm / 27 C / 3.3 V "
+                                                           "(covers all 1 corner(s) mc.json declares)"),
+                                  RID, exp, tmp_path)
+    assert problems == [], problems
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run="tt: tt_mm / 27 C / 3.3 V "
+                                                           "(covers all 4 corner(s) mc.json declares)"),
+                                  RID, exp, tmp_path)
+    assert any("claims full coverage of 4 corner(s) but the record declares 1 of them" in p
+               for p in problems), problems
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run="tt: tt_mm / 27 C / 3.3 V "
+                                                           "(covers all 1 corner(s) mc.json declares and "
+                                                           "makes no claim about `binding`)"),
+                                  RID, exp, tmp_path)
+    assert any("claims full coverage but also makes no claim about ['binding']" in p
+               for p in problems), problems
+
+
+def test_stored_degraded_mode_clause_internal_inconsistency_is_rejected(tmp_path):
+    exp = make_exp(tmp_path, spec4())
+    msha = write_manifest(tmp_path, f"x-mismatch-{RID}.manifest.json",
+                          [entry(f"x-mismatch/{RID}/mc.json", b"frozen-but-different"),
+                           *campaign_entries(RID, ["tt"])])
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run="tt: tt_mm / 27 C / 3.3 V "
+                                                           "(covers 2 of the 4 corner(s) mc.json declares)"),
+                                  RID, exp, tmp_path)
+    assert any("claims 2 of the 4 corner(s) but the record declares 1 of them" in p
+               for p in problems), problems
+    clause = "covers 1 of the 4 corner(s) mc.json declares and makes no claim about `binding`, `fs100v36`"
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run=f"tt: tt_mm / 27 C / 3.3 V ({clause})",
+                                          result=f"PASS -- ok -- this record {clause}"), RID, exp, tmp_path)
+    assert any("makes no claim about ['binding', 'fs100v36'] but the clause leaves 3 corner(s) unclaimed" in p
+               for p in problems), problems
+    clause = ("covers 1 of the 4 corner(s) mc.json declares and makes no claim about "
+              "`tt`, `binding`, `fs100v36`")
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run=f"tt: tt_mm / 27 C / 3.3 V ({clause})",
+                                          result=f"PASS -- ok -- this record {clause}"), RID, exp, tmp_path)
+    assert any("makes no claim about ['tt'] but Corners run declares it covered" in p
+               for p in problems), problems
+    clause = ("covers 1 of the 4 corner(s) mc.json declares and makes no claim about "
+              "`binding`, `binding`, `fs100v36`")
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run=f"tt: tt_mm / 27 C / 3.3 V ({clause})",
+                                          result=f"PASS -- ok -- this record {clause}"), RID, exp, tmp_path)
+    assert any("makes no claim about ['binding', 'fs100v36'] but names a corner more than once" in p
+               for p in problems), problems
+
+
+def test_stored_byte_exact_mode_still_rejects_a_clause_stale_against_the_live_spec(tmp_path):
+    exp = make_exp(tmp_path, spec4())
+    spec = json.loads((exp / "testbench/mc.json").read_text())
+    spec["corners"].append({"id": "ss125v30", "process": "ss_mm", "temperature_c": 125.0,
+                            "supply_v": 3.0, "basis": "b"})
+    (exp / "testbench/mc.json").write_text(json.dumps(spec))
+    msha = write_manifest(tmp_path, f"x-mismatch-{RID}.manifest.json",
+                          [entry(f"x-mismatch/{RID}/mc.json", (exp / "testbench/mc.json").read_bytes()),
+                           *campaign_entries(RID, ["tt"])])
+    clause = ("covers 1 of the 4 corner(s) mc.json declares and makes no claim about "
+              "`binding`, `fs100v36`, `sf40v36`")
+    problems = ml.stored_coverage(sfields(sha=msha, corners_run=f"tt: tt_mm / 27 C / 3.3 V ({clause})",
+                                          result=f"PASS -- ok -- this record {clause}"), RID, exp, tmp_path)
+    assert any("claims 1 of the 4 corner(s) but the record declares 1 of the 5 the live mc.json declares" in p
+               for p in problems), problems
+
+
 @pytest.fixture
 def tree4(tmp_path, monkeypatch):
     sim = tmp_path / "sim"

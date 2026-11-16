@@ -685,7 +685,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:13620ebc0493ff9e9a35628e8dc619385a36d26cc50a04f30757ee5e83b17d1d",
+        "content_hash": "sha256:d95d318481d259fef14a3626023496bb351007ce074f9b39d730f03dcd6138fb",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -694,7 +694,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:13620ebc0493ff9e9a35628e8dc619385a36d26cc50a04f30757ee5e83b17d1d",
+          "content_hash": "sha256:d95d318481d259fef14a3626023496bb351007ce074f9b39d730f03dcd6138fb",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
@@ -716,7 +716,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:13620ebc0493ff9e9a35628e8dc619385a36d26cc50a04f30757ee5e83b17d1d",
+        "content_hash": "sha256:d95d318481d259fef14a3626023496bb351007ce074f9b39d730f03dcd6138fb",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -725,7 +725,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:13620ebc0493ff9e9a35628e8dc619385a36d26cc50a04f30757ee5e83b17d1d",
+          "content_hash": "sha256:d95d318481d259fef14a3626023496bb351007ce074f9b39d730f03dcd6138fb",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
