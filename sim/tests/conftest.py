@@ -8,7 +8,7 @@ import json  # noqa: E402
 
 import pytest  # noqa: E402
 
-from harness import artifact_manifest as _am, evidence_store as _es  # noqa: E402
+from harness import artifact_manifest as _am, evidence_store as _es, matrix as _mx  # noqa: E402
 
 
 def fake_put_file(path, name, manifest):
@@ -91,3 +91,32 @@ def synthetic_report(matrix, values_for, *, tamper=None, environment=None, prove
     if tamper:
         tamper(rep)
     return rep
+
+
+# ---- run manifest + record-render arguments shared by the record-text self-tests ----
+# One place that knows the fixed run-manifest keys `runner.render_record` reads.
+
+RECORD_ID = "20260101-000000-abcdef0"
+RECORD_SHA = "0" * 64
+
+
+def render_manifest(experiment, matrix, status, measurements, problems=(), job_id="j",
+                    result_status="ok"):
+    """A synthetic run manifest. `measurements` is a {name: value} dict, or a callable
+    taking the (process, temperature, supply) point and returning one."""
+    per_point = measurements if callable(measurements) else (lambda _p: measurements)
+    return {"experiment": experiment, "status": status,
+            "results": [{"corner_id": _mx.corner_id(*p), "status": result_status,
+                         "measurements": dict(per_point(p))} for p in matrix.points()],
+            "axes": {"process": list(matrix.process), "temperature_c": list(matrix.temperature_c),
+                     "supply_v": list(matrix.supply_v)},
+            "problems": list(problems), "backend": "batch", "job_id": job_id, "klt_version": "k",
+            "engine_version": "46", "pdk": {}, "git": {"head": "h", "dirty": False},
+            "started_utc": "t", "author": "a"}
+
+
+def render(manifest, tb, **kw):
+    """`runner.render_record` over a manifest and a testbench's claim/record metadata."""
+    from harness import runner
+    parts = {"claim": tb["claim"], "supersedes": "", "record_meta": tb.get("record") or {}, **kw}
+    return runner.render_record(RECORD_ID, manifest, RECORD_SHA, parts)
