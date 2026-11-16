@@ -242,6 +242,135 @@ def test_a_row_set_mismatch_fails_the_item6_analog_gate(tree, edit, capsys):
     assert "must equal the rows" in err or "undeclared" in err
 
 
+# --- store-resolved item-6 citations (issue #331) ---------------------------
+#
+# The driver-matching and pull-up yield bytes live in the artifact store; a
+# citation resolves them through a committed manifests/artifacts/*.manifest.json
+# and pins the paired samples entry's recorded sha256. All store-shape tests
+# run offline: check.py's store path never reads yield bytes, only the store
+# manifest's entries.
+
+STORE_RECORD = "bench/20261115-000000-abc1234"
+STORE_YIELD_SHA = "a" * 64
+STORE_SAMPLES_SHA = "b" * 64
+
+
+def _add_store_manifest(
+    root: Path,
+    rel: str = "manifests/artifacts/bench-20261115-000000-abc1234.manifest.json",
+    entries: list | None = None,
+) -> str:
+    path = root / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "entries": entries
+                if entries is not None
+                else [
+                    {
+                        "sha256": STORE_YIELD_SHA,
+                        "size": 10,
+                        "name": f"{STORE_RECORD}/m-tt.yield.json",
+                    },
+                    {
+                        "sha256": STORE_SAMPLES_SHA,
+                        "size": 10,
+                        "name": f"{STORE_RECORD}/m-tt.samples.json",
+                    },
+                ],
+            }
+        )
+    )
+    return rel
+
+
+def _add_store_citation(root: Path, **overrides) -> dict:
+    cite = {
+        "artifact_manifest": "manifests/artifacts/bench-20261115-000000-abc1234.manifest.json",
+        "artifact_member": f"{STORE_RECORD}/m-tt.yield.json",
+        "content_hash": f"sha256:{STORE_SAMPLES_SHA}",
+        "rows": ["6-14"],
+    }
+    cite.update(overrides)
+    path = root / "signoff" / "block-manifest.json"
+    manifest = json.loads(path.read_text())
+    manifest["evidence"]["6.analog"] = manifest["evidence"]["6.analog"] + [cite]
+    path.write_text(json.dumps(manifest))
+    return cite
+
+
+def test_a_store_resolved_citation_passes_offline(tree):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root)
+    assert check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_store_citation_missing_its_samples_entry_fails(tree, capsys):
+    check, root = tree
+    rel = _add_store_manifest(
+        root,
+        entries=[
+            {"sha256": STORE_YIELD_SHA, "size": 10, "name": f"{STORE_RECORD}/m-tt.yield.json"},
+        ],
+    )
+    _add_store_citation(root)
+    assert not check.check_item6_analog(_manifest(root), root)
+    err = capsys.readouterr().err
+    assert f"{rel}#{STORE_RECORD}/m-tt.yield.json" in err
+    assert "unreadable or inconsistent" in err
+
+
+def test_a_store_citation_pinned_to_a_moved_entry_fails(tree, capsys):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, content_hash="sha256:" + "c" * 64)
+    assert not check.check_item6_analog(_manifest(root), root)
+    err = capsys.readouterr().err
+    assert "store manifest records" in err and "append-only" in err
+
+
+def test_a_store_citation_whose_manifest_is_missing_fails(tree):
+    check, root = tree
+    _add_store_citation(root)  # no store manifest written
+    assert not check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_store_citation_outside_the_store_dir_fails(tree):
+    check, root = tree
+    _add_store_manifest(root, rel="evidence/bench.manifest.json")
+    _add_store_citation(
+        root, artifact_manifest="evidence/bench.manifest.json"
+    )
+    assert not check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_store_citation_without_a_pin_fails(tree):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, content_hash=None)
+    assert not check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_citation_naming_both_shapes_fails(tree, capsys):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, file="sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-binding.yield.json")
+    assert not check.check_item6_analog(_manifest(root), root)
+    assert "never both or neither" in capsys.readouterr().err
+
+
+def test_regen_repins_a_store_citation_from_the_store_manifest(tree):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, content_hash="sha256:" + "c" * 64)
+    check.refresh_item6()
+    cite = _manifest(root)["evidence"][check.ITEM6_ANALOG_KEY][-1]
+    assert cite["content_hash"] == f"sha256:{STORE_SAMPLES_SHA}"
+
+
 def test_item5_analog_binding_passes_on_the_real_tree(tree):
     check, root = tree
     assert check.check_item5_analog(_manifest(root), root)
