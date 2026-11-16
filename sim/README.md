@@ -77,7 +77,7 @@ sim/
   tests/                       toolchain-free tests (pytest)
   <experiment-slug>/           e.g. smoke-inverter
     testbench/                 tb.json (analysis, measurements, harness bounds) + netlist body
-    netlist-snapshots/<record-id>.spice   frozen netlist as submitted
+    netlist-snapshots/<record-id>.spice   frozen netlist as simulated (an in-deck .include is inlined; see the snapshot convention below)
     corners/<record-id>/       evidence directory for one run:
         evidence.json            manifest: status, job id, versions, PDK identity, SHA-256 of every file
         request.json             the resolved `klt sim` request
@@ -93,6 +93,16 @@ sim/
 Statistical convention, Result, Links (cites the evidence.json SHA-256),
 Timestamp / author, Supersedes`. A `FAIL` record (backend error, missing or
 failed corners) is valid evidence and is kept; it never counts as coverage.
+
+**Snapshot convention**: the snapshot is the netlist *as simulated*. A deck with
+in-deck `.include` lines is frozen with each included file inlined after it, in the
+one shared format all runners emit (`snapshot_body` in `sim/harness/runner.py`: a
+`* ---- included: <path> ----` banner line, then the file's bytes), so the snapshot
+reproduces the simulated circuit -- a deck whose DUT sits behind an `.include` has no
+device cards by itself -- and is never byte-identical to the deck staged into the
+artifact store, which would trip `committed_duplicates` on every re-run. A deck with
+no in-deck `.include` freezes as the bare deck bytes. A runner refuses to overwrite
+an existing snapshot: evidence is append-only.
 
 ## Running
 
@@ -128,7 +138,9 @@ testbench/matrix, klt report and stderr, every per-corner `.log` and `evidence.j
 
 - `manifests/artifacts/<bench>-<record-id>.manifest.json` (every `uri` is `artifact:<key>`),
 - `sim/<bench>/records/<record-id>.md` with a **Stored evidence** table (name, size, sha256),
-- the netlist snapshot `netlist-snapshots/<record-id>.spice` (small, source-like; stays in git).
+- the netlist snapshot `netlist-snapshots/<record-id>.spice` (small, source-like; stays in
+  git; the snapshot convention above applies here too: a bench with an in-deck `.include`
+  freezes the included file inlined, and the runner writes it -- never by hand).
 
 `python3 sim/run_store_evidence.py <bench> <staged-dir>` does the same for a staged campaign
 directory (e.g. Monte Carlo output under `sim/.work/`), writing `sim/<bench>/campaigns/<run-id>.md`.
