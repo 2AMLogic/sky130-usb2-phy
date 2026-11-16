@@ -9,6 +9,14 @@ reduced to what design/export_netlist.sh does not change: its two comment
 header lines and the `** sch_path:` line are dropped, and `+` continuation
 lines are joined, because xschem wraps device lines differently from the
 committed files. Every device, node and parameter must otherwise match.
+
+Both klt netlist call sites (here and design/export_netlist.sh) pass
+`--no-provenance-header`: the committed netlists predate klt's
+`** klt-netlist-inputs:` provenance line and their content hashes are pinned
+in signoff/evidence/item-1-analog-sources.json, so neither the checker nor
+the exporter may let klt write that line. The flag needs klayout-tools
+newer than 0.8.0 (which signoff/toolchain.json pins for grading and which
+predates the flag).
 """
 import re
 import subprocess
@@ -49,7 +57,7 @@ def main() -> int:
         out = Path(tmp) / f"{cell}.spice"
         subprocess.run(
             ["klt", "netlist", str(HERE / f"{cell}.sch"), "-o", str(out), "--block",
-             "--rcfile", pdk_rcfile(), "--pdk", "sky130A"],
+             "--no-provenance-header", "--rcfile", pdk_rcfile(), "--pdk", "sky130A"],
             check=True, capture_output=True,
         )
         fresh = out.read_text()
