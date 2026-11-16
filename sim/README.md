@@ -413,7 +413,11 @@ stored record's manifest citation and Stored evidence table, cross-checks its `C
 coverage declaration against the committed manifest (`stored_coverage`: the campaign object names
 reveal which corners ran; when the manifest's `mc.json` sha256 equals the live `testbench/mc.json`
 the corner definitions are compared too, otherwise the check degrades to corner ids plus the
-record's own coverage clause and says so rather than claiming full confidence), and fails a record
+record's own coverage clause, checked for internal consistency only: `covers all M` must equal the
+declared count and `covers N of the M` must name exactly the `M - N` corners it makes no claim
+about, distinct and disjoint from the declared ids — nothing committed records the frozen corner
+set, so a degraded-mode record's `M` is taken on the record's word rather than measured against
+the live spec), and fails a record
 that also commits `campaigns/<record-id>/`; like stored corner records, it cannot re-derive
 PASS/FAIL from the bytes.
 
