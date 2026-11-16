@@ -335,10 +335,16 @@ does not rescue it.
 Reproduce (the campaigns are submitted to the batch fleet, never run locally):
 
 ```bash
-# klt yield needs the klt_yield_native extension, which is not on PyPI (klayout-tools#2900).
-# Build it into a throwaway venv, never into the host tools (see the worker rules):
+# `klt yield` needs the klt_yield_native extension. It is on PyPI (klt-yield-native 0.1.0,
+# 2026-11-05), reached by the `yield` extra -- install it into a throwaway venv inside the
+# worktree, never into the host tools (see the worker rules). The host klt on a loom-worker
+# is NOT yield-capable, so --klt must point at that venv:
+#   uv venv --python 3.12 <venv>
+#   uv pip install --python <venv>/bin/python "klayout-tools[yield]"
+# Prebuilt wheels cover Linux x86_64 and macOS arm64 only. On another platform, or for a klt
+# revision that is not on PyPI, build the extension from a klayout-tools checkout instead:
 #   maturin build --release -j 2 -o <wheel-dir>      # in klayout-tools native/yield
-#   uv venv --python 3.12 <venv> && uv pip install --python <venv>/bin/python <klayout-tools checkout> <wheel>
+#   uv pip install --python <venv>/bin/python <klayout-tools checkout> <wheel>
 python3 sim/run_mismatch.py --list
 python3 sim/run_mismatch.py diff-receiver-mismatch --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
 python3 sim/run_mismatch.py se-receiver-mismatch  --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
