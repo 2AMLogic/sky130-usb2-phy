@@ -143,25 +143,31 @@ rules make the *same* `PATH` serve both the grading gate and every leg of
 `npm run check:all` (issue #338):
 
 - **Put only a `klt` symlink on `PATH` — never the venv's `bin/`.**
-  `check.py` resolves the grader through `shutil.which("klt")`, but the
-  pytest legs of `check:all` (`signoff/tests`, the lint self-tests) run
-  under the `python3` that the *same* `PATH` selects. A venv provisioned
-  for grading alone carries no pytest, so prepending its `bin/` — which
-  puts the venv's `python3` first — kills leg 3
-  (`python3 -m pytest signoff/tests`) with `No module named pytest`, while
-  skipping the venv entirely fails leg 2's grader-identity check: with the
-  venv on `PATH` there is no form that runs both. A wrapper directory
-  holding the one symlink gives the gate the pinned grader while
-  `python3` stays the host interpreter, whose pytest is already a hard
-  requirement of leg 1 (`.github/scripts/lint.sh` fails closed without
-  it).
+  `check.py` resolves the grader through `shutil.which("klt")`, so the
+  pinned grader must resolve first on `PATH` — skipping the venv
+  entirely fails leg 2's grader-identity check. But the pytest legs of
+  `check:all` (`signoff/tests`, the lint self-tests) also run under the
+  `python3` that the *same* `PATH` selects, and prepending the venv's
+  `bin/` puts the venv's `python3` first. A venv provisioned for grading
+  alone would carry no pytest and fail leg 3
+  (`python3 -m pytest signoff/tests`) with `No module named pytest` — but
+  the `[functional-verification]` extra this recipe installs pulls pytest
+  in transitively (cocotb depends on it), so the venv-bin form happens to
+  run those legs today. The wrapper directory is still the form to use,
+  on grounds that survive measurement: it does not rest on a transitive
+  *test* dependency of cocotb, which the grader makes no promise to
+  keep, and it leaves `python3` as the host interpreter the rest of the
+  repo's tooling assumes — whose pytest is already a hard requirement of
+  leg 1 (`.github/scripts/lint.sh` fails closed without it).
 - **Install the `[functional-verification]` extra into that venv.** Leg 4
   (`scripts/check-ci.sh`) drives the cocotb testbenches through the same
   `klt` the `PATH` selects, and `klt functional-verification` imports
   cocotb **inside `klt`'s own environment**
-  (`docs/environment-setup.md` §3 — the same provisioning CI's `check-ci`
-  job does). The extra does not disturb the grading identity: same
-  registry wheel, same `git_tag`, `is_release` still true.
+  (`docs/environment-setup.md` §3 — the same environment CI's `check-ci`
+  job provisions, installing plain `cocotb` into klt's tool venv
+  directly; see the *Install cocotb into klt's own tool venv* step of
+  `.github/workflows/ci.yml`). The extra does not disturb the grading
+  identity: same registry wheel, same `git_tag`, `is_release` still true.
 
 ```bash
 VER=$(python3 -c 'import json;print(json.load(open("signoff/toolchain.json"))["klt"]["package_version"])')
@@ -202,8 +208,9 @@ warns about none of them:
   `shutil.which("klt")` and the `klt version --format json` subprocess inside
   `check_toolchain_pin()` — so a one-shot `uvx` wrapper satisfies only the
   single command it wraps, while `check.py` still sees whatever `klt` is on
-  `PATH`. The wrapper-dir-on-`PATH` form in the recipe above is
-  load-bearing, not a style preference.
+  `PATH`. What is load-bearing versus `uvx` is the pinned `klt` resolving
+  first on `PATH` for every command the chain runs; the wrapper dir is
+  simply the form this recipe uses to arrange that.
 - **Never install over the shared fleet tool.** On a shared worker,
   `~/.local/bin/klt` is deliberately a git snapshot (`is_release false`) that
   other fleet sweeps depend on; host-wide installs are forbidden by worker
