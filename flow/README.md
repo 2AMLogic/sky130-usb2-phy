@@ -18,9 +18,7 @@ thing that gets fixed.
 **For what the records in this directory add up to, read
 [`docs/characterization.md`](../docs/characterization.md)** — the
 authoritative characterization summary, which indexes every row of
-`spec/usb2-phy.md` §6 against the evidence that exists, per corner, and
-states the resulting headline: zero spec rows have design-anchored evidence
-today.
+`spec/usb2-phy.md` §6 against the evidence that exists, per corner.
 
 ---
 
