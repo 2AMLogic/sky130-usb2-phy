@@ -1,8 +1,8 @@
 {
-  "schema_version": 1,
+  "schema_version": 3,
   "engine": "klayout-runset",
-  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-167/layout/analog/differential_receiver/differential_receiver.gds",
-  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-167/design/netlist/differential_receiver.spice",
+  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-293/layout/analog/differential_receiver/differential_receiver.gds",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-293/design/netlist/differential_receiver.spice",
   "top": "differential_receiver",
   "reference_top": "differential_receiver",
   "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
@@ -22,6 +22,7 @@
     "instance_count": 0,
     "expected_nets": null,
     "unchecked_expected_pins": [],
+    "excluded_pins": [],
     "findings": [],
     "finding_count": 0
   },
@@ -825,7 +826,7 @@
   ],
   "environment": {
     "engine": "klayout-runset",
-    "engine_version": "0.28.16",
+    "engine_version": "0.30.12",
     "klayout_binary": "/usr/bin/klayout",
     "netgen_binary": null,
     "layout_sha256": "3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540",
@@ -833,8 +834,10 @@
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.7.1.dev2419+ga7dfbc5ce95d",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev3+gd5d57daf9a14",
+    "klt_git_commit": "d5d57daf9a145961ea01f5f891e4d87c0d435807",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@d5d57daf9a145961ea01f5f891e4d87c0d435807",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sky130.lvs",
@@ -853,7 +856,7 @@
         "thr": "2"
       },
       "content_hash": "sha256:5b4ede4bdb4744b60e42c9b29baa93f40bb24430fb8f3a48a276a712a492ac38",
-      "klayout_application_version": "0.28.16",
+      "klayout_application_version": "0.30.12",
       "exit_status": 0,
       "engine_error_lines": []
     }
@@ -861,12 +864,12 @@
   "mismatches": [],
   "net_correspondence": [
     {
-      "layout": "\\$4",
+      "layout": "\\$6",
       "reference": "AMPOUT",
       "pin": false
     },
     {
-      "layout": "\\$5",
+      "layout": "\\$7",
       "reference": "BUF1",
       "pin": false
     },
@@ -881,12 +884,12 @@
       "pin": true
     },
     {
-      "layout": "\\$1",
+      "layout": "\\$3",
       "reference": "IBIASN",
       "pin": false
     },
     {
-      "layout": "\\$2",
+      "layout": "\\$4",
       "reference": "LOADDIODE",
       "pin": false
     },
@@ -896,7 +899,7 @@
       "pin": true
     },
     {
-      "layout": "\\$3",
+      "layout": "\\$5",
       "reference": "TAIL",
       "pin": false
     },

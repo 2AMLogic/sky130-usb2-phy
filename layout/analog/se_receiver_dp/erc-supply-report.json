@@ -486,12 +486,17 @@
     "inapplicable": [
       {
         "id": "erc.supply_short",
-        "reason": "substrate_continuity_not_modelled"
+        "missing": [
+          "--deck naming the PDK family, so the isolation layers can be measured",
+          "or assert ties[].isolation_boxes"
+        ],
+        "reason": "substrate_isolation_undecidable"
       }
     ],
     "unknown": [],
     "nothing_checked": false,
     "nothing_checked_reasons": [],
+    "missing_tie_checked": true,
     "checked_by_assertion": [],
     "checked_by_well_assertion": [
       "erc.missing_tie:[\"psub_vss\"]"
@@ -507,10 +512,10 @@
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.8.1.dev719+g526d52fbd7f9",
-    "klt_git_commit": "526d52fbd7f9d6fc08f26a14c19c9c9f3648c138",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@526d52fbd7f9d6fc08f26a14c19c9c9f3648c138",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev3+gd5d57daf9a14",
+    "klt_git_commit": "d5d57daf9a145961ea01f5f891e4d87c0d435807",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@d5d57daf9a145961ea01f5f891e4d87c0d435807",
+    "klayout_version": "0.30.13",
     "pdk": {
       "name": "sky130",
       "source": "built-in",
