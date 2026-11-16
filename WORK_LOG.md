@@ -14,6 +14,7 @@ by the Guide triage agent. Newest entries first.
 - **PR #350**: test: share one run-manifest builder for record-render tests
 - **PR #346**: signoff: re-pin grading klt from 0.8.0 to the 0.9.1 release and regrade
 - **PR #342**: docs(signoff): run every check:all leg via a klt-only wrapper dir on PATH
+- **Issue #325** (closed): main's strict required-status-checks policy stalls every approved PR (all 6 are MERGEABLE/BEHIND)
 - **Issue #347** (closed): signoff/README.md still attributes current rows to klt 0.8.0 after the 0.9.1 re-pin
 - **Issue #344** (closed): Deduplicate the run-manifest literal in sim/tests render_record tests (four hand-written copies)
 - **Issue #338** (closed): signoff: the throwaway-grader-venv recipe makes `npm run check:all`'s pytest leg unrunnable
