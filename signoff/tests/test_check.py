@@ -495,15 +495,20 @@ def test_pins_only_fails_on_a_mutated_pinned_member_and_prints_the_recipe(
     tree, capsys
 ):
     """One appended byte to README.md reds --pins-only, names the stale
-    member and prints the grader-free refresh recipe -- no second lookup."""
+    member and prints the grader-free refresh recipe -- no second lookup.
+    The hint defers the PATH rules to the README recipe (their single
+    home), so the venv-bin PATH form it must not resurrect is pinned
+    absent here."""
     check, root = tree
     with (root / "README.md").open("a") as handle:
         handle.write("\n")
     assert check.main(["--pins-only"]) == 1
     err = capsys.readouterr().err
     assert "README.md" in err
+    assert "How to re-run the grading" in err
     assert "uv venv /tmp/signoff-grader" in err
     assert "--regen" in err
+    assert 'PATH="/tmp/signoff-grader/bin:$PATH"' not in err
 
 
 def test_pins_only_is_not_readme_special_cased(tree, capsys):
