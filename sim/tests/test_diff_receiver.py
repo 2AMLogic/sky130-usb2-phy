@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from conftest import meas, synthetic_report
+from conftest import meas, render, render_manifest, synthetic_report
 from harness import evidence_lint as lint, matrix as mx, results as rs, runner
 
 SIM = Path(__file__).resolve().parents[1]
@@ -113,24 +113,13 @@ def test_design_netlist_uses_only_sky130_devices():
 
 # ---- record metadata ---------------------------------------------------------
 
-def make_parts(tb, **kw):
-    return {"claim": tb["claim"], "supersedes": "", "record_meta": tb.get("record") or {}, **kw}
-
-
 def manifest(problems=(), status="FAIL"):
-    pts = MATRIX.points()
-    results = [{"corner_id": mx.corner_id(*p), "status": "ok",
-                "measurements": {"vth_cm0p80_v": -0.02, "rxd_pos_min_cm0p80_v": p[2]}} for p in pts]
-    return {"experiment": "diff-receiver-sensitivity", "status": status, "results": results,
-            "axes": {"process": list(MATRIX.process), "temperature_c": list(MATRIX.temperature_c),
-                     "supply_v": list(MATRIX.supply_v)},
-            "problems": list(problems), "backend": "batch", "job_id": "j", "klt_version": "k",
-            "engine_version": "46", "pdk": {}, "git": {"head": "h", "dirty": False},
-            "started_utc": "t", "author": "a"}
+    return render_manifest("diff-receiver-sensitivity", MATRIX, status,
+                           lambda p: {"vth_cm0p80_v": -0.02, "rxd_pos_min_cm0p80_v": p[2]}, problems)
 
 
 def test_receiver_record_makes_no_smoke_claim_and_discloses_coverage():
-    rec = runner.render_record("20260101-000000-abcdef0", manifest(), "0" * 64, make_parts(TB))
+    rec = render(manifest(), TB)
     assert "harness smoke deck" not in rec and "No design claim" not in rec
     assert "harness-only" not in rec
     assert "xschem export of design/differential_receiver.sch" in rec
@@ -141,7 +130,7 @@ def test_receiver_record_makes_no_smoke_claim_and_discloses_coverage():
 
 def test_receiver_record_lists_every_failure_not_just_five():
     probs = [f"tt_27c_3.30v: rxd_pos_min_cm{i}=0 below min 0.9" for i in range(12)]
-    rec = runner.render_record("20260101-000000-abcdef0", manifest(probs), "0" * 64, make_parts(TB))
+    rec = render(manifest(probs), TB)
     for p in probs:
         assert f"- {p}" in rec
     assert "12 problem(s)" in rec

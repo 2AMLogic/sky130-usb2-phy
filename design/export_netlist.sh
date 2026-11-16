@@ -11,6 +11,13 @@
 # byte-reproducible only on a host with the same xschem build (`+` continuation
 # wrapping differs across builds); compare across hosts with `design/check_netlist.py`,
 # which ignores `+` wrapping.
+#
+# `--no-provenance-header` keeps klt's `** klt-netlist-inputs:` provenance line out
+# of design/netlist/<cell>.spice: the committed netlists predate that line and their
+# content hashes are pinned in signoff/evidence/item-1-analog-sources.json.
+# design/check_netlist.py passes the same flag so it compares against exactly what
+# this script writes. Needs klayout-tools newer than 0.8.0 (which
+# signoff/toolchain.json pins for grading and which predates the flag).
 set -euo pipefail
 cell="${1:?usage: export_netlist.sh <cell>}"
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -21,7 +28,7 @@ if [ -z "${XSCHEMRC:-}" ]; then
   XSCHEMRC="$(python3 "$here/../sim/harness/pdk_pin.py")" || exit 2
 fi
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
-klt netlist "$here/$cell.sch" --block --rcfile "$XSCHEMRC" -o "$tmp/$cell.spice" >/dev/null
+klt netlist "$here/$cell.sch" --block --no-provenance-header --rcfile "$XSCHEMRC" -o "$tmp/$cell.spice" >/dev/null
 {
   echo "* $cell -- exported by design/export_netlist.sh from design/$cell.sch (xschem, sky130 symbols)"
   echo "* Do not edit: edit the schematic and re-run the export."

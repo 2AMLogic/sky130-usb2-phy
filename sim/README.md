@@ -375,9 +375,12 @@ Choices worth knowing:
     of the M corner(s) mc.json declares", naming the corners it makes no claim about, so a partial
     record cannot be skim-read as a full one;
   - `mismatch_lint` derives campaign and yield completeness from that declaration instead of the full
-    matrix, and checks the declaration against the frozen `mc.json` — an undeclared corner id, an
-    altered corner definition under a declared id, a duplicate, and a **missing or empty** declaration
-    are all rejected, so the lint cannot be satisfied by declaring less coverage than was run;
+    matrix, and checks the declaration: against the frozen `mc.json` for committed evidence, and for
+    stored evidence against the committed manifest (`stored_coverage`, from the campaign object names)
+    plus the record's own coverage clause — an undeclared corner id, an altered corner definition under
+    a declared id, a duplicate, a **missing or empty** declaration, and corners the manifest ran but the
+    record does not claim are all rejected, so the lint cannot be satisfied by declaring less coverage
+    than was run;
   - coverage is only the corner axis. Row coverage for sign-off is still decided by the manifest
     `spec_rows` citations (`signoff/README.md` item 6), so a partial record cannot flip a row to `met`.
   - an unknown id is an error naming the declared ids, and a repeated id selects once.
@@ -406,8 +409,13 @@ runner does, see "Stored evidence") and commit only `records/<record-id>.md` and
 `manifests/artifacts/<experiment>-<record-id>.manifest.json`; nothing is written under
 `campaigns/`. `run_mismatch.py` checks the store before it submits anything and exits 4 with
 nothing written if it is unusable; `--no-write` does not need the store. `mismatch_lint` checks a
-stored record's manifest citation and Stored evidence table and fails a record that also commits
-`campaigns/<record-id>/`; like stored corner records, it cannot re-derive PASS/FAIL from the bytes.
+stored record's manifest citation and Stored evidence table, cross-checks its `Corners run`
+coverage declaration against the committed manifest (`stored_coverage`: the campaign object names
+reveal which corners ran; when the manifest's `mc.json` sha256 equals the live `testbench/mc.json`
+the corner definitions are compared too, otherwise the check degrades to corner ids plus the
+record's own coverage clause and says so rather than claiming full confidence), and fails a record
+that also commits `campaigns/<record-id>/`; like stored corner records, it cannot re-derive
+PASS/FAIL from the bytes.
 
 ## dplus-pullup-mismatch, driver-matching-mismatch (Monte Carlo, T1 item 6, #223)
 

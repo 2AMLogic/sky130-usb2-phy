@@ -262,7 +262,8 @@ def write_tree(exp, cdir, files, manifest):
     (cdir / "evidence.json").write_bytes(mbytes)
     (exp / "records" / f"{RID}.md").write_text("\n".join([
         f"# x-mismatch -- {RID}", "", f"- **Record ID**: {RID}", f"- **Status**: {manifest['status']}", "- **Claim**: c",
-        "- **Netlist provenance**: p", "- **Corners run**: tt", "- **Statistical convention**: s",
+        "- **Netlist provenance**: p", "- **Corners run**: tt: tt_mm / 27 C / 3.3 V (covers all 1 corner(s) "
+        "mc.json declares; each corner a separate Monte Carlo population)", "- **Statistical convention**: s",
         "- **Monte Carlo**: seed 7", "- **Result**: r",
         f"- **Links**: sim/x-mismatch/campaigns/{RID}/ (evidence.json sha256 `{sha(mbytes)}`)",
         "- **Timestamp / author**: t / a", "- **Supersedes**: (none)", ""]))
