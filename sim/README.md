@@ -72,6 +72,7 @@ sim/
   corners-resistor-sets.json   the supplemental 225-point resistor-set matrix (id pvt225-mos-rc)
   run_corners.py               runner (stdlib only): --list, --check-env, <experiment>
   check_records.py             toolchain-free record lint (also run by `npm run lint`)
+  make_se_receiver_tb.py       shared source rendering the se-receiver dp/dm testbench inputs (--check)
   harness/                     matrix.py results.py runner.py evidence_lint.py append_only.py
   tests/                       toolchain-free tests (pytest)
   <experiment-slug>/           e.g. smoke-inverter
@@ -279,6 +280,13 @@ minimum over 2.0-3.0 V, the 0.8 V / 2.0 V boundary probes, the internal
 Records: `se-receiver-dp-thresholds/records/`, `se-receiver-dm-thresholds/records/`.
 No Monte Carlo is run; each record says so. Both ran on fleet runner klt
 0.5.0 against client 0.7.0 with the version check in `warn` mode, as above.
+
+The D+ / D- pair is not hand-synchronised: `sim/make_se_receiver_tb.py` renders
+both `tb.json` files and all four `se_rx_*_tb.spice` decks (these two and the
+two `se-receiver-mismatch` Monte Carlo decks) from one per-leaf parameterisation.
+The threshold decks cross-reference their *sibling* experiment, so the pair is
+not a token substitution of one file. `--check` (run by `sim/tests`) fails if a
+committed copy is edited by hand.
 
 ## diff-receiver-mismatch, se-receiver-mismatch (Monte Carlo, T1 item 6)
 
