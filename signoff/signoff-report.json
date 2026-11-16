@@ -108,7 +108,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:5dadc686a6c59000fd56929d7d5a61a9f96d1f328e276317a81f3f887f9615cb",
+        "content_hash": "sha256:5cb707ad4e5864553a2ac76ffb3a66719f58aeb03f727aab341ccc5f623a0d2a",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -117,7 +117,7 @@
             "path": "signoff/inventory/item-2-analog-layout.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:5dadc686a6c59000fd56929d7d5a61a9f96d1f328e276317a81f3f887f9615cb",
+          "content_hash": "sha256:5cb707ad4e5864553a2ac76ffb3a66719f58aeb03f727aab341ccc5f623a0d2a",
           "input_verified": true,
           "summary": "T1 item 2.analog: the five analog leaf GDS streams under layout/analog/ and the generator of each are committed, with the pinned stream hashes. The audited artifact is signoff/inventory/item-2-analog-layout.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-2-analog-layout.json"
@@ -574,7 +574,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
+        "content_hash": "sha256:2cf3a78210de1caeadb842d1160c33286098469e0d7ef200c455baf50d78b084",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -583,7 +583,7 @@
             "path": "signoff/inventory/item-9-testbenches.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
+          "content_hash": "sha256:2cf3a78210de1caeadb842d1160c33286098469e0d7ef200c455baf50d78b084",
           "input_verified": true,
           "summary": "T1 item 9: every cocotb suite in verification/ and every analog testbench under sim/*/testbench/ is committed, with its cold-start invocation and the pinned PDK revision. The audited artifact is signoff/inventory/item-9-testbenches.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-9-testbenches.json"
@@ -605,7 +605,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
+        "content_hash": "sha256:2cf3a78210de1caeadb842d1160c33286098469e0d7ef200c455baf50d78b084",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -614,7 +614,7 @@
             "path": "signoff/inventory/item-9-testbenches.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:68ed8c155539a4a3bbec4cd8b2643cd224c2f93d19dba08c5597ee92227f32e6",
+          "content_hash": "sha256:2cf3a78210de1caeadb842d1160c33286098469e0d7ef200c455baf50d78b084",
           "input_verified": true,
           "summary": "T1 item 9: every cocotb suite in verification/ and every analog testbench under sim/*/testbench/ is committed, with its cold-start invocation and the pinned PDK revision. The audited artifact is signoff/inventory/item-9-testbenches.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-9-testbenches.json"
@@ -636,7 +636,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
+        "content_hash": "sha256:0d6d26939a90d1882666a7de6c8f249eb031e2ad2350085226774875cce03a7d",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -645,7 +645,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
+          "content_hash": "sha256:0d6d26939a90d1882666a7de6c8f249eb031e2ad2350085226774875cce03a7d",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
@@ -667,7 +667,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
+        "content_hash": "sha256:0d6d26939a90d1882666a7de6c8f249eb031e2ad2350085226774875cce03a7d",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -676,7 +676,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:b9e0d35ec8c826edd3cdf2141d8f0acf67d0440a3f9d7330f32c2224079a7371",
+          "content_hash": "sha256:0d6d26939a90d1882666a7de6c8f249eb031e2ad2350085226774875cce03a7d",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"

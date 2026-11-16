@@ -1,3 +1,4 @@
+* Derived by sim/make_se_receiver_tb.py; do not edit by hand.
 * se-receiver-dp-thresholds -- sky130 single-ended D+ receiver switching threshold and output levels
 *
 * Circuit body for `klt sim`. The design netlist (design/netlist/se_receiver_dp.spice)

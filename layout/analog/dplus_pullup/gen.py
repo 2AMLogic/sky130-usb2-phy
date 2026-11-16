@@ -18,22 +18,21 @@ emitted in a fixed order, so `--check` compares sha256 of the whole file.
 
 from __future__ import annotations
 
-import argparse
-import hashlib
 import sys
-import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from gen_common import (  # noqa: E402
     GRID,
-    LIC,
+    L,
     LIC_PITCH,
     PAD,
     STRIP_W,
     Canvas,
     Ports,
     mos,
+    res_generic_po,
+    run_gds,
     tap_ring,
 )
 
@@ -41,30 +40,6 @@ HERE = Path(__file__).resolve().parent
 GDS = HERE / "dplus_pullup.gds"
 TOP = "dplus_pullup"
 
-
-# --- sky130A drawn-layer table (GDS layer/datatype) -------------------------
-L = {
-    "nwell": (64, 20),
-    "diff": (65, 20),
-    "tap": (65, 44),
-    "poly": (66, 20),
-    "licon": (66, 44),
-    "li1": (67, 20),
-    "mcon": (67, 44),
-    "met1": (68, 20),
-    "via1": (68, 44),
-    "met2": (69, 20),
-    "via2": (69, 44),
-    "met3": (70, 20),
-    "nsdm": (93, 44),
-    "psdm": (94, 20),
-    "npc": (95, 20),
-    "hvi": (75, 20),
-    "urpm": (79, 20),
-    "poly_res": (66, 13),
-    "met1_label": (68, 5),
-    "met3_label": (70, 5),
-}
 
 # --- drawn dimensions, um (all on the 0.005 grid) ---------------------------
 V1 = 0.15  # via1 edge
@@ -81,32 +56,6 @@ FINGER_MAX = 10.0  # widest single finger, um
 # every labelled net into a circuit pin, so labelling internal nets would give
 # the layout more pins than the schematic's eight.
 PIN_NETS = {"DP", "VPU", "VSS", "PU_EN", "TRIM0", "TRIM1", "TRIM2", "TRIM3"}
-
-
-def resistor(cv: Canvas, ports: Ports, x0: float, y0: float, length: float, left: str, right: str) -> float:
-    """One straight sky130_fd_pr__res_generic_po bar, `length` x RES_W um.
-
-    The `poly_res` marker covers exactly the body; the poly heads either side
-    stay outside it, so the SKY130 runset sees two contact terminals. The
-    runset reads L as area / width, so a straight bar has L = `length`
-    exactly. Returns the x of the right edge of the right head.
-    """
-    yc = y0 + RES_W / 2
-    xb0 = x0 + RES_HEAD
-    xb1 = xb0 + length
-    x1 = xb1 + RES_HEAD
-    cv.rect("poly", x0, y0, x1, y0 + RES_W)
-    cv.rect("poly_res", xb0, y0, xb1, y0 + RES_W)
-    for xh, net in ((x0 + RES_HEAD / 2, left), (xb1 + RES_HEAD / 2, right)):
-        ys = [yc + (k - 1.5) * LIC_PITCH for k in range(4)]
-        for y in ys:
-            cv.centred("licon", xh, y, LIC, LIC)
-            cv.centred("mcon", xh, y, LIC, LIC)
-        cv.rect("npc", xh - 0.185, ys[0] - 0.185, xh + 0.185, ys[-1] + 0.185)
-        cv.rect("li1", xh - 0.165, ys[0] - 0.165, xh + 0.165, ys[-1] + 0.165)
-        cv.rect("met1", xh - 0.175, ys[0] - 0.175, xh + 0.175, ys[-1] + 0.175)
-        ports.add(net, xh, yc, "n")
-    return x1
 
 
 def build() -> Canvas:
@@ -153,7 +102,9 @@ def build() -> Canvas:
     rx = x + 0.7
     for length, left, right in ((40.3, "N0", "N1"), (2.4, "N1", "N2"), (4.8, "N2", "N3"),
                                 (9.6, "N3", "N4"), (19.2, "N4", "DP")):
-        rx = resistor(cv, ports, rx, N_DIFF_Y, length, left, right) + RES_GAP
+        head_ys = [RES_W / 2 + (k - 1.5) * LIC_PITCH for k in range(4)]
+        rx = res_generic_po(cv, ports, rx + RES_HEAD, N_DIFF_Y, RES_W, length, (left, right),
+                            head_ys, 0.175, RES_W / 2, "n") + RES_GAP
     ring_x1 = rx - RES_GAP + 0.8
     tap_ring(cv, "n", 0.0, N_RING_Y0, ring_x1, N_RING_Y1, ("b",))
 
@@ -227,23 +178,5 @@ def build() -> Canvas:
     return cv
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true", help="compare, do not write")
-    ap.add_argument("-o", "--output", type=Path, default=GDS)
-    args = ap.parse_args()
-    cv = build()
-    if args.check:
-        with tempfile.TemporaryDirectory(prefix="gen-check-") as scratch:
-            tmp = Path(scratch) / GDS.name
-            cv.write(tmp)
-            same = hashlib.sha256(tmp.read_bytes()).hexdigest() == hashlib.sha256(GDS.read_bytes()).hexdigest()
-        print("reproducible" if same else "DIFFERS from committed stream")
-        return 0 if same else 1
-    cv.write(args.output)
-    print(f"wrote {args.output} sha256={hashlib.sha256(args.output.read_bytes()).hexdigest()}")
-    return 0
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(run_gds(GDS, build, __doc__.splitlines()[0]))

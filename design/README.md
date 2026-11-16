@@ -539,9 +539,9 @@ were re-measured.
 
 **Status: schematic level only** (no layout, no parasitics, no level shifter,
 no passive-process spread; local device mismatch is Monte-Carlo-recorded at
-`tt` (PASS), `sf40v36` (FAIL) and `fs100v36` (match PASS, xover FAIL) so far —
-`sim/driver-matching-mismatch/records/`;
-`fs100v30` outstanding). Evidence: "What the grids show"
+`tt` (PASS), `sf40v36` (FAIL), `fs100v36` (match PASS, xover FAIL) and
+`fs100v30` (match FAIL, xover PASS) —
+`sim/driver-matching-mismatch/records/`). Evidence: "What the grids show"
 below. Regenerate the netlist with `design/export_netlist.sh
 differential_driver`; two consecutive exports on that host are byte-identical to the
 committed `design/netlist/differential_driver.spice` (xschem 3.4.4, installed
@@ -700,9 +700,12 @@ measured at `tt` (six graded rows, all PASS:
 `fs100v36` — the thin-margin crossover corner itself — where the mismatch tail
 does move it: match PASS (all four ratios yield 1), xover FAIL (empirical
 yield 0.6675 / 0.655 against the 0.99 target:
-`sim/driver-matching-mismatch/records/20261115-172039-45b6298.md`); the
-remaining thin-margin corner (`fs100v30`) is still
-unrecorded, and passive spread is unsimulated. The four rows that
+`sim/driver-matching-mismatch/records/20261115-172039-45b6298.md`), and at
+`fs100v30`, the thinnest low-side matching margin: the four ratios' mismatch
+tails cross the 0.9 bound there (3-4 of 400 samples per ratio, worst 0.8755;
+crossover still PASSes —
+`sim/driver-matching-mismatch/records/20261115-141134-38bdad2.md`); passive
+spread is still unsimulated. The four rows that
 failed in gf180 pass here; that is a sky130 measurement, not an inference from
 gf180.
 
@@ -734,11 +737,12 @@ to 3.0 mA (`ff_-40c_3.60v`) during the transition; static supply current
 150.8-254.7 uA (bias network).
 
 **Limits of these PASSes.** (1) Schematic level: no extracted parasitics, no
-layout, no pad or ESD; mismatch / Monte Carlo recorded at `tt` (PASS),
-`sf40v36` (FAIL — mismatch moves the rise/fall ratios out of 0.9-1.1) and
-`fs100v36` (match PASS, xover FAIL —
-`sim/driver-matching-mismatch/records/20261115-172039-45b6298.md`),
-not at `fs100v30`.
+layout, no pad or ESD; mismatch / Monte Carlo recorded at all four corners —
+`tt` (PASS), `sf40v36` (FAIL — mismatch moves the rise/fall ratios out of
+0.9-1.1), `fs100v36` (match PASS, xover FAIL —
+`sim/driver-matching-mismatch/records/20261115-172039-45b6298.md`) and
+`fs100v30` (match FAIL, xover PASS —
+`sim/driver-matching-mismatch/records/20261115-141134-38bdad2.md`).
 (2) The grid does not
 exercise resistor or MIM capacitor process spread (item 2 above); both are in
 the edge rate and the output resistance. (3) The load for VOH/VOL awaits DR-0004
