@@ -728,7 +728,7 @@ carries -14.2 nA to +0.05 nA. **Forcing the pad to 3.6 V on a 3.0 V rail
 forward-biases the output PMOS drain junction: -259 uA at `fs_100c_3.00v`** (-3
 nA at `tt` 27 C 3.3 V). This is real behaviour of the schematic when the pad
 can sit above `VDD` while the driver is disabled; no limit exists, so it is
-reported, not judged, and is tracked as a follow-up (#130). Enable/disable
+reported, not judged; DR-0006 (`spec/decision-records/0006-disabled-pad-leakage-envelope.md`) proposes an envelope and budget, awaiting operator ratification. Enable/disable
 transitions into a pad forced to `VDD`/2: disabled current up to 14.2 nA
 (`sf_100c_3.60v`), enable at 102.6-106.0 ns after the `OE` edge at 100 ns,
 release at 209.9-226.4 ns after the 200 ns edge, enabled current 33-59 mA
