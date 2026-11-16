@@ -146,6 +146,21 @@ def invoke_klt(request_path: Path, outdir: Path, backend: str, workdir: Path,
     return report, proc.stderr or "", proc.returncode
 
 
+def snapshot_body(base: Path, netlist: str, includes: list[str]) -> bytes:
+    """The frozen netlist snapshot body, in the one shared format every runner emits.
+
+    The deck's bytes, then for each include a `\n* ---- included: <path> ----\n` banner
+    followed by the included file's bytes. Inlining is what makes the snapshot reproduce the
+    simulated circuit (a deck whose DUT sits behind an `.include` has no device cards alone)
+    and keeps its bytes distinct from the deck staged into the artifact store, so
+    `artifact_manifest.committed_duplicates` has no byte-identity to match.
+    """
+    body = (base / netlist).read_bytes()
+    for inc in includes:  # design netlists the deck instantiates, frozen into the snapshot
+        body += b"\n* ---- included: " + inc.encode() + b" ----\n" + (base / inc).read_bytes()
+    return body
+
+
 def write_evidence(exp_dir: Path, rid: str, parts: dict) -> Path:
     """Store the run's raw outputs in the artifact store; commit the snapshot + records/<rid>.md.
 
@@ -286,9 +301,7 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
         raise RunError(str(exc)) from exc
     matrix_path = mx.CORNERS_JSON if matrix.matrix_id == mx.LEGACY_ID else (
         mx.SIM_DIR / mx.APPROVED_MATRICES[matrix.matrix_id]["file"])
-    body = (exp_dir / "testbench" / tb["netlist"]).read_bytes()
-    for inc in tb.get("include", []):  # design netlists the deck instantiates, frozen into the snapshot
-        body += b"\n* ---- included: " + inc.encode() + b" ----\n" + (exp_dir / "testbench" / inc).read_bytes()
+    body = snapshot_body(exp_dir / "testbench", tb["netlist"], tb.get("include", []))
 
     full = not any(subset.values())
     if record and not full:
