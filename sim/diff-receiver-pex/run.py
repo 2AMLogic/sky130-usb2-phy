@@ -19,6 +19,16 @@ schematic leg reproduces the committed numbers. The gate also fails (exit 3)
 unless the envelope's status is `pass` and its delta carries exactly
 corners x measurements distinct rows: absent, partial or duplicated data must
 fail the run, not pass it vacuously.
+
+The run's netlist is frozen as sim/diff-receiver-pex/netlist-snapshots/<run-id>.spice,
+composed by the shared harness helper (`snapshot_body`: deck bytes, then each in-deck
+`.include` target inlined behind a `* ---- included: <path> ----` banner) so the snapshot
+reproduces the simulated circuit and is never byte-identical to the deck staged into the
+artifact store (which would re-trigger committed_duplicates on every re-run). The snapshot
+is written into the tracked tree immediately, while the store step is a separate command:
+if a run is abandoned before `python3 sim/run_store_evidence.py` mints its summary, the
+stray snapshot must be deleted by hand -- `sim/harness/evidence_lint.py` fails CI on any
+snapshot file no summary record cites.
 """
 
 import argparse
@@ -30,6 +40,10 @@ import time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "sim"))
+
+from harness.runner import snapshot_body  # noqa: E402
+
 GDS = REPO / "layout/analog/differential_receiver/differential_receiver.gds"
 TB = Path(__file__).resolve().parent / "testbench/tb.json"
 DECK = Path(__file__).resolve().parent / "testbench/diff_receiver_pex_tb.spice"
@@ -42,6 +56,30 @@ REL_TOL = 1e-6
 def head_sha() -> str:
     return subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO,
                           capture_output=True, text=True, check=True).stdout.strip()[:7]
+
+
+def deck_includes(deck: Path) -> list[str]:
+    """The deck's `.include` targets, in order, as named (relative to the testbench dir)."""
+    out = []
+    for line in deck.read_text().splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0].lower() == ".include":
+            out.append(line.split(None, 1)[1].strip().strip('"'))
+    return out
+
+
+def write_snapshot(rid: str, repo: Path = REPO) -> Path:
+    """Freeze the netlist as submitted into netlist-snapshots/<rid>.spice (append-only).
+
+    The snapshots directory is evidence: an existing snapshot for the same run id must
+    never be overwritten (mirrors sim/harness/runner.py's append-only refusal).
+    """
+    snap = repo / "sim/diff-receiver-pex/netlist-snapshots" / f"{rid}.spice"
+    if snap.exists():
+        raise FileExistsError(f"{snap} exists; evidence is append-only")
+    snap.parent.mkdir(parents=True, exist_ok=True)
+    snap.write_bytes(snapshot_body(DECK.parent, DECK.name, deck_includes(DECK)))
+    return snap
 
 
 def pex_cmd(stage: Path, backend: str, wait: int, dry_run: bool) -> list[str]:
@@ -159,6 +197,11 @@ def main(argv=None) -> int:
          "equivalent": ok, "rows": rows}, indent=1) + "\n")
     for f in (TB, DECK, SHIM):
         (stage / f.name).write_bytes(f.read_bytes())
+    try:
+        write_snapshot(rid)
+    except FileExistsError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 4
 
     bb = envelope.get("body_bias") or {}
     mm = envelope.get("model_mismatch")
@@ -172,8 +215,8 @@ def main(argv=None) -> int:
     for r_ in bad[:10]:
         print(f"  {r_['corner_id']} {r_['measurement']}: committed={r_['committed']} "
               f"schematic={r_['schematic']}", file=sys.stderr)
-    print(f"evidence staged under {stage}; store with: python3 sim/run_store_evidence.py "
-          f"diff-receiver-pex {stage}")
+    print(f"evidence staged under {stage}; netlist frozen to netlist-snapshots/{rid}.spice; "
+          f"store with: python3 sim/run_store_evidence.py diff-receiver-pex {stage}")
     return 0 if ok else 3
 
 
