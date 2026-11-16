@@ -23,13 +23,15 @@ placement plan is source evidence for *topology*, never geometry
 
 ## Shared generator helpers: `gen_common.py`
 
-`snap`, `Canvas`, `contacts_y`, `Ports`, `mos` and `tap_ring` (with the
-dimensions they depend on) live once in `gen_common.py`; operator ruling
-2026-10-29 (#238) allowed shared *code* while outputs stay per leaf. A change
+`snap`, `Canvas`, `contacts_y`, `Ports`, `mos`, `tap_ring`, the sky130A layer
+table `L`, the `--check`/`-o` GDS CLI (`run_gds`, per-leaf `--help` description
+passed in) and the poly-resistor builders `xhigh_resistor` and `res_generic_po`
+(with the dimensions they depend on) live once in `gen_common.py`; operator
+ruling 2026-10-29 (#238) allowed shared *code* while outputs stay per leaf, and
+asked that the module "reconcile the mos/resistor variants explicitly". A change
 there must leave every committed GDS byte-identical: run `python3
 layout/analog/<block>/gen.py --check` for all five leaves. Each `gen.py` keeps
-its own layer table, `TOP` and `build()`, except the two se_receiver leaves
-(below).
+its own `TOP` and `build()`, except the two se_receiver leaves (below).
 
 ## Shared check runner: `run_checks_common.py`
 
@@ -45,16 +47,21 @@ runner must leave every leaf's reports byte-identical for unchanged inputs.
 Deliberate leaf-local variants, not yet reconciled into the shared helpers:
 
 - `differential_driver/gen.py` keeps its own `Ports` and `mos` (per-gate
-  length `gl`, supply-net asserts, `m1`/`m3`/`m4` landing kinds).
-- `resistor`: variants in `differential_receiver` and `dplus_pullup`, plus the
-  driver's `xhigh_resistor`/`generic_poly_resistor`, each tied to its block's
-  geometry.
+  length `gl`, supply-net asserts, `m1`/`m3`/`m4` landing kinds) — tracked as
+  #274.
+
+The poly-resistor family was reconciled into the shared helpers per ruling
+#238 ("reconciles the mos/resistor variants explicitly"): the
+`res_xhigh_po` serpentine is `gen_common.xhigh_resistor` (carrying the
+two-leg `urpm.width.1` marker guard), and the `res_generic_po` bar is
+`gen_common.res_generic_po`, parameterised over the two leaves' head
+geometries.
 
 `se_receiver_dm` and `se_receiver_dp` are the same circuit with two net names,
-so their drawing (layer table, `resistor()`, `build()`) lives once in
-`gen_se_receiver.py`, parameterised by (leaf, input net, output net); each
-leaf's `gen.py` is a thin entry point and both records pin the module as a
-provenance input (#240).
+so their drawing (`build()`) lives once in `gen_se_receiver.py`, parameterised
+by (leaf, input net, output net); the layer table and the resistor builders
+come from `gen_common.py`. Each leaf's `gen.py` is a thin entry point and both
+records pin both modules as provenance inputs (#240, #293).
 
 ## What a leaf directory contains
 

@@ -14,52 +14,22 @@ emitted in a fixed order, so `gen.py --check` compares sha256 of the whole file.
 
 from __future__ import annotations
 
-import argparse
-import hashlib
 import sys
-import tempfile
 from pathlib import Path
 
-import klayout.db as db
-
 from gen_common import (
-    DBU,
     GRID,
-    LIC,
-    LIC_PITCH,
+    L,
     PAD,
     STRIP_W,
     Canvas,
     Ports,
     mos,
-    snap,
+    run_gds,
     tap_ring,
+    xhigh_resistor,
 )
 
-
-# --- sky130A drawn-layer table (GDS layer/datatype) -------------------------
-L = {
-    "nwell": (64, 20),
-    "diff": (65, 20),
-    "tap": (65, 44),
-    "poly": (66, 20),
-    "licon": (66, 44),
-    "li1": (67, 20),
-    "mcon": (67, 44),
-    "met1": (68, 20),
-    "via1": (68, 44),
-    "met2": (69, 20),
-    "via2": (69, 44),
-    "met3": (70, 20),
-    "nsdm": (93, 44),
-    "psdm": (94, 20),
-    "npc": (95, 20),
-    "hvi": (75, 20),
-    "urpm": (79, 20),
-    "poly_res": (66, 13),
-    "met1_label": (68, 5),
-    "met3_label": (70, 5),
-}
 
 # --- drawn dimensions, um (all on the 0.005 grid) ---------------------------
 V1 = 0.15  # via1 edge
@@ -67,65 +37,9 @@ V2 = 0.20  # via2 edge
 TRUNK_W = 0.40  # met3 trunk width
 TRUNK_PITCH = 0.70  # met3 trunk pitch
 V2_PAD = 0.38  # met2 pad around via2 (0.09 enclosure on the sides)
-RES_W = 1.41  # sky130_fd_pr__res_xhigh_po_1p41 body width
-RES_GAP = 0.50  # poly space between serpentine legs
 # (netlist instance, L in um, serpentine legs). Legs are even so both heads sit at the top.
 RESISTORS = (("XR2", 14.0, 2), ("XR1", 19.0, 2), ("XRBIAS", 140.0, 14))
 RES_SPACE = 1.2  # poly space between neighbouring resistors
-
-
-
-def resistor(cv: Canvas, x0: float, y0: float, res_l: float, n: int) -> tuple[tuple[float, float], tuple[float, float]]:
-    """Serpentine sky130_fd_pr__res_xhigh_po_1p41, centreline length `res_l`, `n` legs.
-
-    Both terminal heads are at the top, outside the `poly_res` marker, so the
-    SKY130 runset sees exactly two terminals. Returns the (x, y) centre of each
-    head's met1 pad.
-    """
-    w = RES_W
-    pitch = w + RES_GAP
-    # centreline: n legs of `leg` + (n-1) links of `pitch`
-    leg = snap((res_l - (n - 1) * pitch) / n)
-    # leg centreline x_i; vertical centreline from yb to yt
-    xs = [x0 + w / 2 + i * pitch for i in range(n)]
-    yb = y0 + w / 2
-    yt = yb + leg
-    region = db.Region()
-    for x in xs:
-        region.insert(db.DBox(x - w / 2, yb - w / 2, x + w / 2, yt + w / 2).to_itype(DBU))
-    for i in range(n - 1):
-        y = yb if i % 2 == 0 else yt
-        region.insert(db.DBox(xs[i] - w / 2, y - w / 2, xs[i + 1] + w / 2, y + w / 2).to_itype(DBU))
-    region.merge()
-    # The first and last leg are free at the top: trim them to the centreline
-    # end so area / width is the centreline length (mitred corners count once).
-    for x in (xs[0], xs[-1]):
-        region -= db.Region(db.DBox(x - w / 2, yt, x + w / 2, yt + w / 2).to_itype(DBU))
-    area_um2 = region.area() * DBU * DBU
-    cv.cell.shapes(cv.idx["poly"]).insert(region)
-    # With two legs there is no top link: the marker ends at the head edge, or the gap
-    # between the two cut-outs would leave a sliver narrower than urpm.width.1.
-    marker = db.Region(db.DBox(x0, y0, xs[-1] + w / 2, yt + (0 if n == 2 else w / 2)).to_itype(DBU))
-    for x in (xs[0], xs[-1]):
-        marker -= db.Region(db.DBox(x - w / 2 - 0.01, yt, x + w / 2 + 0.01, yt + w).to_itype(DBU))
-    cv.cell.shapes(cv.idx["poly_res"]).insert(marker)
-    cv.cell.shapes(cv.idx["urpm"]).insert(marker)
-    # heads above the marker edge (marker top == yt): poly contact pads
-    head_pads = []
-    for x in (xs[0], xs[-1]):
-        cv.rect("poly", x - w / 2, yt, x + w / 2, yt + 0.5)
-        yl = yt + 0.25
-        for k in range(4):
-            cx = x + (k - 1.5) * LIC_PITCH
-            cv.centred("licon", cx, yl, LIC, LIC)
-            cv.centred("mcon", cx, yl, LIC, LIC)
-        cv.rect("npc", x - w / 2 + 0.1, yl - 0.185, x + w / 2 - 0.1, yl + 0.185)
-        cv.rect("li1", x - 0.64, yl - 0.165, x + 0.64, yl + 0.165)
-        cv.rect("met1", x - 0.66, yl - 0.175, x + 0.66, yl + 0.175)
-        head_pads.append((x, yl))
-    cv.rect("psdm", x0 - 0.3, 0.3, xs[-1] + w / 2 + 0.3, yt + 0.5 + 0.3)
-    print(f"resistor body area {area_um2:.3f} um2 -> L = {area_um2 / w:.3f} um (target {res_l})", file=sys.stderr)
-    return head_pads[0], head_pads[1]
 
 
 def build(top: str, din: str, rxout: str) -> Canvas:
@@ -224,7 +138,7 @@ def build(top: str, din: str, rxout: str) -> Canvas:
     rx = res_x0
     vdd_heads: list[tuple[float, float]] = []
     for name, res_l, legs in RESISTORS:
-        head_l, head_r = resistor(cv, rx, N_DIFF_Y, res_l, legs)
+        head_l, head_r, _ = xhigh_resistor(cv, rx, N_DIFF_Y, res_l, legs)
         for head, net in zip((head_l, head_r), res_nets[name]):
             if net == "VDD":
                 vdd_heads.append(head)
@@ -274,19 +188,8 @@ def build(top: str, din: str, rxout: str) -> Canvas:
 
 def run(leaf: str, din: str, rxout: str, here: Path) -> int:
     """Command-line entry shared by the dm/dp leaf generators."""
-    gds = here / f"{leaf}.gds"
-    ap = argparse.ArgumentParser(description=f"Generate layout/analog/{leaf}/{leaf}.gds.")
-    ap.add_argument("--check", action="store_true", help="compare, do not write")
-    ap.add_argument("-o", "--output", type=Path, default=gds)
-    args = ap.parse_args()
-    cv = build(leaf, din, rxout)
-    if args.check:
-        with tempfile.TemporaryDirectory(prefix="gen-check-") as scratch:
-            tmp = Path(scratch) / gds.name
-            cv.write(tmp)
-            same = hashlib.sha256(tmp.read_bytes()).hexdigest() == hashlib.sha256(gds.read_bytes()).hexdigest()
-        print("reproducible" if same else "DIFFERS from committed stream")
-        return 0 if same else 1
-    cv.write(args.output)
-    print(f"wrote {args.output} sha256={hashlib.sha256(args.output.read_bytes()).hexdigest()}")
-    return 0
+    return run_gds(
+        here / f"{leaf}.gds",
+        lambda: build(leaf, din, rxout),
+        f"Generate layout/analog/{leaf}/{leaf}.gds.",
+    )
