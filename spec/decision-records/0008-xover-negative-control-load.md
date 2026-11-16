@@ -10,8 +10,7 @@
   ratification.
 - **Related**: #307 (this gap), #223 (item 6 owner, rows `6-06` / `6-14`),
   #269 (tt record), #271 / PR #314 (fs100v36 record, merged),
-  #272 (sf40v36 record), #273 / PR #309 (fs100v30 record, **open, not
-  landed**), `sim/driver-matching-mismatch/testbench/mc.json`,
+  #272 (sf40v36 record), #273 / PR #309 (fs100v30 record, **merged**), `sim/driver-matching-mismatch/testbench/mc.json`,
   `sim/driver-matching-mismatch/testbench/driver_mc_tb.spice`, and the
   precedent records 0004, 0005, 0006 (proposed-by-Builder, operator-ratified).
 
@@ -30,25 +29,28 @@ nominal PASS meaningless on that row: the measurement has no demonstrated
 sensitivity.
 
 **Measured control behaviour at 180 ohm** — the Monte Carlo control campaigns
-(n = 50, mismatch) of the four declared corners. The first three rows are
-re-derived from the committed, digest-pinned stored artifacts of the landed
-records (fetched with `klt artifact get`, sha256 in the source record's
-Stored-evidence table); the fourth is on an open PR and is cited as such.
+(n = 50, mismatch) of the four declared corners, all of which are now recorded
+(PR #309, the `fs100v30` record, merged 2026-11-16). Every row is re-derived
+from the committed, digest-pinned stored artifacts of the landed records
+(fetched with `klt artifact get`, sha256 in the source record's
+Stored-evidence table).
 
 | corner | nominal crossing mean, rise / fall (V) | controlled `vcross_rise_v` min-max (mean) | controlled `vcross_fall_v` min-max (mean) | control samples in window | verdict | source |
 |---|---|---|---|---|---|---|
 | `tt` (tt_mm / 27 C / 3.3 V) | 1.7266 / 1.7265 | 1.2394-1.2836 (1.2622) | 1.2398-1.2808 (1.2629) | 0 / 50 | `detected` — trips | record `20261115-040553-f76df63`, report sha256 `a0b54d11…` |
 | `sf40v36` (sf_mm / -40 C / 3.6 V) | 1.7612 / 1.7612 | 1.3045-1.3598 (1.3317) | 1.3035-1.3559 (1.3325) | 50 / 50 | `not_detected` — does not trip | record `20261115-064022-f76df63`, report sha256 `33380725…` |
 | `fs100v36` (fs_mm / 100 C / 3.6 V) | 1.9942 / 1.9942 | 1.4333-1.4727 (1.4551) | 1.4338-1.4707 (1.4559) | 50 / 50 | `not_detected` — does not trip | record `20261115-172039-45b6298`, report sha256 `1ec51efc…` |
-| `fs100v30` (fs_mm / 100 C / 3.0 V) | not cited here | not measured in this record | not measured in this record | — | `detected` per PR #309 (**open, not-yet-landed**; re-read from `origin/main` before citing as settled) | PR #309, record `20261115-141134-38bdad2` |
+| `fs100v30` (fs_mm / 100 C / 3.0 V) | 1.6680 / 1.6679 | 1.1474-1.1838 (1.1674) | 1.1480-1.1811 (1.1682) | 0 / 50 | `detected` — trips | record `20261115-141134-38bdad2`, report sha256 `d36a47fc…` |
 
 The control's pull-down is corner-dependent. Against the nominal means, one
-180 ohm load pulls the crossover down by about 465 mV at `tt`, 431 mV at
-`sf40v36` and 540 mV at `fs100v36`; the distance from the nominal mean to the
-1.3 V floor is 427 mV, 461 mV and 694 mV respectively. So the control trips at
-`tt` with about 38 mV of deterministic margin, misses `sf40v36` by about
-30 mV, and misses `fs100v36` by about 154 mV: the value was effectively sized
-against the `tt` nominal crossover and carries no corner margin. The suspected
+180 ohm load pulls the crossover down by about 465 mV at `tt`, 430 mV at
+`sf40v36`, 540 mV at `fs100v36` and 500 mV at `fs100v30`; the distance from
+the nominal mean to the 1.3 V floor is 427 mV, 461 mV, 694 mV and 368 mV
+respectively. So the control trips at `tt` with about 38 mV of deterministic
+margin and at `fs100v30` with about 132 mV, and misses `sf40v36` by about
+30 mV and `fs100v36` by about 154 mV: the value was effectively sized
+against the `tt` nominal crossover and holds no margin at the 3.6 V corners.
+The suspected
 cause in issue #307 — sized at `tt`, no corner margin — is **confirmed by
 measurement**, not refuted: no alternative mechanism (measurement-window
 effect, `.meas` trigger, resistor temperature behaviour) is needed to explain
@@ -80,9 +82,9 @@ it, and no file under `sim/` is changed.
 | 56 | 0.7583 / 0.7583 | 0.8213 / 0.8213 | 0.8994 / 0.8994 | 0.6756 / 0.6756 |
 
 All four corners are **measured** in this table (each cell is a deterministic
-run made for this record); `fs100v30` is included for completeness and is
-independent of PR #309, whose unlanded row covers the 180 ohm *Monte Carlo*
-control campaign, not this sweep. The largest measured resistance that puts
+run made for this record); the `fs100v30` sweep row is independent of the
+`fs100v30` Monte Carlo record (landed via PR #309), which covers the 180 ohm
+*Monte Carlo* control campaign, not this sweep. The largest measured resistance that puts
 both crossings below 1.3 V at every measured corner is **120 ohm** (deterministic
 margin 22 mV at `fs100v36`, the binding corner), but 22 mV is inside the
 observed mismatch spread of the control campaigns at 180 ohm (min-max span
@@ -111,25 +113,25 @@ prediction.
    and stay valid evidence of what they ran against regardless of the choice.
    - **Option A (ranked first): re-run only `sf40v36` and `fs100v36`** under
      the ratified control. Repairs exactly the two corners whose control is
-     broken; `tt`'s landed record keeps a working (`detected`) 180 ohm control
-     and is not re-minted; `fs100v30` is still unrecorded and would be
-     recorded under the ratified control when its turn comes (#273 / PR #309
-     coordinates). Trade-off: the campaign's records then span two control
-     values (180 ohm at `tt`, 100 ohm elsewhere) — each record states its own
-     control, so nothing is misread, but the corners are not graded against an
-     identical control.
+     broken; the landed `tt` and `fs100v30` records keep working
+     (`detected`) 180 ohm controls and are not re-minted. Trade-off: the
+     campaign's records then span two control values (180 ohm at `tt` and
+     `fs100v30`, 100 ohm at `sf40v36` and `fs100v36`) — each record states its
+     own control, so nothing is misread, but the corners are not graded
+     against an identical control.
    - **Option B (ranked second): re-run all four corners** under the ratified
      control for a uniform control across the campaign. Trade-off: mints a
-     second `tt` record whose only change is the control value, and if PR #309
-     has not merged by then it makes that PR's `fs100v30` record obsolete on
-     arrival — the fleet cost of four corners versus two buys symmetry, not
-     new information.
-   - **Option C (ranked third): apply the new control to unrecorded corners
-     only** (i.e. `fs100v30` whenever it is recorded; any future corners).
-     Cheapest, but leaves the landed evidence with a broken control at exactly
-     the two corners where the nominal crossover is weakest (`sf40v36`,
-     `fs100v36`) — the crossover row keeps no working sensitivity control
-     there until a later re-run.
+     second record for each of `tt` and `fs100v30` whose only change is the
+     control value — the fleet cost of four corners versus two buys symmetry,
+     not new information.
+   - **Option C (ranked third): record the new control at future corners
+     only.** With #309 merged, all four declared corners are recorded, so as
+     written this defers every re-run: the existing records keep the 180 ohm
+     control and only corners added after ratification would use the new
+     value. Cheapest, but leaves the landed evidence with a broken control at
+     exactly the two corners where the nominal crossover is weakest
+     (`sf40v36`, `fs100v36`) — the crossover row keeps no working sensitivity
+     control there until a later re-run.
 
 Every numeric value above is a **design/exploration figure**, not a verified
 signoff result: the deterministic sweep is mismatch-free single-point
@@ -140,7 +142,7 @@ work, per the operator's pick among the options above).
 ## Alternatives considered
 
 - **Keep 180 ohm** — rejected: `not_detected` at two of the four measured
-  corners (three if PR #309's unlanded `fs100v30` row is excluded); a
+  corners (`sf40v36` and `fs100v36`; it trips at `tt` and `fs100v30`); a
   crossover PASS at those corners would rest on a measurement with no
   demonstrated sensitivity.
 - **Propose 120 ohm** (the largest measured value that trips everywhere) —
