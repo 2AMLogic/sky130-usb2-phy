@@ -200,6 +200,23 @@ def test_variant_grid_rejects_bad_receivers(lbl, tamper, needle):
     assert any(needle in p for p in probs), probs
 
 
+# ---- generated testbench inputs (#288)
+
+@pytest.mark.parametrize("lbl", LINES)
+def test_threshold_decks_cross_reference_the_sibling(lbl):
+    deck = (SIM / f"se-receiver-{lbl}-thresholds/testbench/se_rx_{lbl}_tb.spice").read_text()
+    other = "dm" if lbl == "dp" else "dp"
+    assert f"sim/se-receiver-{other}-thresholds/" in deck
+    assert f"sim/se-receiver-{lbl}-thresholds/" not in deck
+
+
+def test_se_receiver_testbench_inputs_are_fresh():
+    import subprocess
+    import sys
+    script = SIM / "make_se_receiver_tb.py"
+    assert subprocess.run([sys.executable, str(script), "--check"]).returncode == 0
+
+
 @pytest.mark.parametrize("lbl", LINES)
 def test_legacy_45_report_is_not_a_225_variant_record(lbl):
     probs = rs.evaluate(report(), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))[1]
