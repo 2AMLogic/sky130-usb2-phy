@@ -8,7 +8,7 @@
 
 Every campaign goes to the batch fleet through `klt sim --batch-set`; a backend error fails the
 run, there is no local fallback. `klt yield` needs the klt_yield_native extension: point --klt at
-a klt that has it (see sim/README.md, "Mismatch Monte Carlo").
+a klt that has it (see sim/README.md, "diff-receiver-mismatch, se-receiver-mismatch (Monte Carlo, T1 item 6)").
 
 A recorded run stores the raw evidence in the artifact store and commits only the manifest and
 the record; the store is checked before anything is submitted (exit 4 if it is unusable).
