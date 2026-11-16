@@ -335,21 +335,6 @@ def test_stored_coverage_clause_disagreeing_with_declaration_is_rejected(tmp_pat
                for p in problems), problems
 
 
-@pytest.fixture
-def tree4(tmp_path, monkeypatch):
-    sim = tmp_path / "sim"
-    exp = sim / "x-mismatch"
-    (exp / "testbench").mkdir(parents=True)
-    (exp / "testbench/mc.json").write_text(json.dumps(spec4()))
-    monkeypatch.setattr(mx, "SIM_DIR", sim)
-    monkeypatch.setattr(runner, "WORK_DIR", sim / ".work")
-    monkeypatch.setattr(runner, "check_env", lambda m: dict(ENV))
-    monkeypatch.setattr(runner, "lib_sections", lambda lib: {"tt_mm"})
-    monkeypatch.setattr(mm, "load_spec", lambda d: spec4())
-    monkeypatch.setattr(mm, "_git", lambda *a: "abc1234")
-    return exp
-
-
 def test_stored_degraded_mode_ignores_a_corner_added_to_the_live_spec_after_mint(tmp_path):
     exp = make_exp(tmp_path, spec4())
     frozen = (exp / "testbench/mc.json").read_bytes()
