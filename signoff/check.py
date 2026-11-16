@@ -87,7 +87,6 @@ MANIFEST = SIGNOFF_DIR / "block-manifest.json"
 REPORT = SIGNOFF_DIR / "signoff-report.json"
 TOOLCHAIN = SIGNOFF_DIR / "toolchain.json"
 EVIDENCE_DIR = SIGNOFF_DIR / "evidence"
-INVENTORY_DIR = SIGNOFF_DIR / "inventory"
 
 # The single artifact the item-8 generic envelope wraps today. Keep in one
 # place: --regen re-derives both pins (the envelope's and the manifest's)

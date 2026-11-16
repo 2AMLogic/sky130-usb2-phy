@@ -448,11 +448,6 @@ def extract_record_meta(text: str, path: Path, findings: Findings):
 # --------------------------------------------------------------------------
 # Condition 1 -- required fields
 # --------------------------------------------------------------------------
-def record_kind(meta: dict) -> str:
-    """`"full-flow"` unless the record declares a known alternative kind."""
-    return meta.get("record_kind") or "full-flow"
-
-
 def check_required_fields(meta: dict, path: Path, findings: Findings) -> None:
     if "record_kind" in meta and meta["record_kind"] not in VALID_RECORD_KINDS:
         findings.add(
