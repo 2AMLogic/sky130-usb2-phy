@@ -15,10 +15,12 @@ Expected byte stream
 ---------------------------------------------------------------------
 `DataIn` delivers PID + type-specific fields + CRC (SYNC is consumed by
 SOP lock and never delivered; EOP is not part of the bit-stuffed stream
-at all -- see `rtl/usb_rx_framer.v`'s header). `expected_rx_bytes()`
-below reconstructs that exact byte sequence from a `usbfs.scenarios`
-`Scenario`'s already-parsed `fields`, via the same
-`usbfs.packets.raw_field_bits()` call `scenarios.py` used to build it.
+at all -- see `rtl/usb_rx_framer.v`'s header). The expected sequence is
+`usbfs.scenarios.byte_stream_for_scenario(scenario)` -- the one shared,
+independently verified reference the scenario builders themselves come
+from, not a local re-derivation (issue #386). `RxMonitor` collects
+`list[int]` (`monitors.py`) while the helper returns `bytes`, so every
+comparison converts the monitor side: `bytes(mon.bytes) == ...`.
 
 ---------------------------------------------------------------------
 Combined host+device frequency offset
@@ -73,7 +75,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, Timer
 
 from monitors import Monitor, RxMonitor
-from usbfs import packets, pid, scenarios
+from usbfs import scenarios
 from usbfs.linestate import LineState, to_dpdm
 from usbfs.timing import MAX_FREQ_OFFSET_PPM, TimingConfig
 from usbfs.transceiver import IdealTransceiver
@@ -128,28 +130,6 @@ async def start_test(dut, clk144_period_ns=CLK144_PERIOD_NS_NOMINAL,
                       clk_utmi_period_ns=CLK_UTMI_PERIOD_NS_NOMINAL):
     await set_clocks(dut, clk144_period_ns, clk_utmi_period_ns)
     await reset_dut(dut)
-
-
-def expected_rx_bytes(scenario):
-    """The exact `DataIn` byte sequence this scenario's packet should
-    produce: PID + type-specific fields + CRC, reconstructed from the
-    scenario's own parsed `fields` via the same `raw_field_bits()` call
-    `usbfs.scenarios.py` used to build it (bit-exact by construction, not
-    a re-derivation)."""
-    fields = scenario.fields
-    pid_name = fields["pid"]
-    if pid_name in pid.TOKEN_PIDS:
-        if pid_name == "SOF":
-            raw = packets.raw_field_bits(pid_name, frame_number=fields["frame_number"])
-        else:
-            raw = packets.raw_field_bits(pid_name, addr=fields["addr"], endp=fields["endp"])
-    elif pid_name in pid.DATA_PIDS:
-        raw = packets.raw_field_bits(pid_name, payload=scenario.payload)
-    else:
-        raw = packets.raw_field_bits(pid_name)
-    from usbfs.bits import bits_to_bytes
-
-    return list(bits_to_bytes(raw))
 
 
 def _encode_state(state):
@@ -223,7 +203,7 @@ def _make_zero_offset_test(name, builder):
         await start_test(dut)
         scenario = builder()
         mon = await _drive_and_receive(dut, scenario.states)
-        assert mon.bytes == expected_rx_bytes(scenario), (
+        assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario), (
             f"{name}: byte mismatch, got {mon.bytes!r}"
         )
         assert not mon.saw_error, f"{name}: unexpected RxError at zero offset"
@@ -269,7 +249,7 @@ async def test_offset_host_plus_quarter_percent(dut):
     (+0.25%), device nominal."""
     scenario, mon = await _run_offset_case(dut, host_offset_ppm=2500.0,
                                             device_offset_ppm=0.0)
-    assert mon.bytes == expected_rx_bytes(scenario)
+    assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
     assert not mon.saw_error
 
 
@@ -277,7 +257,7 @@ async def test_offset_host_plus_quarter_percent(dut):
 async def test_offset_host_minus_quarter_percent(dut):
     scenario, mon = await _run_offset_case(dut, host_offset_ppm=-2500.0,
                                             device_offset_ppm=0.0)
-    assert mon.bytes == expected_rx_bytes(scenario)
+    assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
     assert not mon.saw_error
 
 
@@ -290,7 +270,7 @@ async def test_offset_combined_half_percent_host_fast(dut):
     scenario, mon = await _run_offset_case(
         dut, host_offset_ppm=MAX_FREQ_OFFSET_PPM, device_offset_ppm=-MAX_FREQ_OFFSET_PPM
     )
-    assert mon.bytes == expected_rx_bytes(scenario)
+    assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
     assert not mon.saw_error
 
 
@@ -300,7 +280,7 @@ async def test_offset_combined_half_percent_host_slow(dut):
     scenario, mon = await _run_offset_case(
         dut, host_offset_ppm=-MAX_FREQ_OFFSET_PPM, device_offset_ppm=MAX_FREQ_OFFSET_PPM
     )
-    assert mon.bytes == expected_rx_bytes(scenario)
+    assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
     assert not mon.saw_error
 
 
@@ -332,7 +312,7 @@ async def test_offset_sweep_finds_first_failure(dut):
             # bound, not to claim a real device could run this far out of spec.
             allow_out_of_spec=True,
         )
-        ok = (mon.bytes == expected_rx_bytes(scenario)) and not mon.saw_error
+        ok = (bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)) and not mon.saw_error
         dut._log.info(f"offset sweep: combined={combined_ppm} ppm ok={ok}")
         if not ok and first_failure is None:
             first_failure = combined_ppm
@@ -370,7 +350,7 @@ async def test_sop_lock_all_oversample_phases(dut):
         await ClockCycles(dut.clk_utmi, 30)
         mon.stop()
 
-        assert mon.bytes == expected_rx_bytes(scenario), (
+        assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario), (
             f"phase {phase_idx}/12: byte mismatch"
         )
         assert not mon.saw_error, f"phase {phase_idx}/12: unexpected RxError"
@@ -390,7 +370,7 @@ async def test_bit_stuff_violation_asserts_rxerror(dut):
     mon = await _drive_and_receive(dut, mutated_states)
 
     assert mon.saw_error, "RxError was never asserted on a bit-stuff violation"
-    assert mon.bytes != expected_rx_bytes(scenario), (
+    assert bytes(mon.bytes) != scenarios.byte_stream_for_scenario(scenario), (
         "corrupted stream must not silently reproduce the clean byte sequence"
     )
 
@@ -403,7 +383,7 @@ async def test_no_bit_stuff_violation_on_clean_all_ones(dut):
     scenario = scenarios.all_ones_payload()
     mon = await _drive_and_receive(dut, scenario.states)
     assert not mon.saw_error
-    assert mon.bytes == expected_rx_bytes(scenario)
+    assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
 
 
 # ---------------------------------------------------------------------------
@@ -417,7 +397,7 @@ async def test_eop_deasserts_rxactive_at_correct_boundary(dut):
     scenario = scenarios.stuff_before_eop_payload()
     mon = await _drive_and_receive(dut, scenario.states, settle_utmi_cycles=30)
 
-    assert mon.bytes == expected_rx_bytes(scenario)
+    assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
     # RxActive must eventually return low (EOP recognized) and stay low --
     # no further bytes after the trace's last high sample.
     assert mon.active_trace[-1] is False
