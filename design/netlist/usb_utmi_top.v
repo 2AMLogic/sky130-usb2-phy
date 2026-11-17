@@ -4030,8 +4030,8 @@ module usb_rx_cdc(reset_async, clk_144, rst_144_n, rx_byte_valid, rx_byte, rx_ac
     .X(wptr_bin_next[3])
   );
   sky130_fd_sc_hd__and2_1 _125_ (
-    .A(rst144_meta[1]),
-    .B(rstutmi_meta[1]),
+    .A(rst_144_n),
+    .B(rst_utmi_n),
     .X(fifo_rst_n)
   );
   sky130_fd_sc_hd__xor2_1 _126_ (
@@ -5063,73 +5063,73 @@ module usb_rx_cdc(reset_async, clk_144, rst_144_n, rx_byte_valid, rx_byte, rx_ac
     .CLK(clk_utmi),
     .D(rx_active_144),
     .Q(rxactive_s1),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _296_ (
     .CLK(clk_utmi),
     .D(rxactive_s1),
     .Q(rxactive_s2),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _297_ (
     .CLK(clk_utmi),
     .D(rx_error_144),
     .Q(rxerror_s1),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _298_ (
     .CLK(clk_utmi),
     .D(rxerror_s1),
     .Q(rxerror_s2),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _299_ (
     .CLK(clk_utmi),
     .D(line_state_144[0]),
     .Q(linestate_s1[0]),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _300_ (
     .CLK(clk_utmi),
     .D(line_state_144[1]),
     .Q(linestate_s1[1]),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _301_ (
     .CLK(clk_utmi),
     .D(linestate_s1[0]),
     .Q(linestate_s2[0]),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _302_ (
     .CLK(clk_utmi),
     .D(linestate_s1[1]),
     .Q(linestate_s2[1]),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _303_ (
     .CLK(clk_utmi),
     .D(bus_reset_144),
     .Q(busreset_s1),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _304_ (
     .CLK(clk_utmi),
     .D(busreset_s1),
     .Q(busreset_s2),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _305_ (
     .CLK(clk_utmi),
     .D(suspend_144),
     .Q(suspend_s1),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _306_ (
     .CLK(clk_utmi),
     .D(suspend_s1),
     .Q(suspend_s2),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _307_ (
     .CLK(clk_144),
@@ -5332,7 +5332,7 @@ module usb_rx_cdc(reset_async, clk_144, rst_144_n, rx_byte_valid, rx_byte, rx_ac
   sky130_fd_sc_hd__dfrtp_1 _340_ (
     .CLK(clk_utmi),
     .D(rstutmi_meta[0]),
-    .Q(rstutmi_meta[1]),
+    .Q(rst_utmi_n),
     .RESET_B(_008_)
   );
   sky130_fd_sc_hd__dfrtp_1 _341_ (
@@ -5344,7 +5344,7 @@ module usb_rx_cdc(reset_async, clk_144, rst_144_n, rx_byte_valid, rx_byte, rx_ac
   sky130_fd_sc_hd__dfrtp_1 _342_ (
     .CLK(clk_144),
     .D(rst144_meta[0]),
-    .Q(rst144_meta[1]),
+    .Q(rst_144_n),
     .RESET_B(_011_)
   );
   sky130_fd_sc_hd__conb_1 _343_ (
@@ -5359,6 +5359,8 @@ module usb_rx_cdc(reset_async, clk_144, rst_144_n, rx_byte_valid, rx_byte, rx_ac
   assign wptr_gray_next[3] = wptr_bin_next[3];
   assign rptr_gray_wsync = rptr_gray_ws2;
   assign wptr_bin[3] = wptr_gray[3];
+  assign rstutmi_meta[1] = rst_utmi_n;
+  assign rst144_meta[1] = rst_144_n;
   assign Suspend = suspend_s2;
   assign BusReset = busreset_s2;
   assign LineState = linestate_s2;
@@ -5366,8 +5368,6 @@ module usb_rx_cdc(reset_async, clk_144, rst_144_n, rx_byte_valid, rx_byte, rx_ac
   assign RxActive = rxactive_s2;
   assign DataIn = data_out;
   assign RxValid = rxvalid_r;
-  assign rst_utmi_n = rstutmi_meta[1];
-  assign rst_144_n = rst144_meta[1];
 endmodule
 
 module usb_tx_framer(clk, rst_n, bit_stb, TxValid, TxReady, DataOut, OpMode, nrzi_bit_stb, nrzi_sof, nrzi_bypass, nrzi_bit_in, nrzi_level, stuff_bit_stb, stuff_sof, stuff_bypass, stuff_bit_in, stuff_bit_out, stuff_consume, stuff_pending_after, tx_drive_en, tx_oe
@@ -6445,181 +6445,181 @@ module usb_utmi_top(clk_144, clk_utmi, Clock, Reset, TxValid, TxReady, DataOut, 
     .CLK(clk_144),
     .D(_04_),
     .Q(accept_toggle_144),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _20_ (
     .CLK(clk_utmi),
     .D(accept_toggle_144),
     .Q(accept_tog_s1),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _21_ (
     .CLK(clk_utmi),
     .D(accept_tog_s1),
     .Q(accept_tog_s2),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _22_ (
     .CLK(clk_utmi),
     .D(accept_tog_s2),
     .Q(accept_tog_s3),
-    .RESET_B(rstutmi_meta[1])
+    .RESET_B(rst_utmi_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _23_ (
     .CLK(clk_144),
     .D(ser_txready),
     .Q(txready_144_q),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _24_ (
     .CLK(clk_144),
     .D(TxValid),
     .Q(txvalid_s1),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _25_ (
     .CLK(clk_144),
     .D(txvalid_s1),
     .Q(txvalid_s2),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _26_ (
     .CLK(clk_144),
     .D(txvalid_s2),
     .Q(txvalid_s3),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _27_ (
     .CLK(clk_144),
     .D(DataOut[0]),
     .Q(dataout_s1[0]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _28_ (
     .CLK(clk_144),
     .D(DataOut[1]),
     .Q(dataout_s1[1]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _29_ (
     .CLK(clk_144),
     .D(DataOut[2]),
     .Q(dataout_s1[2]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _30_ (
     .CLK(clk_144),
     .D(DataOut[3]),
     .Q(dataout_s1[3]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _31_ (
     .CLK(clk_144),
     .D(DataOut[4]),
     .Q(dataout_s1[4]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _32_ (
     .CLK(clk_144),
     .D(DataOut[5]),
     .Q(dataout_s1[5]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _33_ (
     .CLK(clk_144),
     .D(DataOut[6]),
     .Q(dataout_s1[6]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _34_ (
     .CLK(clk_144),
     .D(DataOut[7]),
     .Q(dataout_s1[7]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _35_ (
     .CLK(clk_144),
     .D(dataout_s1[0]),
     .Q(dataout_s2[0]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _36_ (
     .CLK(clk_144),
     .D(dataout_s1[1]),
     .Q(dataout_s2[1]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _37_ (
     .CLK(clk_144),
     .D(dataout_s1[2]),
     .Q(dataout_s2[2]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _38_ (
     .CLK(clk_144),
     .D(dataout_s1[3]),
     .Q(dataout_s2[3]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _39_ (
     .CLK(clk_144),
     .D(dataout_s1[4]),
     .Q(dataout_s2[4]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _40_ (
     .CLK(clk_144),
     .D(dataout_s1[5]),
     .Q(dataout_s2[5]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _41_ (
     .CLK(clk_144),
     .D(dataout_s1[6]),
     .Q(dataout_s2[6]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _42_ (
     .CLK(clk_144),
     .D(dataout_s1[7]),
     .Q(dataout_s2[7]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _43_ (
     .CLK(clk_144),
     .D(OpMode[0]),
     .Q(opmode_s1[0]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _44_ (
     .CLK(clk_144),
     .D(OpMode[1]),
     .Q(opmode_s1[1]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _45_ (
     .CLK(clk_144),
     .D(opmode_s1[0]),
     .Q(opmode_s2[0]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _46_ (
     .CLK(clk_144),
     .D(opmode_s1[1]),
     .Q(opmode_s2[1]),
-    .RESET_B(rst144_meta[1])
+    .RESET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfstp_2 _47_ (
     .CLK(clk_144),
     .D(SuspendM),
     .Q(suspendm_s1),
-    .SET_B(rst144_meta[1])
+    .SET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfstp_2 _48_ (
     .CLK(clk_144),
     .D(suspendm_s1),
     .Q(suspendm_s2),
-    .SET_B(rst144_meta[1])
+    .SET_B(rst_144_n)
   );
   sky130_fd_sc_hd__dfrtp_1 _49_ (
     .CLK(clk_utmi),
@@ -6630,7 +6630,7 @@ module usb_utmi_top(clk_144, clk_utmi, Clock, Reset, TxValid, TxReady, DataOut, 
   sky130_fd_sc_hd__dfrtp_1 _50_ (
     .CLK(clk_utmi),
     .D(rstutmi_meta[0]),
-    .Q(rstutmi_meta[1]),
+    .Q(rst_utmi_n),
     .RESET_B(_02_)
   );
   sky130_fd_sc_hd__dfrtp_1 _51_ (
@@ -6642,7 +6642,7 @@ module usb_utmi_top(clk_144, clk_utmi, Clock, Reset, TxValid, TxReady, DataOut, 
   sky130_fd_sc_hd__dfrtp_1 _52_ (
     .CLK(clk_144),
     .D(rst144_meta[0]),
-    .Q(rst144_meta[1]),
+    .Q(rst_144_n),
     .RESET_B(_03_)
   );
   sky130_fd_sc_hd__conb_1 _53_ (
@@ -6669,7 +6669,7 @@ module usb_utmi_top(clk_144, clk_utmi, Clock, Reset, TxValid, TxReady, DataOut, 
     .TxReady(ser_txready),
     .TxValid(txvalid_s3),
     .clk(clk_144),
-    .rst_n(rst144_meta[1]),
+    .rst_n(rst_144_n),
     .tx_dn(ser_tx_dn),
     .tx_dp(ser_tx_dp),
     .tx_drive_en(ser_tx_drive_en),
@@ -6679,8 +6679,8 @@ module usb_utmi_top(clk_144, clk_utmi, Clock, Reset, TxValid, TxReady, DataOut, 
   assign opmode_144 = opmode_s2;
   assign dataout_144 = dataout_s2;
   assign txvalid_144 = txvalid_s3;
-  assign rst_utmi_n = rstutmi_meta[1];
-  assign rst_144_n = rst144_meta[1];
+  assign rstutmi_meta[1] = rst_utmi_n;
+  assign rst144_meta[1] = rst_144_n;
   assign tx_dn = ser_tx_dn;
   assign tx_dp = ser_tx_dp;
   assign Clock = clk_utmi;

@@ -108,7 +108,7 @@
         "role": "derived",
         "path": "design/netlist/usb_utmi_top.v",
         "passed": true,
-        "content_hash": "sha256:44441f5ae2fbda739aa783f0e60352c1cb8f86b75d9f64839b02ac12e2867edd"
+        "content_hash": "sha256:2dc5804c9ef576dba0f0a9e06bb3c99595fe454d82e5eac645f6cf38a0e1b223"
       },
       {
         "check": "command",
@@ -122,7 +122,7 @@
           "--pdk",
           "sky130A",
           "--check",
-          "flow/utmi-top/artifacts/20261024-000101-85fcd37-tt_025C_1v80/synthesize-report.json"
+          "flow/utmi-top/artifacts/20261117-051541-1378c0e-tt_025C_1v80/synthesize-report.json"
         ],
         "cwd": ".",
         "exit_status": 0,
@@ -141,7 +141,7 @@
         "path": "signoff/inventory/item-1-digital-sources.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:72d7197c3c896ec6ffaa0b71de62a05a1cb40c4c475bbb7cbd64ed9c74b4cd95"
+      "content_hash": "sha256:6c566049782e09c8790943eaf805151957ae9b631a019dcdfd5e2913b713a4e1"
     }
   }
 }
