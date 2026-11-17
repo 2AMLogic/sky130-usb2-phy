@@ -10,7 +10,7 @@ outside the markers is touched by automation.
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-_None._
+- **#382**: chore(loom): resync installed Loom to v0.19.1305
 
 ## Very Important
 
@@ -30,28 +30,24 @@ _None._
 Human-approved issues ready for implementation (`loom:issue`).
 
 - **#274**: Deduplicate analog device geometry: differential_driver/gen.py keeps a second copy of gen_common's Ports and mos
-- **#348**: signoff/check.py's pins-refresh hint still prints the venv-bin PATH form that signoff/README.md now forbids
-- **#349**: npm run check:all cannot complete on fleet workers whose host python3 has no pytest
-- **#371**: signoff/README.md item-6 analog row: unescaped | truncates most of the cell on GitHub render
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
 - **#275**: Deduplicate the raw-mode / byte-stream reference helpers duplicated across two TX testbenches
-- **#326**: DR 0008: add sim/README.md to the 'prose that must move with the value' list (and clarify the 'two of four corners' parenthetical)
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#372**: docs(spec): list sim/README.md prose in DR 0008's value-coupled prose checklist
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-_None._
+- **#382**: chore(loom): resync installed Loom to v0.19.1305
 
 ## Proposed
 
@@ -61,11 +57,7 @@ Issues carrying `loom:curated`.
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
 - **#270**: signoff item-10 README pin goes stale on every automated Guide README edit (3rd recurrence of #180/#181) *(curated)*
 - **#274**: Deduplicate analog device geometry: differential_driver/gen.py keeps a second copy of gen_common's Ports and mos *(curated)*
-- **#326**: DR 0008: add sim/README.md to the 'prose that must move with the value' list (and clarify the 'two of four corners' parenthetical) *(curated)*
 - **#331**: T1 item 6 (analog): cite the driver-matching and D+ pull-up klt yield reports in the manifest (6-06, 6-14) *(curated)*
-- **#348**: signoff/check.py's pins-refresh hint still prints the venv-bin PATH form that signoff/README.md now forbids *(curated)*
-- **#349**: npm run check:all cannot complete on fleet workers whose host python3 has no pytest *(curated)*
-- **#371**: signoff/README.md item-6 analog row: unescaped | truncates most of the cell on GitHub render *(curated)*
 
 ## Proposed (Architect / Hermit)
 
@@ -80,14 +72,14 @@ Issues carrying `loom:curated`.
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 0 |
+| Operator merge-risk holds | 1 |
 | Very important | 1 |
 | Important | 2 |
-| Ready (`loom:issue`) | 4 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 0 |
-| Curated | 9 |
+| Ready (`loom:issue`) | 1 |
+| In Progress (`loom:building`) | 1 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 1 |
+| Curated | 5 |
 | Architect / Hermit proposals | 1 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
