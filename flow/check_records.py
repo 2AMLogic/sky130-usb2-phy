@@ -1169,6 +1169,154 @@ def check_synthesis_only(
 
 
 # --------------------------------------------------------------------------
+# Rule 8f -- a superseding record must disclose a netlist-hash delta
+# --------------------------------------------------------------------------
+# `check_synthesis_only` compares a record against itself: its netlist against
+# its own recorded sha256, its reproduction run against its own bytes. Nothing
+# compared a record's netlist hash with its `supersedes` target's, so a new
+# record could commit different netlist bytes in silence -- exactly what the
+# utmi-top chain did twice (`20261008` -> `20261017`, and `20261024` ->
+# `20261117`, the record PR #285 landed). Rule 8f closes that (issue #387,
+# decision record 0009): a record minted after the cutoff that supersedes a
+# record in the same experiment whose `stages.synthesize.netlist.sha256`
+# differs must carry `stages.synthesize.netlist_delta` -- the
+# `provenance.klt_version` on both sides of the delta (stated even when
+# equal), and a structural-equivalence statement.
+#
+# The rule is deliberately NOT retroactive. Records are append-only, so the
+# committed hash changes cannot be retrofitted with disclosures;
+# NETLIST_DELTA_DISCLOSURE_CUTOFF is the newest record id on main when the
+# rule was written, and only a record whose id sorts strictly after it is
+# held to the disclosure. Record ids begin with their mint date, so a plain
+# string compare is the cutoff test. Naming the constant here and in decision
+# record 0009 is what makes the grandfathering auditable.
+NETLIST_DELTA_DISCLOSURE_CUTOFF = "20261117-051541-1378c0e-tt_025C_1v80"
+
+
+def check_netlist_delta_disclosure(
+    parsed: list[tuple[Path, dict]], findings: Findings
+) -> None:
+    """Pairwise Rule 8f over one experiment's parsed records (issue #387).
+
+    Kept a small pure helper over `(path, meta)` pairs so the test suite can
+    drive it directly; `lint_experiment` supplies the records it has already
+    parsed. A `supersedes` target absent from this experiment is not this
+    rule's finding -- the pairwise comparison needs both sides in hand.
+    """
+    by_id: dict[str, tuple[Path, dict]] = {}
+    for path, meta in parsed:
+        record_id = meta.get("record_id")
+        if isinstance(record_id, str) and record_id:
+            by_id[record_id] = (path, meta)
+
+    for path, meta in parsed:
+        record_id = meta.get("record_id")
+        if not isinstance(record_id, str) or not record_id:
+            continue
+        if record_id <= NETLIST_DELTA_DISCLOSURE_CUTOFF:
+            continue  # grandfathered: minted before the rule (decision record 0009)
+        prior_id = meta.get("supersedes")
+        if not isinstance(prior_id, str) or not prior_id.strip():
+            continue
+        prior = by_id.get(prior_id.strip())
+        if prior is None:
+            continue
+        stages = meta.get("stages")
+        prior_stages = prior[1].get("stages")
+        synth = stages.get("synthesize") if isinstance(stages, dict) else None
+        prior_synth = (
+            prior_stages.get("synthesize") if isinstance(prior_stages, dict) else None
+        )
+        if not isinstance(synth, dict) or not isinstance(prior_synth, dict):
+            continue
+        netlist = synth.get("netlist")
+        prior_netlist = prior_synth.get("netlist")
+        sha = netlist.get("sha256") if isinstance(netlist, dict) else None
+        prior_sha = (
+            prior_netlist.get("sha256") if isinstance(prior_netlist, dict) else None
+        )
+        if not isinstance(sha, str) or not isinstance(prior_sha, str) or sha == prior_sha:
+            continue  # same bytes (or no recorded hash): nothing to disclose
+
+        # The netlist bytes changed across a supersession: the whole disclosure
+        # is mandatory, and none of its fields may be empty or whitespace.
+        delta = synth.get("netlist_delta")
+        name = path.name
+        if not isinstance(delta, dict):
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.synthesize.netlist.sha256 differs from superseded "
+                f"{prior_id.strip()} and stages.synthesize.netlist_delta is missing -- "
+                "changed netlist bytes must disclose the klt-version delta and state "
+                "structural equivalence (rule 8f, decision record 0009)",
+            )
+            continue
+        prior_klt = str(delta.get("prior_klt_version", "")).strip()
+        new_klt = str(delta.get("new_klt_version", "")).strip()
+        equivalence = str(delta.get("structural_equivalence", "")).strip()
+        if not prior_klt:
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.synthesize.netlist_delta.prior_klt_version is empty -- "
+                "state the superseded record's provenance.klt_version even if it equals "
+                "this record's (rule 8f)",
+            )
+        if not new_klt:
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.synthesize.netlist_delta.new_klt_version is empty -- "
+                "state this record's provenance.klt_version even if it equals the "
+                "superseded record's (rule 8f)",
+            )
+        if not equivalence:
+            findings.add(
+                "synthesis-only",
+                f"{name}: stages.synthesize.netlist_delta.structural_equivalence is "
+                "empty -- state what changed in the netlist and why it is, or is not, "
+                "logically equivalent (rule 8f)",
+            )
+        # The disclosed versions must agree with the two records' own
+        # provenance.klt_version values; a disclosure naming versions the
+        # records do not carry is a misstatement, not a disclosure. A missing
+        # or non-string provenance.klt_version is required-fields' finding,
+        # not this rule's.
+        recorded_prior = prior[1].get("provenance")
+        recorded_new = meta.get("provenance")
+        prior_klt_recorded = (
+            recorded_prior.get("klt_version")
+            if isinstance(recorded_prior, dict)
+            else None
+        )
+        new_klt_recorded = (
+            recorded_new.get("klt_version") if isinstance(recorded_new, dict) else None
+        )
+        if (
+            prior_klt
+            and isinstance(prior_klt_recorded, str)
+            and prior_klt_recorded.strip()
+            and prior_klt != prior_klt_recorded.strip()
+        ):
+            findings.add(
+                "synthesis-only",
+                f"{name}: netlist_delta.prior_klt_version {prior_klt!r} disagrees with "
+                f"the superseded record's own provenance.klt_version "
+                f"{prior_klt_recorded.strip()!r} (rule 8f)",
+            )
+        if (
+            new_klt
+            and isinstance(new_klt_recorded, str)
+            and new_klt_recorded.strip()
+            and new_klt != new_klt_recorded.strip()
+        ):
+            findings.add(
+                "synthesis-only",
+                f"{name}: netlist_delta.new_klt_version {new_klt!r} disagrees with this "
+                f"record's own provenance.klt_version {new_klt_recorded.strip()!r} "
+                "(rule 8f)",
+            )
+
+
+# --------------------------------------------------------------------------
 # Rule 9 -- analog layout records
 # --------------------------------------------------------------------------
 ANALOG_PDK_PINS = REPO_ROOT / "sim" / "pdk-pins.json"
@@ -1561,6 +1709,7 @@ def lint_experiment(
         parsed.append((path, meta))
 
     superseded = superseded_record_ids([meta for _, meta in parsed])
+    check_netlist_delta_disclosure(parsed, findings)
 
     for path, meta in parsed:
         if meta.get("experiment") != experiment:

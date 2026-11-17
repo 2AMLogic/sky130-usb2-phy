@@ -1405,3 +1405,239 @@ def test_analog_record_id_must_end_in_its_block(analog_sandbox: Path):
     assert "record-id" in checks_in(
         mutate_analog(analog_sandbox, lambda m: m.update(block="differential_driver"))
     )
+
+
+# --------------------------------------------------------------------------
+# Rule 8f -- a superseding record must disclose a netlist-hash delta
+#
+# `lint_experiment` pairs each record with its `supersedes` target and, when
+# the two `stages.synthesize.netlist.sha256` values differ, holds the newer
+# record to a `stages.synthesize.netlist_delta` disclosure (issue #387,
+# decision record 0009). The sandbox records are full-flow records without a
+# netlist hash, so each test synthesizes a supersession pair by cloning an
+# otherwise-valid record -- a test corrupts only the disclosure it is testing.
+# The cutoff is NOT retroactive: `20261117-051541-1378c0e-tt_025C_1v80` and
+# every id before it stays green with no disclosure, because records are
+# append-only and cannot be retrofitted.
+# --------------------------------------------------------------------------
+KLT_OLD, KLT_NEW = "0.9.1", "0.9.3.dev291+g9ddf73155117"
+SHA_A, SHA_B = "a" * 64, "b" * 64
+
+
+def complete_disclosure() -> dict:
+    return {
+        "prior_klt_version": KLT_OLD,
+        "new_klt_version": KLT_NEW,
+        "structural_equivalence": (
+            "klt's synthesizer updated its cell mapping; same RTL sources, same "
+            "port list, gate-level FV re-run and passing."
+        ),
+    }
+
+
+def synth_netlist_record(
+    sandbox: Path,
+    stem: str,
+    supersedes: str | None,
+    netlist_sha: str,
+    klt_version: str,
+    disclosure: dict | None = None,
+    corner: str | None = None,
+) -> str:
+    """Clone a sandbox record into one carrying a netlist hash; return its id.
+
+    Cloned from a standing record with a PDN echo (`pdn_record`), not from the
+    fixture's first record: a Rule 8f record is standing by construction, and a
+    standing record must carry the `stages.place_and_route.power` echo (issue
+    #67), which the older fixture records legitimately omit only because they
+    are superseded.
+    """
+    records_dir = sandbox / "smoke-utmi_stub" / "records"
+    source = pdn_record(sandbox)
+    meta = read_meta(source)
+    meta["corner"] = corner or meta["corner"]
+    record_id = f"{stem}-{meta['corner']}"
+    meta["record_id"] = record_id
+    meta["supersedes"] = supersedes
+    meta["provenance"]["klt_version"] = klt_version
+    meta["stages"]["synthesize"]["netlist"] = {
+        "path": "design/netlist/usb_utmi_top.v",
+        "sha256": netlist_sha,
+    }
+    meta["stages"]["synthesize"].pop("netlist_delta", None)
+    if disclosure is not None:
+        meta["stages"]["synthesize"]["netlist_delta"] = disclosure
+    clone = records_dir / f"{record_id}.md"
+    shutil.copy2(source, clone)
+    write_meta(clone, meta)
+    rebuild_manifest(records_dir)
+    return record_id
+
+
+def netlist_delta_pair(
+    sandbox: Path, *, prior_stem: str, new_stem: str, disclosure: dict | None = None
+) -> tuple[str, str]:
+    """A supersession pair whose netlist bytes differ; returns (prior, new) ids."""
+    prior_id = synth_netlist_record(sandbox, prior_stem, None, SHA_A, KLT_OLD)
+    new_id = synth_netlist_record(
+        sandbox, new_stem, prior_id, SHA_B, KLT_NEW, disclosure=disclosure
+    )
+    return prior_id, new_id
+
+
+def test_netlist_delta_without_disclosure_fails(sandbox: Path):
+    netlist_delta_pair(
+        sandbox, prior_stem="20261001-000000-cafe001", new_stem="20261201-000000-cafe002"
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "synthesis-only" in checks_in(findings), findings.items
+    assert any("netlist_delta" in message for _, message in findings.items), findings.items
+
+
+def test_netlist_delta_with_complete_disclosure_passes(sandbox: Path):
+    netlist_delta_pair(
+        sandbox,
+        prior_stem="20261001-000000-cafe001",
+        new_stem="20261201-000000-cafe002",
+        disclosure=complete_disclosure(),
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+
+
+def test_netlist_delta_empty_disclosure_fails(sandbox: Path):
+    netlist_delta_pair(
+        sandbox,
+        prior_stem="20261001-000000-cafe001",
+        new_stem="20261201-000000-cafe002",
+        disclosure={
+            "prior_klt_version": "   ",
+            "new_klt_version": "\t",
+            "structural_equivalence": "",
+        },
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert any(
+        "prior_klt_version is empty" in message for _, message in findings.items
+    ), findings.items
+    assert any(
+        "new_klt_version is empty" in message for _, message in findings.items
+    ), findings.items
+    assert any(
+        "structural_equivalence is" in message for _, message in findings.items
+    ), findings.items
+
+
+def test_netlist_delta_version_mismatch_fails(sandbox: Path):
+    """A disclosure naming versions the records do not carry is a misstatement."""
+    netlist_delta_pair(
+        sandbox,
+        prior_stem="20261001-000000-cafe001",
+        new_stem="20261201-000000-cafe002",
+        disclosure={
+            "prior_klt_version": "9.9.9",
+            "new_klt_version": "8.8.8",
+            "structural_equivalence": "same structure, re-minted under a newer klt",
+        },
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert any(
+        "prior_klt_version '9.9.9' disagrees" in message for _, message in findings.items
+    ), findings.items
+    assert any(
+        "new_klt_version '8.8.8' disagrees" in message for _, message in findings.items
+    ), findings.items
+
+
+def test_same_netlist_hash_needs_no_disclosure(sandbox: Path):
+    prior_id = synth_netlist_record(
+        sandbox, "20261001-000000-cafe001", None, SHA_A, KLT_OLD
+    )
+    synth_netlist_record(
+        sandbox, "20261201-000000-cafe002", prior_id, SHA_A, KLT_NEW
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+
+
+def test_precutoff_hash_change_is_exempt(sandbox: Path):
+    """The committed pre-rule hash changes stay green: append-only, not retrofitted."""
+    netlist_delta_pair(
+        sandbox, prior_stem="20260101-000000-cafe001", new_stem="20260201-000000-cafe002"
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+
+
+def test_cutoff_record_itself_is_exempt(sandbox: Path):
+    """The cutoff id (`20261117-051541-1378c0e`, PR #285's record) stays green."""
+    prior_id = synth_netlist_record(
+        sandbox, "20261001-000000-cafe001", None, SHA_A, KLT_OLD,
+        corner="tt_025C_1v80",
+    )
+    cutoff_id = synth_netlist_record(
+        sandbox, "20261117-051541-1378c0e", prior_id, SHA_B, KLT_NEW,
+        corner="tt_025C_1v80",
+    )
+    assert cutoff_id == check_records.NETLIST_DELTA_DISCLOSURE_CUTOFF
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+
+
+def test_absent_supersedes_target_does_not_crash(sandbox: Path):
+    """A target outside the directory is not this rule's finding (and not a crash)."""
+    synth_netlist_record(
+        sandbox,
+        "20261201-000000-cafe002",
+        "20250101-000000-aaaaaaa-tt_025C_1v80",
+        SHA_B,
+        KLT_NEW,
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+
+
+def test_pure_helper_reports_directly(tmp_path: Path):
+    """The pairwise check drives standalone, without a full lint run."""
+    findings = check_records.Findings()
+    prior = tmp_path / "20261201-000000-cafe001.md"
+    new = tmp_path / "20261202-000000-cafe002.md"
+    metas = [
+        (
+            prior,
+            {
+                "record_id": "20261201-000000-cafe001",
+                "supersedes": None,
+                "provenance": {"klt_version": KLT_OLD},
+                "stages": {"synthesize": {"netlist": {"sha256": SHA_A}}},
+            },
+        ),
+        (
+            new,
+            {
+                "record_id": "20261202-000000-cafe002",
+                "supersedes": "20261201-000000-cafe001",
+                "provenance": {"klt_version": KLT_NEW},
+                "stages": {"synthesize": {"netlist": {"sha256": SHA_B}}},
+            },
+        ),
+    ]
+
+    check_records.check_netlist_delta_disclosure(metas, findings)
+    assert findings, "a bare hash change with no disclosure must be a finding"
+
+    metas[1][1]["stages"]["synthesize"]["netlist_delta"] = complete_disclosure()
+    clean = check_records.Findings()
+    check_records.check_netlist_delta_disclosure(metas, clean)
+    assert not clean, clean.items
