@@ -1,8 +1,8 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "engine": "klayout-runset",
-  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-220/layout/analog/differential_driver/differential_driver.gds",
-  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-220/layout/analog/differential_driver/lvs-reference.spice",
+  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-274/layout/analog/differential_driver/differential_driver.gds",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-274/layout/analog/differential_driver/lvs-reference.spice",
   "top": "differential_driver",
   "reference_top": "differential_driver",
   "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
@@ -830,7 +830,7 @@
   ],
   "environment": {
     "engine": "klayout-runset",
-    "engine_version": "0.28.16",
+    "engine_version": "0.30.12",
     "klayout_binary": "/usr/bin/klayout",
     "netgen_binary": null,
     "layout_sha256": "2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
@@ -838,10 +838,10 @@
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.8.1.dev1080+ge2dd61498b57",
-    "klt_git_commit": "e2dd61498b57b345e043750f89a3a544d68542f7",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@e2dd61498b57b345e043750f89a3a544d68542f7",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev268+g17a90d6ed20d",
+    "klt_git_commit": "17a90d6ed20d265cc6c0ab746c2bd0ec6d273349",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@17a90d6ed20d265cc6c0ab746c2bd0ec6d273349",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sky130.lvs",
@@ -860,7 +860,7 @@
         "thr": "2"
       },
       "content_hash": "sha256:5b4ede4bdb4744b60e42c9b29baa93f40bb24430fb8f3a48a276a712a492ac38",
-      "klayout_application_version": "0.28.16",
+      "klayout_application_version": "0.30.12",
       "exit_status": 0,
       "engine_error_lines": []
     }
@@ -883,117 +883,117 @@
       "pin": true
     },
     {
-      "layout": "\\$15",
+      "layout": "\\$17",
       "reference": "EN",
       "pin": false
     },
     {
-      "layout": "\\$14",
+      "layout": "\\$16",
       "reference": "ENB",
       "pin": false
     },
     {
-      "layout": "\\$13",
+      "layout": "\\$15",
       "reference": "ENX",
       "pin": false
     },
     {
-      "layout": "\\$40",
+      "layout": "\\$42",
       "reference": "KNX_DM",
       "pin": false
     },
     {
-      "layout": "\\$38",
+      "layout": "\\$40",
       "reference": "KNX_DP",
       "pin": false
     },
     {
-      "layout": "\\$11",
+      "layout": "\\$13",
       "reference": "KPX_DM",
       "pin": false
     },
     {
-      "layout": "\\$6",
+      "layout": "\\$8",
       "reference": "KPX_DP",
       "pin": false
     },
     {
-      "layout": "\\$32",
+      "layout": "\\$34",
       "reference": "KSNB_DM",
       "pin": false
     },
     {
-      "layout": "\\$23",
+      "layout": "\\$25",
       "reference": "KSNB_DP",
       "pin": false
     },
     {
-      "layout": "\\$12",
+      "layout": "\\$14",
       "reference": "KSN_DM",
       "pin": false
     },
     {
-      "layout": "\\$7",
+      "layout": "\\$9",
       "reference": "KSN_DP",
       "pin": false
     },
     {
-      "layout": "\\$31",
+      "layout": "\\$33",
       "reference": "KSPB_DM",
       "pin": false
     },
     {
-      "layout": "\\$22",
+      "layout": "\\$24",
       "reference": "KSPB_DP",
       "pin": false
     },
     {
-      "layout": "\\$10",
+      "layout": "\\$12",
       "reference": "KSP_DM",
       "pin": false
     },
     {
-      "layout": "\\$5",
+      "layout": "\\$7",
       "reference": "KSP_DP",
       "pin": false
     },
     {
-      "layout": "\\$39",
+      "layout": "\\$41",
       "reference": "NBX_DM",
       "pin": false
     },
     {
-      "layout": "\\$46",
+      "layout": "\\$49",
       "reference": "NBX_DP",
       "pin": false
     },
     {
-      "layout": "\\$27",
+      "layout": "\\$29",
       "reference": "NB_DM",
       "pin": false
     },
     {
-      "layout": "\\$18",
+      "layout": "\\$20",
       "reference": "NB_DP",
       "pin": false
     },
     {
-      "layout": "\\$30",
+      "layout": "\\$32",
       "reference": "NG_DM",
       "pin": false
     },
     {
-      "layout": "\\$21",
+      "layout": "\\$23",
       "reference": "NG_DP",
       "pin": false
     },
     {
-      "layout": "\\$9",
+      "layout": "\\$11",
       "reference": "NONB_DM",
       "pin": false
     },
     {
-      "layout": "\\$4",
+      "layout": "\\$6",
       "reference": "NONB_DP",
       "pin": false
     },
@@ -1003,52 +1003,52 @@
       "pin": true
     },
     {
-      "layout": "\\$33",
+      "layout": "\\$35",
       "reference": "OUTI_DM",
       "pin": false
     },
     {
-      "layout": "\\$24",
+      "layout": "\\$26",
       "reference": "OUTI_DP",
       "pin": false
     },
     {
-      "layout": "\\$25",
+      "layout": "\\$27",
       "reference": "PAX_DM",
       "pin": false
     },
     {
-      "layout": "\\$16",
+      "layout": "\\$18",
       "reference": "PAX_DP",
       "pin": false
     },
     {
-      "layout": "\\$26",
+      "layout": "\\$28",
       "reference": "PA_DM",
       "pin": false
     },
     {
-      "layout": "\\$17",
+      "layout": "\\$19",
       "reference": "PA_DP",
       "pin": false
     },
     {
-      "layout": "\\$29",
+      "layout": "\\$31",
       "reference": "PG_DM",
       "pin": false
     },
     {
-      "layout": "\\$20",
+      "layout": "\\$22",
       "reference": "PG_DP",
       "pin": false
     },
     {
-      "layout": "\\$8",
+      "layout": "\\$10",
       "reference": "PON_DM",
       "pin": false
     },
     {
-      "layout": "\\$3",
+      "layout": "\\$5",
       "reference": "PON_DP",
       "pin": false
     },
@@ -1063,12 +1063,12 @@
       "pin": true
     },
     {
-      "layout": "\\$1",
+      "layout": "\\$3",
       "reference": "VBN",
       "pin": false
     },
     {
-      "layout": "\\$2",
+      "layout": "\\$4",
       "reference": "VBP",
       "pin": false
     },
@@ -1083,22 +1083,22 @@
       "pin": true
     },
     {
-      "layout": "\\$43",
+      "layout": "\\$46",
       "reference": "XN_DM",
       "pin": false
     },
     {
-      "layout": "\\$42",
+      "layout": "\\$45",
       "reference": "XN_DP",
       "pin": false
     },
     {
-      "layout": "\\$28",
+      "layout": "\\$30",
       "reference": "XP_DM",
       "pin": false
     },
     {
-      "layout": "\\$19",
+      "layout": "\\$21",
       "reference": "XP_DP",
       "pin": false
     }

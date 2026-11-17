@@ -16,7 +16,8 @@ from pathlib import Path
 
 import pytest
 
-from harness import evidence_lint as lint, matrix as mx, results as rs, runner, trim
+from conftest import RL, meas, render, render_manifest, synthetic_report, v_of
+from harness import evidence_lint as lint, matrix as mx, results as rs, trim
 
 SIM = Path(__file__).resolve().parents[1]
 REPO = SIM.parent
@@ -24,12 +25,6 @@ EXP = SIM / "dplus-pullup-tolerance"
 MATRIX = mx.load()
 TB = json.loads((EXP / "testbench/tb.json").read_text())
 CFG = TB["trim"]
-RL = 15000.0
-
-
-def v_of(r, vpu):
-    """V(DP) for an effective pull-up resistance r into the 15 kohm host load."""
-    return vpu * RL / (RL + r)
 
 
 def codes_to_r(base=1900.0, step=52.0):
@@ -50,30 +45,14 @@ def good_values(vpu, rs_=None, tc=1.0):
 
 
 def report(tamper=None, per_corner=None):
-    corners = []
-    for p, t, v in MATRIX.points():
+    def values_for(p, t, v):
         # shift the ladder with temperature so the harness-integrity spread check is met
         scale = 1.0 + (t - 27.0) * 0.0009
         vals = good_values(v, [r * scale for r in codes_to_r(1950.0)])
         if per_corner:
             vals.update(per_corner(p, t, v) or {})
-        raw = {n: x for n, x in vals.items()}
-        for m in TB["measure"].values():
-            pass
-        corners.append({
-            "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
-            "temperature_c": float(t), "status": "pass",
-            "measurements": [{"name": n, "value": x / float(TB["measure"][n].get("scale", 1.0)),
-                              "status": "pass"} for n, x in raw.items()],
-            "artifacts": {"log": None}})
-    rep = {"status": "pass", "corners": corners, "environment": {"remote": {"job_id": "j"}}}
-    if tamper:
-        tamper(rep)
-    return rep
-
-
-def meas(rep, idx, name):
-    return next(m for m in rep["corners"][idx]["measurements"] if m["name"] == name)
+        return {n: x / float(TB["measure"][n].get("scale", 1.0)) for n, x in vals.items()}
+    return synthetic_report(MATRIX, values_for, tamper=tamper)
 
 
 def evaluate(rep):
@@ -255,8 +234,6 @@ def test_failure_names_corner_id_and_value():
 
 
 def test_flat_resistance_across_the_grid_is_flagged():
-    def flat(r):
-        pass
     rep = report(per_corner=lambda p, t, v: {f"vdp_c{k:02d}_v": v_of(1900.0 - 52 * k, v) for k in range(16)})
     _, probs = evaluate(rep)
     assert any("r_c00_ohm spread" in p for p in probs), probs
@@ -304,20 +281,23 @@ def test_design_netlist_uses_only_sky130_devices_and_documented_pins():
 
 
 def test_record_discloses_selection_limits_and_resistor_corner_mapping():
-    m = {"experiment": "dplus-pullup-tolerance", "status": "PASS",
-         "results": [{"corner_id": mx.corner_id(*p), "status": "ok",
-                      "measurements": {"best_code": 8.0, "best_r_ohm": 1480.0, "n_in_window": 3.0}}
-                     for p in MATRIX.points()],
-         "axes": {"process": list(MATRIX.process), "temperature_c": list(MATRIX.temperature_c),
-                  "supply_v": list(MATRIX.supply_v)},
-         "problems": [], "backend": "batch", "job_id": "j", "klt_version": "k", "engine_version": "46",
-         "pdk": {}, "git": {"head": "h", "dirty": False}, "started_utc": "t", "author": "a"}
-    rec = runner.render_record("20260101-000000-abcdef0", m, "0" * 64,
-                               {"claim": TB["claim"], "supersedes": "", "record_meta": TB["record"]})
+    m = render_manifest("dplus-pullup-tolerance", MATRIX, "PASS",
+                        {"best_code": 8.0, "best_r_ohm": 1480.0, "n_in_window": 3.0})
+    rec = render(m, TB)
     assert "Monte Carlo was NOT run" in rec and "res_typical__cap_typical" in rec
     assert "does not prove that a single calibration code" in rec
     assert "No leakage limit is ratified" in rec and "inclusive" in rec
     assert "## Per-corner selection" in rec and rec.count("| `") >= 45
+
+
+def test_record_zero_measurement_run_keeps_detail_headings_with_note_and_no_tables():
+    m = render_manifest("dplus-pullup-tolerance", MATRIX, "FAIL", {},
+                        ["batch refused the job before any corner simulated"], job_id="",
+                        result_status="error")
+    rec = render(m, TB)
+    assert "## Measurement ranges over the grid" in rec and "## Per-corner selection" in rec
+    assert rec.count("No corner produced a measurement") == 2
+    assert "|---|" not in rec and rec.count("| `") == 0
 
 
 # ---- committed evidence and the record lint

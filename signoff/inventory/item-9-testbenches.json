@@ -137,6 +137,30 @@
       ]
     },
     {
+      "id": "diff-receiver-pex",
+      "partition": "analog",
+      "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics",
+      "cold_start": "python3 sim/diff-receiver-pex/run.py",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/diff-receiver-pex/testbench/tb.json",
+          "sha256": "sha256:5f764427e60e8d1e57ee27237b275f6b95ad0decb0a7fead08c07413626b0224",
+          "role": "klt sim request (2 corners: tt_27c_3.30v, sf_100c_3.00v) driving both klt pex legs"
+        },
+        {
+          "path": "sim/diff-receiver-pex/testbench/diff_receiver_pex_tb.spice",
+          "sha256": "sha256:b256406be243cfc3b95e8a1afc23446fc93951d449143363d25f8d5f2ab17bc2",
+          "role": "testbench netlist (sensitivity body with the in-deck DUT .include klt pex swaps)"
+        },
+        {
+          "path": "sim/diff-receiver-pex/testbench/differential_receiver_pex_dut.spice",
+          "sha256": "sha256:ece059b506393f2b325440344247f723a68d49f0794922bde397710deaf79007",
+          "role": "schematic-leg DUT shim (design/netlist/differential_receiver.spice with the .subckt declaration pin order matched to the extracted header)"
+        }
+      ]
+    },
+    {
       "id": "diff-receiver-mismatch",
       "partition": "analog",
       "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
@@ -245,7 +269,7 @@
         },
         {
           "path": "sim/se-receiver-dm-thresholds/testbench/se_rx_dm_tb.spice",
-          "sha256": "sha256:d38ae440e6ed4d9ef4d7fad1dc7181f58c96bfba3bcf952934373d8ef9de6cf9",
+          "sha256": "sha256:398995fd69f9485ec3c79a3f2b9e100c42e7da810803c0b8abdfc20e88f6f501",
           "role": "testbench netlist"
         }
       ]
@@ -264,7 +288,7 @@
         },
         {
           "path": "sim/se-receiver-dp-thresholds/testbench/se_rx_dp_tb.spice",
-          "sha256": "sha256:1b80fed8d59cb94ba5896a29eadba6acd6da3033880bacd1e80dbcee51b6c8cd",
+          "sha256": "sha256:fd28c307c41669e0d4a99164e270be48f8d0887093292886c29aedb857700605",
           "role": "testbench netlist"
         }
       ]
@@ -283,12 +307,12 @@
         },
         {
           "path": "sim/se-receiver-mismatch/testbench/se_rx_dp_mc_tb.spice",
-          "sha256": "sha256:e9b58fcd3442fe2138f6c7287895be6607029ffe82cd2eb498411412c2e79082",
+          "sha256": "sha256:fedca0072bdde82d898f35dd92ede88e0461c691772a61f7b68eb1506b98b7f0",
           "role": "testbench netlist (D+)"
         },
         {
           "path": "sim/se-receiver-mismatch/testbench/se_rx_dm_mc_tb.spice",
-          "sha256": "sha256:ac4ea37382785b11112dbadaf3537c58a351c937eb8cc6addb9f848d07495ba2",
+          "sha256": "sha256:8437bf222f866cfd34c38cdb9e3def4bf0f9d95bf0e6822224538f5843e5dcd1",
           "role": "testbench netlist (D-)"
         }
       ]

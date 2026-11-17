@@ -18,7 +18,13 @@ name: CI
 #                    with the pinned released `klt` and fails on any drift
 #                    from the committed signoff/signoff-report.json, so a
 #                    manifest citation whose underlying artifact has changed
-#                    fails the PR instead of silently rotting.
+#                    fails the PR instead of silently rotting. The same job
+#                    also re-runs every analog leaf generator's `gen.py
+#                    --check` (issue #363): the committed GDS must be
+#                    byte-reproducible from its `layout/analog/<leaf>/gen.py`
+#                    under the same pinned grader, so a generator drift
+#                    fails the PR instead of silently diverging from the
+#                    hash-pinned layout evidence.
 #
 # They are deliberately separate: the evidence lint and the signoff gate must
 # stay green (and stay fast) even when the heavy toolchain job is slow or its
@@ -124,9 +130,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # The append-only check compares every record present in the base ref
-      # against the working tree, so the base ref's history must be present --
-      # a default shallow clone would silently degrade that check to a skip.
+      # The append-only check compares the working tree against the merge
+      # base with $FLOW_LINT_BASE_REF, so that history must be present. Both
+      # evidence lints fail closed on a base ref they cannot resolve, so a
+      # default shallow clone breaks this job loudly rather than degrading the
+      # check to a skip -- which is the point (see flow/README.md).
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -141,8 +149,8 @@ jobs:
 
       # Resolve the ref the append-only rule is enforced against. On a PR that
       # is the base branch as GitHub reports it; on a push to main it is the
-      # commit before the push. Fetched explicitly so `git show <ref>:<path>`
-      # can read the base ref's record blobs.
+      # commit before the push. Fetched explicitly so `git merge-base <ref>
+      # HEAD` can resolve: both lints fail if it cannot.
       - name: Resolve the append-only base ref
         run: |
           if [ -n "${{ github.base_ref }}" ]; then
@@ -183,13 +191,31 @@ jobs:
       # committed from (same-version git snapshots have been observed to
       # grade differently -- klayout-tools#2216).
       - name: Install the pinned grading klt (klayout-tools)
-        run: python3 -m pip install klayout-tools==0.8.0
+        run: python3 -m pip install klayout-tools==0.9.1
 
       - name: Confirm the grading build is the pinned release
         run: klt version --format json
 
       - name: Re-grade the block manifest; require the committed report to match
         run: python3 signoff/check.py
+
+      # The committed analog GDS must stay byte-reproducible from its
+      # generator under this same pinned grader (layout/analog/README.md,
+      # "Shared generator helpers"): `gen.py --check` re-emits the stream and
+      # compares sha256 with the committed file, so a hand-edited GDS or a
+      # generator drift fails here instead of silently diverging from the
+      # hash-pinned layout evidence (issue #363). Discovered by glob so a
+      # sixth leaf is covered automatically; the explicit loop status (not
+      # just errexit) runs every leaf and fails the step if any drifted.
+      - name: Re-generate the analog GDS leaves; require byte-identical output
+        run: |
+          status=0
+          for g in layout/analog/*/gen.py; do
+            echo "::group::$g --check"
+            python3 "$g" --check || status=1
+            echo "::endgroup::"
+          done
+          exit "$status"
 
       # Negative controls: mutating a file an items-9/10 inventory lists must
       # fail the gate, and moving the bound inventory must grade stale.

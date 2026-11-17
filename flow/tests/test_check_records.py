@@ -232,53 +232,171 @@ def test_unregistered_new_record_fails(sandbox: Path):
     ), findings.items
 
 
-def test_manifest_removal_is_caught_by_the_git_layer(tmp_path: Path):
-    """The manifest alone cannot stop an edit that also rewrites the manifest.
+# --------------------------------------------------------------------------
+# Condition 2, layer 2 -- the base-ref comparison (issue #276)
+#
+# Layer 1 (MANIFEST.sha256) cannot stop an edit that also re-stamps the
+# manifest, because both are writable from the branch under review. Layer 2
+# compares against a base ref, which is not. These tests pin the two
+# properties that layer 2's shared implementation
+# (`sim/harness/append_only.py`) exists to guarantee, and that the deleted
+# flow-local copy got wrong in both directions:
+#
+#   * it compares against merge-base(base_ref, HEAD), so a branch merely
+#     *behind* the base ref is not accused of deleting what it has not merged;
+#   * an unresolvable base ref FAILS -- a shallow clone must not be able to
+#     retire the check while still reporting a clean exit.
+#
+# Each builds a throwaway git repo, so none of them touches this one.
+# --------------------------------------------------------------------------
+def git_repo_with_two_evidence_commits(tmp_path: Path) -> tuple[Path, Path]:
+    """A repo whose `main` has two evidence commits, with HEAD cut at the first.
 
-    This exercises the second, git-based layer: a record blob that exists in a
-    base ref must be byte-identical in the working tree, whatever the manifest
-    says. The test builds a throwaway git repo so it never touches this one.
+    Returns `(repo, records_dir)`. The working tree is the *earlier* commit, so
+    it is legitimately behind `main` by one record -- the exact shape that the
+    base-ref-tip comparison used to misreport as a deletion.
     """
     if shutil.which("git") is None:
         pytest.skip("git is not available")
 
     repo = tmp_path / "repo"
-    (repo / "flow" / "smoke-utmi_stub" / "records").mkdir(parents=True)
-    flow = repo / "flow"
+    records_dir = repo / "flow" / "smoke-utmi_stub" / "records"
+    records_dir.mkdir(parents=True)
     for name in ("corners.json", "drc-deck-coverage.json"):
-        shutil.copy2(FLOW_DIR / name, flow / name)
-    records_dir = flow / "smoke-utmi_stub" / "records"
-    source = real_record_paths()[0]
-    shutil.copy2(source, records_dir / source.name)
-    rebuild_manifest(records_dir)
+        shutil.copy2(FLOW_DIR / name, repo / "flow" / name)
 
     def git(*args: str) -> None:
         subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True)
 
+    first, second = real_record_paths()[:2]
+    shutil.copy2(first, records_dir / first.name)
+    rebuild_manifest(records_dir)
     git("init", "-q", "-b", "main")
     git("config", "user.email", "t@example.invalid")
     git("config", "user.name", "test")
     git("add", "-A")
-    git("commit", "-qm", "seed")
+    git("commit", "-qm", "seed: one record")
 
-    # Rewrite the record AND its manifest line -- the manifest layer is now happy.
-    victim = records_dir / source.name
+    shutil.copy2(second, records_dir / second.name)
+    rebuild_manifest(records_dir)
+    git("add", "-A")
+    git("commit", "-qm", "evidence: a second record lands on main")
+
+    # Cut the working tree back to the first commit: behind main by one record.
+    git("checkout", "-q", "-b", "behind", "HEAD~1")
+    assert not (records_dir / second.name).exists(), "fixture is not actually behind main"
+    return repo, records_dir
+
+
+def base_ref_findings(repo: Path, base_ref: str) -> check_records.Findings:
+    findings = check_records.Findings()
+    check_records.check_append_only_base_ref(
+        repo / "flow", ["smoke-utmi_stub"], base_ref, findings, repo_root=repo
+    )
+    return findings
+
+
+def test_a_tree_behind_the_base_ref_is_not_a_deletion(tmp_path: Path):
+    """The false positive this layer used to produce: being behind != deleting.
+
+    Nothing was removed here -- a record simply landed on `main` after this
+    branch point -- so layer 2 must be silent. The old base-ref-*tip* walk
+    reported it as a deleted record plus a removed manifest line.
+    """
+    repo, _ = git_repo_with_two_evidence_commits(tmp_path)
+    findings = base_ref_findings(repo, "main")
+    assert not findings.items, f"a tree merely behind the base ref was flagged: {findings.items}"
+
+
+def test_edited_record_on_a_branch_behind_the_base_ref_still_fails(tmp_path: Path):
+    """The merge-base fix must not become a hole of its own.
+
+    The record is edited *and* its manifest line re-stamped, so layer 1 is
+    satisfied; the branch is also behind `main`, so this is the case where a
+    merge-base comparison could plausibly look the other way. It must not.
+    """
+    repo, records_dir = git_repo_with_two_evidence_commits(tmp_path)
+    victim = sorted(records_dir.glob("*.md"))[0]
     victim.write_text(
-        victim.read_text(encoding="utf-8") + "\n<!-- rewritten history -->\n",
-        encoding="utf-8",
+        victim.read_text(encoding="utf-8") + "\n<!-- rewritten history -->\n", encoding="utf-8"
     )
     rebuild_manifest(records_dir)
 
-    original_root = check_records.REPO_ROOT
-    try:
-        check_records.REPO_ROOT = repo
-        findings = check_records.Findings()
-        check_records.check_append_only_git(records_dir, "main", findings)
-    finally:
-        check_records.REPO_ROOT = original_root
+    findings = base_ref_findings(repo, "main")
+    assert findings, "an edited committed record was not caught on a branch behind the base ref"
+    messages = [message for _, message in findings.items]
+    assert {check for check, _ in findings.items} == {"append-only"}, findings.items
+    assert any(victim.name in m and "was modified" in m for m in messages), messages
+    assert any("was rewritten" in m for m in messages), messages
 
-    assert findings, "the git layer did not notice a rewritten record"
-    assert any("differs from main" in message for _, message in findings.items), findings.items
+
+def test_deleted_record_on_a_branch_behind_the_base_ref_still_fails(tmp_path: Path):
+    repo, records_dir = git_repo_with_two_evidence_commits(tmp_path)
+    victim = sorted(records_dir.glob("*.md"))[0]
+    victim.unlink()
+    rebuild_manifest(records_dir)
+
+    findings = base_ref_findings(repo, "main")
+    messages = [message for _, message in findings.items]
+    assert any(victim.name in m and "was deleted" in m for m in messages), messages
+
+
+def test_manifest_line_removal_is_caught(tmp_path: Path):
+    """`flow/`'s stronger-than-`sim/` assertion: manifest lines are append-only.
+
+    The record blob itself is untouched, so only the manifest comparison can
+    see this. It is the piece of layer 2 that must survive sharing the
+    implementation with the analog lint, which has no manifest of its own.
+    """
+    repo, records_dir = git_repo_with_two_evidence_commits(tmp_path)
+    manifest = records_dir / "MANIFEST.sha256"
+    kept = sorted(records_dir.glob("*.md"))[0]
+    manifest.write_text("# test manifest\n", encoding="utf-8")
+
+    findings = base_ref_findings(repo, "main")
+    messages = [message for _, message in findings.items]
+    assert any(kept.name in m and "was removed" in m for m in messages), messages
+
+
+def test_unresolvable_base_ref_fails_rather_than_skipping(tmp_path: Path):
+    """Fail-closed: the half of this that used to evaporate into a clean exit."""
+    repo, _ = git_repo_with_two_evidence_commits(tmp_path)
+
+    findings = base_ref_findings(repo, "origin/nope")
+    messages = [message for _, message in findings.items]
+    assert any("not available in this checkout" in m for m in messages), messages
+    assert any("cannot be skipped" in m for m in messages), messages
+
+    findings = base_ref_findings(repo, "")
+    assert any("no base ref" in m for _, m in findings.items), findings.items
+
+
+def test_unresolvable_base_ref_is_reported_once_not_per_assertion(tmp_path: Path):
+    """One cause, one finding -- the report must stay readable (and countable)."""
+    repo, _ = git_repo_with_two_evidence_commits(tmp_path)
+    findings = check_records.Findings()
+    check_records.check_append_only_base_ref(
+        repo / "flow",
+        ["smoke-utmi_stub", "another-experiment", "a-third"],
+        "origin/nope",
+        findings,
+        repo_root=repo,
+    )
+    assert len(findings.items) == 1, findings.items
+
+
+def test_a_flow_dir_outside_the_repo_is_a_finding_not_a_silent_pass(tmp_path: Path):
+    """The same posture one level up: if the comparison cannot run, say so."""
+    repo, _ = git_repo_with_two_evidence_commits(tmp_path)
+    outside = tmp_path / "elsewhere" / "flow"
+    outside.mkdir(parents=True)
+
+    findings = check_records.Findings()
+    status = check_records.check_append_only_base_ref(
+        outside, ["smoke-utmi_stub"], "main", findings, repo_root=repo
+    )
+    assert "not run" in status
+    assert any("--no-git" in message for _, message in findings.items), findings.items
 
 
 # --------------------------------------------------------------------------
@@ -370,6 +488,21 @@ def test_vanished_input_fails(sandbox: Path):
     code, findings = run_lint(sandbox)
     assert code == 1
     assert "freshness" in checks_in(findings), findings.items
+
+
+def test_malformed_input_entry_fails(sandbox: Path):
+    target = standing_record(sandbox)
+    meta = read_meta(target)
+    meta["provenance"]["inputs"].append({"path": "rtl/usb_rx_cdc.v"})
+    write_meta(target, meta)
+    rebuild_manifest(target.parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 1
+    assert "freshness" in checks_in(findings), findings.items
+    assert any(
+        "must carry `path` and `content_hash`" in message for _, message in findings.items
+    ), findings.items
 
 
 def test_superseded_record_is_exempt_from_freshness(sandbox: Path):
@@ -888,8 +1021,25 @@ def synth_record(sandbox: Path) -> Path:
     return records[-1]
 
 
-def mutate_synth(sandbox: Path, mutate) -> check_records.Findings:
-    path = synth_record(sandbox)
+def superseded_synth_record(sandbox: Path) -> Path:
+    """A record another record supersedes.
+
+    Rule 8e's hash check exempts exactly one artifact of a superseded
+    record -- the netlist: a superseded record is frozen evidence of what
+    an earlier revision produced, so its netlist hash may drift from the
+    file on disk without being a finding. A supersession test must
+    therefore corrupt a superseded record; mutating the standing record
+    would leave the exemption unexercised.
+    """
+    records = sorted((sandbox / "utmi-top" / "records").glob("*.md"))
+    superseded_ids = check_records.superseded_record_ids([read_meta(p) for p in records])
+    superseded = [p for p in records if p.stem in superseded_ids]
+    assert superseded, "fixture has no superseded utmi-top record to corrupt"
+    return superseded[0]
+
+
+def mutate_synth(sandbox: Path, mutate, record=None) -> check_records.Findings:
+    path = synth_record(sandbox) if record is None else record
     meta = read_meta(path)
     mutate(meta)
     write_meta(path, meta)
@@ -1024,6 +1174,54 @@ def test_changed_artifact_hash_fails(synth_sandbox: Path):
         meta["provenance"]["artifacts"][0]["content_hash"] = "sha256:" + "0" * 64
 
     assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, stale))
+
+
+def test_malformed_artifact_entry_fails(synth_sandbox: Path):
+    def malformed(meta):
+        meta["provenance"]["artifacts"].append({"path": "design/netlist/usb_utmi_top.v"})
+
+    findings = mutate_synth(synth_sandbox, malformed)
+    assert "synthesis-only" in checks_in(findings)
+    assert any(
+        "must carry `path` and `content_hash`" in message for _, message in findings.items
+    ), findings.items
+
+
+def test_vanished_artifact_fails(synth_sandbox: Path):
+    def vanish(meta):
+        meta["provenance"]["artifacts"].append(
+            {"path": "design/netlist/vanished.v", "content_hash": "sha256:" + "2" * 64}
+        )
+
+    findings = mutate_synth(synth_sandbox, vanish)
+    assert "synthesis-only" in checks_in(findings)
+    assert any("no longer exists" in message for _, message in findings.items), findings.items
+
+
+def test_superseded_record_netlist_hash_drift_is_exempt(synth_sandbox: Path):
+    record = superseded_synth_record(synth_sandbox)
+
+    def stale(meta):
+        netlist_path = meta["stages"]["synthesize"]["netlist"]["path"]
+        for entry in meta["provenance"]["artifacts"]:
+            if entry["path"] == netlist_path:
+                entry["content_hash"] = "sha256:" + "0" * 64
+                return
+
+    assert "synthesis-only" not in checks_in(mutate_synth(synth_sandbox, stale, record))
+
+
+def test_superseded_record_non_netlist_artifact_hash_drift_still_fails(synth_sandbox: Path):
+    record = superseded_synth_record(synth_sandbox)
+
+    def stale(meta):
+        netlist_path = meta["stages"]["synthesize"]["netlist"]["path"]
+        for entry in meta["provenance"]["artifacts"]:
+            if entry["path"] != netlist_path:
+                entry["content_hash"] = "sha256:" + "0" * 64
+                return
+
+    assert "synthesis-only" in checks_in(mutate_synth(synth_sandbox, stale, record))
 
 
 def test_missing_synthesis_envelope_artifact_fails(synth_sandbox: Path):
@@ -1165,6 +1363,42 @@ def test_analog_record_with_changed_gds_goes_stale(analog_sandbox: Path):
         meta["provenance"]["inputs"][0]["content_hash"] = "sha256:" + "0" * 64
 
     assert "freshness" in checks_in(mutate_analog(analog_sandbox, corrupt))
+
+
+def test_analog_malformed_artifact_entry_fails(analog_sandbox: Path):
+    def malformed(meta):
+        meta["provenance"]["artifacts"].append(
+            {"path": "flow/analog-layout-differential_receiver/artifacts/gone.json"}
+        )
+
+    findings = mutate_analog(analog_sandbox, malformed)
+    assert "analog-layout" in checks_in(findings)
+    assert any(
+        "must carry `path` and `content_hash`" in message for _, message in findings.items
+    ), findings.items
+
+
+def test_analog_vanished_artifact_fails(analog_sandbox: Path):
+    def vanish(meta):
+        meta["provenance"]["artifacts"].append(
+            {
+                "path": "flow/analog-layout-differential_receiver/artifacts/gone.json",
+                "content_hash": "sha256:" + "2" * 64,
+            }
+        )
+
+    findings = mutate_analog(analog_sandbox, vanish)
+    assert "analog-layout" in checks_in(findings)
+    assert any("no longer exists" in message for _, message in findings.items), findings.items
+
+
+def test_changed_analog_artifact_hash_fails(analog_sandbox: Path):
+    def stale(meta):
+        meta["provenance"]["artifacts"][0]["content_hash"] = "sha256:" + "0" * 64
+
+    findings = mutate_analog(analog_sandbox, stale)
+    assert "analog-layout" in checks_in(findings)
+    assert any("is stale" in message for _, message in findings.items), findings.items
 
 
 def test_analog_record_id_must_end_in_its_block(analog_sandbox: Path):

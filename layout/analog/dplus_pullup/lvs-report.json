@@ -1,8 +1,8 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "engine": "klayout-runset",
-  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-222/layout/analog/dplus_pullup/dplus_pullup.gds",
-  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-222/design/netlist/dplus_pullup.spice",
+  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-274/layout/analog/dplus_pullup/dplus_pullup.gds",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-274/design/netlist/dplus_pullup.spice",
   "top": "dplus_pullup",
   "reference_top": "dplus_pullup",
   "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
@@ -826,7 +826,7 @@
   ],
   "environment": {
     "engine": "klayout-runset",
-    "engine_version": "0.28.16",
+    "engine_version": "0.30.12",
     "klayout_binary": "/usr/bin/klayout",
     "netgen_binary": null,
     "layout_sha256": "7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
@@ -834,10 +834,10 @@
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.8.1.dev604+g4f345a577997",
-    "klt_git_commit": "4f345a577997d2c31d4fa55e0092efbb3ee24f41",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@4f345a577997d2c31d4fa55e0092efbb3ee24f41",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev268+g17a90d6ed20d",
+    "klt_git_commit": "17a90d6ed20d265cc6c0ab746c2bd0ec6d273349",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@17a90d6ed20d265cc6c0ab746c2bd0ec6d273349",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sky130.lvs",
@@ -856,7 +856,7 @@
         "thr": "2"
       },
       "content_hash": "sha256:5b4ede4bdb4744b60e42c9b29baa93f40bb24430fb8f3a48a276a712a492ac38",
-      "klayout_application_version": "0.28.16",
+      "klayout_application_version": "0.30.12",
       "exit_status": 0,
       "engine_error_lines": []
     }
@@ -869,27 +869,27 @@
       "pin": true
     },
     {
-      "layout": "\\$6",
+      "layout": "\\$8",
       "reference": "N0",
       "pin": false
     },
     {
-      "layout": "\\$7",
+      "layout": "\\$9",
       "reference": "N1",
       "pin": false
     },
     {
-      "layout": "\\$8",
+      "layout": "\\$10",
       "reference": "N2",
       "pin": false
     },
     {
-      "layout": "\\$9",
+      "layout": "\\$11",
       "reference": "N3",
       "pin": false
     },
     {
-      "layout": "\\$10",
+      "layout": "\\$12",
       "reference": "N4",
       "pin": false
     },
@@ -899,7 +899,7 @@
       "pin": true
     },
     {
-      "layout": "\\$1",
+      "layout": "\\$3",
       "reference": "PU_ENB",
       "pin": false
     },
@@ -909,7 +909,7 @@
       "pin": true
     },
     {
-      "layout": "\\$2",
+      "layout": "\\$4",
       "reference": "TRIM0B",
       "pin": false
     },
@@ -919,7 +919,7 @@
       "pin": true
     },
     {
-      "layout": "\\$3",
+      "layout": "\\$5",
       "reference": "TRIM1B",
       "pin": false
     },
@@ -929,7 +929,7 @@
       "pin": true
     },
     {
-      "layout": "\\$4",
+      "layout": "\\$6",
       "reference": "TRIM2B",
       "pin": false
     },
@@ -939,7 +939,7 @@
       "pin": true
     },
     {
-      "layout": "\\$5",
+      "layout": "\\$7",
       "reference": "TRIM3B",
       "pin": false
     },

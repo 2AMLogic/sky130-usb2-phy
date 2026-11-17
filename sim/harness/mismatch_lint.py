@@ -9,6 +9,14 @@ hashes against the klt reports, the negative-control deck against the nominal de
 declared replacement, the executed-PDK identity, the pairing hashes in each sample set, and
 the grading of every `klt yield` report (`mismatch.grade`). A PASS record cannot survive any
 of these; a FAIL record must state its problems.
+
+Campaign and yield completeness is checked against the corners the record *declares it covers*
+(`evidence.json` `corners`), not the full declared matrix, so a `--corner`-scoped run can land
+one corner per record. On the committed-evidence path that declaration is checked against the
+frozen `mc.json` and fails closed (`covered_corners`); on the stored-evidence path the record's
+`Corners run` declaration is cross-checked against the committed manifest (`stored_coverage`).
+Neither path lets a record declare less coverage than was run and pass — but a stored record's
+PASS/FAIL verdict is still not re-derivable here: those bytes live in the artifact store.
 """
 
 from __future__ import annotations
@@ -16,7 +24,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from . import evidence_lint as el, matrix as mx, mismatch as mm
+from . import artifact_manifest as am, evidence_lint as el, matrix as mx, mismatch as mm
 from .integrity import check_record_header, load_json, sha256_file
 
 REQUIRED_FIELDS = ("Record ID", "Status", "Claim", "Netlist provenance", "Corners run", "Statistical convention",
@@ -32,8 +40,10 @@ def check_record(exp_dir: Path, rec: Path) -> list[str]:
     cdir = exp_dir / "campaigns" / rid
     if el.MANIFEST_CITE_RE.search(fields.get("Links", "")):
         # bytes live in the artifact store: PASS/FAIL cannot be re-derived here (klt artifact
-        # get/verify does that); check the citation and that no copy is also committed
+        # get/verify does that); check the citation, that no copy is also committed, and that the
+        # record's declared corner coverage agrees with the committed manifest (stored_coverage)
         problems += el.check_stored_summary(rec.read_text(), rid, exp_dir.parent.parent)
+        problems += stored_coverage(fields, rid, exp_dir, exp_dir.parent.parent)
         if cdir.exists():
             problems.append(f"{rid}: campaigns/{rid}/ is committed but the record cites stored evidence")
         return problems
@@ -67,6 +77,181 @@ def check_record(exp_dir: Path, rec: Path) -> list[str]:
     return problems
 
 
+CORNERS_RUN_ID_RE = re.compile(r"^\s*(?P<id>[A-Za-z0-9_]+)\s*:")
+CORNERS_RUN_DEF_RE = re.compile(r"^\s*(?P<id>[A-Za-z0-9_]+)\s*:\s*(?P<proc>\S+)\s*/\s*(?P<temp>-?\d+(?:\.\d+)?)"
+                                r"\s*C\s*/\s*(?P<volt>\d+(?:\.\d+)?)\s*V\b")
+COVERS_ALL_RE = re.compile(r"covers all (\d+) corner\(s\) mc\.json declares")
+COVERS_SOME_RE = re.compile(r"covers (\d+) of the (\d+) corner\(s\) mc\.json declares")
+NO_CLAIM_RE = re.compile(r"makes no claim about ([^;)]*)")
+
+
+def _num_eq(text: str, value) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and float(text) == float(value)
+
+
+def stored_coverage(fields: dict, rid: str, exp_dir: Path, repo: Path) -> list[str]:
+    """Corner coverage of a stored-citation record, re-derived from committed bytes only.
+
+    A stored record's PASS/FAIL cannot be re-derived here (the bytes live in the artifact store),
+    but the corners it ran are: the cited manifest is committed and its campaign object names are
+    `campaign_stem()` = `<receiver>-<corner>-<kind>`, so the forward membership test
+    `<receiver>-<corner>-nominal.request.json` among the entry basenames yields the corner set
+    that actually ran. This fails closed on the same shapes `covered_corners` rejects on the
+    committed path (an empty or unparseable declaration, an id the live mc.json does not declare,
+    a duplicate, and a covered corner whose rendered definition differs) plus the shape this check
+    exists for: a manifest showing corners the record does not claim to cover. When the manifest's
+    mc.json sha256 equals the live `testbench/mc.json` the two specs are byte-identical and the
+    corner definitions are compared; when they differ the frozen spec is out of reach and the
+    check degrades to ids plus the record's own coverage clause, cross-checked for internal
+    consistency only: a degraded record's corner count `M` is taken on the record's word, because
+    nothing committed records the frozen corner set (see sim/README.md) — never silently
+    claiming full confidence.
+    """
+    cite = el.MANIFEST_CITE_RE.search(fields.get("Links", ""))
+    if cite is None:
+        return []  # no citation: check_stored_summary has already reported it
+    data, _ = am.load_manifest(repo / cite.group(1))
+    if data is None:
+        return []  # unusable manifest: already reported
+    bad: list[str] = []
+    spec = load_json(exp_dir / "testbench" / "mc.json", bad, rid)
+    if not isinstance(spec, dict) or spec.get("schema") != mm.SCHEMA:
+        return bad + [f"{rid}: live testbench/mc.json is missing or not a {mm.SCHEMA} document; "
+                      f"corner coverage cannot be checked"]
+    rcv_ids = [r["id"] for r in spec.get("receivers", []) if isinstance(r, dict) and isinstance(r.get("id"), str)]
+    corners = {c["id"]: c for c in spec.get("corners", []) if isinstance(c, dict) and isinstance(c.get("id"), str)}
+    if not rcv_ids or not corners:
+        return bad + [f"{rid}: live mc.json declares no receivers/corners; corner coverage cannot be checked"]
+    stems = [f"{r}-{c}" for r in rcv_ids for c in corners]
+    if len(stems) != len(set(stems)):
+        return bad + [f"{rid}: mc.json receivers x corners yields ambiguous campaign object names; "
+                      f"coverage cannot be derived from the manifest"]
+    basenames = {(e.get("name") or "").rsplit("/", 1)[-1] for e in data["entries"] if isinstance(e, dict)}
+    ran = {c for r in rcv_ids for c in corners if f"{r}-{c}-nominal.request.json" in basenames}
+    if not ran:
+        return bad + [f"{rid}: the cited manifest has no mismatch campaign object "
+                      f"(<receiver>-<corner>-nominal.request.json); no corner coverage could be established"]
+    declared: dict[str, str] = {}
+    for seg in (s.strip() for s in fields.get("Corners run", "").split(";")):
+        m = CORNERS_RUN_ID_RE.match(seg)
+        if not m:
+            continue
+        if m["id"] in declared:
+            return bad + [f"{rid}: Corners run declares covered corner {m['id']!r} more than once"]
+        declared[m["id"]] = seg
+    if not declared:
+        return bad + [f"{rid}: Corners run must declare the corners it covers as "
+                      f"`<id>: <process> / <T> C / <V> V` entries; got {fields.get('Corners run', '')!r}"]
+    unknown = sorted(set(declared) - set(corners))
+    if unknown:
+        return bad + [f"{rid}: Corners run covers corner(s) {unknown}, which the live mc.json does "
+                      f"not declare (declared: {sorted(corners)})"]
+    unclaimed = sorted(ran - set(declared))
+    if unclaimed:
+        bad.append(f"{rid}: the cited manifest shows campaign evidence for corner(s) {unclaimed} that "
+                   f"the record does not claim to cover")
+    ghost = sorted(set(declared) - ran)
+    if ghost:
+        bad.append(f"{rid}: Corners run claims corner(s) {ghost} for which the cited manifest shows "
+                   f"no campaign evidence")
+    mc_entries = [e for e in data["entries"] if isinstance(e, dict)
+                  and (e.get("name") or "").rsplit("/", 1)[-1] == "mc.json"]
+    shas = sorted({e["sha256"] for e in mc_entries if isinstance(e.get("sha256"), str)})
+    byte_exact = len(shas) == 1 and shas[0] == sha256_file(exp_dir / "testbench" / "mc.json")
+    if len(shas) != 1:
+        bad.append(f"{rid}: the cited manifest has no single mc.json object; which spec the campaign "
+                   f"froze cannot be established")
+    elif byte_exact:
+        for cid, seg in declared.items():
+            d = CORNERS_RUN_DEF_RE.match(seg)
+            if d is None:
+                bad.append(f"{rid}: covered corner {cid!r} in Corners run is not "
+                           f"`<id>: <process> / <T> C / <V> V`; its definition cannot be compared "
+                           f"with the live mc.json")
+            elif (d["proc"] != str(corners[cid].get("process")) or not _num_eq(d["temp"], corners[cid].get("temperature_c"))
+                  or not _num_eq(d["volt"], corners[cid].get("supply_v"))):
+                bad.append(f"{rid}: covered corner {cid!r} differs from the corner the live mc.json declares")
+    uncovered = set(corners) - set(declared)
+    for fname in ("Corners run", "Result"):
+        fval = fields.get(fname, "")
+        all_m, some_m = COVERS_ALL_RE.search(fval), COVERS_SOME_RE.search(fval)
+        claim = NO_CLAIM_RE.search(fval)
+        degraded = " (frozen mc.json differs from live; clause checked for internal consistency only)"
+        if all_m:
+            total = int(all_m.group(1))
+            if byte_exact:
+                if total != len(corners) or uncovered:
+                    bad.append(f"{rid}: {fname} claims full coverage of {total} corner(s) but the record "
+                               f"declares {len(declared)} of the {len(corners)} the live mc.json declares")
+            elif total != len(declared):
+                bad.append(f"{rid}: {fname} claims full coverage of {total} corner(s) but the record "
+                           f"declares {len(declared)} of them{degraded}")
+            if claim:
+                names = set(re.findall(r"`([A-Za-z0-9_]+)`", claim.group(1)))
+                bad.append(f"{rid}: {fname} claims full coverage but also makes no claim about {sorted(names)}")
+        elif some_m:
+            n, total = int(some_m.group(1)), int(some_m.group(2))
+            if byte_exact:
+                if total != len(corners) or n != len(declared) or n >= total:
+                    bad.append(f"{rid}: {fname} claims {n} of the {total} corner(s) but the record declares "
+                               f"{len(declared)} of the {len(corners)} the live mc.json declares")
+                else:
+                    names = set(re.findall(r"`([A-Za-z0-9_]+)`", claim.group(1))) if claim else set()
+                    if names != uncovered:
+                        bad.append(f"{rid}: {fname} makes no claim about {sorted(names)} but the declared "
+                                   f"coverage leaves {sorted(uncovered)} uncovered")
+            elif n != len(declared) or n >= total:
+                bad.append(f"{rid}: {fname} claims {n} of the {total} corner(s) but the record declares "
+                           f"{len(declared)} of them{degraded}")
+            else:
+                raw = re.findall(r"`([A-Za-z0-9_]+)`", claim.group(1)) if claim else []
+                names = set(raw)
+                if len(raw) > len(names):
+                    bad.append(f"{rid}: {fname} makes no claim about {sorted(names)} but names a corner "
+                               f"more than once{degraded}")
+                overlap = sorted(names & set(declared))
+                if overlap:
+                    bad.append(f"{rid}: {fname} makes no claim about {overlap} but Corners run declares "
+                               f"it covered{degraded}")
+                if len(names) != total - n:
+                    bad.append(f"{rid}: {fname} makes no claim about {sorted(names)} but the clause leaves "
+                               f"{total - n} corner(s) unclaimed{degraded}")
+    return bad
+
+
+def covered_corners(rid: str, m: dict, declared: dict[str, dict]) -> tuple[dict[str, dict] | None, list[str]]:
+    """The corners a record claims to cover, checked against the frozen mc.json.
+
+    A run scoped with `--corner` records a subset of the declared corners, so completeness is
+    derived from this declaration rather than from the full matrix. That only holds if the
+    declaration itself cannot be fudged, so this **fails closed**: a missing, empty or
+    malformed `corners` list, a corner the frozen mc.json does not declare, a duplicate, or a
+    covered corner whose definition differs from the frozen one all return `None` (no coverage
+    could be established) instead of an empty set, which would make an empty record lint clean.
+
+    Returns `(covered by id, problems)`; `covered` is None when the declaration is unusable.
+    """
+    corners = m.get("corners")
+    if not isinstance(corners, list) or not corners:
+        return None, [f"{rid}: evidence.json must declare the corners it covers in a non-empty "
+                      f"`corners` list; got {corners!r}"]
+    out: dict[str, dict] = {}
+    for c in corners:
+        if not isinstance(c, dict) or not isinstance(c.get("id"), str):
+            return None, [f"{rid}: evidence.json `corners` entry {c!r} is not a corner declaration"]
+        cid = c["id"]
+        if cid in out:
+            return None, [f"{rid}: evidence.json declares covered corner {cid!r} more than once"]
+        if cid not in declared:
+            return None, [f"{rid}: evidence.json covers corner {cid!r}, which the frozen mc.json "
+                          f"does not declare (declared: {sorted(declared)})"]
+        if c != declared[cid]:
+            return None, [f"{rid}: evidence.json covered corner {cid!r} differs from the corner the "
+                          f"frozen mc.json declares"]
+        out[cid] = c
+    return out, []
+
+
 def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
     """(criteria failures re-derived from the raw files, structural problems with the evidence)."""
     bad: list[str] = []
@@ -80,11 +265,15 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
         bad.append(f"{rid}: evidence.json monte_carlo differs from the frozen mc.json")
     if not (isinstance(mc.get("seed"), int) and mc.get("vary") == "mismatch" and mc.get("n", 0) >= 2):
         bad.append(f"{rid}: monte_carlo must record an integer seed, vary 'mismatch' and n >= 2")
+    covered, cov_bad = covered_corners(rid, m, corners)
+    if covered is None:
+        return None, bad + cov_bad
     failing: list[str] = []
-    want = {(r, c, k) for r in rcvs for c in corners for k in ("nominal", "control")}
+    want = {(r, c, k) for r in rcvs for c in covered for k in ("nominal", "control")}
     got = {(c["receiver"], c["corner"], c["kind"]) for c in m.get("campaigns", [])}
     if want != got:
-        bad.append(f"{rid}: campaigns {sorted(got)} != declared receivers x corners x (nominal, control)")
+        bad.append(f"{rid}: campaigns {sorted(got)} != declared receivers x covered corners "
+                   f"{sorted(covered)} x (nominal, control)")
     bodies: dict[tuple, str] = {}
     for c in m.get("campaigns", []):
         stem = c["stem"]
@@ -141,8 +330,9 @@ def derive(cdir: Path, rid: str, m: dict) -> tuple[list[str] | None, list[str]]:
             if derived != body:
                 bad.append(f"{rid}: {r}-{cn}: control deck is not the nominal deck plus the declared skew")
     ys = {(y["receiver"], y["corner"]): y for y in m.get("yields", [])}
-    if set(ys) != {(r, c) for r in rcvs for c in corners}:
-        failing.append(f"yield reports present for {sorted(ys)}, expected every (receiver, corner)")
+    if set(ys) != {(r, c) for r in rcvs for c in covered}:
+        failing.append(f"yield reports present for {sorted(ys)}, expected every (receiver, corner) "
+                       f"over the covered corners {sorted(covered)}")
     for (r, cn), y in ys.items():
         rcv, corner = rcvs.get(r), corners.get(cn)
         if rcv is None or corner is None:

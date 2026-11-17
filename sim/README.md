@@ -72,11 +72,12 @@ sim/
   corners-resistor-sets.json   the supplemental 225-point resistor-set matrix (id pvt225-mos-rc)
   run_corners.py               runner (stdlib only): --list, --check-env, <experiment>
   check_records.py             toolchain-free record lint (also run by `npm run lint`)
-  harness/                     matrix.py results.py runner.py evidence_lint.py
+  make_se_receiver_tb.py       shared source rendering the se-receiver dp/dm testbench inputs (--check)
+  harness/                     matrix.py results.py runner.py evidence_lint.py append_only.py
   tests/                       toolchain-free tests (pytest)
   <experiment-slug>/           e.g. smoke-inverter
     testbench/                 tb.json (analysis, measurements, harness bounds) + netlist body
-    netlist-snapshots/<record-id>.spice   frozen netlist as submitted
+    netlist-snapshots/<record-id>.spice   frozen netlist as simulated (an in-deck .include is inlined; see the snapshot convention below)
     corners/<record-id>/       evidence directory for one run:
         evidence.json            manifest: status, job id, versions, PDK identity, SHA-256 of every file
         request.json             the resolved `klt sim` request
@@ -92,6 +93,16 @@ sim/
 Statistical convention, Result, Links (cites the evidence.json SHA-256),
 Timestamp / author, Supersedes`. A `FAIL` record (backend error, missing or
 failed corners) is valid evidence and is kept; it never counts as coverage.
+
+**Snapshot convention**: the snapshot is the netlist *as simulated*. A deck with
+in-deck `.include` lines is frozen with each included file inlined after it, in the
+one shared format all runners emit (`snapshot_body` in `sim/harness/runner.py`: a
+`* ---- included: <path> ----` banner line, then the file's bytes), so the snapshot
+reproduces the simulated circuit -- a deck whose DUT sits behind an `.include` has no
+device cards by itself -- and is never byte-identical to the deck staged into the
+artifact store, which would trip `committed_duplicates` on every re-run. A deck with
+no in-deck `.include` freezes as the bare deck bytes. A runner refuses to overwrite
+an existing snapshot: evidence is append-only.
 
 ## Running
 
@@ -127,7 +138,9 @@ testbench/matrix, klt report and stderr, every per-corner `.log` and `evidence.j
 
 - `manifests/artifacts/<bench>-<record-id>.manifest.json` (every `uri` is `artifact:<key>`),
 - `sim/<bench>/records/<record-id>.md` with a **Stored evidence** table (name, size, sha256),
-- the netlist snapshot `netlist-snapshots/<record-id>.spice` (small, source-like; stays in git).
+- the netlist snapshot `netlist-snapshots/<record-id>.spice` (small, source-like; stays in
+  git; the snapshot convention above applies here too: a bench with an in-deck `.include`
+  freezes the included file inlined, and the runner writes it -- never by hand).
 
 `python3 sim/run_store_evidence.py <bench> <staged-dir>` does the same for a staged campaign
 directory (e.g. Monte Carlo output under `sim/.work/`), writing `sim/<bench>/campaigns/<run-id>.md`.
@@ -156,7 +169,10 @@ python3 and git. It fails on:
 
 - any file under `sim/*/records/`, `netlist-snapshots/`, `corners/`, `campaigns/` that is
   modified, deleted or renamed relative to the merge base with the base ref
-  (new files are fine); an unresolvable base ref also **fails**;
+  (new files are fine); an unresolvable base ref also **fails**. That posture
+  — merge base, fail closed — lives in `harness/append_only.py`, which
+  `flow/check_records.py` calls for the digital-flow evidence too, so one rule
+  has one implementation (issue #276);
 - missing record fields, an id/filename mismatch, a snapshot or evidence
   directory no record cites, a missing or hash-mismatched referenced file;
 - a `PASS` record whose raw envelope does not re-derive as a complete grid:
@@ -215,6 +231,44 @@ against client 0.7.0 (its provenance line shows the client; `report.json` has
 returned finite `.meas` values in the raw logs, and a re-run is due once the
 runner image is updated (klayout-tools #2851, #2948, #2917, under Known limits).
 
+## diff-receiver-pex
+
+Post-layout (parasitic-extraction) evidence for the differential receiver, and
+the repo's first `klt pex` bench (#281). One `klt pex` call runs **two legs**
+from the same request (`testbench/tb.json`, the sensitivity bench's
+measurements, analysis and checks): a schematic leg and an extracted leg of the
+committed leaf GDS (`layout/analog/differential_receiver/
+differential_receiver.gds`). The DUT is reached through exactly one in-deck
+`.include` in `testbench/diff_receiver_pex_tb.spice` -- `klt pex` requires the
+deck itself to carry the DUT reference and refuses a request-level `include`
+array. On the schematic leg that `.include` names
+`testbench/differential_receiver_pex_dut.spice`, a shim equal to
+`design/netlist/differential_receiver.spice` except that the `.subckt` pin
+order is reordered to the extracted header's, so one positional instance line
+serves both legs. Electrical identity is not assumed: `run.py`'s equivalence
+gate requires the run's schematic leg to reproduce the committed 45-point
+sensitivity report
+(`diff-receiver-sensitivity/corners/20261020-172719-ca4a45a/report.json`) at
+relative deviation <= 1e-6, an envelope status of `pass`, and a delta of
+exactly corners x measurements distinct rows.
+
+Cold start:
+
+```bash
+python3 sim/diff-receiver-pex/run.py --dry-run    # pre-flight, no extraction
+python3 sim/diff-receiver-pex/run.py              # batch run, equivalence gate, staging
+```
+
+The default grid is a deliberate two-corner subset (`tt_27c_3.30v` plus
+`sf_100c_3.00v`, the binding corner of the committed 45-point record), not the
+frozen matrix: a subset cannot be committed as `corners.json`
+(`sim/harness/matrix.py` approves only `pvt45-mos` and `pvt225-mos-rc`), so raw
+evidence lives in the fleet artifact store (manifest under
+`manifests/artifacts/`, fetch with `klt artifact get`; no `corners/` directory
+is committed), staged with `python3 sim/run_store_evidence.py
+diff-receiver-pex <stage-dir>` into `campaigns/`, with records under
+`diff-receiver-pex/records/`.
+
 ## se-receiver-dp-thresholds, se-receiver-dm-thresholds
 
 The sky130 single-ended D+ / D- receivers (`design/se_receiver_dp.sch`,
@@ -238,6 +292,13 @@ minimum over 2.0-3.0 V, the 0.8 V / 2.0 V boundary probes, the internal
 Records: `se-receiver-dp-thresholds/records/`, `se-receiver-dm-thresholds/records/`.
 No Monte Carlo is run; each record says so. Both ran on fleet runner klt
 0.5.0 against client 0.7.0 with the version check in `warn` mode, as above.
+
+The D+ / D- pair is not hand-synchronised: `sim/make_se_receiver_tb.py` renders
+both `tb.json` files and all four `se_rx_*_tb.spice` decks (these two and the
+two `se-receiver-mismatch` Monte Carlo decks) from one per-leaf parameterisation.
+The threshold decks cross-reference their *sibling* experiment, so the pair is
+not a token substitution of one file. `--check` (run by `sim/tests`) fails if a
+committed copy is edited by hand.
 
 ## diff-receiver-mismatch, se-receiver-mismatch (Monte Carlo, T1 item 6)
 
@@ -274,10 +335,16 @@ does not rescue it.
 Reproduce (the campaigns are submitted to the batch fleet, never run locally):
 
 ```bash
-# klt yield needs the klt_yield_native extension, which is not on PyPI (klayout-tools#2900).
-# Build it into a throwaway venv, never into the host tools (see the worker rules):
+# `klt yield` needs the klt_yield_native extension. It is on PyPI (klt-yield-native 0.1.0,
+# 2026-11-05), reached by the `yield` extra -- install it into a throwaway venv inside the
+# worktree, never into the host tools (see the worker rules). The host klt on a loom-worker
+# is NOT yield-capable, so --klt must point at that venv:
+#   uv venv --python 3.12 <venv>
+#   uv pip install --python <venv>/bin/python "klayout-tools[yield]"
+# Prebuilt wheels cover Linux x86_64 and macOS arm64 only. On another platform, or for a klt
+# revision that is not on PyPI, build the extension from a klayout-tools checkout instead:
 #   maturin build --release -j 2 -o <wheel-dir>      # in klayout-tools native/yield
-#   uv venv --python 3.12 <venv> && uv pip install --python <venv>/bin/python <klayout-tools checkout> <wheel>
+#   uv pip install --python <venv>/bin/python <klayout-tools checkout> <wheel>
 python3 sim/run_mismatch.py --list
 python3 sim/run_mismatch.py diff-receiver-mismatch --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
 python3 sim/run_mismatch.py se-receiver-mismatch  --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
@@ -298,6 +365,30 @@ Choices worth knowing:
 - `--from-work <dir>` grades and records a batch-set that already finished (for example when the
   harness stopped after the fleet did its work) without resubmitting; it byte-compares the requests and
   decks with what `mc.json` generates and the record says it was collected that way.
+- `--corner <id>` (repeatable) runs and **records** only the corners it names, so a campaign too big
+  for one session lands one corner per record (`--corner tt` on `driver-matching-mismatch` is 4
+  requests instead of 16). This is sound because `mc.json`'s statistical convention already makes each
+  (receiver, corner) its own population with nothing pooled across corners: a corner-scoped record is
+  a complete claim about the corners it covers and says nothing about the rest. What makes that
+  readable rather than a loophole:
+  - the record declares its coverage (`evidence.json` `corners`), and **Corners run** says "covers N
+    of the M corner(s) mc.json declares", naming the corners it makes no claim about, so a partial
+    record cannot be skim-read as a full one;
+  - `mismatch_lint` derives campaign and yield completeness from that declaration instead of the full
+    matrix, and checks the declaration: against the frozen `mc.json` for committed evidence, and for
+    stored evidence against the committed manifest (`stored_coverage`, from the campaign object names)
+    plus the record's own coverage clause — an undeclared corner id, an altered corner definition under
+    a declared id, a duplicate, a **missing or empty** declaration, and corners the manifest ran but the
+    record does not claim are all rejected, so the lint cannot be satisfied by declaring less coverage
+    than was run;
+  - coverage is only the corner axis. Row coverage for sign-off is still decided by the manifest
+    `spec_rows` citations (`signoff/README.md` item 6), so a partial record cannot flip a row to `met`.
+  - an unknown id is an error naming the declared ids, and a repeated id selects once.
+
+  Note `run_corners.py --corner` (the PVT runner) means something different and has the opposite
+  recordability: there it is a `--no-write` debug subset of *process sections*. Here it selects by
+  **corner id** from `mc.json` and is recordable. `--only` is the `run_mismatch.py` flag that stays
+  unrecordable; it narrows campaign stems *within* the selected corners and never widens them.
 
 The D+ and D- receivers are identical netlists and both campaigns use seed 166, so their sample sets are
 numerically identical: one population counted for two receivers, not two independent draws (the record says so).
@@ -318,8 +409,17 @@ runner does, see "Stored evidence") and commit only `records/<record-id>.md` and
 `manifests/artifacts/<experiment>-<record-id>.manifest.json`; nothing is written under
 `campaigns/`. `run_mismatch.py` checks the store before it submits anything and exits 4 with
 nothing written if it is unusable; `--no-write` does not need the store. `mismatch_lint` checks a
-stored record's manifest citation and Stored evidence table and fails a record that also commits
-`campaigns/<record-id>/`; like stored corner records, it cannot re-derive PASS/FAIL from the bytes.
+stored record's manifest citation and Stored evidence table, cross-checks its `Corners run`
+coverage declaration against the committed manifest (`stored_coverage`: the campaign object names
+reveal which corners ran; when the manifest's `mc.json` sha256 equals the live `testbench/mc.json`
+the corner definitions are compared too, otherwise the check degrades to corner ids plus the
+record's own coverage clause, checked for internal consistency only: `covers all M` must equal the
+declared count and `covers N of the M` must name exactly the `M - N` corners it makes no claim
+about, distinct and disjoint from the declared ids — nothing committed records the frozen corner
+set, so a degraded-mode record's `M` is taken on the record's word rather than measured against
+the live spec), and fails a record
+that also commits `campaigns/<record-id>/`; like stored corner records, it cannot re-derive
+PASS/FAIL from the bytes.
 
 ## dplus-pullup-mismatch, driver-matching-mismatch (Monte Carlo, T1 item 6, #223)
 
@@ -339,15 +439,41 @@ A measurement without a `limits` entry (edge times, per-code resistances) is a h
   `testbench/make_mm_netlist.py`; a test checks it is current). Result: a passing code exists in 400/400 samples at
   both corners (see the record for the numbers); the control (1 kohm in series) is `detected`. The result
   depends on the assumed A_R; global sheet-resistance spread is in the 225-point record, not here.
-- **`driver-matching-mismatch`** (declared and tested, **not yet recorded**: the run needs more fleet time than one
-  builder session; see #223). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
+- **`driver-matching-mismatch`** (declared and tested, recorded one corner per record — all four corners:
+  `tt` is recorded as PASS — record `20261115-040553-f76df63`, both receivers, controls `detected`;
+  `sf40v36` is run and recorded as FAIL (`records/20261115-064022-f76df63.md`) —
+  mismatch puts 11-13 % of samples' rise/fall ratios above the 1.1 bound, far short of the 0.99 yield target (empirical
+  yield 0.87-0.90), and the 180 ohm crossover control lands just inside 1.3-2.0 V at this corner, so its verdict is
+  `not_detected`;
+  `fs100v36` is run and recorded as match PASS / xover FAIL (`records/20261115-172039-45b6298.md`) —
+  the mismatch tail pushes about a third of samples' crossovers past the 2.0 V bound (empirical yield
+  0.6675 / 0.655 against the 0.99 target), exactly where the 7 mV deterministic margin sits, and the
+  180 ohm crossover control cannot pull the crossover below 1.3 V at 3.6 V, so its verdict is
+  `not_detected`; the FAIL is recorded as evidence, not waived;
+  at both of those corners the 180 ohm crossover control lands inside the window, so the row has no
+  working sensitivity control there — `spec/decision-records/0008-xover-negative-control-load.md`
+  measures the load dependence at all four corners and proposes re-deriving the control at 100 ohm,
+  pending operator ratification;
+  `fs100v30` is run and recorded as match FAIL / xover PASS (`records/20261115-141134-38bdad2.md`) —
+  the mismatch tail of all four rise/fall ratios crosses the 0.9 lower bound (3-4 of 400 samples per
+  ratio, worst 0.8755) while both crossover rows PASS with empirical yield 1; the FAIL is recorded as
+  evidence, not waived). Receiver `match` grades the four rise/fall ratios (0.9-1.1), receiver `xover` grades
   the crossover voltage (1.3-2.0 V; graded because the 45-point record leaves 7 mV at fs / 100 C / 3.6 V). Corners:
   `tt`, `fs100v36` (crossover binding), `sf40v36` (high-side ratio, 1.0772) and `fs100v30` (low-side ratio,
   0.9278). Two receivers because no single deterministic control degrades both rows while keeping every
   measurement measurable (a 330 ohm load moves the ratios to about 1.5 but leaves the crossovers at about 1.44 V; a
   180 ohm load moves both crossovers to 1.26 V but the 90 % level is never reached). Sizing: a 100-sample shard of
-  this transient took about an hour on the fleet, so `mc.json` shards the nominal campaigns 8 ways. Reproduce with
-  `python3 sim/run_mismatch.py driver-matching-mismatch --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3`.
+  this transient took about an hour on the fleet, so `mc.json` shards the nominal campaigns 8 ways. All 16 requests
+  at once need more fleet time than one session holds, so run it **one corner per record** with `--corner`
+  (each run is 4 requests; the record names the corners it covers and claims nothing about the others):
+
+  ```bash
+  python3 sim/run_mismatch.py driver-matching-mismatch --corner tt \
+      --klt <venv>/bin/klt --max-in-flight 3 --capacity-retries 3
+  # then fs100v36, sf40v36, fs100v30 the same way (#223's children)
+  ```
+
+  Dropping `--corner` runs and records all four corners in one pass, as the other experiments do.
 
 ## dplus-pullup-tolerance
 

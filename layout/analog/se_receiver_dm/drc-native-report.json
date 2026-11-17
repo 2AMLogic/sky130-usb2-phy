@@ -774,10 +774,10 @@
     "satisfied": true
   },
   "provenance": {
-    "klt_version": "0.8.1.dev719+g526d52fbd7f9",
-    "klt_git_commit": "526d52fbd7f9d6fc08f26a14c19c9c9f3648c138",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@526d52fbd7f9d6fc08f26a14c19c9c9f3648c138",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev268+g17a90d6ed20d",
+    "klt_git_commit": "17a90d6ed20d265cc6c0ab746c2bd0ec6d273349",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@17a90d6ed20d265cc6c0ab746c2bd0ec6d273349",
+    "klayout_version": "0.30.13",
     "pdk": {
       "name": "sky130A",
       "source": "PDK_ROOT environment variable",
@@ -803,6 +803,6 @@
       "content_hash": "sha256:ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb",
       "role": "layout"
     },
-    "klayout_version_mismatch": false
+    "klayout_version_mismatch": true
   }
 }

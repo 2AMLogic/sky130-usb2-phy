@@ -537,8 +537,11 @@ device was re-derived for sky130. Nothing from the gf180 evidence (record
 `20260817-203552-a408cb6`, four FAIL rows) is a sky130 claim; the four rows
 were re-measured.
 
-**Status: schematic level only** (no layout, no parasitics, no mismatch, no
-passive-process spread, no level shifter). Evidence: "What the grids show"
+**Status: schematic level only** (no layout, no parasitics, no level shifter,
+no passive-process spread; local device mismatch is Monte-Carlo-recorded at
+`tt` (PASS), `sf40v36` (FAIL), `fs100v36` (match PASS, xover FAIL) and
+`fs100v30` (match FAIL, xover PASS) —
+`sim/driver-matching-mismatch/records/`). Evidence: "What the grids show"
 below. Regenerate the netlist with `design/export_netlist.sh
 differential_driver`; two consecutive exports on that host are byte-identical to the
 committed `design/netlist/differential_driver.spice` (xschem 3.4.4, installed
@@ -689,7 +692,20 @@ mismatch`, version check `warn`; the same skew as #111). Each record's
 Margins are thin in two places: crossover 6.7 mV below 2.0 V at the
 fast-P/slow-N, hot, high-supply corner, and matching 0.9279 at `fs_100c_3.00v`
 (bound 0.9). Mismatch and passive spread, which are not in the grid, could
-move both; the PASS is for the deterministic grid only. The four rows that
+move both; the PASS is for the deterministic grid only. Mismatch is now
+measured at `tt` (six graded rows, all PASS:
+`sim/driver-matching-mismatch/records/20261115-040553-f76df63.md`), at
+`sf40v36`, which fails all four rise/fall ratios against the 1.1 bound
+(`sim/driver-matching-mismatch/records/20261115-064022-f76df63.md`), and at
+`fs100v36` — the thin-margin crossover corner itself — where the mismatch tail
+does move it: match PASS (all four ratios yield 1), xover FAIL (empirical
+yield 0.6675 / 0.655 against the 0.99 target:
+`sim/driver-matching-mismatch/records/20261115-172039-45b6298.md`), and at
+`fs100v30`, the thinnest low-side matching margin: the four ratios' mismatch
+tails cross the 0.9 bound there (3-4 of 400 samples per ratio, worst 0.8755;
+crossover still PASSes —
+`sim/driver-matching-mismatch/records/20261115-141134-38bdad2.md`); passive
+spread is still unsimulated. The four rows that
 failed in gf180 pass here; that is a sky130 measurement, not an inference from
 gf180.
 
@@ -712,7 +728,7 @@ carries -14.2 nA to +0.05 nA. **Forcing the pad to 3.6 V on a 3.0 V rail
 forward-biases the output PMOS drain junction: -259 uA at `fs_100c_3.00v`** (-3
 nA at `tt` 27 C 3.3 V). This is real behaviour of the schematic when the pad
 can sit above `VDD` while the driver is disabled; no limit exists, so it is
-reported, not judged, and is tracked as a follow-up (#130). Enable/disable
+reported, not judged; DR-0006 (`spec/decision-records/0006-disabled-pad-leakage-envelope.md`) proposes an envelope and budget, awaiting operator ratification. Enable/disable
 transitions into a pad forced to `VDD`/2: disabled current up to 14.2 nA
 (`sf_100c_3.60v`), enable at 102.6-106.0 ns after the `OE` edge at 100 ns,
 release at 209.9-226.4 ns after the 200 ns edge, enabled current 33-59 mA
@@ -720,8 +736,14 @@ release at 209.9-226.4 ns after the 200 ns edge, enabled current 33-59 mA
 to 3.0 mA (`ff_-40c_3.60v`) during the transition; static supply current
 150.8-254.7 uA (bias network).
 
-**Limits of these PASSes.** (1) Schematic level: no mismatch / Monte Carlo, no
-extracted parasitics, no layout, no pad or ESD. (2) The grid does not
+**Limits of these PASSes.** (1) Schematic level: no extracted parasitics, no
+layout, no pad or ESD; mismatch / Monte Carlo recorded at all four corners —
+`tt` (PASS), `sf40v36` (FAIL — mismatch moves the rise/fall ratios out of
+0.9-1.1), `fs100v36` (match PASS, xover FAIL —
+`sim/driver-matching-mismatch/records/20261115-172039-45b6298.md`) and
+`fs100v30` (match FAIL, xover PASS —
+`sim/driver-matching-mismatch/records/20261115-141134-38bdad2.md`).
+(2) The grid does not
 exercise resistor or MIM capacitor process spread (item 2 above); both are in
 the edge rate and the output resistance. (3) The load for VOH/VOL awaits DR-0004
 ratification. (4) The harness job ran on a fleet runner older than the client.

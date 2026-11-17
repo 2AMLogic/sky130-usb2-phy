@@ -11,24 +11,24 @@
 # byte-reproducible only on a host with the same xschem build (`+` continuation
 # wrapping differs across builds); compare across hosts with `design/check_netlist.py`,
 # which ignores `+` wrapping.
+#
+# `--no-provenance-header` keeps klt's `** klt-netlist-inputs:` provenance line out
+# of design/netlist/<cell>.spice: the committed netlists predate that line and their
+# content hashes are pinned in signoff/evidence/item-1-analog-sources.json.
+# design/check_netlist.py passes the same flag so it compares against exactly what
+# this script writes. Needs klayout-tools newer than 0.8.0 (which
+# signoff/toolchain.json pins for grading and which predates the flag).
 set -euo pipefail
 cell="${1:?usage: export_netlist.sh <cell>}"
 here="$(cd "$(dirname "$0")" && pwd)"
-# Same search order as sim/harness/runner.py: $PDK_ROOT, ~/.ciel, then system roots; the first
-# tree holding sky130A wins and must be the open_pdks revision pinned in sim/corners.json.
+# Shared pinned-PDK search + revision check (sim/harness/pdk_pin.py, same order as the sim
+# harness: $PDK_ROOT, ~/.ciel, then system roots): prints the pinned sky130A xschemrc, or
+# refuses a stale tree naming both open_pdks revisions.
 if [ -z "${XSCHEMRC:-}" ]; then
-  pdk=""
-  for root in "${PDK_ROOT:-}" "$HOME/.ciel" /usr/share/pdk /usr/local/share/pdk /opt/pdk; do
-    if [ -n "$root" ] && [ -f "$root/sky130A/libs.tech/xschem/xschemrc" ]; then pdk="$root/sky130A"; break; fi
-  done
-  [ -n "$pdk" ] || { echo "export_netlist: sky130A not found (set PDK_ROOT or install it under ~/.ciel; see docs/environment-setup.md)" >&2; exit 2; }
-  pin="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["pdk"]["open_pdks_commit"])' "$here/../sim/corners.json")"
-  got="$(awk '$1=="open_pdks"{print $2}' "$pdk/SOURCES" 2>/dev/null || true)"
-  [ "$got" = "$pin" ] || { echo "export_netlist: $pdk is open_pdks ${got:-unknown}, but this repo pins open_pdks $pin (sim/corners.json)" >&2; exit 2; }
-  XSCHEMRC="$pdk/libs.tech/xschem/xschemrc"
+  XSCHEMRC="$(python3 "$here/../sim/harness/pdk_pin.py")" || exit 2
 fi
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' EXIT
-klt netlist "$here/$cell.sch" --block --rcfile "$XSCHEMRC" -o "$tmp/$cell.spice" >/dev/null
+klt netlist "$here/$cell.sch" --block --no-provenance-header --rcfile "$XSCHEMRC" -o "$tmp/$cell.spice" >/dev/null
 {
   echo "* $cell -- exported by design/export_netlist.sh from design/$cell.sch (xschem, sky130 symbols)"
   echo "* Do not edit: edit the schematic and re-run the export."

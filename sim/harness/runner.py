@@ -16,7 +16,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import HARNESS_VERSION, evidence_store as es, matrix as mx, results as rs
+from . import HARNESS_VERSION, evidence_store as es, matrix as mx, pdk_pin, results as rs
 from .integrity import sha256_bytes, sha256_file  # noqa: F401  (re-exported)
 from .evidence_store import StoreUnavailable  # noqa: F401  (re-exported for the CLI)
 
@@ -28,34 +28,15 @@ class RunError(RuntimeError):
     pass
 
 
-def pdk_roots() -> list[Path]:
-    """PDK search roots in order: explicit `$PDK_ROOT`, then ciel's `~/.ciel`, then system paths."""
-    import os
-
-    roots = []
-    if os.environ.get("PDK_ROOT"):
-        roots.append(Path(os.environ["PDK_ROOT"]))
-    roots += [Path("~/.ciel").expanduser(), Path("/usr/share/pdk"), Path("/usr/local/share/pdk"),
-              Path("/opt/pdk")]
-    return roots
-
-
 def find_pdk_dir(name: str) -> Path | None:
-    for root in pdk_roots():
-        if (root / name / "libs.tech" / "ngspice").is_dir():
-            return root / name
-    return None
+    """The installed `<name>` tree with an ngspice library dir, or None (shared search: `pdk_pin`)."""
+    hit = pdk_pin.search_tree(name, pdk_pin.ngspice_tree)
+    return hit[1] if hit else None
 
 
 def pdk_open_pdks_commit(pdk: Path) -> str:
-    """The open_pdks revision in the tree's `SOURCES` file, or "unknown" (which never matches a pin)."""
-    sources = pdk / "SOURCES"
-    if sources.is_file():
-        for line in sources.read_text().splitlines():
-            parts = line.split()
-            if len(parts) >= 2 and parts[0] == "open_pdks":
-                return parts[1]
-    return "unknown"
+    """The open_pdks revision in the tree's `SOURCES` file, or "unknown" (shared parse: `pdk_pin`)."""
+    return pdk_pin.open_pdks_commit(pdk)
 
 
 def lib_sections(lib_path: Path) -> set[str]:
@@ -104,14 +85,10 @@ def section_evidence(lib: Path, sections) -> tuple[dict, list[str]]:
 
 def check_env(matrix: mx.Matrix) -> dict:
     """Confirm, on this host, the PDK, model library and corner sections."""
-    pdk = find_pdk_dir(matrix.pdk["name"])
-    if pdk is None:
-        raise RunError(f"{matrix.pdk['name']} not found (set PDK_ROOT or install it under ~/.ciel: see docs/environment-setup.md)")
-    commit = pdk_open_pdks_commit(pdk)
-    if commit != matrix.pdk["open_pdks_commit"]:
-        raise RunError(f"PDK at {pdk} is open_pdks {commit}, but the pin in sim/corners.json is "
-                       f"open_pdks {matrix.pdk['open_pdks_commit']}; install the pinned revision under "
-                       "~/.ciel or point PDK_ROOT at it")
+    _, pdk, commit, _ = pdk_pin.resolve_pinned_tree(
+        matrix.pdk["name"], pdk_pin.ngspice_tree,
+        pin=matrix.pdk["open_pdks_commit"], error=RunError,
+    )
     lib = pdk / matrix.pdk["lib"]
     if not lib.is_file():
         raise RunError(f"model library missing: {lib}")
@@ -167,6 +144,21 @@ def invoke_klt(request_path: Path, outdir: Path, backend: str, workdir: Path,
             f"{(proc.stderr or proc.stdout)[-1500:]}"
         ) from exc
     return report, proc.stderr or "", proc.returncode
+
+
+def snapshot_body(base: Path, netlist: str, includes: list[str]) -> bytes:
+    """The frozen netlist snapshot body, in the one shared format every runner emits.
+
+    The deck's bytes, then for each include a `\n* ---- included: <path> ----\n` banner
+    followed by the included file's bytes. Inlining is what makes the snapshot reproduce the
+    simulated circuit (a deck whose DUT sits behind an `.include` has no device cards alone)
+    and keeps its bytes distinct from the deck staged into the artifact store, so
+    `artifact_manifest.committed_duplicates` has no byte-identity to match.
+    """
+    body = (base / netlist).read_bytes()
+    for inc in includes:  # design netlists the deck instantiates, frozen into the snapshot
+        body += b"\n* ---- included: " + inc.encode() + b" ----\n" + (base / inc).read_bytes()
+    return body
 
 
 def write_evidence(exp_dir: Path, rid: str, parts: dict) -> Path:
@@ -271,15 +263,23 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict, stored: tup
     if meta.get("method"):
         lines += ["", "## Method", ""] + [f"- {x}" for x in meta["method"]]
     if detailed:
-        lines += ["", "## Measurement ranges over the grid", ""] + _measurement_ranges(m)
+        measured = any(r["measurements"] for r in m["results"])
+        lines += ["", "## Measurement ranges over the grid", ""]
+        if measured:
+            lines += _measurement_ranges(m)
+        else:
+            lines += ["No corner produced a measurement; the ranges table is omitted."]
         if meta.get("corner_table"):
             cols = meta["corner_table"]
-            lines += ["", "## Per-corner selection", "",
-                      "| corner | " + " | ".join(f"`{c}`" for c in cols) + " |",
-                      "|---|" + "---|" * len(cols)]
-            for r in m["results"]:
-                cells = [f"{r['measurements'][c]:.6g}" if c in r["measurements"] else "-" for c in cols]
-                lines.append(f"| `{r['corner_id']}` | " + " | ".join(cells) + " |")
+            lines += ["", "## Per-corner selection", ""]
+            if measured:
+                lines += ["| corner | " + " | ".join(f"`{c}`" for c in cols) + " |",
+                          "|---|" + "---|" * len(cols)]
+                for r in m["results"]:
+                    cells = [f"{r['measurements'][c]:.6g}" if c in r["measurements"] else "-" for c in cols]
+                    lines.append(f"| `{r['corner_id']}` | " + " | ".join(cells) + " |")
+            else:
+                lines += ["No corner produced a measurement; the per-corner table is omitted."]
         lines += ["", "## Failures (corner id: measurement and value)", ""]
         lines += [f"- {p}" for p in m["problems"]] if m["problems"] else ["- none"]
     lines += ["", meta["footer"], ""]
@@ -301,9 +301,7 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
         raise RunError(str(exc)) from exc
     matrix_path = mx.CORNERS_JSON if matrix.matrix_id == mx.LEGACY_ID else (
         mx.SIM_DIR / mx.APPROVED_MATRICES[matrix.matrix_id]["file"])
-    body = (exp_dir / "testbench" / tb["netlist"]).read_bytes()
-    for inc in tb.get("include", []):  # design netlists the deck instantiates, frozen into the snapshot
-        body += b"\n* ---- included: " + inc.encode() + b" ----\n" + (exp_dir / "testbench" / inc).read_bytes()
+    body = snapshot_body(exp_dir / "testbench", tb["netlist"], tb.get("include", []))
 
     full = not any(subset.values())
     if record and not full:

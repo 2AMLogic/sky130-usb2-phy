@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Re-grade this block against the klayout-tools T1 checklist, and fail on rot.
 
-    python3 signoff/check.py            # the gate CI runs
-    python3 signoff/check.py --regen    # rewrite signoff/signoff-report.json
+    python3 signoff/check.py              # the gate CI runs
+    python3 signoff/check.py --regen      # rewrite signoff/signoff-report.json
+    python3 signoff/check.py --pins-only  # the re-hash checks only, no klt
 
 `signoff/block-manifest.json` is this block's machine-readable T1 claim and
 `signoff/signoff-report.json` is the verdict `klt signoff --manifest` rendered
@@ -38,9 +39,10 @@ alone cannot cover all of them:
    envelope and manifest pins. Item 1 (digital) is cited through a
    `klt signoff --attest` envelope instead; `check_attested` re-hashes the
    files that envelope recorded (re-attest to refresh it).
-4. **The item-6 digital statement is bound to the spec.** The grader hashes
-   the rows file and the statement but never opens `spec/usb2-phy.md`; this
-   re-hashes the markdown against the rows file's recorded source.
+4. **The spec-bound row files are bound to the spec.** The grader hashes
+   the rows files and statements but never opens `spec/usb2-phy.md`; this
+   re-hashes the markdown against each recorded source (the item-6 digital
+   statement, the item-6 analog statistical rows, the item-5 analog row set).
 5. **The grader itself runs clean.** Exit 0 (`tier: "T1"`) or 3 (`tier: null`,
    at least one item unmet) are both fine -- an all-`unmet` report is a
    correct result. Exit 1/2 mean the manifest is malformed,
@@ -57,7 +59,15 @@ does not open the artifact behind a *native* envelope either (`input_verified`
 arrives upstream in klayout-tools#2196), so the leaf GDS and the LVS reference
 netlist are re-hashed here against what each envelope recorded.
 
-Pure stdlib; no PDK, no simulator, no Icarus. Only `klt` on PATH.
+`--pins-only` runs exactly the re-hash half of the gate -- the eight checks
+above that need nothing but the stdlib -- and skips the grader-dependent
+steps (toolchain pin, `klt signoff`, stale/drift comparison). It exists
+because those re-hash checks are the ones a routine edit stales: it answers
+"did I just stale a pin?" in seconds, with no pinned wheel provisioned,
+instead of that question waiting for the heavyweight `signoff` CI job.
+
+Pure stdlib; no PDK, no simulator, no Icarus. Only `klt` on PATH -- and
+`--pins-only` runs without even that (see below).
 """
 
 from __future__ import annotations
@@ -77,7 +87,6 @@ MANIFEST = SIGNOFF_DIR / "block-manifest.json"
 REPORT = SIGNOFF_DIR / "signoff-report.json"
 TOOLCHAIN = SIGNOFF_DIR / "toolchain.json"
 EVIDENCE_DIR = SIGNOFF_DIR / "evidence"
-INVENTORY_DIR = SIGNOFF_DIR / "inventory"
 
 # The single artifact the item-8 generic envelope wraps today. Keep in one
 # place: --regen re-derives both pins (the envelope's and the manifest's)
@@ -124,6 +133,21 @@ ITEM6_STATEMENT = "signoff/evidence/item-6-digital-not-applicable.json"
 # hash exactly as ITEM6_SPEC does; the manifest's row set must equal its ids.
 ITEM6_ANALOG_KEY = "6.analog"
 ITEM6_ANALOG_SPEC = "signoff/spec/analog-statistical-rows.json"
+# Item 5 (analog): the full analog-partition row set of section 6 is declared
+# under `spec_rows."5.analog"` (evidenced rows bare, uncovered rows with a
+# `gap` reason) and the committed 45-point `klt sim` corner reports are cited
+# against the rows they measured. ITEM5_ANALOG_SPEC records the markdown's
+# hash exactly as the item-6 files do; the manifest's row set must equal its
+# ids. Unlike a `klt yield` citation, the pin here is the sha256 of the cited
+# report.json itself -- a corner report carries its own provenance and names
+# no separate samples document.
+ITEM5_ANALOG_KEY = "5.analog"
+ITEM5_ANALOG_SPEC = "signoff/spec/analog-rows.json"
+
+# Artifact-store-resolved item-6 citations (issue #331): the store manifests
+# recording the driver-matching and pull-up yield bytes live here, committed
+# while the bytes themselves stay in the fleet store (manifests/artifacts/README.md).
+STORE_MANIFEST_DIR = "manifests/artifacts"
 
 # Citations produced by `klt signoff --attest` (klt >= 0.8.0, newer than the
 # 0.7.0 grader): manifest key -> (inventory, envelope). The inventory carries
@@ -148,8 +172,8 @@ RAN_CLEAN = (0, 3)
 
 # The grading build identity, asserted two ways (see check 1 above). Keep in
 # sync with signoff/toolchain.json and the `signoff` CI job's pip pin.
-GRADER_PACKAGE_VERSION = "0.8.0"
-GRADER_GIT_TAG = "v0.8.0"
+GRADER_PACKAGE_VERSION = "0.9.1"
+GRADER_GIT_TAG = "v0.9.1"
 
 
 def fail(msg: str) -> None:
@@ -899,6 +923,34 @@ def yield_samples_pin(root: Path, report_rel: str) -> str | None:
     return sha256_file(path) if path.is_file() else None
 
 
+def store_yield_samples_pin(root: Path, manifest_rel: str, member: str) -> str | None:
+    """The pin for an artifact-store-resolved `klt yield` citation.
+
+    The driver-matching and pull-up yield bytes live in the fleet artifact
+    store, not git; the committed `manifests/artifacts/*.manifest.json` is
+    the only in-tree record of them. The pin is therefore structural: the
+    store manifest must be committed and readable, it must list the named
+    `*.yield.json` entry, and the paired `*.samples.json` entry supplies the
+    pin exactly as :func:`yield_samples_pin` derives it from the bytes
+    themselves. Byte-level verification of those members happens when the
+    store is read (`klt artifact get`/`verify` re-hash every fetched object
+    against these recorded sha256s); it is not available offline.
+    """
+    prefix = f"{STORE_MANIFEST_DIR}/"
+    if not manifest_rel.startswith(prefix) or not member.endswith(".yield.json"):
+        return None
+    try:
+        entries = json.loads((root / manifest_rel).read_text())["entries"]
+        by_name = {e["name"]: e for e in entries if isinstance(e, dict)}
+        by_name[member]["sha256"]  # the yield entry must exist and be shaped
+        samples = by_name[member[: -len(".yield.json")] + ".samples.json"]["sha256"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+    if not isinstance(samples, str) or not samples:
+        return None
+    return f"sha256:{samples.removeprefix('sha256:')}"
+
+
 def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
     """The item-6 analog row set and its yield citations are bound to the tree.
 
@@ -906,6 +958,15 @@ def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
     manifest's declared `spec_rows."6.analog"` to equal that file's ids, and
     requires every cited `klt yield` report to name only declared rows and to
     still hash (via its samples document) to the manifest's pin.
+
+    Two citation shapes are accepted. A committed-report citation (`file`)
+    is re-hashed from the bytes in the tree, exactly as the grader does. A
+    store-resolved citation (`artifact_manifest` + `artifact_member`) pins
+    the samples document structurally through the committed store manifest
+    (`store_yield_samples_pin`): its bytes are not in git, so the check
+    verifies the manifest and both entries are present and consistent and
+    that the pin equals the manifest's recorded samples sha256 -- the byte
+    re-hash happens when the store is read, never here.
     """
     root = root or REPO_ROOT
     try:
@@ -930,11 +991,45 @@ def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
         fail(f"signoff/block-manifest.json: {ITEM6_ANALOG_KEY} must cite the committed klt yield reports")
         return False
     for cite in citations:
-        rel = cite.get("file", "")
+        has_file = isinstance(cite.get("file"), str) and bool(cite["file"])
+        has_store = bool(cite.get("artifact_manifest")) and bool(cite.get("artifact_member"))
+        if has_file == has_store:
+            fail(
+                "a 6.analog citation must name either a committed report ('file') "
+                "or an artifact-store manifest and member ('artifact_manifest' + "
+                "'artifact_member'), never both or neither"
+            )
+            ok = False
+            continue
+        rel = cite["file"] if has_file else f"{cite['artifact_manifest']}#{cite['artifact_member']}"
         undeclared = sorted(set(cite.get("rows", [])) - set(spec_ids))
         if not cite.get("rows") or undeclared:
             fail(f"{rel}: must cite declared rows only; undeclared {undeclared or 'none cited'}")
             ok = False
+        if has_store:
+            if not isinstance(cite.get("content_hash"), str) or not cite["content_hash"]:
+                fail(f"{rel}: a store-resolved citation must pin its samples document's content_hash")
+                ok = False
+                continue
+            actual = store_yield_samples_pin(
+                root, cite["artifact_manifest"], cite["artifact_member"]
+            )
+            if actual is None:
+                fail(
+                    f"{rel}: the artifact-store manifest or the yield/samples "
+                    "entries it must name is unreadable or inconsistent"
+                )
+                ok = False
+            elif actual != cite["content_hash"]:
+                fail(
+                    f"{rel}: pinned to {cite['content_hash']} but the store manifest "
+                    f"records {actual} for its samples document.\n"
+                    "     The store manifests are append-only: cite the entry that "
+                    "was produced, or re-pin deliberately "
+                    "(python3 signoff/check.py --regen)."
+                )
+                ok = False
+            continue
         actual = yield_samples_pin(root, rel)
         if actual is None:
             fail(f"{rel}: report or the samples document it names is unreadable")
@@ -952,12 +1047,71 @@ def check_item6_analog(manifest: dict, root: Path | None = None) -> bool:
     return ok
 
 
-def refresh_item6() -> None:
-    """--regen: re-pin the item-6 citation to the current rows file and statement.
+def check_item5_analog(manifest: dict, root: Path | None = None) -> bool:
+    """The item-5 analog row set and its 45-point corner citations are bound.
 
-    The spec-markdown hash inside the rows file is deliberately NOT refreshed:
-    re-pinning it is the human act of re-reading the spec and re-accounting
-    for its rows, not a derivation.
+    Re-hashes the spec markdown against the analog rows file, requires the
+    manifest's declared `spec_rows."5.analog"` to equal that file's ids, and
+    requires every cited `klt sim` corner report to name only declared rows
+    and to still hash (the report itself) to the manifest's pin.
+    """
+    root = root or REPO_ROOT
+    try:
+        spec = json.loads((root / ITEM5_ANALOG_SPEC).read_text())
+    except (OSError, ValueError) as exc:
+        fail(f"item 5 (analog): rows file unreadable ({exc})")
+        return False
+    ok = _check_spec_hash(spec, ITEM5_ANALOG_SPEC, root, "analog")
+    spec_ids = sorted(r.get("id") for r in spec.get("rows", []))
+    declared = sorted(
+        r.get("id") for r in (manifest.get("spec_rows") or {}).get(ITEM5_ANALOG_KEY, [])
+    )
+    if declared != spec_ids:
+        fail(
+            f"signoff/block-manifest.json: spec_rows.{ITEM5_ANALOG_KEY} must equal the "
+            f"rows of {ITEM5_ANALOG_SPEC}; missing {sorted(set(spec_ids) - set(declared))}, "
+            f"extra {sorted(set(declared) - set(spec_ids))}"
+        )
+        ok = False
+    citations = (manifest["evidence"].get(ITEM5_ANALOG_KEY)) or []
+    if not isinstance(citations, list) or not citations:
+        fail(f"signoff/block-manifest.json: {ITEM5_ANALOG_KEY} must cite the committed klt sim corner reports")
+        return False
+    for cite in citations:
+        rel = cite.get("file", "")
+        undeclared = sorted(set(cite.get("rows", [])) - set(spec_ids))
+        if not cite.get("rows") or undeclared:
+            fail(f"{rel}: must cite declared rows only; undeclared {undeclared or 'none cited'}")
+            ok = False
+        path = root / rel
+        if not path.is_file():
+            fail(f"{rel}: cited corner report is missing from the tree")
+            ok = False
+            continue
+        actual = sha256_file(path)
+        if actual != cite.get("content_hash"):
+            fail(
+                f"{rel}: pinned to {cite.get('content_hash')} but the report now "
+                f"hashes to {actual}.\n"
+                "     The cited report changed; recorded results are append-only. "
+                "Restore it, or re-pin deliberately (python3 signoff/check.py --regen)."
+            )
+            ok = False
+    if ok:
+        print(f"ok   {ITEM5_ANALOG_SPEC}: bound to {spec['source']['file']}; {len(citations)} corner reports cited against {len(spec_ids)} declared rows")
+    return ok
+
+
+def refresh_item6() -> None:
+    """--regen: re-pin the item-6 and item-5 analog citations to the tree.
+
+    Re-pins each cited `klt yield` report via its samples document and each
+    cited item-5 `klt sim` corner report directly. A store-resolved citation
+    re-pins from its committed store manifest (offline; the manifest's
+    recorded samples sha256 is the pin). The spec-markdown hash
+    inside either rows file is deliberately NOT refreshed: re-pinning it is
+    the human act of re-reading the spec and re-accounting for its rows, not
+    a derivation.
     """
     manifest = json.loads(MANIFEST.read_text())
     entry = (manifest["evidence"].get(ITEM6_KEY) or {}).get("not_applicable")
@@ -965,10 +1119,68 @@ def refresh_item6() -> None:
         for part, rel in (("spec", ITEM6_SPEC), ("statement", ITEM6_STATEMENT)):
             entry[part] = {"file": rel, "content_hash": sha256_file(REPO_ROOT / rel)}
     for cite in manifest["evidence"].get(ITEM6_ANALOG_KEY) or []:
-        pin = yield_samples_pin(REPO_ROOT, cite["file"])
+        if cite.get("artifact_manifest") and cite.get("artifact_member"):
+            pin = store_yield_samples_pin(
+                REPO_ROOT, cite["artifact_manifest"], cite["artifact_member"]
+            )
+        else:
+            pin = yield_samples_pin(REPO_ROOT, cite["file"])
         if pin is not None:
             cite["content_hash"] = pin
+    for cite in manifest["evidence"].get(ITEM5_ANALOG_KEY) or []:
+        path = REPO_ROOT / cite["file"]
+        if path.is_file():
+            cite["content_hash"] = sha256_file(path)
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
+
+
+def pinned_grader_version() -> str:
+    """The grader to install for a re-pin, read from the pin so the recipe
+    printed below survives every future re-pin instead of rotting on one
+    hardcoded version string."""
+    try:
+        return json.loads(TOOLCHAIN.read_text())["klt"]["package_version"]
+    except (OSError, ValueError, KeyError):
+        return GRADER_PACKAGE_VERSION
+
+
+def print_pins_refresh_recipe() -> None:
+    """Print how to provision the pinned grader and re-pin.
+
+    A red re-hash check already names the stale member; this closes the
+    follow-up "and how do I refresh it?" without a second lookup. Only the
+    venv provisioning is reproduced here -- the PATH rules have a single
+    home, signoff/README.md's "How to re-run the grading", and this hint
+    defers to that recipe instead of keeping a second copy that drifts.
+    """
+    ver = pinned_grader_version()
+    sys.stderr.write(
+        "     To refresh the pins, run --regen under the pinned grader:\n"
+        "       uv venv /tmp/signoff-grader\n"
+        f'       uv pip install --python /tmp/signoff-grader/bin/python "klayout-tools[functional-verification]=={ver}"\n'
+        "       # (uv venv ships no pip; python -m pip fails in it)\n"
+        '     Then follow signoff/README.md "How to re-run the grading" for the\n'
+        "     PATH rules (a klt-only wrapper dir -- never the venv's bin/) and\n"
+        "     the --regen / re-grade commands themselves.\n"
+    )
+
+
+def run_rehash_checks(manifest: dict) -> bool:
+    """The nine stdlib re-hash checks -- the grader-free half of the gate.
+
+    Shared by the default path and --pins-only so the two can never drift
+    into checking different things.
+    """
+    ok = check_generic_envelopes(manifest)
+    ok = check_inventory_members() and ok
+    ok = check_item9_complete() and ok
+    ok = check_anchored_envelopes(manifest) and ok
+    ok = check_item6_binding(manifest) and ok
+    ok = check_item6_analog(manifest) and ok
+    ok = check_item5_analog(manifest) and ok
+    ok = check_attested(manifest) and ok
+    ok = check_native_citations(manifest) and ok
+    return ok
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -981,18 +1193,37 @@ def main(argv: list[str] | None = None) -> int:
             "of comparing against it"
         ),
     )
+    parser.add_argument(
+        "--pins-only",
+        action="store_true",
+        help=(
+            "run only the stdlib re-hash checks and skip every grader-dependent "
+            "step: answers 'did I just stale a pin?' with no klt on PATH"
+        ),
+    )
     args = parser.parse_args(argv)
 
-    if shutil.which("klt") is None:
-        fail(
-            "klt is not on PATH. Install the pinned grader:\n"
-            f"       pip install klayout-tools=={GRADER_PACKAGE_VERSION}\n"
-            "     (see signoff/toolchain.json for why this pin is what CI "
-            "also installs)"
+    if args.pins_only and args.regen:
+        parser.error(
+            "--pins-only and --regen are mutually exclusive: --pins-only runs "
+            "without the pinned grader, --regen rewrites pins and the report "
+            "with it. Run them separately."
         )
-        return 1
 
-    ok = check_toolchain_pin()
+    if not args.pins_only:
+        if shutil.which("klt") is None:
+            fail(
+                "klt is not on PATH. Install the pinned grader:\n"
+                f"       pip install klayout-tools=={GRADER_PACKAGE_VERSION}\n"
+                "     (see signoff/toolchain.json for why this pin is what CI "
+                "also installs); or run the grader-free subset as "
+                "`python3 signoff/check.py --pins-only`"
+            )
+            return 1
+        ok = check_toolchain_pin()
+    else:
+        ok = True
+
     manifest = load_manifest()
 
     if args.regen and manifest is not None:
@@ -1008,14 +1239,15 @@ def main(argv: list[str] | None = None) -> int:
     if manifest is None:
         return 1
 
-    ok = check_generic_envelopes(manifest) and ok
-    ok = check_inventory_members() and ok
-    ok = check_item9_complete() and ok
-    ok = check_anchored_envelopes(manifest) and ok
-    ok = check_item6_binding(manifest) and ok
-    ok = check_item6_analog(manifest) and ok
-    ok = check_attested(manifest) and ok
-    ok = check_native_citations(manifest) and ok
+    if args.pins_only:
+        ok = run_rehash_checks(manifest)
+        if ok:
+            print("ok   pins-only: no pinned member has moved (grader-free)")
+        else:
+            print_pins_refresh_recipe()
+        return 0 if ok else 1
+
+    ok = run_rehash_checks(manifest) and ok
 
     stdout, report, ran = run_grader()
     if not ran:

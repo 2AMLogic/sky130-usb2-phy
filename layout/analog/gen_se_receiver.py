@@ -14,52 +14,22 @@ emitted in a fixed order, so `gen.py --check` compares sha256 of the whole file.
 
 from __future__ import annotations
 
-import argparse
-import hashlib
 import sys
-import tempfile
 from pathlib import Path
 
-import klayout.db as db
-
 from gen_common import (
-    DBU,
     GRID,
-    LIC,
-    LIC_PITCH,
+    L,
     PAD,
     STRIP_W,
     Canvas,
     Ports,
     mos,
-    snap,
+    run_gds,
     tap_ring,
+    xhigh_resistor,
 )
 
-
-# --- sky130A drawn-layer table (GDS layer/datatype) -------------------------
-L = {
-    "nwell": (64, 20),
-    "diff": (65, 20),
-    "tap": (65, 44),
-    "poly": (66, 20),
-    "licon": (66, 44),
-    "li1": (67, 20),
-    "mcon": (67, 44),
-    "met1": (68, 20),
-    "via1": (68, 44),
-    "met2": (69, 20),
-    "via2": (69, 44),
-    "met3": (70, 20),
-    "nsdm": (93, 44),
-    "psdm": (94, 20),
-    "npc": (95, 20),
-    "hvi": (75, 20),
-    "urpm": (79, 20),
-    "poly_res": (66, 13),
-    "met1_label": (68, 5),
-    "met3_label": (70, 5),
-}
 
 # --- drawn dimensions, um (all on the 0.005 grid) ---------------------------
 V1 = 0.15  # via1 edge
@@ -67,73 +37,28 @@ V2 = 0.20  # via2 edge
 TRUNK_W = 0.40  # met3 trunk width
 TRUNK_PITCH = 0.70  # met3 trunk pitch
 V2_PAD = 0.38  # met2 pad around via2 (0.09 enclosure on the sides)
-RES_W = 1.41  # sky130_fd_pr__res_xhigh_po_1p41 body width
-RES_GAP = 0.50  # poly space between serpentine legs
 # (netlist instance, L in um, serpentine legs). Legs are even so both heads sit at the top.
 RESISTORS = (("XR2", 14.0, 2), ("XR1", 19.0, 2), ("XRBIAS", 140.0, 14))
 RES_SPACE = 1.2  # poly space between neighbouring resistors
 
 
+# The differential receiver's bias is a single XRBIAS (no VREF divider), drawn beside the
+# NMOS row ahead of the PMOS row instead of east of the n-well.
+BIAS_ONLY = (("XRBIAS", 140.0, 14),)
 
-def resistor(cv: Canvas, x0: float, y0: float, res_l: float, n: int) -> tuple[tuple[float, float], tuple[float, float]]:
-    """Serpentine sky130_fd_pr__res_xhigh_po_1p41, centreline length `res_l`, `n` legs.
 
-    Both terminal heads are at the top, outside the `poly_res` marker, so the
-    SKY130 runset sees exactly two terminals. Returns the (x, y) centre of each
-    head's met1 pad.
+def build(top: str, din: str, rxout: str, vref: str = "VREF", *, differential: bool = False) -> Canvas:
+    """Draw the receiver leaf `top` with input net `din` and output net `rxout`.
+
+    The single-ended leaves tie the second input to a VREF divider (three resistors, east of the
+    n-well). With `differential` the second input `vref` is a pin (DM) and the lone bias
+    resistor sits beside the NMOS row; that floorplan is a different shape order and a
+    0.005 um different ring margin, kept so the committed GDS stays byte-identical.
     """
-    w = RES_W
-    pitch = w + RES_GAP
-    # centreline: n legs of `leg` + (n-1) links of `pitch`
-    leg = snap((res_l - (n - 1) * pitch) / n)
-    # leg centreline x_i; vertical centreline from yb to yt
-    xs = [x0 + w / 2 + i * pitch for i in range(n)]
-    yb = y0 + w / 2
-    yt = yb + leg
-    region = db.Region()
-    for x in xs:
-        region.insert(db.DBox(x - w / 2, yb - w / 2, x + w / 2, yt + w / 2).to_itype(DBU))
-    for i in range(n - 1):
-        y = yb if i % 2 == 0 else yt
-        region.insert(db.DBox(xs[i] - w / 2, y - w / 2, xs[i + 1] + w / 2, y + w / 2).to_itype(DBU))
-    region.merge()
-    # The first and last leg are free at the top: trim them to the centreline
-    # end so area / width is the centreline length (mitred corners count once).
-    for x in (xs[0], xs[-1]):
-        region -= db.Region(db.DBox(x - w / 2, yt, x + w / 2, yt + w / 2).to_itype(DBU))
-    area_um2 = region.area() * DBU * DBU
-    cv.cell.shapes(cv.idx["poly"]).insert(region)
-    # With two legs there is no top link: the marker ends at the head edge, or the gap
-    # between the two cut-outs would leave a sliver narrower than urpm.width.1.
-    marker = db.Region(db.DBox(x0, y0, xs[-1] + w / 2, yt + (0 if n == 2 else w / 2)).to_itype(DBU))
-    for x in (xs[0], xs[-1]):
-        marker -= db.Region(db.DBox(x - w / 2 - 0.01, yt, x + w / 2 + 0.01, yt + w).to_itype(DBU))
-    cv.cell.shapes(cv.idx["poly_res"]).insert(marker)
-    cv.cell.shapes(cv.idx["urpm"]).insert(marker)
-    # heads above the marker edge (marker top == yt): poly contact pads
-    head_pads = []
-    for x in (xs[0], xs[-1]):
-        cv.rect("poly", x - w / 2, yt, x + w / 2, yt + 0.5)
-        yl = yt + 0.25
-        for k in range(4):
-            cx = x + (k - 1.5) * LIC_PITCH
-            cv.centred("licon", cx, yl, LIC, LIC)
-            cv.centred("mcon", cx, yl, LIC, LIC)
-        cv.rect("npc", x - w / 2 + 0.1, yl - 0.185, x + w / 2 - 0.1, yl + 0.185)
-        cv.rect("li1", x - 0.64, yl - 0.165, x + 0.64, yl + 0.165)
-        cv.rect("met1", x - 0.66, yl - 0.175, x + 0.66, yl + 0.175)
-        head_pads.append((x, yl))
-    cv.rect("psdm", x0 - 0.3, 0.3, xs[-1] + w / 2 + 0.3, yt + 0.5 + 0.3)
-    print(f"resistor body area {area_um2:.3f} um2 -> L = {area_um2 / w:.3f} um (target {res_l})", file=sys.stderr)
-    return head_pads[0], head_pads[1]
-
-
-def build(top: str, din: str, rxout: str) -> Canvas:
-    """Draw the receiver leaf `top` with input net `din` and output net `rxout`."""
     # Nets that are cell pins. Only these are labelled: the SKY130 LVS runset turns
     # every labelled net into a circuit pin, so labelling internal nets would give
-    # the layout ten pins against the schematic's four.
-    pin_nets = {din, rxout, "VDD", "VSS"}
+    # the layout ten pins against the schematic's four (five for the differential leaf).
+    pin_nets = {din, rxout, "VDD", "VSS"} | ({vref} if differential else set())
     cv = Canvas(top, L)
     ports = Ports()
 
@@ -165,13 +90,43 @@ def build(top: str, din: str, rxout: str) -> Canvas:
     x = mos(
         cv, ports, "n", x, N_DIFF_Y, 10.0,
         ["LOADDIODE", "TAIL", "AMPOUT", "TAIL", "LOADDIODE"],
-        [din, "VREF", "VREF", din], "VSS", rail_top_n,
+        [din, vref, vref, din], "VSS", rail_top_n,
     ) + gap
     # MN_B1: W2 m1. D=BUF1 G=AMPOUT.
     x = mos(cv, ports, "n", x, N_DIFF_Y, 2.0, ["VSS", "BUF1"], ["AMPOUT"], "VSS", rail_top_n) + gap
     # MN_B2: W5 m1. D=RXOUT G=BUF1.
     x = mos(cv, ports, "n", x, N_DIFF_Y, 5.0, ["VSS", rxout], ["BUF1"], "VSS", rail_top_n)
     n_x1 = x
+
+    # ---------------------------------------------------------------- resistor
+    # Terminal nets (left head, right head) per netlist instance. R2 and R1 share VREF
+    # on adjacent heads; the VREF trunk joins them to the input pair's gates.
+    res_nets = {"XR2": ("VSS", "VREF"), "XR1": ("VREF", "VDD"), "XRBIAS": ("IBIASN", "VDD")}
+    vdd_heads: list[tuple[float, float]] = []
+
+    def draw_resistors(res_x0: float) -> float:
+        """Draw the resistor block from `res_x0`; return the ring's east edge."""
+        rx = res_x0
+        for name, res_l, legs in BIAS_ONLY if differential else RESISTORS:
+            head_l, head_r, _ = xhigh_resistor(cv, rx, N_DIFF_Y, res_l, legs)
+            for head, net in zip((head_l, head_r), res_nets[name]):
+                if net == "VDD":
+                    vdd_heads.append(head)
+                elif net == "VSS":
+                    # met1 drop on the resistor's left, straight down to the VSS rail strip
+                    hx, hy = head
+                    cv.rect("met1", rx - 0.5, N_RING_Y0, rx - 0.21, hy + 0.175)
+                    cv.rect("met1", rx - 0.5, hy - 0.175, hx - 0.4, hy + 0.175)
+                else:
+                    ports.add(net, head[0], head[1], "n")
+            rx = head_r[0] + 0.705 + RES_SPACE
+        res_x1 = rx - RES_SPACE + (0.295 if differential else 0.3)
+        ring_x1 = res_x1 + 0.8
+        tap_ring(cv, "n", 0.0, N_RING_Y0, ring_x1, N_RING_Y1, ("b",))
+        return ring_x1
+
+    if differential:
+        ring_x1 = draw_resistors(n_x1 + 1.5)
 
     # ---------------------------------------------------------------- PMOS row
     p_diff_y = P_DIFF_TOP - 10.0
@@ -190,7 +145,7 @@ def build(top: str, din: str, rxout: str) -> Canvas:
 
     # Shift the PMOS row until no PMOS landing column's met2 vertical comes
     # within met2 space of an NMOS one that shares channel y-range.
-    nets_order = ["IBIASN", "TAIL", "LOADDIODE", "AMPOUT", "BUF1", din, "VREF", rxout]
+    nets_order = ["IBIASN", "TAIL", "LOADDIODE", "AMPOUT", "BUF1", din, vref, rxout]
     ty_of = {n: CH_Y0 + 0.6 + i * TRUNK_PITCH for i, n in enumerate(nets_order)}
 
     def conflicts(a_, b_) -> bool:
@@ -216,34 +171,13 @@ def build(top: str, din: str, rxout: str) -> Canvas:
     tap_ring(cv, "p", nw_x0, P_RING_Y0, nw_x1 - 0.5, P_RING_Y1, ("t",))
     cv.rect("nwell", nw_x0 - 0.5, NW_Y0, nw_x1, NW_Y1)
 
-    # ---------------------------------------------------------------- resistor
-    # Terminal nets (left head, right head) per netlist instance. R2 and R1 share VREF
-    # on adjacent heads; the VREF trunk joins them to the input pair's gates.
-    res_nets = {"XR2": ("VSS", "VREF"), "XR1": ("VREF", "VDD"), "XRBIAS": ("IBIASN", "VDD")}
-    res_x0 = nw_x1 + 1.5  # right of the n-well: the VDD drops run up its east side
-    rx = res_x0
-    vdd_heads: list[tuple[float, float]] = []
-    for name, res_l, legs in RESISTORS:
-        head_l, head_r = resistor(cv, rx, N_DIFF_Y, res_l, legs)
-        for head, net in zip((head_l, head_r), res_nets[name]):
-            if net == "VDD":
-                vdd_heads.append(head)
-            elif net == "VSS":
-                # met1 drop on the resistor's left, straight down to the VSS rail strip
-                hx, hy = head
-                cv.rect("met1", rx - 0.5, N_RING_Y0, rx - 0.21, hy + 0.175)
-                cv.rect("met1", rx - 0.5, hy - 0.175, hx - 0.4, hy + 0.175)
-            else:
-                ports.add(net, head[0], head[1], "n")
-        rx = head_r[0] + 0.705 + RES_SPACE
-    res_x1 = rx - RES_SPACE + 0.3
-
-    ring_x1 = res_x1 + 0.8
-    tap_ring(cv, "n", 0.0, N_RING_Y0, ring_x1, N_RING_Y1, ("b",))
+    if not differential:
+        res_x0 = nw_x1 + 1.5  # right of the n-well: the VDD drops run up its east side
+        ring_x1 = draw_resistors(res_x0)
 
     cv.rect("hvi", -0.4, N_RING_Y0 - 0.4, max(ring_x1, nw_x1) + 0.4, NW_Y1 + 0.4)
     # VDD feeder: rail extended past the well, then down to the resistor's far head.
-    assert min(h[0] for h in vdd_heads) - 0.7 > nw_x1, "VDD drops must clear the n-well"
+    assert differential or min(h[0] for h in vdd_heads) - 0.7 > nw_x1, "VDD drops must clear the n-well"
     cv.rect("met1", nw_x1 - 0.5 - 0.1, P_RAIL_Y, max(h[0] for h in vdd_heads) + 0.145, P_RAIL_Y + STRIP_W)
     for hb_x, hb_y in vdd_heads:
         cv.rect("met1", hb_x - 0.145, hb_y - 0.175, hb_x + 0.145, P_RAIL_Y + STRIP_W)
@@ -272,21 +206,10 @@ def build(top: str, din: str, rxout: str) -> Canvas:
     return cv
 
 
-def run(leaf: str, din: str, rxout: str, here: Path) -> int:
-    """Command-line entry shared by the dm/dp leaf generators."""
-    gds = here / f"{leaf}.gds"
-    ap = argparse.ArgumentParser(description=f"Generate layout/analog/{leaf}/{leaf}.gds.")
-    ap.add_argument("--check", action="store_true", help="compare, do not write")
-    ap.add_argument("-o", "--output", type=Path, default=gds)
-    args = ap.parse_args()
-    cv = build(leaf, din, rxout)
-    if args.check:
-        with tempfile.TemporaryDirectory(prefix="gen-check-") as scratch:
-            tmp = Path(scratch) / gds.name
-            cv.write(tmp)
-            same = hashlib.sha256(tmp.read_bytes()).hexdigest() == hashlib.sha256(gds.read_bytes()).hexdigest()
-        print("reproducible" if same else "DIFFERS from committed stream")
-        return 0 if same else 1
-    cv.write(args.output)
-    print(f"wrote {args.output} sha256={hashlib.sha256(args.output.read_bytes()).hexdigest()}")
-    return 0
+def run(leaf: str, din: str, rxout: str, here: Path, vref: str = "VREF", *, differential: bool = False) -> int:
+    """Command-line entry shared by the receiver leaf generators."""
+    return run_gds(
+        here / f"{leaf}.gds",
+        lambda: build(leaf, din, rxout, vref, differential=differential),
+        f"Generate layout/analog/{leaf}/{leaf}.gds.",
+    )

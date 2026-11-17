@@ -9,9 +9,15 @@ reduced to what design/export_netlist.sh does not change: its two comment
 header lines and the `** sch_path:` line are dropped, and `+` continuation
 lines are joined, because xschem wraps device lines differently from the
 committed files. Every device, node and parameter must otherwise match.
+
+Both klt netlist call sites (here and design/export_netlist.sh) pass
+`--no-provenance-header`: the committed netlists predate klt's
+`** klt-netlist-inputs:` provenance line and their content hashes are pinned
+in signoff/evidence/item-1-analog-sources.json, so neither the checker nor
+the exporter may let klt write that line. The flag needs klayout-tools
+newer than 0.8.0 (which signoff/toolchain.json pins for grading and which
+predates the flag).
 """
-import json
-import os
 import re
 import subprocess
 import sys
@@ -20,19 +26,17 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 
+sys.path.insert(0, str(HERE.parent / "sim" / "harness"))
+import pdk_pin  # noqa: E402  (path set above on purpose; the shared pinned-PDK search, #304)
+
 
 def pdk_rcfile() -> str:
-    pin = json.loads((HERE.parent / "sim" / "corners.json").read_text())["pdk"]["open_pdks_commit"]
-    roots = [os.environ.get("PDK_ROOT", ""), str(Path.home() / ".ciel"), "/usr/share/pdk", "/usr/local/share/pdk", "/opt/pdk"]
-    for root in filter(None, roots):
-        rc = Path(root) / "sky130A" / "libs.tech" / "xschem" / "xschemrc"
-        if rc.is_file():
-            sources = Path(root) / "sky130A" / "SOURCES"
-            got = next((ln.split()[1] for ln in sources.read_text().splitlines() if ln.startswith("open_pdks ")), "unknown") if sources.is_file() else "unknown"
-            if got != pin:
-                sys.exit(f"check_netlist: {root} is open_pdks {got}, but sim/corners.json pins {pin}")
-            return str(rc)
-    sys.exit("check_netlist: sky130A not found (set PDK_ROOT or install it under ~/.ciel)")
+    """The pinned sky130A xschemrc; exits nonzero if no tree or a tree off the pin is found (shared search: sim/harness/pdk_pin.py)."""
+    try:
+        rc = pdk_pin.resolve_pinned_tree("sky130A", pdk_pin.xschem_rcfile)[0]
+    except pdk_pin.PdkPinError as exc:
+        sys.exit(f"check_netlist: {exc}")
+    return str(rc)
 
 
 def normalize(text: str) -> list[str]:
@@ -53,7 +57,7 @@ def main() -> int:
         out = Path(tmp) / f"{cell}.spice"
         subprocess.run(
             ["klt", "netlist", str(HERE / f"{cell}.sch"), "-o", str(out), "--block",
-             "--rcfile", pdk_rcfile(), "--pdk", "sky130A"],
+             "--no-provenance-header", "--rcfile", pdk_rcfile(), "--pdk", "sky130A"],
             check=True, capture_output=True,
         )
         fresh = out.read_text()

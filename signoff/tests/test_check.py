@@ -53,6 +53,10 @@ def tree(tmp_path, monkeypatch):
         report = REAL_ROOT / cite["file"]
         for src in (report, report.parent / json.loads(report.read_text())["samples"]):
             shutil.copy(src, _mk(tmp_path / src.relative_to(REAL_ROOT)))
+    # Item-5 analog citations: the corner reports are pinned directly (no
+    # companion samples document), so only the report itself is copied.
+    for cite in manifest["evidence"][check.ITEM5_ANALOG_KEY]:
+        shutil.copy(REAL_ROOT / cite["file"], _mk(tmp_path / cite["file"]))
     # Native analog citations (items 3, 4, 11): the cited envelopes, the leaf
     # records dirs (for the latest-record check) and each LVS reference netlist.
     for key in check.NATIVE_CITATIONS:
@@ -75,6 +79,9 @@ def tree(tmp_path, monkeypatch):
     monkeypatch.setattr(check, "REPO_ROOT", tmp_path)
     monkeypatch.setattr(check, "SIGNOFF_DIR", tmp_path / "signoff")
     monkeypatch.setattr(check, "MANIFEST", tmp_path / "signoff" / "block-manifest.json")
+    # check_generic_envelopes globs this constant (derived from the real root
+    # at import time); main()-level tests need it pointed at the copy too.
+    monkeypatch.setattr(check, "EVIDENCE_DIR", tmp_path / "signoff" / "evidence")
     return check, tmp_path
 
 
@@ -235,6 +242,175 @@ def test_a_row_set_mismatch_fails_the_item6_analog_gate(tree, edit, capsys):
     assert "must equal the rows" in err or "undeclared" in err
 
 
+# --- store-resolved item-6 citations (issue #331) ---------------------------
+#
+# The driver-matching and pull-up yield bytes live in the artifact store; a
+# citation resolves them through a committed manifests/artifacts/*.manifest.json
+# and pins the paired samples entry's recorded sha256. All store-shape tests
+# run offline: check.py's store path never reads yield bytes, only the store
+# manifest's entries.
+
+STORE_RECORD = "bench/20261115-000000-abc1234"
+STORE_YIELD_SHA = "a" * 64
+STORE_SAMPLES_SHA = "b" * 64
+
+
+def _add_store_manifest(
+    root: Path,
+    rel: str = "manifests/artifacts/bench-20261115-000000-abc1234.manifest.json",
+    entries: list | None = None,
+) -> str:
+    path = root / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "entries": entries
+                if entries is not None
+                else [
+                    {
+                        "sha256": STORE_YIELD_SHA,
+                        "size": 10,
+                        "name": f"{STORE_RECORD}/m-tt.yield.json",
+                    },
+                    {
+                        "sha256": STORE_SAMPLES_SHA,
+                        "size": 10,
+                        "name": f"{STORE_RECORD}/m-tt.samples.json",
+                    },
+                ],
+            }
+        )
+    )
+    return rel
+
+
+def _add_store_citation(root: Path, **overrides) -> dict:
+    cite = {
+        "artifact_manifest": "manifests/artifacts/bench-20261115-000000-abc1234.manifest.json",
+        "artifact_member": f"{STORE_RECORD}/m-tt.yield.json",
+        "content_hash": f"sha256:{STORE_SAMPLES_SHA}",
+        "rows": ["6-14"],
+    }
+    cite.update(overrides)
+    path = root / "signoff" / "block-manifest.json"
+    manifest = json.loads(path.read_text())
+    manifest["evidence"]["6.analog"] = manifest["evidence"]["6.analog"] + [cite]
+    path.write_text(json.dumps(manifest))
+    return cite
+
+
+def test_a_store_resolved_citation_passes_offline(tree):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root)
+    assert check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_store_citation_missing_its_samples_entry_fails(tree, capsys):
+    check, root = tree
+    rel = _add_store_manifest(
+        root,
+        entries=[
+            {"sha256": STORE_YIELD_SHA, "size": 10, "name": f"{STORE_RECORD}/m-tt.yield.json"},
+        ],
+    )
+    _add_store_citation(root)
+    assert not check.check_item6_analog(_manifest(root), root)
+    err = capsys.readouterr().err
+    assert f"{rel}#{STORE_RECORD}/m-tt.yield.json" in err
+    assert "unreadable or inconsistent" in err
+
+
+def test_a_store_citation_pinned_to_a_moved_entry_fails(tree, capsys):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, content_hash="sha256:" + "c" * 64)
+    assert not check.check_item6_analog(_manifest(root), root)
+    err = capsys.readouterr().err
+    assert "store manifest records" in err and "append-only" in err
+
+
+def test_a_store_citation_whose_manifest_is_missing_fails(tree):
+    check, root = tree
+    _add_store_citation(root)  # no store manifest written
+    assert not check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_store_citation_outside_the_store_dir_fails(tree):
+    check, root = tree
+    _add_store_manifest(root, rel="evidence/bench.manifest.json")
+    _add_store_citation(
+        root, artifact_manifest="evidence/bench.manifest.json"
+    )
+    assert not check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_store_citation_without_a_pin_fails(tree):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, content_hash=None)
+    assert not check.check_item6_analog(_manifest(root), root)
+
+
+def test_a_citation_naming_both_shapes_fails(tree, capsys):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, file="sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-binding.yield.json")
+    assert not check.check_item6_analog(_manifest(root), root)
+    assert "never both or neither" in capsys.readouterr().err
+
+
+def test_regen_repins_a_store_citation_from_the_store_manifest(tree):
+    check, root = tree
+    _add_store_manifest(root)
+    _add_store_citation(root, content_hash="sha256:" + "c" * 64)
+    check.refresh_item6()
+    cite = _manifest(root)["evidence"][check.ITEM6_ANALOG_KEY][-1]
+    assert cite["content_hash"] == f"sha256:{STORE_SAMPLES_SHA}"
+
+
+def test_item5_analog_binding_passes_on_the_real_tree(tree):
+    check, root = tree
+    assert check.check_item5_analog(_manifest(root), root)
+
+
+def test_editing_the_spec_markdown_fails_the_item5_analog_gate(tree, capsys):
+    check, root = tree
+    with (root / "spec" / "usb2-phy.md").open("a") as handle:
+        handle.write("\nA new row.\n")
+    assert not check.check_item5_analog(_manifest(root), root)
+    assert "now hashes to" in capsys.readouterr().err
+
+
+def test_a_drifted_cited_report_fails_the_item5_analog_gate(tree, capsys):
+    check, root = tree
+    cite = _manifest(root)["evidence"][check.ITEM5_ANALOG_KEY][0]
+    with (root / cite["file"]).open("a") as handle:
+        handle.write("\n")
+    assert not check.check_item5_analog(_manifest(root), root)
+    assert "now hashes to" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("edit", ["drop", "add", "undeclared-citation"])
+def test_a_row_set_mismatch_fails_the_item5_analog_gate(tree, edit, capsys):
+    check, root = tree
+    path = root / "signoff" / "block-manifest.json"
+    manifest = json.loads(path.read_text())
+    declared = manifest["spec_rows"][check.ITEM5_ANALOG_KEY]
+    if edit == "drop":
+        declared.pop()
+    elif edit == "add":
+        declared.append({"id": "6-99"})
+    else:
+        manifest["evidence"][check.ITEM5_ANALOG_KEY][0]["rows"] = ["6-99"]
+    path.write_text(json.dumps(manifest))
+    assert not check.check_item5_analog(_manifest(root), root)
+    err = capsys.readouterr().err
+    assert "must equal the rows" in err or "undeclared" in err
+
+
 SCAN_WORDS = ("sigma", "σ", "yield", "cpk", "offset", "mismatch", "matching", "accuracy", "monte carlo", "std dev")
 
 
@@ -300,3 +476,65 @@ def test_a_missing_leaf_citation_fails_the_native_gate(tree, capsys):
     manifest["evidence"]["3.analog"].pop()
     assert not check.check_native_citations(manifest)
     assert "se_receiver_dp" in capsys.readouterr().err
+
+
+# --- --pins-only: the grader-free half of the gate
+
+
+def test_pins_only_passes_without_klt_on_path(tree, monkeypatch, capsys):
+    """--pins-only is genuinely toolchain-free: with nothing findable on
+    PATH it must still run the re-hash checks and pass a fresh tree, i.e.
+    it must not trip the main() klt-on-PATH guard."""
+    check, _ = tree
+    monkeypatch.setattr(check.shutil, "which", lambda name: None)
+    assert check.main(["--pins-only"]) == 0
+    assert "pins-only" in capsys.readouterr().out
+
+
+def test_pins_only_fails_on_a_mutated_pinned_member_and_prints_the_recipe(
+    tree, capsys
+):
+    """One appended byte to README.md reds --pins-only, names the stale
+    member and prints the grader-free refresh recipe -- no second lookup.
+    The hint defers the PATH rules to the README recipe (their single
+    home), so the venv-bin PATH form it must not resurrect is pinned
+    absent here. The hint's uv pip install line is the README recipe's
+    line with $VER filled in -- the coupling whose loss was the #348
+    drift (issue #379)."""
+    check, root = tree
+    with (root / "README.md").open("a") as handle:
+        handle.write("\n")
+    assert check.main(["--pins-only"]) == 1
+    err = capsys.readouterr().err
+    assert "README.md" in err
+    assert "How to re-run the grading" in err
+    assert "uv venv /tmp/signoff-grader" in err
+    assert "--regen" in err
+    assert 'PATH="/tmp/signoff-grader/bin:$PATH"' not in err
+    install_line = next(
+        line.strip()
+        for line in err.splitlines()
+        if line.strip().startswith("uv pip install")
+    )
+    readme = (REAL_ROOT / "signoff" / "README.md").read_text()
+    assert install_line.replace(check.pinned_grader_version(), "$VER") in readme
+
+
+def test_pins_only_is_not_readme_special_cased(tree, capsys):
+    """Any pinned member moving fails the mode, not just README.md (here:
+    signoff/toolchain.json, an item-10 inventory member)."""
+    check, root = tree
+    with (root / "signoff" / "toolchain.json").open("a") as handle:
+        handle.write("\n")
+    assert check.main(["--pins-only"]) == 1
+    assert "signoff/toolchain.json" in capsys.readouterr().err
+
+
+def test_pins_only_and_regen_are_mutually_exclusive(tree, capsys):
+    """--pins-only --regen must exit non-zero with an explicit error, never
+    silently preferring one flag."""
+    check, _ = tree
+    with pytest.raises(SystemExit) as excinfo:
+        check.main(["--pins-only", "--regen"])
+    assert excinfo.value.code != 0
+    assert "mutually exclusive" in capsys.readouterr().err

@@ -13,7 +13,8 @@ from pathlib import Path
 
 import pytest
 
-from harness import matrix as mx, results as rs, runner
+from conftest import meas, render, render_manifest, synthetic_report
+from harness import matrix as mx, results as rs
 
 SIM = Path(__file__).resolve().parents[1]
 REPO = SIM.parent
@@ -31,21 +32,7 @@ def good_values(vdd):
 
 
 def report(tamper=None):
-    corners = []
-    for p, t, v in MATRIX.points():
-        corners.append({
-            "corner_id": f"{p}/{v:.3f}V/{t:g}C", "process": p, "supply_v": {"vsup": v},
-            "temperature_c": float(t), "status": "pass",
-            "measurements": [{"name": n, "value": x, "status": "pass"} for n, x in good_values(v).items()],
-            "artifacts": {"log": None}})
-    rep = {"status": "pass", "corners": corners, "environment": {"remote": {"job_id": "j"}}}
-    if tamper:
-        tamper(rep)
-    return rep
-
-
-def meas(rep, idx, name):
-    return next(m for m in rep["corners"][idx]["measurements"] if m["name"] == name)
+    return synthetic_report(MATRIX, lambda p, t, v: good_values(v), tamper=tamper)
 
 
 def set_both(idx, value):
@@ -133,15 +120,8 @@ def test_design_netlist_uses_only_sky130_devices_and_documented_pins(lbl):
 
 def test_record_discloses_method_and_no_monte_carlo():
     tb = tb_of("dp")
-    m = {"experiment": "se-receiver-dp-thresholds", "status": "PASS",
-         "results": [{"corner_id": mx.corner_id(*p), "status": "ok", "measurements": {"vth_v": 1.38}}
-                     for p in MATRIX.points()],
-         "axes": {"process": list(MATRIX.process), "temperature_c": list(MATRIX.temperature_c),
-                  "supply_v": list(MATRIX.supply_v)},
-         "problems": [], "backend": "batch", "job_id": "j", "klt_version": "k", "engine_version": "46",
-         "pdk": {}, "git": {"head": "h", "dirty": False}, "started_utc": "t", "author": "a"}
-    rec = runner.render_record("20260101-000000-abcdef0", m, "0" * 64,
-                               {"claim": tb["claim"], "supersedes": "", "record_meta": tb["record"]})
+    m = render_manifest("se-receiver-dp-thresholds", MATRIX, "PASS", {"vth_v": 1.38})
+    rec = render(m, tb)
     assert "Monte Carlo was NOT run" in rec and "harness smoke deck" not in rec
     assert "strictly inside (0.8 V, 2.0 V)" in rec and "VIH > 2.0 V, VIL < 0.8 V" in rec
     assert "xschem export of design/se_receiver_dp.sch" in rec
@@ -211,6 +191,23 @@ def test_variant_good_225_grid_passes(lbl):
 def test_variant_grid_rejects_bad_receivers(lbl, tamper, needle):
     probs = rs.evaluate(rreport(tamper), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))[1]
     assert any(needle in p for p in probs), probs
+
+
+# ---- generated testbench inputs (#288)
+
+@pytest.mark.parametrize("lbl", LINES)
+def test_threshold_decks_cross_reference_the_sibling(lbl):
+    deck = (SIM / f"se-receiver-{lbl}-thresholds/testbench/se_rx_{lbl}_tb.spice").read_text()
+    other = "dm" if lbl == "dp" else "dp"
+    assert f"sim/se-receiver-{other}-thresholds/" in deck
+    assert f"sim/se-receiver-{lbl}-thresholds/" not in deck
+
+
+def test_se_receiver_testbench_inputs_are_fresh():
+    import subprocess
+    import sys
+    script = SIM / "make_se_receiver_tb.py"
+    assert subprocess.run([sys.executable, str(script), "--check"]).returncode == 0
 
 
 @pytest.mark.parametrize("lbl", LINES)

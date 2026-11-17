@@ -1,0 +1,40 @@
+* diff-receiver-pex -- sky130 differential receiver sensitivity, post-layout (klt pex)
+*
+* Post-layout counterpart of sim/diff-receiver-sensitivity: identical circuit body,
+* measurements and checks. The single .include below names the schematic-leg DUT shim
+* (differential_receiver_pex_dut.spice: design/netlist/differential_receiver.spice with
+* its .subckt declaration line reordered to the extracted header's pin order) -- the
+* swap point klt pex re-points at the extracted netlist for the extracted-side leg.
+* The request supplies the .lib corner section, .temp and the supply sweep (vsup).
+*
+* One receiver instance per common-mode point (0.8 / 1.65 / 2.5 V), all driven by the
+* same differential sweep. Definition:   DP = VCM + VDIFF/2      DM = VCM - VDIFF/2
+* VDIFF is swept -400 mV ... +400 mV in 1 mV steps (both polarities, 801 points).
+* Common-mode sources are ideal (zero source impedance); the supply is the swept I/O rail.
+
+.include "differential_receiver_pex_dut.spice"
+
+vsup vdd 0 dc 3.3
+vd vd 0 dc 0
+ehalf half 0 vol='v(vdd)/2'
+
+* ---- common mode 0.8 V ----
+vi08 vdd vdd08 dc 0
+vcm08 cm08 0 dc 0.8
+edp08 dp08 0 vol='v(cm08)+v(vd)/2'
+edm08 dm08 0 vol='v(cm08)-v(vd)/2'
+x08 dm08 dp08 rxd08 vdd08 0 differential_receiver
+
+* ---- common mode 1.65 V ----
+vi165 vdd vdd165 dc 0
+vcm165 cm165 0 dc 1.65
+edp165 dp165 0 vol='v(cm165)+v(vd)/2'
+edm165 dm165 0 vol='v(cm165)-v(vd)/2'
+x165 dm165 dp165 rxd165 vdd165 0 differential_receiver
+
+* ---- common mode 2.5 V ----
+vi25 vdd vdd25 dc 0
+vcm25 cm25 0 dc 2.5
+edp25 dp25 0 vol='v(cm25)+v(vd)/2'
+edm25 dm25 0 vol='v(cm25)-v(vd)/2'
+x25 dm25 dp25 rxd25 vdd25 0 differential_receiver

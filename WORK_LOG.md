@@ -3,6 +3,118 @@
 Chronological record of merged PRs and closed issues, maintained automatically
 by the Guide triage agent. Newest entries first.
 
+## Archives
+
+- [2026-09](work_log/WORK_LOG_2026-09.md)
+- [2026-08](work_log/WORK_LOG_2026-08.md)
+
+### 2026-11-17
+
+- **PR #383**: docs(porting-plan): fold per-block tracking links into Done cells
+- **Issue #378** (closed): docs/porting-plan.md rows 132-135 have one cell more than their 7-column header: the trailing issue-link cell is silently dropped on the forge
+- **PR #381**: docs: count all three pytest legs in signoff grading recipe
+- **Issue #377** (closed): signoff/README.md undercounts which check:all legs need pytest (legs 1 and 3 -> also leg 4's layer 1)
+- **PR #380**: test(signoff): couple the pins-refresh hint's install line to the README recipe
+- **Issue #379** (closed): Nothing couples check.py's pins-refresh install line to signoff/README.md's recipe
+- **PR #376**: fix(signoff): defer pins-refresh hint PATH rules to the README recipe
+- **Issue #348** (closed): signoff/check.py's pins-refresh hint still prints the venv-bin PATH form that signoff/README.md now forbids
+- **PR #375**: docs: escape table-cell pipes that truncate two rows on the forge
+- **Issue #371** (closed): signoff/README.md item-6 analog row: unescaped | truncates most of the cell on GitHub render
+- **PR #374**: docs: add a pytest-less-host form to the signoff re-run recipe
+- **Issue #349** (closed): npm run check:all cannot complete on fleet workers whose host python3 has no pytest
+
+### 2026-11-16
+
+- **PR #372**: docs(spec): list sim/README.md prose in DR 0008's value-coupled prose checklist
+- **Issue #326** (closed): DR 0008: add sim/README.md to the 'prose that must move with the value' list (and clarify the 'two of four corners' parenthetical)
+- **PR #330**: chore(loom): resync installed Loom to v0.19.1302
+- **PR #369**: docs: scope signoff item-6 record-lint sample-size rule to PASS records
+- **Issue #313** (closed): signoff/README.md item 6 overstates the record lint: 'sample_size.verdict other than insufficient is required' holds only for PASS records
+- **PR #368**: docs: distinguish grader from CI in signoff item-2 regeneration disclosure
+- **Issue #366** (closed): signoff/README.md item 2 still discloses analog regeneration as not re-run; PR #365 made it CI-enforced
+- **PR #365**: ci: enforce analog GDS reproducibility in the signoff job
+- **PR #364**: lint: check stored records' degraded-mode coverage clause for internal consistency only
+- **PR #360**: docs: drop stale restated headline from flow/README.md characterization pointer
+- **PR #359**: refactor: delete unread MANIFEST_GLOB and IDLE_STATE constants
+- **PR #357**: refactor: remove dead record_kind() and INVENTORY_DIR, re-pin item 10
+- **PR #340**: refactor: draw differential_receiver through the shared receiver generator
+- **Issue #363** (closed): CI never regenerates the analog leaf GDS: gen.py --check is the only reproducibility oracle and runs by hand
+- **Issue #358** (closed): flow/README.md still restates the retired 'zero spec rows have design-anchored evidence' characterization headline
+- **Issue #336** (closed): Fold differential_receiver/gen.py build() into the shared receiver generator (~100 duplicated lines)
+- **Issue #329** (closed): stored_coverage's clause check couples a landed record's lint verdict to later testbench/mc.json edits
+- **Issue #319** (closed): Remove two dead module-level symbols in hash-pinned files: record_kind() and INVENTORY_DIR (carries the item-10 re-pin)
+- **Issue #295** (closed): Remove four dead module-level symbols that each shadow a fact the live code re-states inline
+- **PR #356**: docs: restate signoff item 8 disclosure to match characterization headline
+- **PR #355**: signoff: accept artifact-store-resolved item-6 yield citations in check.py
+- **Issue #335** (closed): signoff/README.md item 8 row still paraphrases characterization's old 'zero spec rows' headline
+- **PR #351**: docs(signoff): attribute current item 3/6 grades to klt 0.9.1
+- **PR #350**: test: share one run-manifest builder for record-render tests
+- **PR #346**: signoff: re-pin grading klt from 0.8.0 to the 0.9.1 release and regrade
+- **PR #342**: docs(signoff): run every check:all leg via a klt-only wrapper dir on PATH
+- **Issue #325** (closed): main's strict required-status-checks policy stalls every approved PR (all 6 are MERGEABLE/BEHIND)
+- **Issue #347** (closed): signoff/README.md still attributes current rows to klt 0.8.0 after the 0.9.1 re-pin
+- **Issue #344** (closed): Deduplicate the run-manifest literal in sim/tests render_record tests (four hand-written copies)
+- **Issue #338** (closed): signoff: the throwaway-grader-venv recipe makes `npm run check:all`'s pytest leg unrunnable
+- **Issue #278** (closed): Re-pin the signoff grader from klt 0.8.0 to the 0.9.1 release and regrade
+- **PR #341**: docs: repoint disabled-pad above-VDD tracker from closed #130 to DR-0006
+- **Issue #334** (closed): design/README.md cites closed #130 as the tracker for the disabled-pad above-VDD current
+- **PR #333**: test: pin rule 8e superseded-netlist exemption via superseded-record selector
+- **PR #332**: fix: pass --no-provenance-header to klt netlist in checker and exporter
+- **PR #328**: runner: share one snapshot-body format; pex bench writes its own snapshot
+- **PR #327**: docs(sim): point the klt yield recipe at the PyPI klayout-tools[yield] extra
+- **PR #324**: docs(spec): add DR 0008 proposing a 100 ohm xover negative-control load
+- **Issue #323** (closed): Lock in the superseded-netlist hash exemption at check_synthesis_only's call site with a test
+- **PR #321**: lint: check corner coverage on the stored-evidence mismatch record path
+- **Issue #316** (closed): sim/README.md:318 is stale: klt_yield_native IS on PyPI (klt-yield-native 0.1.0, 2026-11-05)
+- **Issue #315** (closed): diff-receiver-pex: the pex snapshot convention re-triggers the artifact-manifest gate on every re-run, and freezes a deck with no device cards
+- **Issue #311** (closed): design/check_netlist.py reports STALE for every cell on this host (klt/xschem build drift vs the committed netlists)
+- **Issue #307** (closed): sim/driver-matching-mismatch: the 180 ohm xover negative control does not trip at sf40v36 (min 1.3035 V vs the 1.3 V floor)
+- **Issue #304** (closed): Consolidate the four copies of the pinned-PDK root search and open_pdks revision check
+- **Issue #297** (closed): Consolidate the four divergent sha256_file helpers behind one explicit digest contract
+- **PR #294**: docs: sync signoff and root README prose to the committed signoff report
+- **Issue #293** (closed): Deduplicate the analog layout generators: the sky130 layer table, the GDS CLI epilogue and the poly-resistor builders are copied per block
+- **Issue #292** (closed): Corner-coverage declaration is unchecked on the artifact-store record path
+- **PR #291**: build: drop the stale `test` script and add the signoff gate to `check:all`
+- **Issue #288** (closed): Deduplicate the se_receiver dp/dm testbench specs: the two are one token substitution apart
+- **Issue #286** (closed): Deduplicate the three provenance hash-verification loops in flow/check_records.py
+- **Issue #282** (closed): Remove the stale `npm test` script and widen `check:all`: both report green for a suite they do not run
+- **Issue #279** (closed): signoff/README.md and README.md contradict the committed signoff report (stale analog rows, "6 of 22", #130)
+- **Issue #273** (closed): sim/driver-matching-mismatch: run and record the fs100v30 corner (thinnest low-side matching margin, 0.9278)
+- **Issue #223** (closed): T1 item 6 (Monte Carlo, analog): mismatch campaigns for the driver rise/fall matching and D+ pull-up ±5% rows
+- **Issue #128** (closed): docs(signoff): "How to re-run the grading" never warns about the three wrong-grader traps (false drift, uvx, shared klt) — recipe itself landed in #298
+- **PR #310**: refactor(flow): share one provenance hash-verification helper across the three record checks
+- **PR #317**: refactor(analog): consolidate the layer table, GDS CLI and poly-resistor builders into gen_common
+- **PR #312**: refactor: consolidate the four pinned-PDK root searches into sim/harness/pdk_pin.py
+- **PR #309**: sim: record driver-matching-mismatch fs100v30 corner (match FAIL, xover PASS)
+- **PR #320**: sim: render the se_receiver dp/dm testbench inputs from one shared source
+
+### 2026-11-15
+
+- **PR #308**: docs(signoff): document the three wrong-grader traps in the re-grading recipe
+- **PR #314**: sim: record driver-matching-mismatch fs100v36 corner (match PASS, xover FAIL); state partial driver coverage
+- **PR #305**: sim: record driver-matching-mismatch sf40v36 corner (FAIL); state partial driver coverage
+- **PR #303**: feat(sim): first klt pex report on the differential_receiver leaf (36/36 rows pass, bodies biased)
+- **PR #302**: sim: record driver-matching-mismatch tt corner (PASS); state partial coverage
+- **PR #301**: feat(sim): render a one-line note instead of empty detail tables when no corner measured
+- **PR #300**: test: share one synthetic klt-report builder across the sim/tests analog modules
+- **PR #299**: signoff: declare the item-5 analog row set with cited 45-point envelopes
+- **PR #287**: refactor(lint): share one merge-base, fail-closed append-only check between both evidence lints
+- **Issue #289** (closed): Deduplicate the synthetic klt-report builders in sim/tests: five hand-rolled copies of one corner envelope, one carrying a dead no-op loop
+- **Issue #283** (closed): Simplify record rendering: skip the per-corner and measurement-range tables when no corner produced a measurement
+- **Issue #281** (closed): T1 item 7 (post-layout verification, analog): first klt pex report on the differential_receiver leaf
+- **Issue #280** (closed): T1 item 5 (corner verification, analog): declare the analog row set and cite the committed klt sim corner envelopes
+- **Issue #276** (closed): Remove the duplicate append-only base-ref check in flow/check_records.py: it disagrees with sim/harness/evidence_lint.py and is wrong both ways
+- **Issue #272** (closed): sim/driver-matching-mismatch: run and record the sf40v36 corner (thinnest high-side matching margin, 1.0772)
+- **Issue #271** (closed): sim/driver-matching-mismatch: run and record the fs100v36 corner (thinnest crossover margin, ~7 mV)
+- **Issue #269** (closed): sim/driver-matching-mismatch: run and record the tt corner (Monte Carlo mismatch, driver rise/fall matching + crossover)
+- **PR #298**: feat(signoff): grader-free --pins-only mode makes pin staleness locally detectable
+
+### 2026-11-14
+
+- **PR #290**: feat(sim): scope a mismatch record to a declared subset of corners (--corner)
+- **Issue #268** (closed): sim/harness: let a mismatch record cover a declared subset of corners (--corner), so a multi-corner campaign can land one corner per PR
+- **PR #277**: docs: roadmap as of 2026-11-13
+
 ### 2026-11-12
 
 - **PR #265**: Bump Repo Skills 0.25.10 -> 0.26.1
@@ -231,57 +343,3 @@ by the Guide triage agent. Newest entries first.
 - **PR #55**: feat(flow): bootstrap the digital physical flow — synth→P&R→GDS→DRC/LVS, 6-corner timing, append-only evidence records and CI
 - **Issue #54** (closed): Curator dep-recheck idempotency: CONCLUSION_HASH is not stable across passes, causing heartbeat-comment spam
 
-### 2026-09-09
-
-- **Issue #52** (closed): RTL: the real UTMI digital top — integrate usb_tx_serializer + usb_rx_path behind DR-0001 Decision 4's full port table, add the TX-side 30↔144 MHz CDC synchronizers, and verify it end-to-end with a DP/DM loopback cocotb suite
-- **PR #53**: RTL: usb_utmi_top — the UTMI digital top (TX+RX integration, TX-side 30↔144 MHz CDC, DP/DM loopback suite)
-
-### 2026-09-04
-
-- **Issue #47** (closed): Champion: Merge-Risk Hold Digest
-
-### 2026-08-16
-
-- **Issue #42** (closed): Auditor Capability Request: cocotb unavailable in klt's tool venv on this host (Python 3.14, cocotb needs <=3.13) -- Layer 2 RTL tests unvalidated
-- **Issue #39** (closed): Add a CI workflow that runs the verification harness on every PR (T1 item 10)
-- **PR #43**: ci: add GitHub Actions workflow running the verification suite on every PR
-- **Issue #34** (closed): Decompose the T1 re-read's failing items (#29) into dispatchable issues
-- **Issue #41** (closed): scratch permission probe - safe to delete
-- **Issue #35** (closed): Docs: dedupe hand-maintained interface-requirements table in spec/architecture.md
-- **PR #36**: docs: dedupe interface-requirements table in spec/architecture.md
-
-### 2026-08-15
-
-- **Issue #29** (closed): T1/bronze checklist re-read against current evidence (2026-08-15)
-- **Issue #25** (closed): Wire up package.json check scripts to real verification, or remove them: they currently lie about running checks
-- **PR #26**: fix: wire package.json check scripts to real verification, or remove them
-
-### 2026-08-11
-
-- **Issue #19** (closed): Guard: worktree-write-confinement-unresolved-var denies mktemp-rooted rm cleanup it cannot statically resolve
-- **Issue #20** (closed): Guard: catastrophic rm -rf pattern matches inline markdown prose inside a create-issue.sh --body heredoc
-- **Issue #22** (closed): Guard: stash-scope asks are correct-as-designed, not false positives (keep flagged)
-
-### 2026-08-08
-
-- **Issue #12** (closed): RTL: FS transmit path — UTMI TX handshake, framing, bit stuffing, NRZI encode
-- **PR #21**: feat(rtl): FS transmit path -- UTMI TX handshake, framing, bit stuffing, NRZI encode
-- **Issue #13** (closed): RTL: FS receive path — 12× oversampled bit/edge synchronizer, NRZI decode, destuffing, LineState and the UTMI crossing
-- **PR #18**: feat(rtl): FS receive path — bit/edge sync, NRZI decode, destuffing, LineState, UTMI CDC
-- **Issue #16** (closed): Guard false positive: worktree-write-confinement misreads Python >>/>>= as shell append-redirect inside interpreter-fed heredocs
-- **PR #17**: fix: split shell vs script interpreters in guard heredoc masking
-- **Issue #10** (closed): Behavioral ideal-transceiver model and DP/DM protocol reference — the testbench substrate spec §7 requires
-- **PR #15**: feat: add usbfs behavioral ideal-transceiver model and FS protocol reference
-- **Issue #9** (closed): Spec gaps: the PLL jitter budget binds the wrong metric, the 30 MHz UTMI clock has no source, and there is no PVT envelope
-- **PR #14**: docs: add decision record for PLL jitter metric, UTMI clock, CDC, and PVT gaps
-
-### 2026-08-05
-
-- **Issue #7** (closed): Missing flow/ directory — needed as soon as the digital half is synthesized
-- **PR #8**: docs: add flow/ directory for synthesis + P&R recipes
-- **Issue #3** (closed): Harness bootstrap: digital verification flow, copied not reinvented
-- **PR #6**: feat: bootstrap cocotb+Icarus+Yosys digital verification harness
-- **Issue #1** (closed): Ratify the target spec
-- **PR #5**: docs: ratify target spec into spec/usb2-phy.md
-- **Issue #2** (closed): Architecture and partitioning: what this block is made of, and which pieces come from siblings
-- **PR #4**: Add architecture and partitioning spec (spec/architecture.md)
