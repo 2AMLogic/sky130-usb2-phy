@@ -8,8 +8,25 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-17
+
+- **PR #383**: docs(porting-plan): fold per-block tracking links into Done cells
+- **Issue #378** (closed): docs/porting-plan.md rows 132-135 have one cell more than their 7-column header: the trailing issue-link cell is silently dropped on the forge
+- **PR #381**: docs: count all three pytest legs in signoff grading recipe
+- **Issue #377** (closed): signoff/README.md undercounts which check:all legs need pytest (legs 1 and 3 -> also leg 4's layer 1)
+- **PR #380**: test(signoff): couple the pins-refresh hint's install line to the README recipe
+- **Issue #379** (closed): Nothing couples check.py's pins-refresh install line to signoff/README.md's recipe
+- **PR #376**: fix(signoff): defer pins-refresh hint PATH rules to the README recipe
+- **Issue #348** (closed): signoff/check.py's pins-refresh hint still prints the venv-bin PATH form that signoff/README.md now forbids
+- **PR #375**: docs: escape table-cell pipes that truncate two rows on the forge
+- **Issue #371** (closed): signoff/README.md item-6 analog row: unescaped | truncates most of the cell on GitHub render
+- **PR #374**: docs: add a pytest-less-host form to the signoff re-run recipe
+- **Issue #349** (closed): npm run check:all cannot complete on fleet workers whose host python3 has no pytest
+
 ### 2026-11-16
 
+- **PR #372**: docs(spec): list sim/README.md prose in DR 0008's value-coupled prose checklist
+- **Issue #326** (closed): DR 0008: add sim/README.md to the 'prose that must move with the value' list (and clarify the 'two of four corners' parenthetical)
 - **PR #330**: chore(loom): resync installed Loom to v0.19.1302
 - **PR #369**: docs: scope signoff item-6 record-lint sample-size rule to PASS records
 - **Issue #313** (closed): signoff/README.md item 6 overstates the record lint: 'sample_size.verdict other than insufficient is required' holds only for PASS records
