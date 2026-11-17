@@ -62,8 +62,11 @@ changes cannot be retrofitted with disclosures; editing them is refused. The
 rule therefore holds only records whose `record_id` sorts **strictly after**
 the cutoff constant — a plain string compare, valid because record ids begin
 with their mint date and time. The cutoff is the newest record id on `main`
-at the time the rule was written (`20261117-051541-1378c0e-tt_025C_1v80`,
-PR #285's record): the last record allowed to change netlist bytes silently.
+carrying a `stages.synthesize.netlist` hash at the time the rule was
+written (`20261117-051541-1378c0e-tt_025C_1v80`, PR #285's record): the
+last record allowed to change netlist bytes silently. The `analog-layout-*`
+record ids minted later on `main` sort strictly after the cutoff but carry
+no synthesize stage, so the rule does not reach them.
 Naming the constant in this record and in `check_records.py` is what makes
 the grandfathering auditable.
 

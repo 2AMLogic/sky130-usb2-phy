@@ -1185,10 +1185,13 @@ def check_synthesis_only(
 #
 # The rule is deliberately NOT retroactive. Records are append-only, so the
 # committed hash changes cannot be retrofitted with disclosures;
-# NETLIST_DELTA_DISCLOSURE_CUTOFF is the newest record id on main when the
-# rule was written, and only a record whose id sorts strictly after it is
-# held to the disclosure. Record ids begin with their mint date, so a plain
-# string compare is the cutoff test. Naming the constant here and in decision
+# NETLIST_DELTA_DISCLOSURE_CUTOFF is the newest record id on main carrying
+# a stages.synthesize.netlist hash when the rule was written (PR #285's
+# record); the analog-layout-* record ids minted later on main sort after
+# it but carry no synthesize stage, so the rule does not reach them. Only
+# a record whose id sorts strictly after the cutoff is held to the
+# disclosure. Record ids begin with their mint date, so a plain string
+# compare is the cutoff test. Naming the constant here and in decision
 # record 0009 is what makes the grandfathering auditable.
 NETLIST_DELTA_DISCLOSURE_CUTOFF = "20261117-051541-1378c0e-tt_025C_1v80"
 
