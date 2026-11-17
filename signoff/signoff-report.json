@@ -108,7 +108,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:93ca199d0f150b433e20d754cd68415fcd6649c3e96aad2e285608877c4170e0",
+        "content_hash": "sha256:60c0f96b1da077317f257ef26c415998200e59438a635ec23fcda898bf4106de",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -117,7 +117,7 @@
             "path": "signoff/inventory/item-2-analog-layout.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:93ca199d0f150b433e20d754cd68415fcd6649c3e96aad2e285608877c4170e0",
+          "content_hash": "sha256:60c0f96b1da077317f257ef26c415998200e59438a635ec23fcda898bf4106de",
           "input_verified": true,
           "summary": "T1 item 2.analog: the five analog leaf GDS streams under layout/analog/ and the generator of each are committed, with the pinned stream hashes. The audited artifact is signoff/inventory/item-2-analog-layout.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-2-analog-layout.json"
@@ -173,38 +173,38 @@
       "citation": null,
       "citations_graded": [
         {
-          "citation": "flow/analog-layout-differential_driver/artifacts/20261115-194945-774273d-differential_driver/lvs-report.json",
+          "citation": "flow/analog-layout-differential_driver/artifacts/20261117-041522-89ac6c9-differential_driver/lvs-report.json",
           "status": "unmet",
           "reason": "runset_unrecognised_device"
         },
         {
-          "citation": "flow/analog-layout-differential_receiver/artifacts/20261116-110841-f6d1a0c-differential_receiver/lvs-report.json",
+          "citation": "flow/analog-layout-differential_receiver/artifacts/20261117-041552-89ac6c9-differential_receiver/lvs-report.json",
           "status": "unmet",
           "reason": "runset_unrecognised_device"
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261115-194919-774273d-dplus_pullup/lvs-report.json",
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261117-041603-89ac6c9-dplus_pullup/lvs-report.json",
           "status": "unmet",
           "reason": "runset_unrecognised_device"
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261116-110904-f6d1a0c-se_receiver_dm/lvs-report.json",
+          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261117-041701-89ac6c9-se_receiver_dm/lvs-report.json",
           "status": "unmet",
           "reason": "runset_unrecognised_device"
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261116-110928-f6d1a0c-se_receiver_dp/lvs-report.json",
+          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261117-041631-89ac6c9-se_receiver_dp/lvs-report.json",
           "status": "unmet",
           "reason": "runset_unrecognised_device"
         }
       ],
       "detail": {
         "failed_citations": [
-          "flow/analog-layout-differential_driver/artifacts/20261115-194945-774273d-differential_driver/lvs-report.json",
-          "flow/analog-layout-differential_receiver/artifacts/20261116-110841-f6d1a0c-differential_receiver/lvs-report.json",
-          "flow/analog-layout-dplus_pullup/artifacts/20261115-194919-774273d-dplus_pullup/lvs-report.json",
-          "flow/analog-layout-se_receiver_dm/artifacts/20261116-110904-f6d1a0c-se_receiver_dm/lvs-report.json",
-          "flow/analog-layout-se_receiver_dp/artifacts/20261116-110928-f6d1a0c-se_receiver_dp/lvs-report.json"
+          "flow/analog-layout-differential_driver/artifacts/20261117-041522-89ac6c9-differential_driver/lvs-report.json",
+          "flow/analog-layout-differential_receiver/artifacts/20261117-041552-89ac6c9-differential_receiver/lvs-report.json",
+          "flow/analog-layout-dplus_pullup/artifacts/20261117-041603-89ac6c9-dplus_pullup/lvs-report.json",
+          "flow/analog-layout-se_receiver_dm/artifacts/20261117-041701-89ac6c9-se_receiver_dm/lvs-report.json",
+          "flow/analog-layout-se_receiver_dp/artifacts/20261117-041631-89ac6c9-se_receiver_dp/lvs-report.json"
         ]
       }
     },
