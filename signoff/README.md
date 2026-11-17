@@ -185,11 +185,12 @@ cannot (issue #349):
   `check.py` resolves the grader through `shutil.which("klt")`, so the
   pinned grader must resolve first on `PATH` — skipping the venv
   entirely fails leg 2's grader-identity check. But the pytest legs of
-  `check:all` (`signoff/tests`, the lint self-tests) also run under the
+  `check:all` (`signoff/tests`, the lint self-tests, and leg 4's model
+  test at `scripts/check-ci.sh:12`) also run under the
   `python3` that the *same* `PATH` selects, and prepending the venv's
   `bin/` puts the venv's `python3` first. A venv provisioned for grading
-  alone would carry no pytest and fail leg 3
-  (`python3 -m pytest signoff/tests`) with `No module named pytest` — but
+  alone would carry no pytest and fail at the first pytest leg, leg 1's
+  lint self-tests, with `No module named pytest` — but
   the `[functional-verification]` extra this recipe installs pulls pytest
   in transitively (cocotb depends on it), so the venv-bin form happens to
   run those legs today. The wrapper directory is still the form to use,
@@ -197,10 +198,12 @@ cannot (issue #349):
   *test* dependency of cocotb, which the grader makes no promise to
   keep, and it leaves `python3` as the host interpreter the rest of the
   repo's tooling assumes — whose pytest is already a hard requirement of
-  leg 1 (`.github/scripts/lint.sh` fails closed without it). That hard
+  every pytest leg: leg 1 (`.github/scripts/lint.sh` fails closed without
+  it), leg 3 (`python3 -m pytest signoff/tests`) and leg 4's first layer
+  (`scripts/check-ci.sh:12`). That hard
   requirement is also this form's boundary: on a host whose `python3`
-  carries no pytest, the wrapper form cannot complete `check:all`
-  legs 1 and 3, and extending the wrapper directory with a symlink to
+  carries no pytest, the wrapper form cannot complete those three
+  pytest legs, and extending the wrapper directory with a symlink to
   the venv's `python3` does **not** rescue it — CPython resolves the
   symlink chain down to the base interpreter before searching for
   `pyvenv.cfg`, so the venv never activates (`sys.prefix` resolves to
@@ -217,7 +220,8 @@ cannot (issue #349):
   `.github/workflows/ci.yml`). The extra does not disturb the grading
   identity: same registry wheel, same `git_tag`, `is_release` still true.
 - **No pytest in the host `python3`? Run `check:all` with the venv's
-  `bin/` first.** Legs 1 and 3 of `check:all` need pytest in whichever
+  `bin/` first.** Legs 1, 3 and leg 4's first layer (`scripts/check-ci.sh:12`)
+  of `check:all` need pytest in whichever
   interpreter `PATH` selects — under the wrapper form that is the host
   `python3`, which a shared worker may not carry (fleet workers have
   drifted apart: some have pytest 9.1.1 in the user site, some have
@@ -243,10 +247,11 @@ cannot (issue #349):
 VER=$(python3 -c 'import json;print(json.load(open("signoff/toolchain.json"))["klt"]["package_version"])')
 uv venv /tmp/signoff-grader
 uv pip install --python /tmp/signoff-grader/bin/python "klayout-tools[functional-verification]==$VER"
-uv pip install --python /tmp/signoff-grader/bin/python pytest    # explicit: legs 1+3 must not rest on cocotb's transitive dep
+uv pip install --python /tmp/signoff-grader/bin/python pytest    # explicit: pytest legs (1, 3, 4's layer 1) must not rest on cocotb's transitive dep
 mkdir -p /tmp/signoff-grader-bin && ln -sfn /tmp/signoff-grader/bin/klt /tmp/signoff-grader-bin/klt
 PATH="/tmp/signoff-grader-bin:$PATH" python3 signoff/check.py            # the gate: re-grade + drift check
 PATH="/tmp/signoff-grader-bin:$PATH" python3 signoff/check.py --regen    # refresh pins + rewrite the report
+# exactly one of the next two lines — the PATHs are alternatives, not sequential:
 PATH="/tmp/signoff-grader-bin:$PATH" npm run check:all                   # host python3 has pytest
 PATH="/tmp/signoff-grader/bin:$PATH" npm run check:all                   # host python3 has NO pytest: venv-bin form (issue #349)
 ```
