@@ -498,7 +498,9 @@ def test_pins_only_fails_on_a_mutated_pinned_member_and_prints_the_recipe(
     member and prints the grader-free refresh recipe -- no second lookup.
     The hint defers the PATH rules to the README recipe (their single
     home), so the venv-bin PATH form it must not resurrect is pinned
-    absent here."""
+    absent here. The hint's uv pip install line is the README recipe's
+    line with $VER filled in -- the coupling whose loss was the #348
+    drift (issue #379)."""
     check, root = tree
     with (root / "README.md").open("a") as handle:
         handle.write("\n")
@@ -509,6 +511,13 @@ def test_pins_only_fails_on_a_mutated_pinned_member_and_prints_the_recipe(
     assert "uv venv /tmp/signoff-grader" in err
     assert "--regen" in err
     assert 'PATH="/tmp/signoff-grader/bin:$PATH"' not in err
+    install_line = next(
+        line.strip()
+        for line in err.splitlines()
+        if line.strip().startswith("uv pip install")
+    )
+    readme = (REAL_ROOT / "signoff" / "README.md").read_text()
+    assert install_line.replace(check.pinned_grader_version(), "$VER") in readme
 
 
 def test_pins_only_is_not_readme_special_cased(tree, capsys):
