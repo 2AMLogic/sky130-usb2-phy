@@ -190,7 +190,10 @@ cannot (issue #349):
   `python3` that the *same* `PATH` selects, and prepending the venv's
   `bin/` puts the venv's `python3` first. A venv provisioned for grading
   alone would carry no pytest and fail at the first pytest leg, leg 1's
-  lint self-tests, with `No module named pytest` — but
+  lint self-tests, reporting `pytest is not installed -- the lint's own
+  self-tests cannot run.` (leg 1 probes with `python3 -c "import pytest"`
+  and discards its stderr, so the interpreter's own `No module named
+  pytest` is not what surfaces there; that text is leg 3's form) — but
   the `[functional-verification]` extra this recipe installs pulls pytest
   in transitively (cocotb depends on it), so the venv-bin form happens to
   run those legs today. The wrapper directory is still the form to use,
