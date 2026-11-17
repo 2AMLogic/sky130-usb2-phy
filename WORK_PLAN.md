@@ -10,32 +10,31 @@ outside the markers is touched by automation.
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
 
-- **#382**: chore(loom): resync installed Loom to v0.19.1305
+_None._
 
 ## Very Important
 
 `loom:very-important` (one counts per workspace); every stage takes these first.
 
-- **#132**: Worker klt tool venv still lacks cocotb_tools: pre-PR gate cannot pass on fleet hosts (recurrence of #94)
+- **#132**: Worker klt tool venv still lacks cocotb_tools: pre-PR gate cannot pass on fleet hosts (recurrence of #94) *(held)*
 
 ## Important
 
 `loom:important`; taken before unlabelled work.
 
-- **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates
-- **#270**: signoff item-10 README pin goes stale on every automated Guide README edit (3rd recurrence of #180/#181)
+- **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(held)*
 
 ## Ready
 
-Human-approved issues ready for implementation (`loom:issue`).
+Human-approved issues (`loom:issue`) ready for implementation — excluding held (`loom:blocked`/`loom:operator`/`loom:frozen`), `loom:building`, and issues closed by an open `loom:pr` PR (listed under Approved).
 
-- **#274**: Deduplicate analog device geometry: differential_driver/gen.py keeps a second copy of gen_common's Ports and mos
+_None._
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#275**: Deduplicate the raw-mode / byte-stream reference helpers duplicated across two TX testbenches
+_None._
 
 ## PRs Awaiting Review
 
@@ -47,39 +46,38 @@ _None._
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#382**: chore(loom): resync installed Loom to v0.19.1305
+_None._
 
 ## Proposed
 
 Issues carrying `loom:curated`.
 
-- **#86**: README: embed the fleet burndown chart (one line) *(curated)*
-- **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)*
-- **#270**: signoff item-10 README pin goes stale on every automated Guide README edit (3rd recurrence of #180/#181) *(curated)*
-- **#274**: Deduplicate analog device geometry: differential_driver/gen.py keeps a second copy of gen_common's Ports and mos *(curated)*
-- **#331**: T1 item 6 (analog): cite the driver-matching and D+ pull-up klt yield reports in the manifest (6-06, 6-14) *(curated)*
+- **#86**: README: embed the fleet burndown chart (one line) *(curated)* *(held)*
+- **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)* *(held)*
+- **#322**: layout/analog: res_generic_po hardcodes head=0.8 while callers keep RES_HEAD; unused import re in differential_driver/gen.py *(curated)* *(held)*
+- **#331**: T1 item 6 (analog): cite the driver-matching and D+ pull-up klt yield reports in the manifest (6-06, 6-14) *(curated)* *(held)*
 
 ## Proposed (Architect / Hermit)
 
-- **#339**: Deduplicate analog layout generators: conflicts() and net-routing loop copied into three gen files *(hermit)*
+_None._
 
 ## Epics
 
-- **#23**: Track the gap to T1 sim-validated / bronze (klayout-tools design-evidence tiers)
+- **#23**: Track the gap to T1 sim-validated / bronze (klayout-tools design-evidence tiers) *(held)*
 - **#105**: Digital T1 items 3, 4, 11 (and 5): place and route the real UTMI datapath and commit DRC, LVS, ERC and timing evidence
 
 ## Backlog Balance
 
 | Bucket | Count |
 |------|-------|
-| Operator merge-risk holds | 1 |
+| Operator merge-risk holds | 0 |
 | Very important | 1 |
-| Important | 2 |
-| Ready (`loom:issue`) | 1 |
-| In Progress (`loom:building`) | 1 |
+| Important | 1 |
+| Ready (`loom:issue`, net of holds/building/merge-pending) | 0 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 0 |
-| Approved PRs awaiting merge | 1 |
-| Curated | 5 |
-| Architect / Hermit proposals | 1 |
+| Approved PRs awaiting merge | 0 |
+| Curated | 4 |
+| Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->

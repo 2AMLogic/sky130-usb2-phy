@@ -10,6 +10,9 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-17
 
+- **PR #392**: feat(flow): require a netlist-delta disclosure on superseding records (rule 8f)
+- **Issue #387** (closed): Minting a utmi-top record under a newer klt silently rewrites the committed netlist inside an unrelated PR
+- **Issue #270** (closed): signoff item-10 README pin goes stale on every automated Guide README edit (3rd recurrence of #180/#181)
 - **PR #390**: refactor(layout): hoist conflicts() and the met3 trunk/via-stack loop into gen_common
 - **Issue #339** (closed): Deduplicate analog layout generators: conflicts() and net-routing loop copied into three gen files
 - **PR #389**: chore(loom): resync installed Loom to v0.19.1306
