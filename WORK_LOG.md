@@ -10,6 +10,17 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-17
 
+- **PR #390**: refactor(layout): hoist conflicts() and the met3 trunk/via-stack loop into gen_common
+- **Issue #339** (closed): Deduplicate analog layout generators: conflicts() and net-routing loop copied into three gen files
+- **PR #389**: chore(loom): resync installed Loom to v0.19.1306
+- **PR #388**: refactor(verification): fold test_usb_rx expected_rx_bytes into usbfs.byte_stream_for_scenario
+- **Issue #386** (closed): Fold test_usb_rx.py's expected_rx_bytes into usbfs.scenarios.byte_stream_for_scenario (third copy)
+- **PR #385**: layout: deduplicate differential_driver's Ports and mos into gen_common
+- **Issue #274** (closed): Deduplicate analog device geometry: differential_driver/gen.py keeps a second copy of gen_common's Ports and mos
+- **PR #285**: refactor(verification): move the raw-mode and byte-stream reference helpers into usbfs
+- **Issue #284** (closed): Mint a new utmi-top flow record after the #275 verification-helper dedup
+- **Issue #275** (closed): Deduplicate the raw-mode / byte-stream reference helpers duplicated across two TX testbenches
+
 - **PR #383**: docs(porting-plan): fold per-block tracking links into Done cells
 - **Issue #378** (closed): docs/porting-plan.md rows 132-135 have one cell more than their 7-column header: the trailing issue-link cell is silently dropped on the forge
 - **PR #381**: docs: count all three pytest legs in signoff grading recipe
