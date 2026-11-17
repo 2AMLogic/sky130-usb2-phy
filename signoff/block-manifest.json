@@ -4,7 +4,7 @@
   "evidence": {
     "1.digital": {
       "file": "signoff/evidence/item-1-digital-sources.json",
-      "content_hash": "sha256:72d7197c3c896ec6ffaa0b71de62a05a1cb40c4c475bbb7cbd64ed9c74b4cd95"
+      "content_hash": "sha256:6c566049782e09c8790943eaf805151957ae9b631a019dcdfd5e2913b713a4e1"
     },
     "1.analog": {
       "file": "signoff/evidence/item-1-analog-sources.json",
@@ -154,7 +154,7 @@
     },
     "9": {
       "file": "signoff/evidence/item-9-testbenches.json",
-      "content_hash": "sha256:2cf3a78210de1caeadb842d1160c33286098469e0d7ef200c455baf50d78b084"
+      "content_hash": "sha256:9c4fc91c94918bb0e5be78c9ee05aba0888143df7429cb3fe92dc302dbc5a358"
     },
     "10": {
       "file": "signoff/evidence/item-10-hygiene.json",

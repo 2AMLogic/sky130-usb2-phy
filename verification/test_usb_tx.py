@@ -25,11 +25,8 @@ from cocotb.clock import Clock
 from cocotb.triggers import NextTimeStep, ReadOnly, RisingEdge
 
 from usbfs import packets, scenarios
-from usbfs.bits import bits_of_byte, bits_to_bytes, bytes_to_bits
-from usbfs.linestate import from_dpdm, level_to_state
-from usbfs.nrzi import encode as nrzi_encode
-from usbfs.packets import EOP_STATES
-from usbfs.pid import SYNC_BYTE
+from usbfs.bits import bits_to_bytes
+from usbfs.linestate import from_dpdm
 
 BIT_STB_PERIOD_CYCLES = 12  # 144 MHz / 12 = 12 MHz FS bit rate (issue scope item 6)
 
@@ -126,29 +123,11 @@ async def collect_line_states(dut):
     return states
 
 
-def _byte_stream_for_scenario(scenario):
-    """The UTMI DataOut byte stream for a `usbfs.scenarios.Scenario`:
-    PID + type-specific fields + CRC, not yet bit-stuffed or NRZI-encoded
-    -- `spec/decision-records/0001`'s port table is explicit that this is
-    what `DataOut` carries. Reconstructed generically from
-    `scenario.fields` (== `packets.parse(scenario.states)`) so this works
-    for token, data, and handshake scenarios alike."""
-    fields = scenario.fields
-    raw = packets.raw_field_bits(
-        fields["pid"],
-        addr=fields.get("addr"),
-        endp=fields.get("endp"),
-        frame_number=fields.get("frame_number"),
-        payload=scenario.payload,
-    )
-    return bits_to_bytes(raw)
-
-
 async def _run_scenario(dut, scenario):
     _start_clock(dut)
     await reset(dut)
 
-    data_bytes = _byte_stream_for_scenario(scenario)
+    data_bytes = scenarios.byte_stream_for_scenario(scenario)
     send_task = cocotb.start_soon(send_bytes(dut, data_bytes))
     observed = await collect_line_states(dut)
     await send_task
@@ -349,19 +328,6 @@ async def test_txready_backpressure_stretches_by_one_bit_time_on_stuff(dut):
 # ---------------------------------------------------------------------------
 
 
-def _raw_mode_expected(payload_bytes):
-    """SYNC is still normal NRZI (PHY-generated framing, not link-
-    controller payload -- see rtl/usb_tx_framer.v's header comment); the
-    body bits are placed directly onto the line (bit value == J/K level,
-    no NRZI transform, no stuffing); EOP is unaffected by OpMode."""
-    sync_states = [
-        level_to_state(level)
-        for level in nrzi_encode(bits_of_byte(SYNC_BYTE), start_level=1)
-    ]
-    body_states = [level_to_state(bit) for bit in bytes_to_bits(payload_bytes)]
-    return sync_states + body_states + list(EOP_STATES)
-
-
 @cocotb.test()
 async def test_bit_stuffing_nrzi_bypass_mode(dut):
     """OpMode == 2'b10 disables bit-stuffing and NRZI encoding for the
@@ -378,7 +344,7 @@ async def test_bit_stuffing_nrzi_bypass_mode(dut):
     observed = await collect_line_states(dut)
     await send_task
 
-    assert observed == _raw_mode_expected(payload_bytes)
+    assert observed == packets.raw_mode_expected(payload_bytes)
 
 
 # ---------------------------------------------------------------------------
