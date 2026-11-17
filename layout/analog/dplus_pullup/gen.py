@@ -26,12 +26,14 @@ from gen_common import (  # noqa: E402
     GRID,
     L,
     LIC_PITCH,
-    PAD,
     STRIP_W,
+    TRUNK_PITCH,
     Canvas,
     Ports,
+    make_conflicts,
     mos,
     res_generic_po,
+    route_nets,
     run_gds,
     tap_ring,
 )
@@ -42,11 +44,6 @@ TOP = "dplus_pullup"
 
 
 # --- drawn dimensions, um (all on the 0.005 grid) ---------------------------
-V1 = 0.15  # via1 edge
-V2 = 0.20  # via2 edge
-TRUNK_W = 0.40  # met3 trunk width
-TRUNK_PITCH = 0.70  # met3 trunk pitch
-V2_PAD = 0.38  # met2 pad around via2 (0.09 enclosure on the sides)
 RES_W = 2.0  # sky130_fd_pr__res_generic_po body width (netlist W)
 RES_HEAD = 0.8  # poly head past each end of the body, holds the contact column
 RES_GAP = 1.2  # poly space between neighbouring resistors
@@ -116,13 +113,7 @@ def build() -> Canvas:
             px = mos(c, pts, "p", px, p_diff_y, 4.0, ["VPU", drain], [gate], "VPU", P_RAIL_Y) + gap
         return px - gap
 
-    def conflicts(a_, b_) -> bool:
-        (na, xa, ya, _sa), (nb, xb, yb, _sb) = a_, b_
-        lo_a, hi_a = sorted((ya, ty_of[na]))
-        lo_b, hi_b = sorted((yb, ty_of[nb]))
-        if max(lo_a, lo_b) > min(hi_a, hi_b) + 0.14:
-            return False  # verticals never share a y-range
-        return abs(xa - xb) < (0.45 if na == nb else 0.52)
+    conflicts = make_conflicts(ty_of)
 
     # Shift the small PMOS row until none of its met2 drops comes within met2
     # space of an NMOS/resistor drop that shares a channel y-range.
@@ -155,23 +146,7 @@ def build() -> Canvas:
     cv.rect("hvi", -0.4, N_RING_Y0 - 0.4, max(ring_x1, nw_x1) + 0.4, NW_Y1 + 0.4)
 
     # ---------------------------------------------------------------- routing
-    by_net: dict[str, list[tuple[float, float, str]]] = {}
-    for net, px_, py_, side in ports.items:
-        by_net.setdefault(net, []).append((px_, py_, side))
-    for net, pts in by_net.items():
-        if net in ("VSS", "VPU"):
-            continue
-        ty = ty_of[net]
-        xs_ = [p[0] for p in pts]
-        cv.rect("met3", min(xs_) - 0.3, ty - TRUNK_W / 2, max(xs_) + 0.3, ty + TRUNK_W / 2)
-        for (vx, vy, _side) in pts:
-            cv.centred("via1", vx, vy, V1, V1)
-            cv.centred("met1", vx, vy, PAD, PAD)
-            cv.rect("met2", vx - PAD / 2, min(vy, ty) - PAD / 2, vx + PAD / 2, max(vy, ty) + PAD / 2)
-            cv.centred("met2", vx, ty, V2_PAD, V2_PAD)
-            cv.centred("via2", vx, ty, V2, V2)
-        if net in PIN_NETS:
-            cv.label("met3_label", net, min(xs_), ty)
+    route_nets(cv, ports, ty_of, ("VSS", "VPU"), PIN_NETS)
     # supply pins and labels
     cv.label("met1_label", "VSS", 1.0, N_RING_Y0 + STRIP_W / 2)
     cv.label("met1_label", "VPU", nw_x0 + 1.0, P_RAIL_Y + STRIP_W / 2)

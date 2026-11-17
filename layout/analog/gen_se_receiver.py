@@ -20,11 +20,13 @@ from pathlib import Path
 from gen_common import (
     GRID,
     L,
-    PAD,
     STRIP_W,
+    TRUNK_PITCH,
     Canvas,
     Ports,
+    make_conflicts,
     mos,
+    route_nets,
     run_gds,
     tap_ring,
     xhigh_resistor,
@@ -32,11 +34,6 @@ from gen_common import (
 
 
 # --- drawn dimensions, um (all on the 0.005 grid) ---------------------------
-V1 = 0.15  # via1 edge
-V2 = 0.20  # via2 edge
-TRUNK_W = 0.40  # met3 trunk width
-TRUNK_PITCH = 0.70  # met3 trunk pitch
-V2_PAD = 0.38  # met2 pad around via2 (0.09 enclosure on the sides)
 # (netlist instance, L in um, serpentine legs). Legs are even so both heads sit at the top.
 RESISTORS = (("XR2", 14.0, 2), ("XR1", 19.0, 2), ("XRBIAS", 140.0, 14))
 RES_SPACE = 1.2  # poly space between neighbouring resistors
@@ -147,14 +144,7 @@ def build(top: str, din: str, rxout: str, vref: str = "VREF", *, differential: b
     # within met2 space of an NMOS one that shares channel y-range.
     nets_order = ["IBIASN", "TAIL", "LOADDIODE", "AMPOUT", "BUF1", din, vref, rxout]
     ty_of = {n: CH_Y0 + 0.6 + i * TRUNK_PITCH for i, n in enumerate(nets_order)}
-
-    def conflicts(a_, b_) -> bool:
-        (na, xa, ya, _sa), (nb, xb, yb, _sb) = a_, b_
-        lo_a, hi_a = sorted((ya, ty_of[na]))
-        lo_b, hi_b = sorted((yb, ty_of[nb]))
-        if max(lo_a, lo_b) > min(hi_a, hi_b) + 0.14:
-            return False  # verticals never share a y-range
-        return abs(xa - xb) < (0.45 if na == nb else 0.52)
+    conflicts = make_conflicts(ty_of)
 
     start = 0.8 + STRIP_W + 0.9
     while True:
@@ -183,23 +173,7 @@ def build(top: str, din: str, rxout: str, vref: str = "VREF", *, differential: b
         cv.rect("met1", hb_x - 0.145, hb_y - 0.175, hb_x + 0.145, P_RAIL_Y + STRIP_W)
 
     # ---------------------------------------------------------------- routing
-    by_net: dict[str, list[tuple[float, float, str]]] = {}
-    for net, px_, py_, side in ports.items:
-        by_net.setdefault(net, []).append((px_, py_, side))
-    for net, pts in by_net.items():
-        if net in ("VSS", "VDD"):
-            continue
-        ty = ty_of[net]
-        xs_ = [p[0] for p in pts]
-        cv.rect("met3", min(xs_) - 0.3, ty - TRUNK_W / 2, max(xs_) + 0.3, ty + TRUNK_W / 2)
-        for (vx, vy, _side) in pts:
-            cv.centred("via1", vx, vy, V1, V1)
-            cv.centred("met1", vx, vy, PAD, PAD)
-            cv.rect("met2", vx - PAD / 2, min(vy, ty) - PAD / 2, vx + PAD / 2, max(vy, ty) + PAD / 2)
-            cv.centred("met2", vx, ty, V2_PAD, V2_PAD)
-            cv.centred("via2", vx, ty, V2, V2)
-        if net in pin_nets:
-            cv.label("met3_label", net, min(xs_), ty)
+    route_nets(cv, ports, ty_of, ("VSS", "VDD"), pin_nets)
     # supply pins and labels
     cv.label("met1_label", "VSS", 1.0, N_RING_Y0 + STRIP_W / 2)
     cv.label("met1_label", "VDD", nw_x0 + 1.0, P_RAIL_Y + STRIP_W / 2)
