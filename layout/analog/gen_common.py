@@ -12,7 +12,9 @@ Shared here: the sky130A drawn-layer table `L`, the `--check` / `-o` GDS CLI
 (`run_gds`, with the per-leaf `--help` description passed in), the landing-pad
 collector `Ports`, the device builder `mos`, and the two poly-resistor builders
 `xhigh_resistor` (serpentine `res_xhigh_po`, carrying the two-leg `urpm.width.1`
-marker guard) and `res_generic_po` (straight bar).
+marker guard) and `res_generic_po` (straight bar); and, since #339, the channel
+router -- the trunk/via geometry constants, the placement predicate factory
+`make_conflicts(ty_of)` and the per-net trunk + via-stack loop `route_nets`.
 
 `klayout.db` only, no timestamps. A change here must leave every committed GDS
 byte-identical (`gen.py --check` for all five leaves).
@@ -75,6 +77,13 @@ L = {
 XHIGH_W = 1.41  # sky130_fd_pr__res_xhigh_po_1p41 body width
 XHIGH_GAP = 0.50  # poly space between serpentine legs
 
+# --- channel-router geometry, um (all on the 0.005 grid) ----------------------
+V1 = 0.15  # via1 edge
+V2 = 0.20  # via2 edge
+TRUNK_W = 0.40  # met3 trunk width
+TRUNK_PITCH = 0.70  # met3 trunk pitch
+V2_PAD = 0.38  # met2 pad around via2 (0.09 enclosure on the sides)
+
 
 def snap(v: float) -> float:
     return round(round(v / GRID) * GRID, 6)
@@ -131,6 +140,61 @@ class Ports:
 
     def add(self, net: str, x: float, y: float, kind: str = "m1") -> None:
         self.items.append((net, x, y, kind))
+
+
+def make_conflicts(ty_of: dict[str, float]) -> Callable[[tuple, tuple], bool]:
+    """The met2-vertical spacing predicate for the PMOS-row placement search.
+
+    Returns the `conflicts(a, b)` closure the leaves shift their PMOS row
+    with: two landing pads conflict when their met2 verticals (pad y to the
+    net's trunk y in `ty_of`) share a y-range and sit within met2 space in
+    x -- closer for two pads of the same net, which may share a vertical.
+    """
+
+    def conflicts(a_, b_) -> bool:
+        (na, xa, ya, _sa), (nb, xb, yb, _sb) = a_, b_
+        lo_a, hi_a = sorted((ya, ty_of[na]))
+        lo_b, hi_b = sorted((yb, ty_of[nb]))
+        if max(lo_a, lo_b) > min(hi_a, hi_b) + 0.14:
+            return False  # verticals never share a y-range
+        return abs(xa - xb) < (0.45 if na == nb else 0.52)
+
+    return conflicts
+
+
+def route_nets(
+    cv: Canvas,
+    ports: Ports,
+    ty_of: dict[str, float],
+    supply: tuple[str, ...],
+    pin_nets: set[str],
+) -> None:
+    """One met3 trunk per signal net at its `ty_of` y, via-stacked down to
+    every landing pad: via1 + met1 pad on the m1 landing, met2 vertical up
+    to the trunk, met2 pad + via2 on the trunk.
+
+    Nets in `supply` ride their rails instead of a trunk; a net in
+    `pin_nets` also gets a met3 label on its trunk's west end (the SKY130
+    LVS runset turns every labelled net into a circuit pin, so internal
+    nets stay unlabelled).
+    """
+    by_net: dict[str, list[tuple[float, float, str]]] = {}
+    for net, px_, py_, side in ports.items:
+        by_net.setdefault(net, []).append((px_, py_, side))
+    for net, pts in by_net.items():
+        if net in supply:
+            continue
+        ty = ty_of[net]
+        xs_ = [p[0] for p in pts]
+        cv.rect("met3", min(xs_) - 0.3, ty - TRUNK_W / 2, max(xs_) + 0.3, ty + TRUNK_W / 2)
+        for (vx, vy, _side) in pts:
+            cv.centred("via1", vx, vy, V1, V1)
+            cv.centred("met1", vx, vy, PAD, PAD)
+            cv.rect("met2", vx - PAD / 2, min(vy, ty) - PAD / 2, vx + PAD / 2, max(vy, ty) + PAD / 2)
+            cv.centred("met2", vx, ty, V2_PAD, V2_PAD)
+            cv.centred("via2", vx, ty, V2, V2)
+        if net in pin_nets:
+            cv.label("met3_label", net, min(xs_), ty)
 
 
 def mos(
