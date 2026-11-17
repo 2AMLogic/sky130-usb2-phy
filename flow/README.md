@@ -570,6 +570,22 @@ held to a different required-field set (`SYNTH_ONLY_REQUIRED_FIELDS` in
   against the file), the structural verdict (a critical one, e.g. a
   combinational loop, must be disclosed in `comb_loop_finding`) and the
   reproduction result.
+- When a record supersedes another whose netlist bytes differ
+  (`stages.synthesize.netlist.sha256` changes across the `supersedes` edge,
+  compared pairwise within the experiment), it must carry
+  `stages.synthesize.netlist_delta`: `prior_klt_version` and
+  `new_klt_version` (the `provenance.klt_version` on each side of the delta,
+  stated explicitly even when the two are equal) and a
+  `structural_equivalence` statement saying what changed in the netlist and
+  why it is, or is not, logically equivalent. An empty or whitespace-only
+  field is a finding, as is a disclosed version that disagrees with the two
+  records' own `provenance.klt_version` values (rule 8f;
+  [DR-0009](../spec/decision-records/0009-netlist-delta-disclosure-lint.md)).
+  The rule is not retroactive: it holds only records minted after
+  `NETLIST_DELTA_DISCLOSURE_CUTOFF` (`20261117-051541-1378c0e-tt_025C_1v80`,
+  named in `check_records.py` and DR-0009), because records are append-only
+  and the pre-rule hash changes cannot be retrofitted. Same-hash
+  supersessions need no disclosure and no field.
 - `design.sources` must name every `rtl/usb_*.v` in the tree, every one must
   be in `provenance.inputs` (freshness-checked like any record), and
   `provenance.artifacts` must include the `synthesize-report.json` envelope;
