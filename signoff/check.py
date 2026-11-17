@@ -1148,20 +1148,20 @@ def print_pins_refresh_recipe() -> None:
     """Print how to provision the pinned grader and re-pin.
 
     A red re-hash check already names the stale member; this closes the
-    follow-up "and how do I refresh it?" without a second lookup. Same
-    throwaway-venv recipe as signoff/README.md's "How to re-run the grading"
-    -- the only form that works on a shared worker where host-wide installs
-    are off-limits.
+    follow-up "and how do I refresh it?" without a second lookup. Only the
+    venv provisioning is reproduced here -- the PATH rules have a single
+    home, signoff/README.md's "How to re-run the grading", and this hint
+    defers to that recipe instead of keeping a second copy that drifts.
     """
     ver = pinned_grader_version()
     sys.stderr.write(
         "     To refresh the pins, run --regen under the pinned grader:\n"
         "       uv venv /tmp/signoff-grader\n"
-        f'       uv pip install --python /tmp/signoff-grader/bin/python "klayout-tools=={ver}"\n'
+        f'       uv pip install --python /tmp/signoff-grader/bin/python "klayout-tools[functional-verification]=={ver}"\n'
         "       # (uv venv ships no pip; python -m pip fails in it)\n"
-        '       PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py --regen\n'
-        '       PATH="/tmp/signoff-grader/bin:$PATH" python3 signoff/check.py   # must be rc 0\n'
-        "     (full recipe and caveats: signoff/README.md)\n"
+        '     Then follow signoff/README.md "How to re-run the grading" for the\n'
+        "     PATH rules (a klt-only wrapper dir -- never the venv's bin/) and\n"
+        "     the --regen / re-grade commands themselves.\n"
     )
 
 
