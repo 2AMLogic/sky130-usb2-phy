@@ -47,12 +47,6 @@ issue, supply-net pair, record prose, extra provenance inputs) and, for
 runner's path is deliberately not in a record's `provenance.inputs`. A change to the
 runner must leave every leaf's reports byte-identical for unchanged inputs.
 
-Deliberate leaf-local variants, not yet reconciled into the shared helpers:
-
-- `differential_driver/gen.py` keeps its own `Ports` and `mos` (per-gate
-  length `gl`, supply-net asserts, `m1`/`m3`/`m4` landing kinds) — tracked as
-  #274.
-
 The poly-resistor family was reconciled into the shared helpers per ruling
 #238 ("reconciles the mos/resistor variants explicitly"): the
 `res_xhigh_po` serpentine is `gen_common.xhigh_resistor` (carrying the

@@ -9,13 +9,10 @@ variants explicitly". The leaf directories still own their outputs: each
 GDS, so sharing code does not weaken reproducibility.
 
 Shared here: the sky130A drawn-layer table `L`, the `--check` / `-o` GDS CLI
-(`run_gds`, with the per-leaf `--help` description passed in), and the two
-poly-resistor builders `xhigh_resistor` (serpentine `res_xhigh_po`, carrying
-the two-leg `urpm.width.1` marker guard) and `res_generic_po` (straight bar).
-
-Variants that genuinely differ stay in their leaf and are named in
-`layout/analog/README.md`: `differential_driver`'s `Ports`/`mos` (per-gate
-length, supply asserts, landing kinds; reconciliation is tracked as #274).
+(`run_gds`, with the per-leaf `--help` description passed in), the landing-pad
+collector `Ports`, the device builder `mos`, and the two poly-resistor builders
+`xhigh_resistor` (serpentine `res_xhigh_po`, carrying the two-leg `urpm.width.1`
+marker guard) and `res_generic_po` (straight bar).
 
 `klayout.db` only, no timestamps. A change here must leave every committed GDS
 byte-identical (`gen.py --check` for all five leaves).
@@ -122,13 +119,18 @@ def contacts_y(w: float) -> list[float]:
 
 
 class Ports:
-    """Collects (net, x, y, side) landing pads for the channel router."""
+    """Collects (net, x, y, kind) landing pads for the channel router.
+
+    kind: 'm1' met1 landing (via1 goes on it), 'm3' met3 landing (via2 goes
+    on it), 'm4' MIM top plate (via3 on the capm, met4 strip down to the
+    trunk).
+    """
 
     def __init__(self) -> None:
         self.items: list[tuple[str, float, float, str]] = []
 
-    def add(self, net: str, x: float, y: float, side: str) -> None:
-        self.items.append((net, x, y, side))
+    def add(self, net: str, x: float, y: float, kind: str = "m1") -> None:
+        self.items.append((net, x, y, kind))
 
 
 def mos(
@@ -142,6 +144,9 @@ def mos(
     gates: list[str],
     rail_net: str,
     rail_y: float,
+    *,
+    gl: float = GATE_L,
+    supply: frozenset[str] = frozenset(),
 ) -> float:
     """Draw one multi-finger g5v0d10v5 MOSFET with its diff-bottom at `y_diff`.
 
@@ -150,15 +155,21 @@ def mos(
     every gate gets a met1 landing pad on the channel side. Returns the x of
     the right edge of the diffusion.
 
+    `gl` is the drawn gate length (the default `GATE_L` unless the leaf's
+    netlist asks for another); `supply`, when given, asserts none of its nets
+    lands on a foreign rail or a gate.
+
     NMOS exits upward (channel above), PMOS exits downward (channel below);
     the supply rail is on the opposite side in each case.
     """
     nf = len(gates)
     assert len(cols) == nf + 1
-    pitch = GATE_L + SD_W
-    width = (nf + 1) * SD_W + nf * GATE_L
+    pitch = gl + SD_W
+    width = (nf + 1) * SD_W + nf * gl
     up = kind == "n"
     dop = "nsdm" if up else "psdm"
+    assert not (supply - {rail_net}) & set(cols + gates), "supply on a foreign rail or gate"
+    assert rail_net not in gates
 
     cv.rect("diff", x0, y_diff, x0 + width, y_diff + wf)
     cv.rect(dop, x0 - 0.125, y_diff - 0.125, x0 + width + 0.125, y_diff + wf + 0.125)
@@ -181,19 +192,19 @@ def mos(
             else:
                 yp = y_diff - GC_Y - LIC / 2
                 cv.rect("met1", xc - 0.145, yp, xc + 0.145, ys[-1] + 0.23)
-            ports.add(net, xc, yp, "n" if up else "p")
+            ports.add(net, xc, yp)
 
     # gates: poly stripe, contact on the channel-side extension
     for g, net in enumerate(gates):
-        xg = x0 + SD_W + GATE_L / 2 + g * pitch
+        xg = x0 + SD_W + gl / 2 + g * pitch
         if up:
             yl = y_diff + wf + GC_Y + LIC / 2
-            cv.rect("poly", xg - GATE_L / 2, y_diff - POLY_ENDCAP, xg + GATE_L / 2, y_diff + wf + POLY_TOP)
-            ports.add(net, xg, yl, "n")
+            cv.rect("poly", xg - gl / 2, y_diff - POLY_ENDCAP, xg + gl / 2, y_diff + wf + POLY_TOP)
+            ports.add(net, xg, yl)
         else:
             yl = y_diff - GC_Y - LIC / 2
-            cv.rect("poly", xg - GATE_L / 2, y_diff - POLY_TOP, xg + GATE_L / 2, y_diff + wf + POLY_ENDCAP)
-            ports.add(net, xg, yl, "p")
+            cv.rect("poly", xg - gl / 2, y_diff - POLY_TOP, xg + gl / 2, y_diff + wf + POLY_ENDCAP)
+            ports.add(net, xg, yl)
         cv.centred("licon", xg, yl, LIC, LIC)
         cv.centred("mcon", xg, yl, LIC, LIC)
         cv.rect("npc", xg - 0.185, yl - 0.185, xg + 0.185, yl + 0.185)

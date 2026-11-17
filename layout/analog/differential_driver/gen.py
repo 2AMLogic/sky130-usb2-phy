@@ -39,10 +39,12 @@ from gen_common import (  # noqa: E402
     PAD,
     POLY_ENDCAP,
     POLY_TOP,
+    Ports,
     SD_W,
     STRIP_W,
     Canvas,
     contacts_y,
+    mos,
     res_generic_po,
     run_gds,
     tap_ring,
@@ -102,93 +104,6 @@ def fingers(w: float, mult: float) -> tuple[int, float]:
     return k * int(mult), w / k
 
 
-class Ports:
-    """Collects (net, x, y, kind) landing points for the channel router.
-
-    kind: 'm1' met1 landing (via1 goes on it), 'm3' met3 landing (via2 goes on
-    it), 'm4' MIM top plate (via3 on the capm, met4 strip down to the trunk).
-    """
-
-    def __init__(self) -> None:
-        self.items: list[tuple[str, float, float, str]] = []
-
-    def add(self, net: str, x: float, y: float, kind: str = "m1") -> None:
-        self.items.append((net, x, y, kind))
-
-
-def mos(
-    cv: Canvas,
-    ports: Ports,
-    kind: str,
-    x0: float,
-    y_diff: float,
-    wf: float,
-    gl: float,
-    cols: list[str],
-    gates: list[str],
-    rail_net: str,
-    rail_y: float,
-) -> float:
-    """Draw one multi-finger g5v0d10v5 MOSFET with its diff-bottom at `y_diff`.
-
-    cols[i] / gates[i] are net names. Columns whose net is `rail_net` are
-    stubbed straight to the supply rail at `rail_y`; every other column and
-    every gate gets a met1 landing pad on the channel side. Returns the x of
-    the right edge of the diffusion.
-
-    NMOS exits upward (channel above), PMOS exits downward (channel below);
-    the supply rail is on the opposite side in each case.
-    """
-    nf = len(gates)
-    assert len(cols) == nf + 1
-    pitch = gl + SD_W
-    width = (nf + 1) * SD_W + nf * gl
-    up = kind == "n"
-    dop = "nsdm" if up else "psdm"
-    assert not (SUPPLY - {rail_net}) & set(cols + gates), "supply on a foreign rail or gate"
-    assert rail_net not in gates
-
-    cv.rect("diff", x0, y_diff, x0 + width, y_diff + wf)
-    cv.rect(dop, x0 - 0.125, y_diff - 0.125, x0 + width + 0.125, y_diff + wf + 0.125)
-
-    # column contacts: licon -> li1 -> mcon -> met1
-    for i, net in enumerate(cols):
-        xc = x0 + SD_W / 2 + i * pitch
-        ys = [y_diff + y for y in contacts_y(wf)]
-        for y in ys:
-            cv.centred("licon", xc, y, LIC, LIC)
-            cv.centred("mcon", xc, y, LIC, LIC)
-        cv.rect("li1", xc - 0.165, ys[0] - LIC / 2 - 0.08, xc + 0.165, ys[-1] + LIC / 2 + 0.08)
-        if net == rail_net:
-            lo, hi = (rail_y, ys[-1] + 0.23) if up else (ys[0] - 0.23, rail_y)
-            cv.rect("met1", xc - 0.145, lo, xc + 0.145, hi)
-        else:
-            if up:
-                yp = y_diff + wf + GC_Y + LIC / 2
-                cv.rect("met1", xc - 0.145, ys[0] - 0.23, xc + 0.145, yp)
-            else:
-                yp = y_diff - GC_Y - LIC / 2
-                cv.rect("met1", xc - 0.145, yp, xc + 0.145, ys[-1] + 0.23)
-            ports.add(net, xc, yp)
-
-    # gates: poly stripe, contact on the channel-side extension
-    for g, net in enumerate(gates):
-        xg = x0 + SD_W + gl / 2 + g * pitch
-        if up:
-            yl = y_diff + wf + GC_Y + LIC / 2
-            cv.rect("poly", xg - gl / 2, y_diff - POLY_ENDCAP, xg + gl / 2, y_diff + wf + POLY_TOP)
-        else:
-            yl = y_diff - GC_Y - LIC / 2
-            cv.rect("poly", xg - gl / 2, y_diff - POLY_TOP, xg + gl / 2, y_diff + wf + POLY_ENDCAP)
-        ports.add(net, xg, yl)
-        cv.centred("licon", xg, yl, LIC, LIC)
-        cv.centred("mcon", xg, yl, LIC, LIC)
-        cv.rect("npc", xg - 0.185, yl - 0.185, xg + 0.185, yl + 0.185)
-        cv.rect("li1", xg - 0.165, yl - 0.165, xg + 0.165, yl + 0.165)
-        cv.centred("met1", xg, yl, PAD, PAD)
-    return x0 + width
-
-
 def mim_cap(cv: Canvas, ports: Ports, x0: float, y0: float, side: float, bot_net: str, top_net: str) -> float:
     """sky130_fd_pr__cap_mim_m3_1: met3 bottom plate, capm, met4 top contact.
     `side` x `side` um capm. The bottom plate takes a via2 landing, the top
@@ -241,7 +156,10 @@ def build() -> Canvas:
         nf, wf = fingers(d["p"]["w"], d["p"]["mult"])
         kind = "n" if "nfet" in d["model"] else "p"
         cols = [sn if i % 2 == 0 else dn for i in range(nf + 1)]
-        return mos(cv, ports, kind, x, y_diff, wf, d["p"]["l"], cols, [gn] * nf, "VSS" if kind == "n" else "VDD", rail_y)
+        return mos(
+            cv, ports, kind, x, y_diff, wf, cols, [gn] * nf,
+            "VSS" if kind == "n" else "VDD", rail_y, gl=d["p"]["l"], supply=SUPPLY,
+        )
 
     # ---------------------------------------------------------------- NMOS row
     x = 0.8 + STRIP_W
