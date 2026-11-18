@@ -1,6 +1,7 @@
 name: CI
 
-# Three independent jobs, on every pull request and every push to `main`:
+# Three independent jobs, on every pull request, every merge-group run of the
+# merge queue, and every push to `main`:
 #
 #   check-ci      -- this repo's real functional verification suite
 #                    (`npm run check:ci`, wired to scripts/check-ci.sh):
@@ -35,6 +36,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  merge_group:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -149,16 +151,23 @@ jobs:
 
       # Resolve the ref the append-only rule is enforced against. On a PR that
       # is the base branch as GitHub reports it; on a push to main it is the
-      # commit before the push. Fetched explicitly so `git merge-base <ref>
-      # HEAD` can resolve: both lints fail if it cannot.
+      # commit before the push; on a merge_group run it is the group's
+      # recorded base sha (github.event.merge_group.base_sha), which is
+      # required and must resolve in this checkout: github.base_ref and
+      # github.event.before are both empty there, so a silent push-style
+      # fallback would mis-base a multi-PR group instead of failing. The
+      # resolution (and the fail-closed merge_group handling) lives in
+      # .github/scripts/resolve-base-ref.sh, selftested in
+      # flow/tests/test_resolve_base_ref.py. Fetched explicitly so
+      # `git merge-base <ref> HEAD` can resolve: both lints fail if it
+      # cannot.
       - name: Resolve the append-only base ref
-        run: |
-          if [ -n "${{ github.base_ref }}" ]; then
-            git fetch --no-tags origin "${{ github.base_ref }}"
-            echo "FLOW_LINT_BASE_REF=origin/${{ github.base_ref }}" >> "$GITHUB_ENV"
-          else
-            echo "FLOW_LINT_BASE_REF=${{ github.event.before || 'HEAD~1' }}" >> "$GITHUB_ENV"
-          fi
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+          MG_BASE: ${{ github.event.merge_group.base_sha }}
+        run: .github/scripts/resolve-base-ref.sh
 
       - name: Run the evidence lint (npm run lint)
         run: npm run lint
