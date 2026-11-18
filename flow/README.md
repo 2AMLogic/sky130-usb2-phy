@@ -278,6 +278,14 @@ CI runs both. Layer 2 needs real history, which is why the `flow-records` job
 checks out with `fetch-depth: 0` — and now, if that ever regresses, the lint
 fails instead of quietly dropping the check.
 
+The CI base ref comes from `.github/scripts/resolve-base-ref.sh`: the PR base
+branch, the pre-push commit, or — on a merge-queue (`merge_group`) run — the
+group's `merge_group.base_sha`, which is required and must resolve in the
+checkout. The empty `github.base_ref`/`github.event.before` of a merge-group
+run are never read as "fall back": a missing or unavailable base fails the
+step rather than mis-basing a multi-PR group (selftested in
+`flow/tests/test_resolve_base_ref.py`).
+
 ## Required fields
 
 `check_records.py`'s `REQUIRED_FIELDS` table is normative; the list below is
