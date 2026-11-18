@@ -10,6 +10,7 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-18
 
+- **PR #396**: ci: run on merge_group and fail closed on its base ref
 - **Issue #322** (closed): layout/analog: res_generic_po hardcodes head=0.8 while callers keep RES_HEAD; unused import re in differential_driver/gen.py
 
 ### 2026-11-17
