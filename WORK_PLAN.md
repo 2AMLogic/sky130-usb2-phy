@@ -54,8 +54,8 @@ Issues carrying `loom:curated`.
 
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)* *(held)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)* *(held)*
-- **#322**: layout/analog: res_generic_po hardcodes head=0.8 while callers keep RES_HEAD; unused import re in differential_driver/gen.py *(curated)* *(held)*
 - **#331**: T1 item 6 (analog): cite the driver-matching and D+ pull-up klt yield reports in the manifest (6-06, 6-14) *(curated)* *(held)*
+- **#394**: Merge queue: add the merge_group trigger and adapt the PR-metadata gates *(curated)* *(held)*
 
 ## Proposed (Architect / Hermit)
 
