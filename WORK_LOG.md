@@ -8,6 +8,10 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-18
+
+- **Issue #322** (closed): layout/analog: res_generic_po hardcodes head=0.8 while callers keep RES_HEAD; unused import re in differential_driver/gen.py
+
 ### 2026-11-17
 
 - **PR #392**: feat(flow): require a netlist-delta disclosure on superseding records (rule 8f)
