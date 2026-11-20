@@ -6,14 +6,15 @@ unchanged. Shared code, per-leaf outputs: the reports, GDS, requests and append-
 records stay in the leaf (and flow/analog-layout-<block>/); only this logic is shared
 (operator ruling on #238, which covers #233).
 
-Five steps, every one driven through `klt` (never a raw `klayout`):
+Six steps, every one driven through `klt` (never a raw `klayout`):
 
   1. `gen.py --check`  the committed GDS is what the generator emits.
   2. `klt drc`         klt's curated sky130 deck          -> drc-report.json
   3. `klt drc`         the PDK-native sky130A_mr.drc deck -> drc-native-report.json
   4. `klt lvs`         the PDK's sky130.lvs runset vs the leaf's reference netlist
                                                           -> lvs-report.json
-  5. `klt erc`         supply islands + well/substrate ties -> erc-supply-report.json
+  5. `klt lvs`         curated sky130 baseline and MOS-finger/geometry comparisons
+  6. `klt erc`         supply islands + well/substrate ties -> erc-supply-report.json
 
 The reports are `klt`'s own JSON, written verbatim. The PDK tree is resolved by
 `flow/run_flow.py`'s `resolve_pdk_root`, which refuses a tree whose open_pdks
@@ -22,7 +23,7 @@ revision differs from the repo's pin (sim/corners.json, #151).
 `--record` mints one append-only record under flow/analog-layout-<block>/ (see
 flow/README.md, "Analog layout records"). This module's path and digest are
 deliberately NOT in a record's `provenance.inputs` (they are the same list as before
-the extraction). Exit codes: 0 every check passed, 1 a check failed, 2 the
+the extraction). Exit codes: 0 mandatory checks passed and curated comparisons completed, 1 a check failed, 2 the
 environment failed.
 """
 
@@ -54,6 +55,8 @@ REPORTS = {
     "drc_curated": "drc-report.json",
     "drc_native": "drc-native-report.json",
     "lvs": "lvs-report.json",
+    "lvs_baseline": "lvs-curated-baseline-report.json",
+    "lvs_curated": "lvs-curated-report.json",
     "erc": "erc-supply-report.json",
 }
 
@@ -145,22 +148,22 @@ def klt(args: list[str], env: dict[str, str], out: Path) -> tuple[int, dict]:
 
 
 def run_all(cfg: LeafConfig, env: dict[str, str], pdk_root: str) -> tuple[dict[str, dict], list[str]]:
-    """Run steps 1-5. Returns ({stage: report}, [failure messages])."""
+    """Run steps 1-6. Returns ({stage: report}, [failure messages])."""
     failures: list[str] = []
     reports: dict[str, dict] = {}
 
-    log("  [1/5] generator reproduces the committed GDS")
+    log("  [1/6] generator reproduces the committed GDS")
     gen = subprocess.run([sys.executable, str(cfg.here / "gen.py"), "--check"], capture_output=True, text=True)
     if gen.returncode != 0:
         failures.append(f"gen.py --check: {gen.stdout.strip()}")
 
-    log("  [2/5] klt drc, curated sky130 deck")
+    log("  [2/6] klt drc, curated sky130 deck")
     rc, rep = klt(["drc", "--deck", "sky130", cfg.gds, "--top", cfg.block, "--format", "json"], env, cfg.here / REPORTS["drc_curated"])
     reports["drc_curated"] = rep
     if rep.get("status") != "clean":
         failures.append(f"curated DRC status {rep.get('status')!r} (rc={rc})")
 
-    log("  [3/5] klt drc, PDK-native sky130A_mr.drc")
+    log("  [3/6] klt drc, PDK-native sky130A_mr.drc")
     native_args = ["drc", cfg.gds, "--top", cfg.block, "--engine", "klayout", "--pdk", "sky130A",
                    "--deck-file", f"{pdk_root}/sky130A/{NATIVE_DECK}",
                    "--expect-rule-categories", str(NATIVE_RULE_CATEGORIES), "--format", "json"]
@@ -171,7 +174,7 @@ def run_all(cfg: LeafConfig, env: dict[str, str], pdk_root: str) -> tuple[dict[s
     if rep.get("status") != "clean":
         failures.append(f"native DRC status {rep.get('status')!r} (rc={rc})")
 
-    log("  [4/5] klt lvs, PDK runset sky130.lvs")
+    log("  [4/6] klt lvs, PDK runset sky130.lvs")
     if cfg.derive_lvs_reference is not None:
         (REPO_ROOT / cfg.lvs_reference).write_text(cfg.derive_lvs_reference(), encoding="utf-8")
     request = json.loads((REPO_ROOT / cfg.lvs_request).read_text(encoding="utf-8"))
@@ -190,7 +193,23 @@ def run_all(cfg: LeafConfig, env: dict[str, str], pdk_root: str) -> tuple[dict[s
     if rep.get("status") != "match":
         failures.append(f"LVS status {rep.get('status')!r} (rc={rc})")
 
-    log("  [5/5] klt erc, supply islands and ties")
+    log("  [5/6] klt lvs, curated sky130 against the design netlist")
+    curated_path = cfg.here / "request-lvs-curated.json"
+    baseline = json.loads(curated_path.read_text(encoding="utf-8"))
+    baseline.pop("options")
+    # Inline requests resolve paths from the repo root, file requests from the leaf.
+    baseline["layout"]["file"] = str((cfg.here / baseline["layout"]["file"]).resolve())
+    baseline["reference"]["netlist"] = str((cfg.here / baseline["reference"]["netlist"]).resolve())
+    for stage, source in (("lvs_baseline", json.dumps(baseline)), ("lvs_curated", str(curated_path))):
+        rc, rep = klt(["lvs", source, "--format", "json"], env, cfg.here / REPORTS[stage])
+        reports[stage] = rep
+        status = rep.get("status")
+        if rep.get("engine") != "klayout" or (rc, status) not in {(0, "match"), (3, "mismatch")}:
+            failures.append(f"{stage}: no completed curated LVS comparison (status={status!r}, rc={rc})")
+        else:
+            log(f"    {stage}: {status}, devices {rep['counts']['devices']}")
+
+    log("  [6/6] klt erc, supply islands and ties")
     rc, rep = klt(["erc", cfg.gds, cfg.erc_spec, "--top", cfg.block, "--pdk", "sky130", "--format", "json"], env, cfg.here / REPORTS["erc"])
     reports["erc"] = rep
     islands = {n["name"]: n["matched_islands"] for n in rep.get("nets", [])}
@@ -214,7 +233,8 @@ def build_meta(cfg: LeafConfig, reports: dict[str, dict], pdk_root: str, record_
     pin = json.loads((REPO_ROOT / "sim" / "pdk-pins.json").read_text(encoding="utf-8"))["current"]
     inputs = [
         cfg.gds, cfg.generator, "layout/analog/gen_common.py", *cfg.inputs_after_common,
-        cfg.netlist, *cfg.inputs_after_netlist, cfg.erc_spec, cfg.lvs_request, "sim/pdk-pins.json",
+        cfg.netlist, *cfg.inputs_after_netlist, cfg.erc_spec, cfg.lvs_request,
+        f"{cfg.rel}/request-lvs-curated.json", "sim/pdk-pins.json",
     ]
     return {
         "schema": RECORD_SCHEMA,
@@ -232,10 +252,8 @@ def build_meta(cfg: LeafConfig, reports: dict[str, dict], pdk_root: str, record_
             "generator": cfg.generator,
             "anchors_design_claim": False,
             "claim_note": (
-                f"One leaf of the analog partition. This record is {cfg.claim_subject} evidence "
-                "for T1 items 2 (layout), 3 (DRC), 4 (LVS) and the supply half of 11; the analog "
-                "partition's rows stay unmet until every leaf has the same, and nothing here is "
-                f"cited from signoff/block-manifest.json (issue #{cfg.issue}, out of scope)."
+                f"This record supplies {cfg.claim_subject} physical evidence. The block manifest selects "
+                "frozen reports for the partition, and the pinned signoff grader evaluates them."
             ),
         },
         "reproducibility": {
@@ -270,6 +288,7 @@ def build_meta(cfg: LeafConfig, reports: dict[str, dict], pdk_root: str, record_
             "lvs": {
                 "status": lvs["status"],
                 "engine": lvs["engine"],
+                "reference": cfg.lvs_reference or cfg.netlist,
                 "counts": lvs["counts"],
                 "device_census": lvs["device_census"],
                 "warnings_only_mismatches": [m for m in lvs["mismatches"] if m.get("severity") == "warning"],
@@ -290,6 +309,16 @@ def build_meta(cfg: LeafConfig, reports: dict[str, dict], pdk_root: str, record_
                     "klayout_application_version": lvs_runset["klayout_application_version"],
                 },
                 "declared_not_recognized_count": len(lvs["coverage"]["declared_not_recognized"]),
+            },
+            **{
+                stage: {
+                    "engine": reports[stage]["engine"],
+                    "reference": cfg.netlist,
+                    "status": reports[stage]["status"],
+                    "counts": reports[stage]["counts"],
+                    "category_error_counts": reports[stage]["category_error_counts"],
+                }
+                for stage in ("lvs_baseline", "lvs_curated")
             },
             "erc": {
                 "status": erc["status"],
@@ -322,6 +351,14 @@ def render_record(cfg: LeafConfig, meta: dict) -> str:
     drc, nat, lvs, erc = st["drc_curated"], st["drc_native"], st["lvs"], st["erc"]
     cov = drc["coverage"]
     counts = lvs["counts"]
+    curated_rows = []
+    for stage in ("lvs_baseline", "lvs_curated"):
+        devices = st[stage]["counts"]["devices"]
+        curated_rows.append(
+            f"| {REPORTS[stage]} | {st[stage]['status']} | {devices['layout']} | "
+            f"{devices['reference']} | {devices['matched']} |"
+        )
+    curated_table = "\n".join(curated_rows)
     body = f"""<!-- record-meta
 {json.dumps(meta, indent=2)}
 -->
@@ -366,6 +403,13 @@ deck vars {json.dumps(lvs['runset']['deck_vars'])}, standalone klayout {lvs['run
 - `body_verification`: {json.dumps(lvs['body_verification'])} -- {lvs['body_verification_note']}
 - `power_connectivity`: `{lvs['power_connectivity']['status']}` -- {lvs['power_connectivity']['reason']}
 - {lvs['declared_not_recognized_count']} runset device classes are declared but not present in this block (not a gap for this block).
+
+Curated sky130 LVS reads `{cfg.netlist}` directly. Layout / reference / matched
+device counts are reported by each comparison below.
+
+| Curated comparison | Status | Layout | Reference | Matched |
+|---|---|---:|---:|---:|
+{curated_table}
 
 ## ERC (supply, T1 item 11)
 
@@ -422,7 +466,7 @@ def main(cfg: LeafConfig) -> int:
     if failures:
         print("\nFAILED:\n  " + "\n  ".join(failures))
         return 1
-    log("\nall checks passed")
+    log("\nmandatory checks passed. Curated LVS " + reports["lvs_curated"]["status"])
     if args.record:
         record = mint_record(cfg, reports, pdk_root)
         log(f"record: {record.relative_to(REPO_ROOT)}")
