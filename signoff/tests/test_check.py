@@ -63,7 +63,7 @@ def tree(tmp_path, monkeypatch):
         for cite in manifest["evidence"][key]:
             envelope_path = REAL_ROOT / cite["file"]
             shutil.copy(envelope_path, _mk(tmp_path / cite["file"]))
-            if envelope_path.name == "lvs-report.json":
+            if envelope_path.name in check.LVS_ENGINES:
                 ref = check._repo_rel(json.loads(envelope_path.read_text())["reference"])
                 shutil.copy(REAL_ROOT / ref, _mk(tmp_path / ref))
     for leaf in check.NATIVE_LEAVES:
@@ -470,12 +470,73 @@ def test_a_changed_lvs_reference_netlist_fails_the_native_gate(tree, capsys):
     assert "reference netlist design/netlist/se_receiver_dm.spice" in capsys.readouterr().err
 
 
-def test_a_missing_leaf_citation_fails_the_native_gate(tree, capsys):
+@pytest.mark.parametrize("row", ["3.analog", "4.analog", "11.analog"])
+def test_a_missing_leaf_citation_fails_the_native_gate(tree, capsys, row):
     check, _ = tree
     manifest = manifest_for(check)
-    manifest["evidence"]["3.analog"].pop()
+    manifest["evidence"][row].pop()
     assert not check.check_native_citations(manifest)
     assert "se_receiver_dp" in capsys.readouterr().err
+
+
+def test_per_leaf_lvs_engine_selection(tree, capsys):
+    check, root = tree
+    manifest = manifest_for(check)
+    # Only the driver uses different SPICE inputs for the two engines.
+    refs = {}
+    for row in ("4.analog", "11.analog"):
+        refs[row] = next(
+            c for c in manifest["evidence"][row]
+            if "differential_driver/" in c["file"] and "/lvs-" in c["file"]
+        )
+    selected = Path(refs["4.analog"]["file"])
+    other = selected.with_name(next(n for n in check.LVS_ENGINES if n != selected.name))
+    other_env = json.loads((REAL_ROOT / other).read_text())
+    shutil.copy(REAL_ROOT / other, root / other)
+    reference = check._repo_rel(other_env["reference"])
+    shutil.copy(REAL_ROOT / reference, _mk(root / reference))
+
+    alternate = {"file": str(other), "content_hash": other_env["provenance"]["input"]["content_hash"]}
+    manifest["evidence"]["4.analog"].append(alternate)
+    assert not check.check_native_citations(manifest)
+    assert "more than one lvs report" in capsys.readouterr().err
+    manifest["evidence"]["4.analog"].remove(alternate)
+    refs["4.analog"].update(alternate)
+    assert not check.check_native_citations(manifest)
+    assert "same LVS report" in capsys.readouterr().err
+    refs["11.analog"].update(alternate)
+    assert check.check_native_citations(manifest)
+    with (root / reference).open("a") as handle:
+        handle.write("* changed\n")
+    assert not check.check_native_citations(manifest)
+    assert f"reference netlist {reference} changed" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("row", ["4.analog", "11.analog"])
+def test_duplicate_lvs_selection_fails(tree, row):
+    check, _ = tree
+    manifest = manifest_for(check)
+    citations = manifest["evidence"][row]
+    citations.append(next(c for c in citations if "/lvs-" in c["file"]))
+    assert not check.check_native_citations(manifest)
+
+
+def test_item11_requires_erc_for_each_leaf(tree):
+    check, _ = tree
+    manifest = manifest_for(check)
+    citations = manifest["evidence"]["11.analog"]
+    citations.remove(next(c for c in citations if c["file"].endswith("/erc-supply-report.json")))
+    assert not check.check_native_citations(manifest)
+
+
+def test_previous_record_cannot_supply_current_lvs(tree, capsys):
+    check, root = tree
+    manifest = manifest_for(check)
+    cite = manifest["evidence"]["4.analog"][0]
+    path = Path(cite["file"])
+    (root / path.parents[2] / "records" / "29990101-later.md").touch()
+    assert not check.check_native_citations(manifest)
+    assert "not the latest record" in capsys.readouterr().err
 
 
 # --- --pins-only: the grader-free half of the gate

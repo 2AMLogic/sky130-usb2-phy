@@ -168,43 +168,42 @@
       "text": "latest LVS report (or, per cell, a list of reports \u2014 all must pass) `status: match`, fresh, engine named, checked against the netlist from item 1 (schematic netlist for analog, synthesized/routed gate-level netlist for digital), **and that same report's `power_connectivity.status` not `\"mismatch\"`**. Those are two verdicts, not one: `klt lvs`'s top-level `status` is the *signal*- connectivity compare's own result, and since issue #1952 the power/ground half is reported beside it in its own `power_connectivity` block (`docs/cli/lvs.md` \u2192 \"Power/ground connectivity\"). `klt signoff` already grades this item on both \u2014 an `lvs`-kind check passes only on `status == \"match\"` **and** `power_connectivity.status != \"mismatch\"` (issue #1965) \u2014 so a claim resting on `status: match` alone is weaker than the tool that grades it. What the check verifies is per-standard-cell-instance *pin-to-net* correctness: on every abstracted instance, each pin the PDK library declares power/ground must reach the net the caller declared (`options.power_connectivity.expected_nets`) or, absent a declaration, the same net every other instance's same-named pin reaches; a disagreement renders `power.inconsistent_pin_net` / `power.unexpected_pin_net`, and a pin on no net at all renders `power.unconnected_pin`. **The check's reach is narrower than \"the power grid is verified\", and a claim must not say otherwise.** A `power_connectivity.status` of `\"unchecked\"` \u2014 every `reference.form` other than `gate-level-verilog`, an explicit `options.power_connectivity: false`, or a layout whose instances declare no PG pins at all \u2014 means the question was never asked; this item and `klt signoff` both read it as \"does not apply here\", never as \"verified\", so a fleet policy of \"re-run LVS, look for `match`\" is not by itself power-connectivity evidence (#1985). And even where it does run it is *not* a geometric rail/grid continuity check: whether a rail is an unbroken annulus, and whether the grid carries the current, stay `klt ring-check`, `klt power`, and the DRC deck's business \u2014 see \"Power/IR-drop + EM evidence\" below for what is and is not covered. Warnings-only mismatches must be listed with the claim. A second, independent engine's concurring verdict (#343) strengthens this from \"one toolchain agrees with itself\" to a cross-checked result. **PDK-runset path (issue #2870, operator ruling of 2026-10-08).** For device families the PDK's own open KLayout LVS runset recognises and the curated extraction deck does not, a `klt lvs` report with `\"engine\": \"klayout-runset\"` is accepted evidence for this item, on four conditions: (1) the runset is the PDK's own at a pinned revision \u2014 `klt signoff` checks `provenance.runset.content_hash` against a signoff-side allowlist (`signoff_runset.PINNED_RUNSETS`, hash \u2192 PDK revision), not against a field the block declares, and the runset file named by the report must still re-hash to that value; (2) the report is a `klt` envelope with the same `--check` re-hash guarantees as a curated-deck report (layout hash, reference netlist hash, plus the runset hash); (3) the report names its engine, and `klt signoff` carries `engine` and the runset hash distinctly in the check detail and the `met` citation; (4) every device is recognised \u2014 a non-empty `coverage.declared_not_recognized`, or a `device_census` whose per-class layout and reference counts differ, is a failure (`runset_unrecognised_device`), never a warning, even when `status` reads `match`. A report from a runset that is not in the allowlist is refused `runset_not_pinned`; one whose runset file changed since the run, `runset_hash_mismatch`. **This does not change** the default: curated decks stay the route wherever they recognise every device in the block, and a block may not choose the runset to avoid a curated-deck finding. The allowlist (`signoff_runset.PINNED_RUNSETS`, listed by `klt signoff --describe-grader` under `pinned_runsets`) holds the SG13G2, SG13CMOS5L and gf180mcu `*.lvs` runsets as of 2026-10-27. **Adding an entry** is a reviewed trust decision, never a copy of a hash from a report: fetch the PDK's runset file from its upstream repo at a named commit, `sha256` it (the same digest `_provenance.sha256_file` records), and add one entry recording `pdk`, `revision`, `repo`, `commit`, `path` and `reviewed_by`. The digest covers the top-level runset file only, so the `commit` is what fixes the `rule_decks/` it includes. A PDK whose runset cannot be fetched or run at a verifiable commit is left unpinned.",
       "notes": [],
       "status": "unmet",
-      "reason": "runset_unrecognised_device",
+      "reason": "check_failed",
       "graded_by_build": true,
       "citation": null,
       "citations_graded": [
         {
-          "citation": "flow/analog-layout-differential_driver/artifacts/20261117-062653-80b3c4d-differential_driver/lvs-report.json",
+          "citation": "flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/lvs-curated-report.json",
           "status": "unmet",
-          "reason": "runset_unrecognised_device"
+          "reason": "check_failed"
         },
         {
-          "citation": "flow/analog-layout-differential_receiver/artifacts/20261117-062721-80b3c4d-differential_receiver/lvs-report.json",
+          "citation": "flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/lvs-curated-report.json",
           "status": "unmet",
-          "reason": "runset_unrecognised_device"
+          "reason": "check_failed"
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261117-062731-80b3c4d-dplus_pullup/lvs-report.json",
-          "status": "unmet",
-          "reason": "runset_unrecognised_device"
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261120-195759-745d347-dplus_pullup/lvs-curated-report.json",
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261117-062759-80b3c4d-se_receiver_dm/lvs-report.json",
+          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/lvs-curated-report.json",
           "status": "unmet",
-          "reason": "runset_unrecognised_device"
+          "reason": "check_failed"
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261117-062829-80b3c4d-se_receiver_dp/lvs-report.json",
+          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/lvs-curated-report.json",
           "status": "unmet",
-          "reason": "runset_unrecognised_device"
+          "reason": "check_failed"
         }
       ],
       "detail": {
         "failed_citations": [
-          "flow/analog-layout-differential_driver/artifacts/20261117-062653-80b3c4d-differential_driver/lvs-report.json",
-          "flow/analog-layout-differential_receiver/artifacts/20261117-062721-80b3c4d-differential_receiver/lvs-report.json",
-          "flow/analog-layout-dplus_pullup/artifacts/20261117-062731-80b3c4d-dplus_pullup/lvs-report.json",
-          "flow/analog-layout-se_receiver_dm/artifacts/20261117-062759-80b3c4d-se_receiver_dm/lvs-report.json",
-          "flow/analog-layout-se_receiver_dp/artifacts/20261117-062829-80b3c4d-se_receiver_dp/lvs-report.json"
+          "flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/lvs-curated-report.json",
+          "flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/lvs-curated-report.json",
+          "flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/lvs-curated-report.json",
+          "flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/lvs-curated-report.json"
         ]
       }
     },
@@ -685,7 +684,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:839be600df29a861633f62284201395fa2ada5f14e3c25de54beb2144c5bae75",
+        "content_hash": "sha256:998e9622d5fa7caa3b02869b3361696b3c40d6f8c4d9afccdb9b01b1ba64e770",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -694,7 +693,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:839be600df29a861633f62284201395fa2ada5f14e3c25de54beb2144c5bae75",
+          "content_hash": "sha256:998e9622d5fa7caa3b02869b3361696b3c40d6f8c4d9afccdb9b01b1ba64e770",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
@@ -716,7 +715,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:839be600df29a861633f62284201395fa2ada5f14e3c25de54beb2144c5bae75",
+        "content_hash": "sha256:998e9622d5fa7caa3b02869b3361696b3c40d6f8c4d9afccdb9b01b1ba64e770",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -725,7 +724,7 @@
             "path": "signoff/inventory/item-10-hygiene.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:839be600df29a861633f62284201395fa2ada5f14e3c25de54beb2144c5bae75",
+          "content_hash": "sha256:998e9622d5fa7caa3b02869b3361696b3c40d6f8c4d9afccdb9b01b1ba64e770",
           "input_verified": true,
           "summary": "T1 item 10: README.md, LICENSE and the CI workflow are committed, and the CI commands that keep the harness and evidence formats valid are named. The audited artifact is signoff/inventory/item-10-hygiene.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-10-hygiene.json"
@@ -752,7 +751,7 @@
             "VDD",
             "VSS"
           ],
-          "lvs_status": "match",
+          "lvs_status": "mismatch",
           "power_connectivity_status": "unchecked"
         }
       }

@@ -449,20 +449,30 @@ NATIVE_LEAVES = (
     "se_receiver_dm",
     "se_receiver_dp",
 )
+LVS_ENGINES = {"lvs-report.json": "klayout-runset", "lvs-curated-report.json": "klayout"}
+NATIVE_ROLES = {
+    "drc-report.json": "drc",
+    "erc-supply-report.json": "erc",
+    **dict.fromkeys(LVS_ENGINES, "lvs"),
+}
 NATIVE_CITATIONS = {
-    "3.analog": ("drc-report.json",),
-    "4.analog": ("lvs-report.json",),
-    "11.analog": ("erc-supply-report.json", "lvs-report.json"),
+    "3.analog": {"drc"},
+    "4.analog": {"lvs"},
+    "11.analog": {"erc", "lvs"},
 }
 
 
-def _repo_rel(path: str) -> str | None:
+def _repo_rel(path: str | dict) -> str | None:
     """Repo-relative form of a path a native envelope recorded.
 
-    `klt lvs` records the absolute path of the worktree it ran in, which is
-    not this checkout, so the stable suffix under layout/ or design/ is used.
+    Curated LVS records a scoped path. Older envelopes and runset LVS can
+    record the producer's absolute path, with a stable layout/ or design/ suffix.
     """
-    if not path:
+    if isinstance(path, dict):
+        if path.get("scope") != "repo":
+            return None
+        path = path.get("path")
+    if not isinstance(path, str) or not path or ".." in Path(path).parts:
         return None
     if not Path(path).is_absolute():
         return path
@@ -475,7 +485,7 @@ def _native_inputs(envelope: dict, name: str) -> list[tuple[str, str | None, str
     prov_hash = ((envelope.get("provenance") or {}).get("input") or {}).get(
         "content_hash"
     )
-    if name == "lvs-report.json":
+    if name in LVS_ENGINES:
         env = envelope.get("environment") or {}
         return [
             (
@@ -490,8 +500,7 @@ def _native_inputs(envelope: dict, name: str) -> list[tuple[str, str | None, str
             ),
         ]
     layout = envelope.get("file") or {}
-    path = layout.get("path") if isinstance(layout, dict) else layout
-    return [(_repo_rel(str(path or "")) or "", prov_hash, "layout")]
+    return [(_repo_rel(layout) or "", prov_hash, "layout")]
 
 
 def check_native_citations(manifest: dict) -> bool:
@@ -504,7 +513,8 @@ def check_native_citations(manifest: dict) -> bool:
     each analog leaf exactly once, for the leaf's latest record.
     """
     ok = True
-    for key, names in NATIVE_CITATIONS.items():
+    selected_lvs = {"4.analog": set(), "11.analog": set()}
+    for key, required in NATIVE_CITATIONS.items():
         cited = manifest["evidence"].get(key)
         if not isinstance(cited, list):
             fail(f"signoff/block-manifest.json: {key} must cite a list of envelopes")
@@ -517,12 +527,18 @@ def check_native_citations(manifest: dict) -> bool:
             match = re.fullmatch(
                 r"flow/analog-layout-([a-z_]+)/artifacts/([^/]+)/([^/]+)", rel
             )
-            if not match or match[1] not in by_leaf or match[3] not in names:
-                fail(f"{key}: {rel!r} is not a cited leaf envelope of {names}")
+            if not match or match[1] not in by_leaf or NATIVE_ROLES.get(match[3]) not in required:
+                fail(f"{key}: {rel!r} is not a cited leaf envelope of {sorted(required)}")
                 bad = True
                 continue
             leaf, record, name = match.groups()
-            by_leaf[leaf].add(name)
+            role = NATIVE_ROLES[name]
+            if role in by_leaf[leaf]:
+                fail(f"{key}: leaf {leaf} cites more than one {role} report")
+                bad = True
+            by_leaf[leaf].add(role)
+            if role == "lvs":
+                selected_lvs[key].add(rel)
             records = sorted(
                 p.stem
                 for p in (REPO_ROOT / f"flow/analog-layout-{leaf}/records").glob("2*.md")
@@ -537,6 +553,9 @@ def check_native_citations(manifest: dict) -> bool:
                 fail(f"{rel}: unreadable ({exc})")
                 bad = True
                 continue
+            if name in LVS_ENGINES and envelope.get("engine") != LVS_ENGINES[name]:
+                fail(f"{rel}: expected LVS engine {LVS_ENGINES[name]}")
+                bad = True
             pinned = ((envelope.get("provenance") or {}).get("input") or {}).get(
                 "content_hash"
             )
@@ -545,6 +564,9 @@ def check_native_citations(manifest: dict) -> bool:
                 bad = True
             for src, recorded, role in _native_inputs(envelope, name):
                 src_path = REPO_ROOT / src
+                if role == "layout" and src != f"layout/analog/{leaf}/{leaf}.gds":
+                    fail(f"{rel}: expected the committed layout of {leaf}, got {src!r}")
+                    bad = True
                 if not src or not src_path.is_file():
                     fail(f"{rel}: {role} {src!r} does not exist")
                     bad = True
@@ -557,12 +579,16 @@ def check_native_citations(manifest: dict) -> bool:
                     )
                     bad = True
         for leaf, got in by_leaf.items():
-            if got != set(names):
-                fail(f"{key}: leaf {leaf} cites {sorted(got)}, wants {sorted(names)}")
+            if got != required:
+                fail(f"{key}: leaf {leaf} cites {sorted(got)}, wants {sorted(required)}")
                 bad = True
         if not bad:
             print(f"ok   {key}: {len(cited)} native envelopes re-hash their inputs")
         ok = ok and not bad
+    if selected_lvs["4.analog"] != selected_lvs["11.analog"]:
+        different = sorted(selected_lvs["4.analog"] ^ selected_lvs["11.analog"])
+        fail(f"4.analog and 11.analog must cite the same LVS report for each leaf: {different}")
+        ok = False
     return ok
 
 

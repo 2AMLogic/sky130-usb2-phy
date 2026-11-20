@@ -149,8 +149,10 @@ the shared rules the lint (`check_analog_layout`) fails a record unless:
   `rules_skipped`, `layers_in_stream_without_rules`, `voltage_domain_warnings`);
 - the PDK-native DRC run is clean against its `--expect-rule-categories`
   assertion (without it a zero-finding native run is `coverage_unknown`);
-- LVS is `match` with equal, non-zero device/net/pin counts and nothing left over
-  but listed warnings, and `body_verification: null` says why;
+- PDK runset LVS is `match` with equal, non-zero device/net/pin counts and only
+  listed warnings, and the record explains `body_verification: null`. Records
+  that pin a curated LVS request also freeze the baseline and the comparison
+  with MOS fingers combined. Both retain the measured `match` or `mismatch`;
 - every supply net in the ERC report is exactly one island, the ties were
   actually *checked* (a skipped tie is not a pass), and `erc_finding_count` is 0;
 - the GDS is the one the generator reproduces, the open_pdks revision is accepted by
