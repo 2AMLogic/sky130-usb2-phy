@@ -4,7 +4,7 @@ A full-speed USB 2.0 PHY on sky130 (digital UTMI layer plus a ported analog
 front end), built to exercise the open flow and
 [klayout-tools](https://github.com/2AMLogic/klayout-tools) end to end.
 
-Status as of 2026-11-13, `main` @ `4c3750c`.
+Status as of 2026-11-20, `main` @ `4bdccc4`.
 
 [`WORK_PLAN.md`](../WORK_PLAN.md) is the machine-generated label snapshot;
 [`signoff/signoff-report.json`](../signoff/signoff-report.json) is the verdict
@@ -13,24 +13,24 @@ of record and wins where this file disagrees with it.
 ## Where it stands
 
 The ladder is the klayout-tools design-evidence checklist, graded by
-`klt signoff` (pinned to the 0.8.0 release) and enforced in CI by
+`klt signoff` (pinned to the 0.9.2 release) and enforced in CI by
 [`signoff/check.py`](../signoff/check.py). The block is `mixed-signal`, so each
-of the 11 items is graded per partition: **9 of 22 rows `met`, 1
+of the 11 items is graded per partition: **10 of 22 rows `met`, 1
 `not_applicable`, `tier: null`.** Tracker: #23.
 
 | Item | Analog (five leaves) | Digital (`usb_utmi_top`) |
 |---|---|---|
 | 1 Design sources | met (#219) | met (#206) |
 | 2 Layout | met: five leaf GDS + generators (#167, #220, #221, #222) | unmet, `no_evidence` (#207) |
-| 3 DRC clean | unmet, `invalid_evidence`: five clean reports, grader takes one envelope | unmet, `no_evidence` (#117) |
-| 4 LVS clean | unmet, `invalid_evidence`: five `match` reports, same shape problem | unmet, `no_evidence` (#117) |
+| 3 DRC clean | met: five clean reports grade as a per-cell set under klt 0.9.2 (#399) | unmet, `no_evidence` (#117) |
+| 4 LVS clean | unmet, `runset_unrecognised_device`: five `match` reports, runset declares device classes no layout uses | unmet, `no_evidence` (#117) |
 | 5 Corner verification | unmet, `no_evidence`: nothing cited yet | unmet, `no_evidence` (#117, #118) |
 | 6 Monte Carlo | unmet, `negative_control_not_detected`; rows 6-06, 6-14 uncovered (#223) | not applicable (#208) |
 | 7 Post-layout | unmet, `no_evidence` | unmet, `no_evidence` (#209) |
 | 8 Characterization report | met (#218) | met |
 | 9 Testbenches shipped | met | met |
 | 10 Repo hygiene | met | met |
-| 11 Power delivery | unmet, `lvs_did_not_pass` (gated on item 4) | unmet, `no_evidence` (#117) |
+| 11 Power delivery | unmet, `check_failed` (as graded by 0.9.2; item 4 still `unmet`) | unmet, `no_evidence` (#117) |
 
 What is evidenced behind those rows:
 
@@ -58,8 +58,11 @@ partition and "6 of 22"; the report is current.
 
 ## Now (startable today; none has an issue yet)
 
-1. **Re-pin the grader from klt 0.8.0 to the 0.9.1 release and regrade.**
-   Done when `signoff/check.py`, `signoff/toolchain.json` and
+1. **Re-pin the grader to each klt release and regrade.** 0.8.0 → 0.9.1
+   (#278), then 0.9.1 → 0.9.2 (#399) — the 0.9.2 wheel carries
+   klayout-tools#5044 (per-cell envelope sets for items 2-4), so item 3
+   analog grades `met` and `t1_met_count` moves to 10/22. Done when
+   `signoff/check.py`, `signoff/toolchain.json` and
    `.github/workflows/ci.yml` name one version, `signoff-report.json` is
    regenerated with it, and `python3 signoff/check.py` passes (as in #165).
 2. **Bring `signoff/README.md` and the top-level README back in line with the
@@ -80,11 +83,14 @@ partition and "6 of 22"; the report is current.
 
 ## Next
 
-- **Items 3, 4 and 11 (analog): cite the five leaves as a set.** The grader
-  gap is klayout-tools#5044, closed upstream on 2026-11-06, after the 0.9.1
-  wheel; unblocked by the first klt release that carries it, then a re-pin.
-  Item 4 has a second recorded blocker (`runset_unrecognised_device` on a
-  single-leaf probe). Done when 3, 4 and 11 analog read `met`.
+- **Items 4 and 11 (analog): LVS and power delivery.** The klayout-tools#5044
+  grader gap is closed — carried by the 0.9.2 pin (#399), item 3 analog
+  reads `met` — so what is left is item 4's own blocker,
+  `runset_unrecognised_device` (the sky130 runset declares device classes no
+  layout device uses; observed on a single-leaf probe under 0.8.0, the
+  graded reason for the whole partition from 0.9.1 on). Item 11 follows
+  item 4; under 0.9.2 its graded reason is `check_failed`. Done when 4 and
+  11 analog read `met`.
 - **Item 6 (analog): finish #223.** The driver rise/fall matching campaign
   (`sim/driver-matching-mismatch/`, declared, not run) needs more compute time
   than one build session; the pull-up record needs citing under row 6-14. Also
