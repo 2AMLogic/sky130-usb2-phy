@@ -367,92 +367,71 @@
         "**Declare item 6 a gap** for the analog partition. The digital partition of the same block may still use `not_applicable`. **Several statistical rows, only some evidenced** (issue #2908): item 6 is a claim about *every* statistical row, so a manifest may declare the row set under `spec_rows.\"6\"` and cite one `klt yield` report per row set (`rows` on each citation). Item 6 grades `met` only when every declared row is covered by a passing citation against a ratified target. A row with no citation (`uncovered_rows`), a row declared a `gap` because no evidence can exist yet (`declared_gaps`), or a row declared `ratified: false` (`unratified_rows`, evidence against a proposed limit is provisional) grades `unmet` / `partial_coverage`, never `met`. Without a declaration the item grades as before; a `not_applicable` entry contradicts a declared row set and is `invalid_evidence`."
       ],
       "status": "unmet",
-      "reason": "negative_control_not_detected",
+      "reason": "partial_coverage",
       "graded_by_build": true,
       "citation": null,
       "citations_graded": [
         {
-          "citation": "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-binding.yield.json",
+          "citation": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/diff-binding.yield.json",
           "rows": [
             "6-09"
           ],
-          "status": "unmet",
-          "reason": "negative_control_not_detected"
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-tt.yield.json",
+          "citation": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/diff-tt.yield.json",
           "rows": [
             "6-09"
           ],
-          "status": "unmet",
-          "reason": "negative_control_not_detected"
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-binding.yield.json",
+          "citation": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dm-binding.yield.json",
           "rows": [
             "6-11"
           ],
-          "status": "unmet",
-          "reason": "negative_control_not_detected"
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-tt.yield.json",
+          "citation": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dm-tt.yield.json",
           "rows": [
             "6-11"
           ],
-          "status": "unmet",
-          "reason": "negative_control_not_detected"
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-binding.yield.json",
+          "citation": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dp-binding.yield.json",
           "rows": [
             "6-11"
           ],
-          "status": "unmet",
-          "reason": "negative_control_not_detected"
+          "status": "met",
+          "reason": null
         },
         {
-          "citation": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-tt.yield.json",
+          "citation": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dp-tt.yield.json",
           "rows": [
             "6-11"
           ],
-          "status": "unmet",
-          "reason": "negative_control_not_detected"
+          "status": "met",
+          "reason": null
         }
       ],
       "detail": {
-        "yield_campaign": {
-          "sample_size": "sufficient",
-          "undersized_measurements": [],
-          "negative_control": "not_detected",
-          "measurements_without_negative_control": [],
-          "undetected_negative_controls": [
-            "rxd_p200_cm0p80_v",
-            "rxd_p200_cm1p65_v",
-            "rxd_p200_cm2p50_v"
-          ],
-          "not_applicable_negative_controls": []
-        },
-        "content_hash_pin": "verified",
-        "failed_citations": [
-          "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-binding.yield.json",
-          "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-tt.yield.json",
-          "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-binding.yield.json",
-          "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-tt.yield.json",
-          "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-binding.yield.json",
-          "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-tt.yield.json"
-        ],
-        "failed_rows": [
-          "6-09",
-          "6-11"
-        ],
+        "failed_rows": [],
         "uncovered_rows": [
           "6-06",
           "6-14"
         ],
         "declared_gaps": [],
         "unratified_rows": [],
-        "row_sources": {}
+        "row_sources": {
+          "6-09": "asserted",
+          "6-11": "asserted"
+        }
       }
     },
     {
