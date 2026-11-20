@@ -9,7 +9,7 @@
       "members": [
         {
           "path": "README.md",
-          "sha256": "sha256:bcf97e5b8f73f729225a39b8e3933422e7c65ed6d81726d7e04985a6b9b2d5b7"
+          "sha256": "sha256:6a6fe499e5b5ed69d6bf608644f6b037a4fb12265d682eea89d4184b8a7560d4"
         }
       ]
     },
@@ -29,7 +29,7 @@
       "members": [
         {
           "path": ".github/workflows/ci.yml",
-          "sha256": "sha256:cf797dfcc6dede44ddc96dde014825d999d61ae87916ee149cb0dd14f090fbd7"
+          "sha256": "sha256:952c1e9a4b5eefc795e8d8c9b8d4ed661729fc0444e1dbb84a55406295cd20a8"
         }
       ]
     },
@@ -78,11 +78,11 @@
       "members": [
         {
           "path": "signoff/check.py",
-          "sha256": "sha256:2be4c1f6ce3f2465b67b907e6bf4586b0b2447f66ff0aa06d5553a6922e6977d"
+          "sha256": "sha256:ff565185c46b8bd641aab8dfeea46957176288f7e670d10839da191651954e71"
         },
         {
           "path": "signoff/toolchain.json",
-          "sha256": "sha256:ce1bbb60bb5a29dc03085dbc32cd9d688d5018895b31486abd427e9ae83945d3"
+          "sha256": "sha256:3eed46dc284ffe993a9cd86bbcc86e91b5c61b25ea882cf5f90a9a2d5eca75da"
         }
       ]
     }

@@ -21,7 +21,7 @@
     "-- observed live for 0.5.0 (klayout-tools#2216) -- and the committed",
     "signoff-report.json is only byte-reproducible when graded with the",
     "distribution it was committed from. signoff/check.py asserts the full",
-    "build identity (git_tag v0.9.1, is_release true) before grading.",
+    "build identity (git_tag v0.9.2, is_release true) before grading.",
     "",
     "0.8.0 (issue #208) adds the item-6 `not_applicable` outcome for a digital",
     "partition (klayout-tools#2865); 0.7.0 could not grade it. 0.7.0 bundled the 11-item checklist and grades item 11 and the",
@@ -47,14 +47,32 @@
     "#5044 fix this pin does not carry is still the item-3 blocker). The",
     "report's `build.grading_ruleset_id` and `source_doc_content_hash` and 12",
     "items' bundled checklist `text` fields move with the wheel; that is",
-    "re-pin drift, not evidence drift."
+    "re-pin drift, not evidence drift.",
+    "",
+    "0.9.2 (issue #399) is the first released wheel that carries upstream",
+    "#5044 (per-cell envelope sets for items 2-4, closed 2026-11-06): item 3",
+    "analog flips to met — the five-citation list under \"3.analog\" grades",
+    "member-by-member (members_covered 5/5, every citation met, input_verified",
+    "true) where 0.9.1 rendered the same list `invalid_evidence` for its",
+    "shape. t1_met_count moves 9/22 -> 10/22; no other row flips to or from",
+    "`met`. Item 11 analog's reason moves with the wheel too:",
+    "lvs_did_not_pass -> check_failed, and the row's `detail` block (0.9.1's",
+    "`power_delivery`) is not rendered — the reason string is the whole",
+    "verdict; the row stays `unmet`. Re-pin drift, not evidence drift: the",
+    "item-6 bundled checklist text (both partitions) now records that the",
+    "klt_yield_native prebuilt wheel is on PyPI behind the [yield] extra, the",
+    "item-11 bundled notes gain the substrate-supply rule (klayout-tools#5346),",
+    "item 4 analog gains members_covered/members_total fields (0/5, status",
+    "unchanged), met list-citations now carry input_verified (klayout-tools#2196",
+    "arriving in the grader), and build.git_commit / grading_ruleset_id /",
+    "source_doc_content_hash move with the wheel."
   ],
   "klt": {
-    "package_version": "0.9.1",
-    "install": "pip install klayout-tools==0.9.1",
+    "package_version": "0.9.2",
+    "install": "pip install klayout-tools==0.9.2",
     "release": {
-      "package_version": "0.9.1",
-      "git_tag": "v0.9.1",
+      "package_version": "0.9.2",
+      "git_tag": "v0.9.2",
       "is_release": true
     }
   }
