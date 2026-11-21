@@ -39,6 +39,7 @@
     "anchor_top_level_pins": null,
     "strict_top_level_pin_count": false,
     "compare_mos_flavour": true,
+    "ignore_mos_bulk": false,
     "supply_nets": [
       "GND",
       "VCC",
@@ -69,10 +70,67 @@
     "reason": null,
     "device_classes": [],
     "device_count": 0,
+    "inspected_count": 10,
     "findings": [],
     "finding_count": 0
   },
   "device_parameter_coverage": [
+    {
+      "class": "nfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 6,
+      "reference_devices": 6,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "pfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 4,
+      "reference_devices": 4,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
     {
       "class": "res_xhigh_po",
       "device_kind": "resistor",
@@ -141,28 +199,28 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.12",
     "netgen_binary": null,
     "layout_sha256": "3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540",
     "reference_sha256": "a4e60f1604ced0bd779dd9c848825d7b7fdaab5bd198307e6c10b38a14d784f1",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.2.dev111+g978f7464fae1",
-    "klt_git_commit": "978f7464fae1eb23946929da55afd088736602ae",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@978f7464fae1eb23946929da55afd088736602ae",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2575+g6bd18bbc8637",
+    "klt_git_commit": "6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
       "name": "sky130",
-      "content_hash": "sha256:029ef177c1f4e872c13cc81093f94a02a9bbfe1f51939a88194a83532d60bf7c",
-      "released": true
+      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "released": false
     },
     "input": {
       "content_hash": "sha256:3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540",
       "role": "layout"
     },
-    "klayout_version_mismatch": true
+    "klayout_version_mismatch": false
   },
   "mismatches": [
     {
@@ -244,7 +302,9 @@
       "side": "both",
       "net": {
         "layout": "\\$2",
-        "reference": "IBIASN"
+        "layout_id": 0,
+        "reference": "IBIASN",
+        "reference_id": 5
       },
       "device": null,
       "property": null,
@@ -308,37 +368,51 @@
   "net_correspondence": [
     {
       "layout": "\\$6",
+      "layout_id": 4,
       "reference": "AMPOUT",
+      "reference_id": 8,
       "pin": false
     },
     {
       "layout": "\\$7",
+      "layout_id": 5,
       "reference": "BUF1",
+      "reference_id": 9,
       "pin": false
     },
     {
       "layout": "DM",
+      "layout_id": 3,
       "reference": "DM",
+      "reference_id": 3,
       "pin": true
     },
     {
       "layout": "DP",
+      "layout_id": 7,
       "reference": "DP",
+      "reference_id": 2,
       "pin": true
     },
     {
       "layout": "\\$3",
+      "layout_id": 1,
       "reference": "LOADDIODE",
+      "reference_id": 7,
       "pin": false
     },
     {
       "layout": "RXD",
+      "layout_id": 6,
       "reference": "RXD",
+      "reference_id": 4,
       "pin": true
     },
     {
       "layout": "\\$4",
+      "layout_id": 2,
       "reference": "TAIL",
+      "reference_id": 6,
       "pin": false
     }
   ]

@@ -1,11 +1,14 @@
 {
   "schema_version": 3,
   "engine": "klayout-runset",
-  "layout": "/workspace/work/2amlogic-sky130-usb2-phy-bd997fcb/.loom/worktrees/2amlogic-sky130-usb2-phy-bd997fcb/issue-400/layout/analog/se_receiver_dm/se_receiver_dm.gds",
-  "reference": "/workspace/work/2amlogic-sky130-usb2-phy-bd997fcb/.loom/worktrees/2amlogic-sky130-usb2-phy-bd997fcb/issue-400/design/netlist/se_receiver_dm.spice",
+  "layout": {
+    "path": "layout/analog/se_receiver_dm/se_receiver_dm.gds",
+    "scope": "repo"
+  },
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-414/design/netlist/se_receiver_dm.spice",
   "top": "se_receiver_dm",
   "reference_top": "se_receiver_dm",
-  "deck_file": "/home/loom/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
+  "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
   "deck_vars": {
     "convert_subckts": "true",
     "scale": "true",
@@ -827,17 +830,17 @@
   "environment": {
     "engine": "klayout-runset",
     "engine_version": "0.30.12",
-    "klayout_binary": "/usr/bin/klayout",
+    "klayout_binary": "klayout",
     "netgen_binary": null,
     "layout_sha256": "ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb",
     "reference_sha256": "3ce8e5cf0d64871e845d11c592035cdee07cc01e18168411c78eb4a26dacfa8d",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.2.dev111+g978f7464fae1",
-    "klt_git_commit": "978f7464fae1eb23946929da55afd088736602ae",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@978f7464fae1eb23946929da55afd088736602ae",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2575+g6bd18bbc8637",
+    "klt_git_commit": "6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
       "name": "sky130.lvs",
@@ -849,7 +852,7 @@
       "role": "layout"
     },
     "runset": {
-      "deck_file": "/home/loom/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
+      "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
       "deck_vars": {
         "convert_subckts": "true",
         "scale": "true",
