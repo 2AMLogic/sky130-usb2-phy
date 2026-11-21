@@ -30,6 +30,7 @@
     "anchor_top_level_pins": null,
     "strict_top_level_pin_count": false,
     "compare_mos_flavour": false,
+    "ignore_mos_bulk": false,
     "supply_nets": [
       "GND",
       "VCC",
@@ -60,10 +61,67 @@
     "reason": null,
     "device_classes": [],
     "device_count": 0,
+    "inspected_count": 290,
     "findings": [],
     "finding_count": 0
   },
   "device_parameter_coverage": [
+    {
+      "class": "nfet",
+      "device_kind": "mos",
+      "layout_devices": 5,
+      "reference_devices": 5,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "pfet",
+      "device_kind": "mos",
+      "layout_devices": 285,
+      "reference_devices": 30,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
     {
       "class": "res_generic_po",
       "device_kind": "resistor",
@@ -94,18 +152,18 @@
       ]
     }
   ],
-  "mismatch_count": 300,
-  "error_count": 297,
+  "mismatch_count": 330,
+  "error_count": 327,
   "category_counts": {
     "device.geometry_not_compared": 1,
     "device.placeholder_value": 1,
-    "device.unmatched": 285,
+    "device.unmatched": 315,
     "net.merged": 6,
     "net.split": 6,
     "topology": 1
   },
   "category_error_counts": {
-    "device.unmatched": 285,
+    "device.unmatched": 315,
     "net.merged": 6,
     "net.split": 6
   },
@@ -116,7 +174,7 @@
       "matched": 6
     },
     "devices": {
-      "layout": 265,
+      "layout": 295,
       "reference": 40,
       "matched": 10
     },
@@ -144,28 +202,28 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.12",
     "netgen_binary": null,
-    "layout_sha256": "7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+    "layout_sha256": "1a4d4bf94b04ba08625bfaa75e8fdc4b252ee22ac13fec4d639f217ed133ccce",
     "reference_sha256": "b824c18d57e4e493b1b733cf8d3670ef5eada615f2b5f32f2e796ef7170d20e3",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.2.dev111+g978f7464fae1",
-    "klt_git_commit": "978f7464fae1eb23946929da55afd088736602ae",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@978f7464fae1eb23946929da55afd088736602ae",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2575+g6bd18bbc8637",
+    "klt_git_commit": "6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
       "name": "sky130",
-      "content_hash": "sha256:029ef177c1f4e872c13cc81093f94a02a9bbfe1f51939a88194a83532d60bf7c",
-      "released": true
+      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "released": false
     },
     "input": {
-      "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+      "content_hash": "sha256:1a4d4bf94b04ba08625bfaa75e8fdc4b252ee22ac13fec4d639f217ed133ccce",
       "role": "layout"
     },
-    "klayout_version_mismatch": true
+    "klayout_version_mismatch": false
   },
   "mismatches": [
     {
@@ -3243,7 +3301,7 @@
       "device": {
         "layout": "\\$261",
         "reference": null,
-        "class": "res_generic_po"
+        "class": "pfet"
       },
       "property": null,
       "details": null,
@@ -3260,7 +3318,7 @@
       "device": {
         "layout": "\\$262",
         "reference": null,
-        "class": "res_generic_po"
+        "class": "pfet"
       },
       "property": null,
       "details": null,
@@ -3277,7 +3335,7 @@
       "device": {
         "layout": "\\$263",
         "reference": null,
-        "class": "res_generic_po"
+        "class": "pfet"
       },
       "property": null,
       "details": null,
@@ -3294,7 +3352,7 @@
       "device": {
         "layout": "\\$264",
         "reference": null,
-        "class": "res_generic_po"
+        "class": "pfet"
       },
       "property": null,
       "details": null,
@@ -3311,7 +3369,75 @@
       "device": {
         "layout": "\\$265",
         "reference": null,
-        "class": "res_generic_po"
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$266",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$267",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$268",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$269",
+        "reference": null,
+        "class": "pfet"
       },
       "property": null,
       "details": null,
@@ -3327,6 +3453,176 @@
       "net": null,
       "device": {
         "layout": "\\$27",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$270",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$271",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$272",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$273",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$274",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$275",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$276",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$277",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$278",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$279",
         "reference": null,
         "class": "pfet"
       },
@@ -3360,9 +3656,281 @@
       "side": "layout",
       "net": null,
       "device": {
+        "layout": "\\$280",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$281",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$282",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$283",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$284",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$285",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$286",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$287",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$288",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$289",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
         "layout": "\\$29",
         "reference": null,
         "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$290",
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$291",
+        "reference": null,
+        "class": "res_generic_po"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$292",
+        "reference": null,
+        "class": "res_generic_po"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$293",
+        "reference": null,
+        "class": "res_generic_po"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$294",
+        "reference": null,
+        "class": "res_generic_po"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.unmatched",
+      "severity": "error",
+      "description": "device has no counterpart on the other side",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": "\\$295",
+        "reference": null,
+        "class": "res_generic_po"
       },
       "property": null,
       "details": null,
@@ -5077,7 +5645,9 @@
       "side": "reference",
       "net": {
         "layout": null,
-        "reference": "DP"
+        "layout_id": null,
+        "reference": "DP",
+        "reference_id": 0
       },
       "device": null,
       "property": null,
@@ -5093,7 +5663,9 @@
       "side": "reference",
       "net": {
         "layout": null,
-        "reference": "N0"
+        "layout_id": null,
+        "reference": "N0",
+        "reference_id": 13
       },
       "device": null,
       "property": null,
@@ -5109,7 +5681,9 @@
       "side": "reference",
       "net": {
         "layout": null,
-        "reference": "N1"
+        "layout_id": null,
+        "reference": "N1",
+        "reference_id": 14
       },
       "device": null,
       "property": null,
@@ -5125,7 +5699,9 @@
       "side": "reference",
       "net": {
         "layout": null,
-        "reference": "N2"
+        "layout_id": null,
+        "reference": "N2",
+        "reference_id": 15
       },
       "device": null,
       "property": null,
@@ -5141,7 +5717,9 @@
       "side": "reference",
       "net": {
         "layout": null,
-        "reference": "N3"
+        "layout_id": null,
+        "reference": "N3",
+        "reference_id": 16
       },
       "device": null,
       "property": null,
@@ -5157,7 +5735,9 @@
       "side": "reference",
       "net": {
         "layout": null,
-        "reference": "N4"
+        "layout_id": null,
+        "reference": "N4",
+        "reference_id": 17
       },
       "device": null,
       "property": null,
@@ -5173,7 +5753,9 @@
       "side": "layout",
       "net": {
         "layout": "DP",
-        "reference": null
+        "layout_id": 15,
+        "reference": null,
+        "reference_id": null
       },
       "device": null,
       "property": null,
@@ -5189,7 +5771,9 @@
       "side": "layout",
       "net": {
         "layout": "\\$12",
-        "reference": null
+        "layout_id": 10,
+        "reference": null,
+        "reference_id": null
       },
       "device": null,
       "property": null,
@@ -5205,7 +5789,9 @@
       "side": "layout",
       "net": {
         "layout": "\\$13",
-        "reference": null
+        "layout_id": 11,
+        "reference": null,
+        "reference_id": null
       },
       "device": null,
       "property": null,
@@ -5221,7 +5807,9 @@
       "side": "layout",
       "net": {
         "layout": "\\$14",
-        "reference": null
+        "layout_id": 12,
+        "reference": null,
+        "reference_id": null
       },
       "device": null,
       "property": null,
@@ -5237,7 +5825,9 @@
       "side": "layout",
       "net": {
         "layout": "\\$15",
-        "reference": null
+        "layout_id": 13,
+        "reference": null,
+        "reference_id": null
       },
       "device": null,
       "property": null,
@@ -5253,7 +5843,9 @@
       "side": "layout",
       "net": {
         "layout": "\\$16",
-        "reference": null
+        "layout_id": 14,
+        "reference": null,
+        "reference_id": null
       },
       "device": null,
       "property": null,
@@ -5283,32 +5875,44 @@
   "net_correspondence": [
     {
       "layout": "PU_EN",
+      "layout_id": 8,
       "reference": "PU_EN",
+      "reference_id": 3,
       "pin": true
     },
     {
       "layout": "TRIM0",
+      "layout_id": 0,
       "reference": "TRIM0",
+      "reference_id": 4,
       "pin": true
     },
     {
       "layout": "TRIM1",
+      "layout_id": 1,
       "reference": "TRIM1",
+      "reference_id": 5,
       "pin": true
     },
     {
       "layout": "TRIM2",
+      "layout_id": 9,
       "reference": "TRIM2",
+      "reference_id": 6,
       "pin": true
     },
     {
       "layout": "TRIM3",
+      "layout_id": 2,
       "reference": "TRIM3",
+      "reference_id": 7,
       "pin": true
     },
     {
       "layout": "VSS",
+      "layout_id": 17,
       "reference": "VSS",
+      "reference_id": 2,
       "pin": true
     }
   ]
