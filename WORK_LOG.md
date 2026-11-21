@@ -8,6 +8,12 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-21
+
+- **Issue #403**: T1 item 7 (analog): klt pex reports for the se_receiver_dp, se_receiver_dm and dplus_pullup leaves
+- **Issue #414** (open): dplus_pullup layout iteration: poly-head parasitics push every trim code above the ratified window (the FAIL post-layout record's follow-up)
+- 2AMLogic/klayout-tools#6990 (open, upstream): klt pex errors the whole envelope on a DUT-internal-node measurement (no portable-subset option)
+
 ### 2026-11-20
 
 - **Issue #193** (closed): Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
