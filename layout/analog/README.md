@@ -11,8 +11,9 @@ spec files); the generator helpers are shared in `gen_common.py` (see below).
 
 **This directory's frozen records are cited from `signoff/block-manifest.json`.**
 The five layout streams supply item 2 (analog, `met`). The latest frozen DRC,
-LVS and ERC reports supply items 3, 4 and 11. The pinned klt 0.9.1 grader
-reports `invalid_evidence`, `check_failed` and `lvs_did_not_pass` respectively.
+curated LVS and supply-ERC reports supply items 3, 4 and 11. The pinned klt
+0.9.2 grader reports `met` for DRC, `unmet / check_failed` for LVS, and
+`unmet / lvs_did_not_pass` for power delivery.
 See the [signoff verdicts](../../signoff/README.md). No layout here
 is post-layout verified (item 7 is not started) and none is matched-layout or
 density closed.

@@ -20,16 +20,18 @@ limitations recorded in the characterization report; real-UTMI place-and-route
 remains pending. The FS line driver, differential and single-ended receivers,
 and trimmed D+ pull-up have schematic-level sky130 simulation evidence, and
 each of those five leaves now has committed GDS with a clean `klt drc` record,
-a matching `klt lvs` record and a `clean_partial` `klt erc` record — leaf-level
-only, and the graded T1 rows for those three checks are still `unmet`. One
+a matching PDK-runset LVS record and a `clean_partial` `klt erc` record — leaf-level
+only; of the graded T1 rows behind those checks, DRC (item 3, analog) reads
+`met` under the 0.9.2 grader pin while LVS and supply-ERC (items 4 and 11)
+are still `unmet`. One
 leaf (the differential receiver) has the repo's first committed post-layout
 record — a `klt pex` re-run of its sensitivity bench, deliberately uncited
 (item 7 takes a single citation and one leaf is not the partition); the other
 four leaves have no parasitic extraction or post-layout re-simulation, so
 every other circuit result in this repo is schematic-level. See the scope note below for the coverage
 limits, and [`signoff/README.md`](signoff/README.md) for the machine-graded T1
-verdict (9 of 22 rows `met` as read from `signoff/signoff-report.json` on
-2026-11-16).
+verdict (10 of 22 rows `met` as read from `signoff/signoff-report.json` on
+2026-11-20).
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -60,17 +62,17 @@ pull-up, and a digital UTMI layer.
   Driver signal-quality and static results pass all 45 corners. All five
   leaves now have committed layout: the GDS streams and their generators are
   pinned by hash (T1 item 2.analog reads `pass`), and each leaf's latest
-  frozen record reads DRC `clean`, LVS `match` and supply-ERC `clean_partial`.
-  Those three checks are **not** signed off: T1 items 3, 4 and 11 (analog)
-  all grade `unmet` in the committed report. Two separate reasons, and only
-  one of them is about the design. Items 3 and 4 were refused for the
-  grader's shape — one native envelope per item, and five leaves are not one
-  partition
-  ([klayout-tools#5044](https://github.com/2AMLogic/klayout-tools/issues/5044),
-  fixed upstream 2026-11-06 but not yet in a released wheel, so the pinned
-  grader still renders `invalid_evidence`). Behind that, item 4 has a real
-  blocker — `runset_unrecognised_device`: the sky130 runset declares device
-  classes no layout device uses — and item 11 is gated on item 4. The reports
+  frozen record reads DRC `clean`, PDK-runset LVS `match` and supply-ERC `clean_partial`.
+  Of those three checks, DRC is signed off: the pinned grader (klt 0.9.2)
+  carries
+  [klayout-tools#5044](https://github.com/2AMLogic/klayout-tools/issues/5044)
+  (fixed upstream 2026-11-06), so the five leaves' clean reports grade as a
+  per-cell set and T1 item 3 (analog) reads `met` in the committed report.
+  Item 4 (analog) grades `unmet / check_failed` with curated LVS. The D+
+  pull-up matches all 20 devices. The driver and three receivers each have
+  a bias-resistor length mismatch tracked in #406. Item 11 (analog) pairs
+  each supply-ERC report with the same curated LVS and grades
+  `unmet / lvs_did_not_pass`. The reports
   also disclose their own gaps: LVS `power_connectivity` is `unchecked`, ERC
   antenna levels are `pass_partial`, and each DRC report lists layers present
   in the stream with no rules. The D+ pull-up
@@ -93,7 +95,7 @@ pull-up, and a digital UTMI layer.
 
   **Layout, mismatch and integrated PHY behaviour — the partial state, not one
   word.** *Layout:* each of the five leaves has committed GDS with a clean
-  `klt drc` record (0 violations), a matching `klt lvs` record and a
+  `klt drc` record (0 violations), a matching PDK-runset LVS record and a
   `clean_partial` `klt erc` record; the differential receiver additionally has
   the repo's first committed `klt pex` record (deliberately uncited — item 7
   takes a single citation and one leaf is not the partition), and the other
