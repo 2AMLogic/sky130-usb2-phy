@@ -174,43 +174,43 @@
     },
     "6.analog": [
       {
-        "file": "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-binding.yield.json",
-        "content_hash": "sha256:e63f053bc9411ba7578a7da106eb7ccecdca7849432621ec4f66057fd223e941",
+        "file": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/diff-binding.yield.json",
+        "content_hash": "sha256:8bcf4fa4dc16bbf49de4729fbb3d4d93831468e611aaf5f7354d7104acdc51e6",
         "rows": [
           "6-09"
         ]
       },
       {
-        "file": "sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/diff-tt.yield.json",
-        "content_hash": "sha256:d10015ec93457c9e4048586da20867559f9f174be4100caca42096cd6ce7ea91",
+        "file": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/diff-tt.yield.json",
+        "content_hash": "sha256:8f8fd23e27a21db727763ec291fe9a9bf147d5544c2c61d57ce7428b91ceb493",
         "rows": [
           "6-09"
         ]
       },
       {
-        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-binding.yield.json",
-        "content_hash": "sha256:5e0c71ff232ea96e71c96dae22cd015e17870057ff742f3a04ff514a84e866c2",
+        "file": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dm-binding.yield.json",
+        "content_hash": "sha256:53d5f79c394985eff446380505f8e2829792498c01703f2603cc4dcbe29041c8",
         "rows": [
           "6-11"
         ]
       },
       {
-        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dm-tt.yield.json",
-        "content_hash": "sha256:a41593a21d6cc583f5f34fba8743221b555cd4aa79ad25ecb0b996d94529f1b4",
+        "file": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dm-tt.yield.json",
+        "content_hash": "sha256:420d2e9ee862f072378637fee4e660e30b078a53f0baf27b9f9aba277280f07d",
         "rows": [
           "6-11"
         ]
       },
       {
-        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-binding.yield.json",
-        "content_hash": "sha256:8e3f13f0903b6e55a4dab4cc5a217219ea3233ad32d18b004f65e75e12c4c802",
+        "file": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dp-binding.yield.json",
+        "content_hash": "sha256:8a79c2301f51c776bd910073e5fc43bec4641e994c2b5e0a99b3d94e8f43fb1b",
         "rows": [
           "6-11"
         ]
       },
       {
-        "file": "sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/dp-tt.yield.json",
-        "content_hash": "sha256:f76915003014071e3ad12c9ab37df3d6b46007a3e5f62c97c15ad1dab3a30ec4",
+        "file": "signoff/evidence/20261120-190153-4bdccc4-item6-rx-not-applicable/dp-tt.yield.json",
+        "content_hash": "sha256:39eac0ba5ca7baddbb88cb5b30b729e44711731cee8a1c94fffca01a2c7ce549",
         "rows": [
           "6-11"
         ]
