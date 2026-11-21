@@ -486,11 +486,7 @@
     "inapplicable": [
       {
         "id": "erc.supply_short",
-        "missing": [
-          "--deck naming the PDK family, so the isolation layers can be measured",
-          "or assert ties[].isolation_boxes"
-        ],
-        "reason": "substrate_isolation_undecidable"
+        "reason": "substrate_continuity_not_modelled"
       }
     ],
     "unknown": [],
@@ -512,9 +508,9 @@
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.9.3.dev310+ga638216e7fea",
-    "klt_git_commit": "a638216e7fea94067a1727f58053bb8cd0b7b329",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@a638216e7fea94067a1727f58053bb8cd0b7b329",
+    "klt_version": "0.9.2.dev111+g978f7464fae1",
+    "klt_git_commit": "978f7464fae1eb23946929da55afd088736602ae",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@978f7464fae1eb23946929da55afd088736602ae",
     "klayout_version": "0.30.13",
     "pdk": {
       "name": "sky130",

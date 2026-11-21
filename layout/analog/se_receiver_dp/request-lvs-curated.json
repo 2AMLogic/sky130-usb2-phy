@@ -1,0 +1,29 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout",
+  "layout": {
+    "file": "se_receiver_dp.gds",
+    "top": "se_receiver_dp",
+    "deck": "sky130"
+  },
+  "reference": {
+    "netlist": "../../../design/netlist/se_receiver_dp.spice",
+    "top": "se_receiver_dp",
+    "form": "subckt-call",
+    "deck": "sky130"
+  },
+  "options": {
+    "compare_mos_flavour": true,
+    "combine_devices": [
+      "nfet__hvi",
+      "pfet__hvi"
+    ],
+    "compare_parameters": {
+      "res_xhigh_po": [
+        "R",
+        "L",
+        "W"
+      ]
+    }
+  }
+}

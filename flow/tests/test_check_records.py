@@ -1392,6 +1392,16 @@ def test_analog_vanished_artifact_fails(analog_sandbox: Path):
     assert any("no longer exists" in message for _, message in findings.items), findings.items
 
 
+@pytest.mark.parametrize("report", ["lvs-curated-baseline-report.json", "lvs-curated-report.json"])
+def test_analog_curated_artifacts_are_required_for_a_curated_run(analog_sandbox, report):
+    def drop(meta):
+        artifacts = meta["provenance"]["artifacts"]
+        artifacts.remove(next(entry for entry in artifacts if Path(entry["path"]).name == report))
+
+    findings = mutate_analog(analog_sandbox, drop)
+    assert any(report in message for _, message in findings.items)
+
+
 def test_changed_analog_artifact_hash_fails(analog_sandbox: Path):
     def stale(meta):
         meta["provenance"]["artifacts"][0]["content_hash"] = "sha256:" + "0" * 64
