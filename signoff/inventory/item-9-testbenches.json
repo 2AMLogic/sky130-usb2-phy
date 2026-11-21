@@ -1,388 +1,460 @@
 {
-  "schema": "sky130-usb2-phy.signoff.inventory/1",
-  "t1_item": 9,
-  "pdk": {
-    "name": "sky130A",
-    "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b",
-    "source": "docs/baseline.md"
-  },
-  "note": "Every cocotb suite in verification/ and every analog testbench under sim/*/testbench/, each with the cold-start invocation documented in verification/README.md or sim/README.md. Plain versioned file: the bound artifact of signoff/evidence/item-9-testbenches.json. Re-hashed member-by-member by signoff/check.py.",
-  "testbenches": [
+ "schema": "sky130-usb2-phy.signoff.inventory/1",
+ "t1_item": 9,
+ "pdk": {
+  "name": "sky130A",
+  "open_pdks_commit": "c6d73a35f524070e85faff4a6a9eef49553ebc2b",
+  "source": "docs/baseline.md"
+ },
+ "note": "Every cocotb suite in verification/ and every analog testbench under sim/*/testbench/, each with the cold-start invocation documented in verification/README.md or sim/README.md. Plain versioned file: the bound artifact of signoff/evidence/item-9-testbenches.json. Re-hashed member-by-member by signoff/check.py.",
+ "testbenches": [
+  {
+   "id": "test_usbfs_model",
+   "partition": "digital",
+   "engine": "pytest (no simulator)",
+   "cold_start": "python3 -m pytest verification/test_usbfs_model.py -v",
+   "cold_start_doc": "verification/README.md",
+   "members": [
     {
-      "id": "test_usbfs_model",
-      "partition": "digital",
-      "engine": "pytest (no simulator)",
-      "cold_start": "python3 -m pytest verification/test_usbfs_model.py -v",
-      "cold_start_doc": "verification/README.md",
-      "members": [
-        {
-          "path": "verification/test_usbfs_model.py",
-          "sha256": "sha256:7a6e82f8ccff72aa3915d3e5893c82c3ff3fe8f8cd2f53d70c6f46e04574d6a1",
-          "role": "testbench"
-        }
-      ]
-    },
-    {
-      "id": "test_utmi_stub",
-      "partition": "digital",
-      "engine": "cocotb + Icarus",
-      "cold_start": "klt functional-verification verification/request-utmi_stub.json --format json",
-      "cold_start_doc": "verification/README.md",
-      "members": [
-        {
-          "path": "verification/test_utmi_stub.py",
-          "sha256": "sha256:6f72a9e698b44396e30954477297047261ebed0324f86e35356204b55a1460eb",
-          "role": "testbench"
-        },
-        {
-          "path": "verification/request-utmi_stub.json",
-          "sha256": "sha256:02ddd124bcc4d01d100a664146efa1ccbfb5602bbef05ecc57c50b5216af1939",
-          "role": "klt functional-verification request"
-        }
-      ]
-    },
-    {
-      "id": "test_usbfs_loopback",
-      "partition": "digital",
-      "engine": "cocotb + Icarus",
-      "cold_start": "klt functional-verification verification/request-usbfs-model.json --format json",
-      "cold_start_doc": "verification/README.md",
-      "members": [
-        {
-          "path": "verification/test_usbfs_loopback.py",
-          "sha256": "sha256:44626893660febddd11fcac16a6e899b403949756a87e9f9ff398c9e7308bbb9",
-          "role": "testbench"
-        },
-        {
-          "path": "verification/request-usbfs-model.json",
-          "sha256": "sha256:594bd9389b3eaf013b1c1ff4f31cec24cbe7928216cab19403469b9a73218bfd",
-          "role": "klt functional-verification request"
-        }
-      ]
-    },
-    {
-      "id": "test_usb_rx_cdc",
-      "partition": "digital",
-      "engine": "cocotb + Icarus",
-      "cold_start": "klt functional-verification verification/request-usb-rx-cdc.json --format json",
-      "cold_start_doc": "verification/README.md",
-      "members": [
-        {
-          "path": "verification/test_usb_rx_cdc.py",
-          "sha256": "sha256:cbe26b27b3163372d66ba450ba596afcbc6e1f5e156ec239b9a2412381083ef5",
-          "role": "testbench"
-        },
-        {
-          "path": "verification/request-usb-rx-cdc.json",
-          "sha256": "sha256:bb0deffb03428bdf17f69c3b7cf381a59f77fa16b33acf8a2dc397fa1f1c7065",
-          "role": "klt functional-verification request"
-        }
-      ]
-    },
-    {
-      "id": "test_usb_rx",
-      "partition": "digital",
-      "engine": "cocotb + Icarus",
-      "cold_start": "klt functional-verification verification/request-usb-rx.json --format json",
-      "cold_start_doc": "verification/README.md",
-      "members": [
-        {
-          "path": "verification/test_usb_rx.py",
-          "sha256": "sha256:22b6af091cabae9f533410f0ab68fb2d80cfd1465e3415fb23ac15845b77da36",
-          "role": "testbench"
-        },
-        {
-          "path": "verification/request-usb-rx.json",
-          "sha256": "sha256:0c472b737fccdad0c419f78923c44c6425f46ae8092394ee314dfd0a0a8d84c7",
-          "role": "klt functional-verification request"
-        }
-      ]
-    },
-    {
-      "id": "test_usb_tx",
-      "partition": "digital",
-      "engine": "cocotb + Icarus",
-      "cold_start": "klt functional-verification verification/request-usb-tx.json --format json",
-      "cold_start_doc": "verification/README.md",
-      "members": [
-        {
-          "path": "verification/test_usb_tx.py",
-          "sha256": "sha256:2f23ad058e86329dafda6a14d725d4de933d0d8c60bfe5fc76d588a1a3f7318d",
-          "role": "testbench"
-        },
-        {
-          "path": "verification/request-usb-tx.json",
-          "sha256": "sha256:33efc8f1abdf56eb5ef1c67be8fc5e640199f7d0fe2a8f789b3933d82d9a96ed",
-          "role": "klt functional-verification request"
-        }
-      ]
-    },
-    {
-      "id": "test_usb_utmi_top",
-      "partition": "digital",
-      "engine": "cocotb + Icarus",
-      "cold_start": "klt functional-verification verification/request-usb-utmi_top.json --format json",
-      "cold_start_doc": "verification/README.md",
-      "members": [
-        {
-          "path": "verification/test_usb_utmi_top.py",
-          "sha256": "sha256:0a6f7de96839e5ba854c8fe600839efb41edabcee177f8daeac88609040b2cee",
-          "role": "testbench"
-        },
-        {
-          "path": "verification/request-usb-utmi_top.json",
-          "sha256": "sha256:de66a14271289dac44cc2bf39ba67106d19b7e2f2c0e5ae69dc07856ec59b784",
-          "role": "klt functional-verification request"
-        }
-      ]
-    },
-    {
-      "id": "diff-receiver-pex",
-      "partition": "analog",
-      "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics",
-      "cold_start": "python3 sim/diff-receiver-pex/run.py",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/diff-receiver-pex/testbench/tb.json",
-          "sha256": "sha256:5f764427e60e8d1e57ee27237b275f6b95ad0decb0a7fead08c07413626b0224",
-          "role": "klt sim request (2 corners: tt_27c_3.30v, sf_100c_3.00v) driving both klt pex legs"
-        },
-        {
-          "path": "sim/diff-receiver-pex/testbench/diff_receiver_pex_tb.spice",
-          "sha256": "sha256:b256406be243cfc3b95e8a1afc23446fc93951d449143363d25f8d5f2ab17bc2",
-          "role": "testbench netlist (sensitivity body with the in-deck DUT .include klt pex swaps)"
-        },
-        {
-          "path": "sim/diff-receiver-pex/testbench/differential_receiver_pex_dut.spice",
-          "sha256": "sha256:ece059b506393f2b325440344247f723a68d49f0794922bde397710deaf79007",
-          "role": "schematic-leg DUT shim (design/netlist/differential_receiver.spice with the .subckt declaration pin order matched to the extracted header)"
-        }
-      ]
-    },
-    {
-      "id": "diff-receiver-mismatch",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
-      "cold_start": "python3 sim/run_mismatch.py diff-receiver-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/diff-receiver-mismatch/testbench/mc.json",
-          "sha256": "sha256:8df72879657729dff16ec9505a3cffeae254e69a6ae8d6e989de94a951b76969",
-          "role": "Monte Carlo campaign definition"
-        },
-        {
-          "path": "sim/diff-receiver-mismatch/testbench/diff_receiver_mc_tb.spice",
-          "sha256": "sha256:eae62ee61fc5211e6ec7b2c817456bb8c1a2fe65c2aa8916b280c63ffb9d4988",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "diff-receiver-sensitivity",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
-      "cold_start": "python3 sim/run_corners.py diff-receiver-sensitivity --klt-runner-version-check warn",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/diff-receiver-sensitivity/testbench/tb.json",
-          "sha256": "sha256:cb41149e144f2d34b4af9b9f6006dc180bf9e8bae09da04e1896b0d1cce14af7",
-          "role": "testbench definition"
-        },
-        {
-          "path": "sim/diff-receiver-sensitivity/testbench/diff_receiver_tb.spice",
-          "sha256": "sha256:4c91a242294dfcacefa98490d89a4da761e396d9b384d88d19afaf5e7c9b0059",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "dplus-pullup-tolerance",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
-      "cold_start": "python3 sim/run_corners.py dplus-pullup-tolerance --klt-runner-version-check warn",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/dplus-pullup-tolerance/testbench/tb.json",
-          "sha256": "sha256:d9762815b9bf1fa8f2ae848f280e6a64cf6d849d0d638555dff84635bbae6ef8",
-          "role": "testbench definition"
-        },
-        {
-          "path": "sim/dplus-pullup-tolerance/testbench/dplus_pullup_tb.spice",
-          "sha256": "sha256:38996fea9fed13e8e6938176eb1b7a9fd71b4d802b7b981384a6a9b4b2fe4a7d",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "driver-signal-quality",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
-      "cold_start": "python3 sim/run_corners.py driver-signal-quality --klt-runner-version-check warn",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/driver-signal-quality/testbench/tb.json",
-          "sha256": "sha256:b5c046421d8e658813c68074fbe5b573afa92e9dad765cf0edcd1857dff3feef",
-          "role": "testbench definition"
-        },
-        {
-          "path": "sim/driver-signal-quality/testbench/driver_tb.spice",
-          "sha256": "sha256:95d030552d034993df371b3fc7cbb0152d6c58ddcb2f0437640f822cefc07dfa",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "driver-static",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
-      "cold_start": "python3 sim/run_corners.py driver-static --klt-runner-version-check warn",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/driver-static/testbench/tb.json",
-          "sha256": "sha256:3755bcc2b213fdf722a2e6fd8e733adfe6468f73d68cbcf157f5ebe6787004ec",
-          "role": "testbench definition"
-        },
-        {
-          "path": "sim/driver-static/testbench/driver_static_tb.spice",
-          "sha256": "sha256:7e64e92227886d66b283de633b2384c4535fb199ed5f466488f10cb0b410abef",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "se-receiver-dm-thresholds",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
-      "cold_start": "python3 sim/run_corners.py se-receiver-dm-thresholds --klt-runner-version-check warn",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/se-receiver-dm-thresholds/testbench/tb.json",
-          "sha256": "sha256:985ac00fbe521b660c5549d67a438b3bf00cc23d8d9c1c1bbc63b674ea3aea37",
-          "role": "testbench definition"
-        },
-        {
-          "path": "sim/se-receiver-dm-thresholds/testbench/se_rx_dm_tb.spice",
-          "sha256": "sha256:398995fd69f9485ec3c79a3f2b9e100c42e7da810803c0b8abdfc20e88f6f501",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "se-receiver-dp-thresholds",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
-      "cold_start": "python3 sim/run_corners.py se-receiver-dp-thresholds --klt-runner-version-check warn",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/se-receiver-dp-thresholds/testbench/tb.json",
-          "sha256": "sha256:b460f330dfdc9c42ac5549e0d84e236eaf585fec4d6e50f41f211ca857f03bf5",
-          "role": "testbench definition"
-        },
-        {
-          "path": "sim/se-receiver-dp-thresholds/testbench/se_rx_dp_tb.spice",
-          "sha256": "sha256:fd28c307c41669e0d4a99164e270be48f8d0887093292886c29aedb857700605",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "se-receiver-mismatch",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
-      "cold_start": "python3 sim/run_mismatch.py se-receiver-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/se-receiver-mismatch/testbench/mc.json",
-          "sha256": "sha256:0527d7f75b72a94b98d42395d72c5b9ad4fb15633b2a619c6079eb951971c9c7",
-          "role": "Monte Carlo campaign definition"
-        },
-        {
-          "path": "sim/se-receiver-mismatch/testbench/se_rx_dp_mc_tb.spice",
-          "sha256": "sha256:fedca0072bdde82d898f35dd92ede88e0461c691772a61f7b68eb1506b98b7f0",
-          "role": "testbench netlist (D+)"
-        },
-        {
-          "path": "sim/se-receiver-mismatch/testbench/se_rx_dm_mc_tb.spice",
-          "sha256": "sha256:8437bf222f866cfd34c38cdb9e3def4bf0f9d95bf0e6822224538f5843e5dcd1",
-          "role": "testbench netlist (D-)"
-        }
-      ]
-    },
-    {
-      "id": "driver-matching-mismatch",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
-      "cold_start": "python3 sim/run_mismatch.py driver-matching-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/driver-matching-mismatch/testbench/mc.json",
-          "sha256": "sha256:984705140b976229b805392528a3df131d2635d006044714235b36f7664a1fe0",
-          "role": "Monte Carlo campaign definition"
-        },
-        {
-          "path": "sim/driver-matching-mismatch/testbench/driver_mc_tb.spice",
-          "sha256": "sha256:3104bd80f5ddbb992e3c4bcf563c6675f27a0a715dee28490202e2bf872d3684",
-          "role": "testbench netlist"
-        }
-      ]
-    },
-    {
-      "id": "dplus-pullup-mismatch",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
-      "cold_start": "python3 sim/run_mismatch.py dplus-pullup-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/dplus-pullup-mismatch/testbench/mc.json",
-          "sha256": "sha256:debcb76824aa7f50e66239a56558df4ae210eeeb7450f1e7dc44ed908fa4abdb",
-          "role": "Monte Carlo campaign definition"
-        },
-        {
-          "path": "sim/dplus-pullup-mismatch/testbench/dplus_pullup_mc_tb.spice",
-          "sha256": "sha256:0a02100d4351258adc61ea6d2f4b66127d3f8ef820ed98d0abc380c34cde897b",
-          "role": "testbench netlist"
-        },
-        {
-          "path": "sim/dplus-pullup-mismatch/testbench/dplus_pullup_mm.spice",
-          "sha256": "sha256:cb5ed63525c3af2f4206b91a818ac9947baad44e225730d3e09d80856234c624",
-          "role": "pull-up netlist with the ladder-resistor mismatch wrapper (generated)"
-        },
-        {
-          "path": "sim/dplus-pullup-mismatch/testbench/make_mm_netlist.py",
-          "sha256": "sha256:fe751035565d6a7d29781c1285f02c97a3723d25b21ed1cb5d5f2511d94182cd",
-          "role": "generator for dplus_pullup_mm.spice"
-        }
-      ]
-    },
-    {
-      "id": "smoke-inverter",
-      "partition": "analog",
-      "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
-      "cold_start": "python3 sim/run_corners.py smoke-inverter --klt-runner-version-check warn",
-      "cold_start_doc": "sim/README.md",
-      "members": [
-        {
-          "path": "sim/smoke-inverter/testbench/tb.json",
-          "sha256": "sha256:9320084b99851cf727eee8aa2ab00b38c025be92bd89de63736a77fbbfe773dd",
-          "role": "testbench definition"
-        },
-        {
-          "path": "sim/smoke-inverter/testbench/smoke_inverter.spice",
-          "sha256": "sha256:891c1323440eff14b43cadf224d7c641a47961a5837e565166219dc5ddab82ee",
-          "role": "testbench netlist"
-        }
-      ]
+     "path": "verification/test_usbfs_model.py",
+     "sha256": "sha256:7a6e82f8ccff72aa3915d3e5893c82c3ff3fe8f8cd2f53d70c6f46e04574d6a1",
+     "role": "testbench"
     }
-  ]
+   ]
+  },
+  {
+   "id": "test_utmi_stub",
+   "partition": "digital",
+   "engine": "cocotb + Icarus",
+   "cold_start": "klt functional-verification verification/request-utmi_stub.json --format json",
+   "cold_start_doc": "verification/README.md",
+   "members": [
+    {
+     "path": "verification/test_utmi_stub.py",
+     "sha256": "sha256:6f72a9e698b44396e30954477297047261ebed0324f86e35356204b55a1460eb",
+     "role": "testbench"
+    },
+    {
+     "path": "verification/request-utmi_stub.json",
+     "sha256": "sha256:02ddd124bcc4d01d100a664146efa1ccbfb5602bbef05ecc57c50b5216af1939",
+     "role": "klt functional-verification request"
+    }
+   ]
+  },
+  {
+   "id": "test_usbfs_loopback",
+   "partition": "digital",
+   "engine": "cocotb + Icarus",
+   "cold_start": "klt functional-verification verification/request-usbfs-model.json --format json",
+   "cold_start_doc": "verification/README.md",
+   "members": [
+    {
+     "path": "verification/test_usbfs_loopback.py",
+     "sha256": "sha256:44626893660febddd11fcac16a6e899b403949756a87e9f9ff398c9e7308bbb9",
+     "role": "testbench"
+    },
+    {
+     "path": "verification/request-usbfs-model.json",
+     "sha256": "sha256:594bd9389b3eaf013b1c1ff4f31cec24cbe7928216cab19403469b9a73218bfd",
+     "role": "klt functional-verification request"
+    }
+   ]
+  },
+  {
+   "id": "test_usb_rx_cdc",
+   "partition": "digital",
+   "engine": "cocotb + Icarus",
+   "cold_start": "klt functional-verification verification/request-usb-rx-cdc.json --format json",
+   "cold_start_doc": "verification/README.md",
+   "members": [
+    {
+     "path": "verification/test_usb_rx_cdc.py",
+     "sha256": "sha256:cbe26b27b3163372d66ba450ba596afcbc6e1f5e156ec239b9a2412381083ef5",
+     "role": "testbench"
+    },
+    {
+     "path": "verification/request-usb-rx-cdc.json",
+     "sha256": "sha256:bb0deffb03428bdf17f69c3b7cf381a59f77fa16b33acf8a2dc397fa1f1c7065",
+     "role": "klt functional-verification request"
+    }
+   ]
+  },
+  {
+   "id": "test_usb_rx",
+   "partition": "digital",
+   "engine": "cocotb + Icarus",
+   "cold_start": "klt functional-verification verification/request-usb-rx.json --format json",
+   "cold_start_doc": "verification/README.md",
+   "members": [
+    {
+     "path": "verification/test_usb_rx.py",
+     "sha256": "sha256:22b6af091cabae9f533410f0ab68fb2d80cfd1465e3415fb23ac15845b77da36",
+     "role": "testbench"
+    },
+    {
+     "path": "verification/request-usb-rx.json",
+     "sha256": "sha256:0c472b737fccdad0c419f78923c44c6425f46ae8092394ee314dfd0a0a8d84c7",
+     "role": "klt functional-verification request"
+    }
+   ]
+  },
+  {
+   "id": "test_usb_tx",
+   "partition": "digital",
+   "engine": "cocotb + Icarus",
+   "cold_start": "klt functional-verification verification/request-usb-tx.json --format json",
+   "cold_start_doc": "verification/README.md",
+   "members": [
+    {
+     "path": "verification/test_usb_tx.py",
+     "sha256": "sha256:2f23ad058e86329dafda6a14d725d4de933d0d8c60bfe5fc76d588a1a3f7318d",
+     "role": "testbench"
+    },
+    {
+     "path": "verification/request-usb-tx.json",
+     "sha256": "sha256:33efc8f1abdf56eb5ef1c67be8fc5e640199f7d0fe2a8f789b3933d82d9a96ed",
+     "role": "klt functional-verification request"
+    }
+   ]
+  },
+  {
+   "id": "test_usb_utmi_top",
+   "partition": "digital",
+   "engine": "cocotb + Icarus",
+   "cold_start": "klt functional-verification verification/request-usb-utmi_top.json --format json",
+   "cold_start_doc": "verification/README.md",
+   "members": [
+    {
+     "path": "verification/test_usb_utmi_top.py",
+     "sha256": "sha256:0a6f7de96839e5ba854c8fe600839efb41edabcee177f8daeac88609040b2cee",
+     "role": "testbench"
+    },
+    {
+     "path": "verification/request-usb-utmi_top.json",
+     "sha256": "sha256:de66a14271289dac44cc2bf39ba67106d19b7e2f2c0e5ae69dc07856ec59b784",
+     "role": "klt functional-verification request"
+    }
+   ]
+  },
+  {
+   "id": "diff-receiver-pex",
+   "partition": "analog",
+   "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics",
+   "cold_start": "python3 sim/diff-receiver-pex/run.py",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/diff-receiver-pex/testbench/tb.json",
+     "sha256": "sha256:5f764427e60e8d1e57ee27237b275f6b95ad0decb0a7fead08c07413626b0224",
+     "role": "klt sim request (2 corners: tt_27c_3.30v, sf_100c_3.00v) driving both klt pex legs"
+    },
+    {
+     "path": "sim/diff-receiver-pex/testbench/diff_receiver_pex_tb.spice",
+     "sha256": "sha256:b256406be243cfc3b95e8a1afc23446fc93951d449143363d25f8d5f2ab17bc2",
+     "role": "testbench netlist (sensitivity body with the in-deck DUT .include klt pex swaps)"
+    },
+    {
+     "path": "sim/diff-receiver-pex/testbench/differential_receiver_pex_dut.spice",
+     "sha256": "sha256:ece059b506393f2b325440344247f723a68d49f0794922bde397710deaf79007",
+     "role": "schematic-leg DUT shim (design/netlist/differential_receiver.spice with the .subckt declaration pin order matched to the extracted header)"
+    }
+   ]
+  },
+  {
+   "id": "se-receiver-dp-pex",
+   "partition": "analog",
+   "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics (klt pex --extract-only probe confirmed the header pin order)",
+   "cold_start": "python3 sim/se-receiver-dp-pex/run.py",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/se-receiver-dp-pex/testbench/tb.json",
+     "sha256": "sha256:42c741f084a77daa3ae1bb8d3b6d9018305319accf63412b02798c1827df3faf",
+     "role": "klt sim request (2 corners: tt_27c_3.30v, ff_lh_100c_3.00v) driving both klt pex legs"
+    },
+    {
+     "path": "sim/se-receiver-dp-pex/testbench/se_rx_dp_pex_tb.spice",
+     "sha256": "sha256:bd207e9e6dc2323ce948006209ab97fe2b08afcefd9ad49da97709bcf4b8114f",
+     "role": "testbench netlist (bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+    },
+    {
+     "path": "sim/se-receiver-dp-pex/testbench/se_receiver_dp_pex_dut.spice",
+     "sha256": "sha256:6726d8343344ec8569b6db55bdc9c82b3ed9f9e1fed25b078cdaf6d516024e1c",
+     "role": "schematic-leg DUT shim (design/netlist/se_receiver_dp.spice with the .subckt declaration pin order matched to the extracted header)"
+    }
+   ]
+  },
+  {
+   "id": "se-receiver-dm-pex",
+   "partition": "analog",
+   "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics (klt pex --extract-only probe confirmed the header pin order)",
+   "cold_start": "python3 sim/se-receiver-dm-pex/run.py",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/se-receiver-dm-pex/testbench/tb.json",
+     "sha256": "sha256:9b96b9e9f6c9f40c304e19e93976bef29cebce008501e86e2e7c69d0c5b8385c",
+     "role": "klt sim request (2 corners: tt_27c_3.30v, ff_lh_100c_3.00v) driving both klt pex legs"
+    },
+    {
+     "path": "sim/se-receiver-dm-pex/testbench/se_rx_dm_pex_tb.spice",
+     "sha256": "sha256:1a6444fa51041ef04cffde4405ff08dc223501ce00241a6b3a4d628688c007ec",
+     "role": "testbench netlist (bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+    },
+    {
+     "path": "sim/se-receiver-dm-pex/testbench/se_receiver_dm_pex_dut.spice",
+     "sha256": "sha256:2019e12d070897a446adb0a7076f71e00ec722bff0d3d7a92452decfd34a5641",
+     "role": "schematic-leg DUT shim (design/netlist/se_receiver_dm.spice with the .subckt declaration pin order matched to the extracted header)"
+    }
+   ]
+  },
+  {
+   "id": "dplus-pullup-pex",
+   "partition": "analog",
+   "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics (klt pex --extract-only probe confirmed the header pin order)",
+   "cold_start": "python3 sim/dplus-pullup-pex/run.py",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/dplus-pullup-pex/testbench/tb.json",
+     "sha256": "sha256:da444623af2a6f32b2799983196481a0e9fbacdbcb4a415e2f2e4118ce67ad71",
+     "role": "klt sim request (2 corners: tt_27c_3.30v, fs_hl_100c_3.00v) driving both klt pex legs"
+    },
+    {
+     "path": "sim/dplus-pullup-pex/testbench/dplus_pullup_pex_tb.spice",
+     "sha256": "sha256:a7facf8ff01aea6352d549bb350f7f1361d8ec106cdf9578c9cebc881f0c6943",
+     "role": "testbench netlist (bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+    },
+    {
+     "path": "sim/dplus-pullup-pex/testbench/dplus_pullup_pex_dut.spice",
+     "sha256": "sha256:6a3f1f5f16dc8bc5ca0b97e1946acc96748f2d6043eeacd170d90b08338e4d9d",
+     "role": "schematic-leg DUT shim (design/netlist/dplus_pullup.spice with the .subckt declaration pin order matched to the extracted header)"
+    }
+   ]
+  },
+  {
+   "id": "diff-receiver-mismatch",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+   "cold_start": "python3 sim/run_mismatch.py diff-receiver-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/diff-receiver-mismatch/testbench/mc.json",
+     "sha256": "sha256:8df72879657729dff16ec9505a3cffeae254e69a6ae8d6e989de94a951b76969",
+     "role": "Monte Carlo campaign definition"
+    },
+    {
+     "path": "sim/diff-receiver-mismatch/testbench/diff_receiver_mc_tb.spice",
+     "sha256": "sha256:eae62ee61fc5211e6ec7b2c817456bb8c1a2fe65c2aa8916b280c63ffb9d4988",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "diff-receiver-sensitivity",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
+   "cold_start": "python3 sim/run_corners.py diff-receiver-sensitivity --klt-runner-version-check warn",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/diff-receiver-sensitivity/testbench/tb.json",
+     "sha256": "sha256:cb41149e144f2d34b4af9b9f6006dc180bf9e8bae09da04e1896b0d1cce14af7",
+     "role": "testbench definition"
+    },
+    {
+     "path": "sim/diff-receiver-sensitivity/testbench/diff_receiver_tb.spice",
+     "sha256": "sha256:4c91a242294dfcacefa98490d89a4da761e396d9b384d88d19afaf5e7c9b0059",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "dplus-pullup-tolerance",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
+   "cold_start": "python3 sim/run_corners.py dplus-pullup-tolerance --klt-runner-version-check warn",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/dplus-pullup-tolerance/testbench/tb.json",
+     "sha256": "sha256:d9762815b9bf1fa8f2ae848f280e6a64cf6d849d0d638555dff84635bbae6ef8",
+     "role": "testbench definition"
+    },
+    {
+     "path": "sim/dplus-pullup-tolerance/testbench/dplus_pullup_tb.spice",
+     "sha256": "sha256:38996fea9fed13e8e6938176eb1b7a9fd71b4d802b7b981384a6a9b4b2fe4a7d",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "driver-signal-quality",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
+   "cold_start": "python3 sim/run_corners.py driver-signal-quality --klt-runner-version-check warn",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/driver-signal-quality/testbench/tb.json",
+     "sha256": "sha256:b5c046421d8e658813c68074fbe5b573afa92e9dad765cf0edcd1857dff3feef",
+     "role": "testbench definition"
+    },
+    {
+     "path": "sim/driver-signal-quality/testbench/driver_tb.spice",
+     "sha256": "sha256:95d030552d034993df371b3fc7cbb0152d6c58ddcb2f0437640f822cefc07dfa",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "driver-static",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
+   "cold_start": "python3 sim/run_corners.py driver-static --klt-runner-version-check warn",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/driver-static/testbench/tb.json",
+     "sha256": "sha256:3755bcc2b213fdf722a2e6fd8e733adfe6468f73d68cbcf157f5ebe6787004ec",
+     "role": "testbench definition"
+    },
+    {
+     "path": "sim/driver-static/testbench/driver_static_tb.spice",
+     "sha256": "sha256:7e64e92227886d66b283de633b2384c4535fb199ed5f466488f10cb0b410abef",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "se-receiver-dm-thresholds",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
+   "cold_start": "python3 sim/run_corners.py se-receiver-dm-thresholds --klt-runner-version-check warn",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/se-receiver-dm-thresholds/testbench/tb.json",
+     "sha256": "sha256:985ac00fbe521b660c5549d67a438b3bf00cc23d8d9c1c1bbc63b674ea3aea37",
+     "role": "testbench definition"
+    },
+    {
+     "path": "sim/se-receiver-dm-thresholds/testbench/se_rx_dm_tb.spice",
+     "sha256": "sha256:398995fd69f9485ec3c79a3f2b9e100c42e7da810803c0b8abdfc20e88f6f501",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "se-receiver-dp-thresholds",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
+   "cold_start": "python3 sim/run_corners.py se-receiver-dp-thresholds --klt-runner-version-check warn",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/se-receiver-dp-thresholds/testbench/tb.json",
+     "sha256": "sha256:b460f330dfdc9c42ac5549e0d84e236eaf585fec4d6e50f41f211ca857f03bf5",
+     "role": "testbench definition"
+    },
+    {
+     "path": "sim/se-receiver-dp-thresholds/testbench/se_rx_dp_tb.spice",
+     "sha256": "sha256:fd28c307c41669e0d4a99164e270be48f8d0887093292886c29aedb857700605",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "se-receiver-mismatch",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+   "cold_start": "python3 sim/run_mismatch.py se-receiver-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/se-receiver-mismatch/testbench/mc.json",
+     "sha256": "sha256:0527d7f75b72a94b98d42395d72c5b9ad4fb15633b2a619c6079eb951971c9c7",
+     "role": "Monte Carlo campaign definition"
+    },
+    {
+     "path": "sim/se-receiver-mismatch/testbench/se_rx_dp_mc_tb.spice",
+     "sha256": "sha256:fedca0072bdde82d898f35dd92ede88e0461c691772a61f7b68eb1506b98b7f0",
+     "role": "testbench netlist (D+)"
+    },
+    {
+     "path": "sim/se-receiver-mismatch/testbench/se_rx_dm_mc_tb.spice",
+     "sha256": "sha256:8437bf222f866cfd34c38cdb9e3def4bf0f9d95bf0e6822224538f5843e5dcd1",
+     "role": "testbench netlist (D-)"
+    }
+   ]
+  },
+  {
+   "id": "driver-matching-mismatch",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+   "cold_start": "python3 sim/run_mismatch.py driver-matching-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/driver-matching-mismatch/testbench/mc.json",
+     "sha256": "sha256:984705140b976229b805392528a3df131d2635d006044714235b36f7664a1fe0",
+     "role": "Monte Carlo campaign definition"
+    },
+    {
+     "path": "sim/driver-matching-mismatch/testbench/driver_mc_tb.spice",
+     "sha256": "sha256:3104bd80f5ddbb992e3c4bcf563c6675f27a0a715dee28490202e2bf872d3684",
+     "role": "testbench netlist"
+    }
+   ]
+  },
+  {
+   "id": "dplus-pullup-mismatch",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
+   "cold_start": "python3 sim/run_mismatch.py dplus-pullup-mismatch --klt <klt with klt_yield_native> --max-in-flight 3 --capacity-retries 3",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/dplus-pullup-mismatch/testbench/mc.json",
+     "sha256": "sha256:debcb76824aa7f50e66239a56558df4ae210eeeb7450f1e7dc44ed908fa4abdb",
+     "role": "Monte Carlo campaign definition"
+    },
+    {
+     "path": "sim/dplus-pullup-mismatch/testbench/dplus_pullup_mc_tb.spice",
+     "sha256": "sha256:0a02100d4351258adc61ea6d2f4b66127d3f8ef820ed98d0abc380c34cde897b",
+     "role": "testbench netlist"
+    },
+    {
+     "path": "sim/dplus-pullup-mismatch/testbench/dplus_pullup_mm.spice",
+     "sha256": "sha256:cb5ed63525c3af2f4206b91a818ac9947baad44e225730d3e09d80856234c624",
+     "role": "pull-up netlist with the ladder-resistor mismatch wrapper (generated)"
+    },
+    {
+     "path": "sim/dplus-pullup-mismatch/testbench/make_mm_netlist.py",
+     "sha256": "sha256:fe751035565d6a7d29781c1285f02c97a3723d25b21ed1cb5d5f2511d94182cd",
+     "role": "generator for dplus_pullup_mm.spice"
+    }
+   ]
+  },
+  {
+   "id": "smoke-inverter",
+   "partition": "analog",
+   "engine": "ngspice via klt sim (45-point PVT grid, batch fleet)",
+   "cold_start": "python3 sim/run_corners.py smoke-inverter --klt-runner-version-check warn",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/smoke-inverter/testbench/tb.json",
+     "sha256": "sha256:9320084b99851cf727eee8aa2ab00b38c025be92bd89de63736a77fbbfe773dd",
+     "role": "testbench definition"
+    },
+    {
+     "path": "sim/smoke-inverter/testbench/smoke_inverter.spice",
+     "sha256": "sha256:891c1323440eff14b43cadf224d7c641a47961a5837e565166219dc5ddab82ee",
+     "role": "testbench netlist"
+    }
+   ]
+  }
+ ]
 }
