@@ -96,7 +96,16 @@ partition and "6 of 22"; the report is current.
   than one build session; the pull-up record needs citing under row 6-14. Also
   open: the receiver reports are refused for a control that is undetected by
   construction. Done when 6 analog reads `met`.
-- **Remaining four leaves through `klt pex`**, after Now 4 settles the method.
+- **Item 7 (analog): finish the leaf set.** Four of five leaves now have
+  committed `klt pex` records (#281 differential receiver, #403 both
+  single-ended receivers and the pull-up): the receivers hold their ratified
+  rows post-layout (threshold shift ≤ 1.1 mV); the pull-up FAILS its window —
+  the committed layout's poly-head interconnect parasitics (~1.6–2.1 kΩ per
+  ladder-node stub) push every trim code above [1425, 1575] Ω, bounded
+  layout-iteration follow-up #414. Remaining: re-run the pull-up bench after
+  #414, run the `differential_driver` leaf (#404), then the full-matrix
+  post-layout runs that supersede the two-corner records and the one honest
+  five-leaf citation.
 - **Digital physical chain, in order:** #116 (stage 2 to 6 driver and request
   templates) → #117 (six-corner layout, DRC, LVS, ERC, STA) → #118, #207, #209
   (citations and the SDF-annotated re-run). Epic #105. Unblocked by #132.

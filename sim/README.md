@@ -269,6 +269,49 @@ is committed), staged with `python3 sim/run_store_evidence.py
 diff-receiver-pex <stage-dir>` into `campaigns/`, with records under
 `diff-receiver-pex/records/`.
 
+## se-receiver-dp-pex, se-receiver-dm-pex, dplus-pullup-pex
+
+Post-layout (parasitic-extraction) evidence for the two single-ended receivers
+and the D+ pull-up (#403), one bench per leaf, each following the
+diff-receiver-pex pattern above: one `klt pex` call runs the schematic and the
+extracted leg of the committed leaf GDS from the same request, through a
+pin-order shim (the design netlist with only the `.subckt` declaration line
+reordered to the extracted header's alphabetical pin order; the deck's DUT
+instance lines carry their nets in that order) and exactly one in-deck
+`.include`. Each bench is a deliberate two-corner subset: `tt_27c_3.30v` plus
+the binding corner of the leaf's committed 225-point resistor-set record
+(`ff_lh_100c_3.00v` for both receivers, `fs_hl_100c_3.00v` for the pull-up) --
+the binding corner may be a resistor-set section, which the request expresses
+as that section's process name.
+
+The equivalence gate is shared (`sim/harness/pex_equivalence.py`, regression
+tests in `sim/tests/test_pex_equivalence.py`): it derives the expected
+(corner, measurement) pairs from each bench's own requested units (14 rows per
+receiver, 52 for the pull-up) and fails on any missing, duplicate, unexpected
+or non-finite row -- the committed reference covers 225 corners, so rows
+lifted from unrequested corners must fail, not pass vacuously. The receiver
+benches carry 7 of the committed bench's 8 measurements: `vref_v` probes a
+DUT-internal node by name and is not extraction-portable
+(2AMLogic/klayout-tools#6990). `run.py` also grades the extracted leg
+(`grading.json` in each run's manifest): the receivers against the bench's own
+window/output-level checks, the pull-up through `sim/harness/trim.py` over the
+16 extracted code voltages.
+
+Cold start (one leaf shown; the other two differ only in directory):
+
+```bash
+python3 sim/se-receiver-dp-pex/run.py --dry-run    # pre-flight, no extraction
+python3 sim/se-receiver-dp-pex/run.py              # batch run, equivalence gate, staging
+```
+
+Outcome as committed: both receivers PASS (threshold moves -1.1 mV at tt,
++0.1 mV at the binding corner; every extracted-leg check holds); the pull-up
+FAILS its ratified window at both corners -- the committed layout's contacted
+poly heads add ~1.6-2.1 kohm per ladder-node stub, so no trim code reaches
+[1425, 1575] ohm (best code 15 at 3720.78 ohm at tt); bounded layout iteration
+in issue #414. Records under each bench's `records/`, evidence in the fleet
+artifact store via `python3 sim/run_store_evidence.py <bench> <stage-dir>`.
+
 ## se-receiver-dp-thresholds, se-receiver-dm-thresholds
 
 The sky130 single-ended D+ / D- receivers (`design/se_receiver_dp.sch`,
