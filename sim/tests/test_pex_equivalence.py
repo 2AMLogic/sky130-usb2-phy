@@ -8,7 +8,9 @@ check. The hermit probe behind these tests built exactly such an envelope at
 `4bdccc4` (36 rows, passing status, reference value in every row, the requested
 binding corner absent) and the count-only gate returned True. These tests build the
 same shape from the committed DP reference against the new shared gate and require
-False. Toolchain-free: committed JSON only, no klt, no ngspice, nothing written.
+False. The receiver envelopes use 7 measurements (the 8th, the internal-node
+vref_v probe, is deliberately absent from the pex benches -- not
+extraction-portable, klayout-tools#6990). Toolchain-free: committed JSON only, no klt, no ngspice, nothing written.
 """
 
 import json
@@ -51,7 +53,10 @@ def test_unit_corner_id_matches_the_report_spelling():
 
 
 def test_expected_pairs_are_the_requested_bench_not_the_reference_matrix():
-    for bench, n_meas, binding in ((DP_PEX, 8, "ff_lh/3.000V/100C"),
+    # the receiver benches carry 7 of the committed bench's 8 measurements: the 8th
+    # (vref_v) probes a DUT-internal node by name and is not extraction-portable
+    # (klayout-tools#6990), so it is absent from the pex request by design
+    for bench, n_meas, binding in ((DP_PEX, 7, "ff_lh/3.000V/100C"),
                                    (PU_PEX, 26, "fs_hl/3.000V/100C")):
         tb = json.loads((bench / "testbench/tb.json").read_text())
         pairs = pex_equivalence.expected_pairs(tb)
@@ -69,7 +74,7 @@ def test_reference_values_reproduce_equivalence():
     env = envelope_from(DP_REFERENCE, ["tt/3.300V/27C", "ff_lh/3.000V/100C"], names)
     ok, rows = pex_equivalence.check_equivalence(env, tb, DP_REFERENCE)
     assert ok, [r for r in rows if r["verdict"] != "ok"]
-    assert len(rows) == 16 and all(r["verdict"] == "ok" and r["rel_dev"] == 0 for r in rows)
+    assert len(rows) == 14 and all(r["verdict"] == "ok" and r["rel_dev"] == 0 for r in rows)
 
 
 def test_a_row_set_with_the_binding_corner_missing_fails():

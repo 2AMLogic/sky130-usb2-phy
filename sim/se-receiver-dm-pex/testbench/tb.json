@@ -68,11 +68,6 @@
       "unit": "V"
     },
     {
-      "name": "vref_v",
-      "spice": ".meas dc vref_v FIND v(xrx.vref) AT=0",
-      "unit": "V"
-    },
-    {
       "name": "isup_ua",
       "spice": ".meas dc isup_ua FIND i(vi) AT=1.4",
       "unit": "A",
