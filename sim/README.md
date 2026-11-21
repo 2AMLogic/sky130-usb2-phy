@@ -297,6 +297,12 @@ DUT-internal node by name and is not extraction-portable
 window/output-level checks, the pull-up through `sim/harness/trim.py` over the
 16 extracted code voltages.
 
+The two receiver `run.py` files are thin entry points over one shared
+implementation, `sim/harness/se_receiver_pex.py` (issue #419; regression tests
+in `sim/tests/test_se_receiver_pex.py`): each bench supplies only its leaf
+name, deck, pin-order shim, committed reference record and bench directory --
+both commands, per-leaf decks and evidence paths are unchanged.
+
 Cold start (one leaf shown; the other two differ only in directory):
 
 ```bash
