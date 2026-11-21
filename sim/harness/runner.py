@@ -39,17 +39,11 @@ def pdk_open_pdks_commit(pdk: Path) -> str:
     return pdk_pin.open_pdks_commit(pdk)
 
 
-def lib_sections(lib_path: Path) -> set[str]:
-    out = set()
-    for line in lib_path.read_text(errors="replace").splitlines():
-        parts = line.split()
-        if len(parts) == 2 and parts[0].lower() == ".lib":
-            out.add(parts[1])
-    return out
-
-
 def lib_section_includes(lib_path: Path) -> dict[str, list[str]]:
-    """`.lib <section>` -> the `.include` targets between it and its `.endl`."""
+    """`.lib <section>` -> the `.include` targets between it and its `.endl`.
+
+    Every section declaration gets a key, empty ones included, so the mapping's keys are
+    also the set of section names the library makes available."""
     out: dict[str, list[str]] = {}
     cur = None
     for line in lib_path.read_text(errors="replace").splitlines():
@@ -70,9 +64,9 @@ def expected_includes(section: str) -> list[str]:
     return [f"corners/{mos}.spice", f"{rc}.spice", f"{rc}__lin.spice", f"corners/{mos}/specialized_cells.spice"]
 
 
-def section_evidence(lib: Path, sections) -> tuple[dict, list[str]]:
-    """Resolved includes per section, and mismatches against the approved section map."""
-    inc = lib_section_includes(lib)
+def section_evidence(inc: dict[str, list[str]], sections) -> tuple[dict, list[str]]:
+    """Resolved includes per section against the parsed library mapping (`lib_section_includes`),
+    and mismatches against the approved section map."""
     ev, bad = {}, []
     for s in sections:
         got = inc.get(s)
@@ -92,10 +86,11 @@ def check_env(matrix: mx.Matrix) -> dict:
     lib = pdk / matrix.pdk["lib"]
     if not lib.is_file():
         raise RunError(f"model library missing: {lib}")
-    missing = [s for s in matrix.process if s not in lib_sections(lib)]
+    inc = lib_section_includes(lib)
+    missing = [s for s in matrix.process if s not in inc]
     if missing:
         raise RunError(f"{lib} has no .lib section(s) {missing}")
-    sections, bad = section_evidence(lib, matrix.process)
+    sections, bad = section_evidence(inc, matrix.process)
     if bad:
         raise RunError("pinned library section mapping differs from the approved one: " + "; ".join(bad[:3]))
     return {"path": str(pdk), "lib": str(lib), "lib_sha256": sha256_file(lib), "open_pdks_commit": commit,

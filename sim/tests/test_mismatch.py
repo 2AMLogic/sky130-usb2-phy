@@ -463,13 +463,18 @@ def test_a_corner_scoped_record_still_demands_every_covered_campaign(tmp_path):
 
 def test_only_still_cannot_be_recorded_and_does_not_widen_the_corner_scope(monkeypatch):
     """--only stays a no-write debugging subset; --corner is the recordable one."""
+    parses = []
     monkeypatch.setattr(mm.es, "preflight", lambda: None)
     monkeypatch.setattr(mm.runner, "check_env", lambda m: {"lib": "x"})
-    monkeypatch.setattr(mm.runner, "lib_sections", lambda lib: ["tt_mm", "fs_mm", "sf_mm", "ff_mm"])
+    monkeypatch.setattr(mm.runner, "lib_section_includes",
+                        lambda lib: parses.append(lib) or dict.fromkeys(
+                            ["tt_mm", "fs_mm", "sf_mm", "ff_mm"], []))
     monkeypatch.setattr(mm, "_run", lambda *a, **k: pytest.fail("submitted a request"))
     for corners in (None, ["tt"]):  # the refusal is unchanged, with or without a corner scope
         with pytest.raises(mm.MismatchError, match="a subset run cannot be recorded"):
             mm.run("driver-matching-mismatch", "klt", None, None, 4, True, ["match"], corner_ids=corners)
+    # the available section names are parsed once per run, not once per selected corner (#413)
+    assert parses == [Path("x"), Path("x")]
     # --only narrows campaign stems within the selected corners; it names no corner of its own
     spec = mm.load_spec(SIM / "driver-matching-mismatch")
     stems = [mm.campaign_stem(r["id"], c["id"], k) for r in spec["receivers"]

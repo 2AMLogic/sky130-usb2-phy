@@ -249,7 +249,10 @@ def run(experiment: str, klt: str, hosts: int | None, runner_version_check: str 
     matrix = mx.load_by_id(mx.LEGACY_ID)
     env_info = runner.check_env(matrix)
     lib = Path(env_info["lib"])
-    missing = [c["process"] for c in covered if c["process"] not in runner.lib_sections(lib)]
+    # one parse for the whole run: mismatch-specific sections (e.g. tt_mm) are outside the
+    # base matrix, so the available names are the library's own section keys
+    available = runner.lib_section_includes(lib)
+    missing = [c["process"] for c in covered if c["process"] not in available]
     if missing:
         raise MismatchError(f"{lib} has no .lib section(s) {missing}")
     if record and only:
