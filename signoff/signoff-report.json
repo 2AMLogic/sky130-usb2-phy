@@ -108,7 +108,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:fb9db4b279a3d9fb1b341f7b96466cb3f5b3e4afb9748d6a9268af173247b55f",
+        "content_hash": "sha256:b69506ec9daf17852cb05be2cf380ade3aa7bf91d86059f56f5403158e9ca9e4",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -117,7 +117,7 @@
             "path": "signoff/inventory/item-2-analog-layout.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:fb9db4b279a3d9fb1b341f7b96466cb3f5b3e4afb9748d6a9268af173247b55f",
+          "content_hash": "sha256:b69506ec9daf17852cb05be2cf380ade3aa7bf91d86059f56f5403158e9ca9e4",
           "input_verified": true,
           "summary": "T1 item 2.analog: the five analog leaf GDS streams under layout/analog/ and the generator of each are committed, with the pinned stream hashes. The audited artifact is signoff/inventory/item-2-analog-layout.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-2-analog-layout.json"
@@ -147,7 +147,7 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/drc-report.json",
+        "file": "flow/analog-layout-differential_driver/artifacts/20261121-060539-432e375-differential_driver/drc-report.json",
         "command": null,
         "kind": "drc",
         "check_status": "clean",
@@ -244,34 +244,34 @@
       },
       "citations_graded": [
         {
-          "citation": "flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/drc-report.json",
+          "citation": "flow/analog-layout-differential_driver/artifacts/20261121-060539-432e375-differential_driver/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/drc-report.json",
+          "citation": "flow/analog-layout-differential_receiver/artifacts/20261121-060555-432e375-differential_receiver/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261120-195759-745d347-dplus_pullup/drc-report.json",
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261121-055152-4fbc794-dplus_pullup/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/drc-report.json",
+          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261121-060610-432e375-se_receiver_dm/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/drc-report.json",
+          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261121-060628-432e375-se_receiver_dp/drc-report.json",
           "status": "met",
           "reason": null
         }
       ],
       "citations": [
         {
-          "file": "flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/drc-report.json",
+          "file": "flow/analog-layout-differential_driver/artifacts/20261121-060539-432e375-differential_driver/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -367,7 +367,7 @@
           }
         },
         {
-          "file": "flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/drc-report.json",
+          "file": "flow/analog-layout-differential_receiver/artifacts/20261121-060555-432e375-differential_receiver/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -481,11 +481,11 @@
           }
         },
         {
-          "file": "flow/analog-layout-dplus_pullup/artifacts/20261120-195759-745d347-dplus_pullup/drc-report.json",
+          "file": "flow/analog-layout-dplus_pullup/artifacts/20261121-055152-4fbc794-dplus_pullup/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
-          "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+          "content_hash": "sha256:1a4d4bf94b04ba08625bfaa75e8fdc4b252ee22ac13fec4d639f217ed133ccce",
           "input_verified": true,
           "exit_status": 0,
           "coverage": {
@@ -596,7 +596,7 @@
           }
         },
         {
-          "file": "flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/drc-report.json",
+          "file": "flow/analog-layout-se_receiver_dm/artifacts/20261121-060610-432e375-se_receiver_dm/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -710,7 +710,7 @@
           }
         },
         {
-          "file": "flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/drc-report.json",
+          "file": "flow/analog-layout-se_receiver_dp/artifacts/20261121-060628-432e375-se_receiver_dp/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -852,27 +852,27 @@
       "citation": null,
       "citations_graded": [
         {
-          "citation": "flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/lvs-curated-report.json",
+          "citation": "flow/analog-layout-differential_driver/artifacts/20261121-060539-432e375-differential_driver/lvs-curated-report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/lvs-curated-report.json",
+          "citation": "flow/analog-layout-differential_receiver/artifacts/20261121-060555-432e375-differential_receiver/lvs-curated-report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261120-195759-745d347-dplus_pullup/lvs-curated-report.json",
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261121-055152-4fbc794-dplus_pullup/lvs-curated-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/lvs-curated-report.json",
+          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261121-060610-432e375-se_receiver_dm/lvs-curated-report.json",
           "status": "unmet",
           "reason": "check_failed"
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/lvs-curated-report.json",
+          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261121-060628-432e375-se_receiver_dp/lvs-curated-report.json",
           "status": "unmet",
           "reason": "check_failed"
         }
@@ -881,10 +881,10 @@
       "members_total": 5,
       "detail": {
         "failed_citations": [
-          "flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/lvs-curated-report.json",
-          "flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/lvs-curated-report.json",
-          "flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/lvs-curated-report.json",
-          "flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/lvs-curated-report.json"
+          "flow/analog-layout-differential_driver/artifacts/20261121-060539-432e375-differential_driver/lvs-curated-report.json",
+          "flow/analog-layout-differential_receiver/artifacts/20261121-060555-432e375-differential_receiver/lvs-curated-report.json",
+          "flow/analog-layout-se_receiver_dm/artifacts/20261121-060610-432e375-se_receiver_dm/lvs-curated-report.json",
+          "flow/analog-layout-se_receiver_dp/artifacts/20261121-060628-432e375-se_receiver_dp/lvs-curated-report.json"
         ]
       }
     },
@@ -1423,19 +1423,9 @@
         "**Port accessibility \u2014 PROVISIONAL, not yet in force** (issue #2839; operator ruling 2AMLogic/product#134, amendment text drafted in 2AMLogic/product PR #168 and awaiting the two-key ratification). Every supply the cited `klt erc` spec declares must be published as an **edge-accessible boundary port** and named in a **machine-readable abstract**: (1) a `klt socket-check` envelope whose `power_ports` facts show, for each declared supply, a `POWER`/`GROUND` pin of that name with drawn conductor under its label lying within the edge band of a counted outline edge with a clear approach channel (no other conductor on its layer between it and the edge), on an allowed layer; and (2) a `klt lef-abstract` envelope whose LEF carries a `PIN` of the same name with `USE POWER`/`USE GROUND` matching the port, a drawn `PORT` on the same layer touching the port, and a `SIZE` equal to the outline. Parameters, with their provisional defaults, are set per block in the `klt signoff` manifest's `power_ports` object: the edge band (`edge_band_um`, default `0` \u2014 the port must touch the outline; the draft proposes one minimum metal pitch), the counted edges (all four), and the allowed layers (default: any layer that resolves to a LEF routing layer, the draft's recommendation). Until ratification `klt signoff` grades this clause only for a block that opts in (`power_ports.required: true`, or port evidence cited in item 11's list), after the ERC/LVS rules above are proven, rendering `power_port_unproven`, `no_edge_power_port`, `power_port_interior_only`, `power_port_layer_disallowed`, `lef_power_pin_missing` or `lef_power_pin_mismatch` when it fails \u2014 see `docs/cli/signoff.md` \u2192 \"Item 11 port accessibility\". Not graded yet: one port per declared island of a multi-island supply."
       ],
       "status": "unmet",
-      "reason": "lvs_did_not_pass",
+      "reason": "check_failed",
       "graded_by_build": true,
-      "citation": null,
-      "detail": {
-        "power_delivery": {
-          "supply_nets": [
-            "VDD",
-            "VSS"
-          ],
-          "lvs_status": "mismatch",
-          "power_connectivity_status": "unchecked"
-        }
-      }
+      "citation": null
     },
     {
       "tier": "T1",
