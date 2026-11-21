@@ -87,10 +87,10 @@ def test_matching_revision_passes_the_revision_check(home, monkeypatch):
     assert "no .lib section" in str(exc.value)
 
 
-def write_approved_sections(lib: Path) -> None:
+def write_approved_sections(lib: Path, matrix: mx.Matrix = LEGACY) -> None:
     """Give the fake library the exact `.lib` sections check_env's approved map expects."""
     lines = []
-    for s in sorted(LEGACY.process):
+    for s in sorted(matrix.process):
         lines.append(f".lib {s}")
         lines += [f".include {t}" for t in runner.expected_includes(s)]
         lines.append(".endl")
@@ -107,6 +107,29 @@ def test_check_env_success_returns_the_pinned_commit(home):
     assert env["path"] == str(pdk)
     assert set(env["sections_present"]) == set(LEGACY.process)
     assert set(env["sections"]) == set(LEGACY.process)
+
+
+@pytest.mark.parametrize("matrix_id", [mx.LEGACY_ID, mx.RESISTOR_SETS_ID])
+def test_check_env_parses_the_library_text_once(home, monkeypatch, matrix_id):
+    """One parse of the model library per PVT preflight, whatever the matrix size (#413):
+    the missing-section check and the approved-include comparison share one
+    `lib_section_includes` pass (this was N+1 text reads for N sections). The provenance
+    hash reads bytes, so a text-read count of 1 means the text was parsed once."""
+    matrix = mx.load_by_id(matrix_id)
+    pdk = fake_tree(home / ".ciel", NEW)
+    lib = pdk / "libs.tech" / "ngspice" / "sky130.lib.spice"
+    write_approved_sections(lib, matrix)
+    reads = []
+    real = Path.read_text
+
+    def counting_read_text(self, *args, **kwargs):
+        if self == lib:
+            reads.append(self)
+        return real(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", counting_read_text)
+    assert runner.check_env(matrix)["open_pdks_commit"] == NEW
+    assert len(reads) == 1
 
 
 def test_known_pins_by_record_date():

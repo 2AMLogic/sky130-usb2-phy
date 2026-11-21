@@ -115,19 +115,23 @@ def _lib(tmp_path, broken=None):
     return p
 
 
+def _inc(tmp_path, broken=None):
+    return runner.lib_section_includes(_lib(tmp_path, broken=broken))
+
+
 def test_section_mapping_is_checked_against_the_library(tmp_path):
-    ev, bad = runner.section_evidence(_lib(tmp_path), RES.process)
+    ev, bad = runner.section_evidence(_inc(tmp_path), RES.process)
     assert bad == [] and ev["ss_hl"]["includes"][1] == "r+c/res_high__cap_low.spice"
-    ev, bad = runner.section_evidence(_lib(tmp_path, broken="hh"), RES.process)
+    ev, bad = runner.section_evidence(_inc(tmp_path, broken="hh"), RES.process)
     assert len(bad) == 1 and bad[0].startswith("hh:")
-    ev, bad = runner.section_evidence(_lib(tmp_path), ["tt", "zz"] if False else RES.process[:2])
+    ev, bad = runner.section_evidence(_inc(tmp_path), ["tt", "zz"] if False else RES.process[:2])
     assert bad == []
 
 
 def test_a_section_missing_from_the_library_is_a_mismatch(tmp_path):
     lib = _lib(tmp_path)
     lib.write_text(lib.read_text().replace(".lib lh\n", ".lib lh_renamed\n").replace(".endl lh\n", ".endl lh_renamed\n"))
-    _, bad = runner.section_evidence(lib, RES.process)
+    _, bad = runner.section_evidence(runner.lib_section_includes(lib), RES.process)
     assert any(b.startswith("lh:") for b in bad)
 
 
@@ -138,7 +142,7 @@ def test_pinned_library_mapping_if_installed():
     lib = pdk / RES.pdk["lib"]
     if runner.sha256_file(lib) != RES.pdk["lib_sha256"]:
         pytest.skip("installed library is not the pinned one")
-    assert runner.section_evidence(lib, RES.process)[1] == []
+    assert runner.section_evidence(runner.lib_section_includes(lib), RES.process)[1] == []
 
 
 # ---- variants
@@ -216,7 +220,7 @@ def sandbox(tmp_path, monkeypatch):
     monkeypatch.setattr(runner, "WORK_DIR", tmp_path / "work")
 
     def env(m):
-        ev, bad = runner.section_evidence(_lib(tmp_path), m.process)
+        ev, bad = runner.section_evidence(_inc(tmp_path), m.process)
         assert bad == []
         return {"open_pdks_commit": m.pdk["open_pdks_commit"], "lib_sha256": m.pdk["lib_sha256"], "sections": ev}
 

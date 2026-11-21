@@ -31,7 +31,7 @@ def tree(tmp_path, monkeypatch):
     monkeypatch.setattr(mx, "SIM_DIR", sim)
     monkeypatch.setattr(runner, "WORK_DIR", sim / ".work")
     monkeypatch.setattr(runner, "check_env", lambda m: dict(ENV))
-    monkeypatch.setattr(runner, "lib_sections", lambda lib: {"tt_mm"})
+    monkeypatch.setattr(runner, "lib_section_includes", lambda lib: {"tt_mm": []})
     monkeypatch.setattr(mm, "load_spec", lambda d: synth_spec())
     monkeypatch.setattr(mm, "_git", lambda *a: "abc1234")
     return exp
@@ -429,7 +429,7 @@ def tree4(tmp_path, monkeypatch):
     monkeypatch.setattr(mx, "SIM_DIR", sim)
     monkeypatch.setattr(runner, "WORK_DIR", sim / ".work")
     monkeypatch.setattr(runner, "check_env", lambda m: dict(ENV))
-    monkeypatch.setattr(runner, "lib_sections", lambda lib: {"tt_mm"})
+    monkeypatch.setattr(runner, "lib_section_includes", lambda lib: {"tt_mm": []})
     monkeypatch.setattr(mm, "load_spec", lambda d: spec4())
     monkeypatch.setattr(mm, "_git", lambda *a: "abc1234")
     return exp
