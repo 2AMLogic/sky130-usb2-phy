@@ -4,7 +4,7 @@
     "path": "layout/analog/differential_receiver/differential_receiver.gds",
     "scope": "repo"
   },
-  "deck": "/home/loom/.ciel/sky130A/libs.tech/klayout/drc/sky130A_mr.drc",
+  "deck": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/drc/sky130A_mr.drc",
   "engine": "klayout",
   "dbu_um": 0.001,
   "status": "clean",
@@ -781,10 +781,7 @@
     "pdk": {
       "name": "sky130A",
       "source": "PDK_ROOT environment variable",
-      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7",
-      "ambiguous_sources": [
-        "search root: ~/.volare"
-      ]
+      "version": "open_pdks f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7"
     },
     "deck": {
       "name": "sky130A_mr.drc",
