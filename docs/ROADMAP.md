@@ -23,14 +23,14 @@ of the 11 items is graded per partition: **10 of 22 rows `met`, 1
 | 1 Design sources | met (#219) | met (#206) |
 | 2 Layout | met: five leaf GDS + generators (#167, #220, #221, #222) | unmet, `no_evidence` (#207) |
 | 3 DRC clean | met: five clean reports grade as a per-cell set under klt 0.9.2 (#399) | unmet, `no_evidence` (#117) |
-| 4 LVS clean | unmet, `runset_unrecognised_device`: five `match` reports, runset declares device classes no layout uses | unmet, `no_evidence` (#117) |
+| 4 LVS clean | unmet, `check_failed`. Curated LVS matches the D+ pull-up and finds bias-resistor mismatches in four leaves (#406) | unmet, `no_evidence` (#117) |
 | 5 Corner verification | unmet, `no_evidence`: nothing cited yet | unmet, `no_evidence` (#117, #118) |
 | 6 Monte Carlo | unmet, `negative_control_not_detected`; rows 6-06, 6-14 uncovered (#223) | not applicable (#208) |
 | 7 Post-layout | unmet, `no_evidence` | unmet, `no_evidence` (#209) |
 | 8 Characterization report | met (#218) | met |
 | 9 Testbenches shipped | met | met |
 | 10 Repo hygiene | met | met |
-| 11 Power delivery | unmet, `check_failed` (as graded by 0.9.2; item 4 still `unmet`) | unmet, `no_evidence` (#117) |
+| 11 Power delivery | unmet, `lvs_did_not_pass` with the curated LVS and supply-ERC reports | unmet, `no_evidence` (#117) |
 
 What is evidenced behind those rows:
 
@@ -47,7 +47,7 @@ What is evidenced behind those rows:
   ([`docs/characterization.md`](characterization.md)): 45-point and 225-point
   PVT matrices, plus `klt yield` Monte Carlo for the receiver rows (#166) and
   the D+ pull-up trim (PR #243). Each leaf has a generated layout with a clean
-  `klt drc`, a matching `klt lvs` and a `klt erc` supply report under
+  `klt drc`, a matching PDK-runset LVS report and a `klt erc` supply report under
   `flow/analog-layout-<leaf>/` (cited by PR #256).
 - **Not evidenced:** the three PLL rows, the two squelch rows, and rows 6-15
   and 6-16 read `NO EVIDENCE`. Nothing is post-layout, and no PHY top exists.
@@ -83,20 +83,25 @@ partition and "6 of 22"; the report is current.
 
 ## Next
 
-- **Items 4 and 11 (analog): LVS and power delivery.** The klayout-tools#5044
-  grader gap is closed — carried by the 0.9.2 pin (#399), item 3 analog
-  reads `met` — so what is left is item 4's own blocker,
-  `runset_unrecognised_device` (the sky130 runset declares device classes no
-  layout device uses; observed on a single-leaf probe under 0.8.0, the
-  graded reason for the whole partition from 0.9.1 on). Item 11 follows
-  item 4; under 0.9.2 its graded reason is `check_failed`. Done when 4 and
-  11 analog read `met`.
+- **Items 4 and 11 (analog): LVS and power delivery.** Correct the driver
+  and three receiver bias-resistor lengths tracked in #406. Re-run the
+  curated LVS comparisons and their paired supply-ERC checks, then grade
+  the five leaves. Done when both analog rows read `met`.
 - **Item 6 (analog): finish #223.** The driver rise/fall matching campaign
   (`sim/driver-matching-mismatch/`, declared, not run) needs more compute time
   than one build session; the pull-up record needs citing under row 6-14. Also
   open: the receiver reports are refused for a control that is undetected by
   construction. Done when 6 analog reads `met`.
-- **Remaining four leaves through `klt pex`**, after Now 4 settles the method.
+- **Item 7 (analog): finish the leaf set.** Four of five leaves now have
+  committed `klt pex` records (#281 differential receiver, #403 both
+  single-ended receivers and the pull-up): the receivers hold their ratified
+  rows post-layout (threshold shift ≤ 1.1 mV); the pull-up FAILS its window —
+  the committed layout's poly-head interconnect parasitics (~1.6–2.1 kΩ per
+  ladder-node stub) push every trim code above [1425, 1575] Ω, bounded
+  layout-iteration follow-up #414. Remaining: re-run the pull-up bench after
+  #414, run the `differential_driver` leaf (#404), then the full-matrix
+  post-layout runs that supersede the two-corner records and the one honest
+  five-leaf citation.
 - **Digital physical chain, in order:** #116 (stage 2 to 6 driver and request
   templates) → #117 (six-corner layout, DRC, LVS, ERC, STA) → #118, #207, #209
   (citations and the SDF-annotated re-run). Epic #105. Unblocked by #132.

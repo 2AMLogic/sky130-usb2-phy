@@ -129,6 +129,24 @@ mints a new record id. Compare corner values with the old record's
 `report.json`. Never edit the old one. To supersede, pass
 `--supersedes <record-id>`.
 
+### Spec-row limits in the request (`harness/spec_limits.py`, issue #401)
+
+The grader credits a spec row only for a bound `klt sim` itself checked: an
+envelope whose request declared no `limits` grades `no_limits_checked`, however
+this repo's own post-hoc records read. For a bench mapped in `BENCH_ROWS`,
+`run_corners.py` writes `measurements[].limits` into the request, generated
+from the ratified row table `signoff/spec/analog-rows.json` (`ROW_BOUNDS`
+holds each row's numbers once; a bench maps measurement names to row ids, never
+to values), and fails closed if the mapping references a row the table does not
+declare, a measurement the testbench does not define, or a tb.json check that
+is not the row's own numbers. After the run the harness re-derives the same
+verdicts from the tb.json checks and the record states both sides
+("Spec limits (envelope) and harness cross-check"); any per-corner
+disagreement is a problem that fails the record. Engineering-only bounds
+(truth tables, leakage, per-supply logic levels) stay harness checks: klt
+limits are absolute `min`/`max`, and a spec row without a number (6-08, 6-10)
+is evidenced by the envelope's other rows rather than a limit.
+
 ## Stored evidence (fleet artifact store)
 
 New recorded runs do not commit their raw outputs. `run_corners.py` stages the request, frozen
@@ -306,6 +324,55 @@ take over these nets (the sky130 deck publishes no licon cut resistance).
 Upstream owners: klayout-tools#7028 (kernel direction) and klayout-tools#7029
 (licon cut gap). Re-run this harness unchanged once they land. Evidence in
 the fleet artifact store (`campaigns/`, no `corners/` committed).
+
+## se-receiver-dp-pex, se-receiver-dm-pex, dplus-pullup-pex
+
+Post-layout (parasitic-extraction) evidence for the two single-ended receivers
+and the D+ pull-up (#403), one bench per leaf, each following the
+diff-receiver-pex pattern above: one `klt pex` call runs the schematic and the
+extracted leg of the committed leaf GDS from the same request, through a
+pin-order shim (the design netlist with only the `.subckt` declaration line
+reordered to the extracted header's alphabetical pin order; the deck's DUT
+instance lines carry their nets in that order) and exactly one in-deck
+`.include`. Each bench is a deliberate two-corner subset: `tt_27c_3.30v` plus
+the binding corner of the leaf's committed 225-point resistor-set record
+(`ff_lh_100c_3.00v` for both receivers, `fs_hl_100c_3.00v` for the pull-up) --
+the binding corner may be a resistor-set section, which the request expresses
+as that section's process name.
+
+The equivalence gate is shared (`sim/harness/pex_equivalence.py`, regression
+tests in `sim/tests/test_pex_equivalence.py`): it derives the expected
+(corner, measurement) pairs from each bench's own requested units (14 rows per
+receiver, 52 for the pull-up) and fails on any missing, duplicate, unexpected
+or non-finite row -- the committed reference covers 225 corners, so rows
+lifted from unrequested corners must fail, not pass vacuously. The receiver
+benches carry 7 of the committed bench's 8 measurements: `vref_v` probes a
+DUT-internal node by name and is not extraction-portable
+(2AMLogic/klayout-tools#6990). `run.py` also grades the extracted leg
+(`grading.json` in each run's manifest): the receivers against the bench's own
+window/output-level checks, the pull-up through `sim/harness/trim.py` over the
+16 extracted code voltages.
+
+The two receiver `run.py` files are thin entry points over one shared
+implementation, `sim/harness/se_receiver_pex.py` (issue #419; regression tests
+in `sim/tests/test_se_receiver_pex.py`): each bench supplies only its leaf
+name, deck, pin-order shim, committed reference record and bench directory --
+both commands, per-leaf decks and evidence paths are unchanged.
+
+Cold start (one leaf shown; the other two differ only in directory):
+
+```bash
+python3 sim/se-receiver-dp-pex/run.py --dry-run    # pre-flight, no extraction
+python3 sim/se-receiver-dp-pex/run.py              # batch run, equivalence gate, staging
+```
+
+Outcome as committed: both receivers PASS (threshold moves -1.1 mV at tt,
++0.1 mV at the binding corner; every extracted-leg check holds); the pull-up
+FAILS its ratified window at both corners -- the committed layout's contacted
+poly heads add ~1.6-2.1 kohm per ladder-node stub, so no trim code reaches
+[1425, 1575] ohm (best code 15 at 3720.78 ohm at tt); bounded layout iteration
+in issue #414. Records under each bench's `records/`, evidence in the fleet
+artifact store via `python3 sim/run_store_evidence.py <bench> <stage-dir>`.
 
 ## se-receiver-dp-thresholds, se-receiver-dm-thresholds
 
@@ -571,12 +638,18 @@ and `per_supply` checks from earlier experiments are reused).
   Rise/fall time per line and direction, four matching pairings, rising and
   falling crossover, single-crossing, masked-slope monotonicity; plus
   enable/disable transitions into a pad forced to VDD/2 (engineering data).
+  Since the limit-carrying re-run (issue #401), `driver-signal-quality`'s
+  request carries `measurements[].limits` for rows 6-06 (rise/fall time and
+  matching) and 6-07 (crossover voltage) from the ratified row table; see
+  "Spec-row limits in the request".
 - `driver-static` (one DC sweep of the leakage-forcing source): VOH (15 kohm to
   ground and, as the literal reading of the ratified row, 1.5 kohm to 3.6 V), VOL
   (1.5 kohm to 3.6 V), total output resistance high and low, the 16-combination
   enable truth table (both lines), disabled-pad leakage over 0-3.6 V forcing.
   VOH/VOL load readings: `spec/decision-records/0004-fs-driver-voh-vol-load-conditions.md`
-  (proposed).
+  (proposed). Since the limit-carrying re-run (issue #401), `driver-static`'s request
+  carries `measurements[].limits` for rows 6-04 (VOH/VOL) and 6-05 (output
+  resistance) from the ratified row table; see "Spec-row limits in the request".
 
 ```bash
 python3 sim/run_corners.py driver-signal-quality --klt-runner-version-check warn

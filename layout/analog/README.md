@@ -10,10 +10,11 @@ output pin names. Each directory owns its outputs (GDS, reports, request and
 spec files); the generator helpers are shared in `gen_common.py` (see below).
 
 **This directory's frozen records are cited from `signoff/block-manifest.json`.**
-All five leaves have DRC, LVS and ERC records, cited for T1 item 2 (layout,
-`met`) and items 3, 4 and 11 (analog). Items 3, 4 and 11 still read `unmet` as
-graded by klt 0.8.0 (it takes one native envelope per item, and item 11 is
-gated on item 4); the reasons are quoted in `signoff/README.md`. No layout here
+The five layout streams supply item 2 (analog, `met`). The latest frozen DRC,
+curated LVS and supply-ERC reports supply items 3, 4 and 11. The pinned klt
+0.9.2 grader reports `met` for DRC, `unmet / check_failed` for LVS, and
+`unmet / lvs_did_not_pass` for power delivery.
+See the [signoff verdicts](../../signoff/README.md). No layout here
 is post-layout verified (item 7 is not started) and none is matched-layout or
 density closed.
 
@@ -74,9 +75,10 @@ all three leaves stays byte-identical (#336).
 | `<block>.gds` | The layout. Top cell is named after the subcircuit, so the LVS top matches. |
 | `gen.py` | The generator: the block-specific `build()` plus the shared helpers imported from `../gen_common.py`. `klayout.db` only, sky130 layer numbers inline, **no timestamps**: `gen.py --check` re-emits the stream and compares sha256 with the committed file. A hand-edited GDS is not acceptable here: it cannot be reproduced. |
 | `request-lvs.json` | `klt lvs` request (`klayout-runset`, the PDK's own `sky130.lvs`). Repo-relative paths and a `$PDK_ROOT` placeholder; `run_checks.py` writes the absolute copy. |
+| `request-lvs-curated.json` | Standalone curated sky130 LVS request against the design netlist. Paths resolve from the leaf directory. |
 | `erc-supply-spec.json` | `klt erc` supply spec: supply nets, `ties[]`, the resistor `devices[]` carve-out. Every field is justified in its `_comment`. |
-| `drc-report.json`, `drc-native-report.json`, `lvs-report.json`, `erc-supply-report.json` | `klt`'s own JSON, verbatim, from the last `run_checks.py` run. The frozen copy that evidence cites lives under `flow/analog-layout-<block>/artifacts/<record-id>/`. |
-| `run_checks.py` | Runs `gen.py --check`, both DRC decks, LVS and ERC through `klt`; `--record` mints the append-only record (see `flow/README.md`, "Analog layout records"). |
+| `drc-report.json`, `drc-native-report.json`, `lvs-report.json`, `lvs-curated-baseline-report.json`, `lvs-curated-report.json`, `erc-supply-report.json` | `klt`'s own JSON, verbatim, from the last `run_checks.py` run. The frozen copy that evidence cites lives under `flow/analog-layout-<block>/artifacts/<record-id>/`. |
+| `run_checks.py` | Runs `gen.py --check`, both DRC decks, runset and curated LVS, and ERC through `klt`; `--record` mints the append-only record (see `flow/README.md`, "Analog layout records"). |
 
 ```bash
 PDK=sky130A python3 layout/analog/differential_receiver/run_checks.py            # reports only
@@ -168,6 +170,73 @@ means re-running that search, not hand-placing it.
 * The runset needs `convert_subckts=true scale=true` to read the xschem netlists
   (set in `request-lvs.json`; klayout-tools#3989).
 
+## Curated LVS by leaf
+
+The records use the producer from the initial probe, klt
+`0.9.2.dev111+g978f7464fae1`. Its curated DRC lists 54 unmodelled rules.
+The preceding records from `0.9.3.dev310+ga638216e7fea` list 347. The
+curated DRC rules checked and skipped, native DRC rule categories and ERC
+checks are identical for each leaf across these two sets of records.
+
+Both curated comparisons use the committed GDS and `design/netlist/<leaf>.spice`
+with the sky130 subcircuit-call reader. The first preserves the default comparison
+in `lvs-curated-baseline-report.json`. Its layout counts include individual MOS
+fingers. For example, the differential receiver compares one 10 µm PFET finger
+against a 20 µm reference PFET and reports the second 10 µm finger as unmatched.
+
+The cited comparison checks MOS flavour and combines only parallel
+`nfet__hvi` and `pfet__hvi` devices on each side. It compares resistor R, L
+and W, and requests C, area and perimeter for the driver's MIM capacitors.
+Without the passive geometry checks all five folded circuits match on topology.
+Each leaf uses the same cited report for items 4 and 11. Both columns of counts
+give layout / reference / matched devices.
+
+| Leaf | Curated baseline (all mismatch) | Cited curated LVS | Device class unrecognised | Open issue |
+|---|---:|---|---|---|
+| `differential_driver` | 356/244/82 | [mismatch (80/80/79)](../../flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
+| `differential_receiver` | 21/20/19 | [mismatch (11/11/10)](../../flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
+| `dplus_pullup` | 265/40/10 | [match (20/20/20)](../../flow/analog-layout-dplus_pullup/artifacts/20261120-195759-745d347-dplus_pullup/lvs-curated-report.json) | None | None |
+| `se_receiver_dm` | 23/22/21 | [mismatch (13/13/12)](../../flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
+| `se_receiver_dp` | 23/22/21 | [mismatch (13/13/12)](../../flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
+
+The curated LVS envelopes report aggregate counts. For the per-class census
+below, each pair gives SPICE X-card instances before multiplier expansion /
+drawn devices from `klt extract --deck sky130 --top <leaf> --no-netlist --format
+json layout/analog/<leaf>/<leaf>.gds` (`device_counts`). The five source models
+carry the `sky130_fd_pr__` prefix. The extractor labels their families `nfet`,
+`pfet`, `res_generic_po`, `res_xhigh_po` and `sky130_fd_pr__model__cap_mim`.
+The curated requests distinguish the high-voltage MOS flavours during LVS.
+The frozen runset `device_census` independently gives counts after combining.
+
+| Leaf | nfet_g5v0d10v5 | pfet_g5v0d10v5 | res_generic_po | res_xhigh_po_1p41 | cap_mim_m3_1 |
+|---|---:|---:|---:|---:|---:|
+| `differential_driver` | 37/139 | 36/210 | 2/2 | 1/1 | 4/4 |
+| `differential_receiver` | 6/9 | 4/11 | 0/0 | 1/1 | 0/0 |
+| `dplus_pullup` | 5/5 | 10/255 | 5/5 | 0/0 | 0/0 |
+| `se_receiver_dm` | 6/9 | 4/11 | 0/0 | 3/3 | 0/0 |
+| `se_receiver_dp` | 6/9 | 4/11 | 0/0 | 3/3 | 0/0 |
+
+- **Bias resistor.** The driver compares 30.01 µm extracted against 30.00 µm
+  specified. Each receiver compares 139.98 µm against 140.00 µm. Each selected
+  report has two `device.property` errors (length and resistance) and a
+  `topology` error on the associated bias net (`VBN` or `IBIASN`). The runset
+  accepts these lengths at its own tolerance. [Chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406)
+- **Driver MIM reference.** The curated reader accepts all four original
+  X-cards (two 42 × 42 µm and two 24 × 24 µm plates) and compares their area
+  and perimeter. Its `device_parameter_coverage` records four devices on each
+  side. Reference capacitance is a placeholder. The derived runset reference
+  also parses, but its scale convention changes the comparison. With the same
+  geometry-aware options it matches 75/80 devices versus 79/80 with the
+  design source (e.g. area 1,764 versus 1.764 × 10¹⁵ for a large plate).
+- **D+ pull-up.** All 20 devices, 18 nets and 8 pins match with resistor
+  geometry enabled. The five generic poly resistors compare on R, L and W.
+  The envelope lists four warnings. Resistor area and perimeter are secondary
+  parameters outside this comparison. The three topology warnings name empty
+  base `nfet`, `pfet` and `pnp` classes.
+
+Every runset report remains frozen as `lvs-report.json`. All five read
+`match`. The open grader issue concerns that route. [klayout-tools #6902](https://github.com/2AMLogic/klayout-tools/issues/6902)
+
 ## Checks and what each one does not say
 
 * `klt drc` with the **curated** sky130 deck is the committed verdict and is
@@ -176,7 +245,7 @@ means re-running that search, not hand-placing it.
   **PDK-native** `sky130A_mr.drc` (`--expect-rule-categories` pins its 244
   categories; without it a zero-finding native run is `coverage_unknown`)
   is committed beside it. Neither is a foundry signoff run.
-* `klt lvs` is `match` only against the schematic netlist; `body_verification`
+* Runset LVS matches the leaf reference netlist. `body_verification`
   is `null` for the runset engine, and `power_connectivity` is `unchecked`
   because the extraction is flat transistor-level.
 * `klt erc` reads VDD and VSS as one island each. The well tie is checked from
@@ -206,7 +275,7 @@ The driver (issue #220) follows the conventions above; what is new:
   (89/44), and a met4 strap from a via3 on the `capm` down to the net's trunk.
 * **Generic poly resistor** (`res_generic_po`): poly bar under the `poly_res`
   marker only (no `urpm`), contacted heads outside the marker.
-* **LVS needs a derived reference for the MIM caps.** The PDK's `sky130.lvs`
+* **The runset needs a derived reference for the MIM caps.** The PDK's `sky130.lvs`
   extracts a MIM as `sky130_fd_pr__model__cap_mim` but its `convert_subckts`
   device list does not contain the xschem export's `sky130_fd_pr__cap_mim_m3_1`,
   so reading `design/netlist/differential_driver.spice` directly drops the four
@@ -216,6 +285,5 @@ The driver (issue #220) follows the conventions above; what is new:
   `A = W*L` and `P = 2*(W+L)` in micrometres. `design/` is not edited and the
   runset is not changed. With it the report is `match` (80/80 devices, 8/8 pins,
   0 mismatches); `power_connectivity` is `unchecked` (the runset's extraction
-  carries no instance-level power pins). A failing LVS still makes
-  `run_checks.py --record` refuse.
+  carries no instance-level power pins). A runset mismatch prevents record creation.
 

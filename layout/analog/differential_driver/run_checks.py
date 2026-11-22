@@ -4,7 +4,7 @@
     python3 layout/analog/differential_driver/run_checks.py            # run, write reports
     python3 layout/analog/differential_driver/run_checks.py --record   # also mint the record
 
-The five steps, the reports and the record are produced by the shared runner
+The checks, reports and record are produced by the shared runner
 layout/analog/run_checks_common.py; this file holds only what is specific to this leaf:
 step 4 (LVS) runs against lvs-reference.spice, which is
 design/netlist/differential_driver.spice with only the MIM cap lines rewritten for the

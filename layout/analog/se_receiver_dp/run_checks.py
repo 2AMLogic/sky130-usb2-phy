@@ -4,7 +4,7 @@
     python3 layout/analog/se_receiver_dp/run_checks.py            # run, write reports
     python3 layout/analog/se_receiver_dp/run_checks.py --record   # also mint the record
 
-The five steps, the reports and the record are produced by the shared runner
+The checks, reports and record are produced by the shared runner
 layout/analog/run_checks_common.py; this file holds only what is specific to this leaf.
 Reports and records stay in this leaf and flow/analog-layout-se_receiver_dp/.
 """

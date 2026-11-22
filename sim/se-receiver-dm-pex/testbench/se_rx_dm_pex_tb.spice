@@ -1,0 +1,23 @@
+* se-receiver-dm-pex -- sky130 single-ended D- receiver thresholds, post-layout (klt pex)
+*
+* Post-layout counterpart of sim/se-receiver-dm-thresholds: identical circuit body, measurements and
+* checks. The single .include below names the schematic-leg DUT shim (se_receiver_dm_pex_dut.spice:
+* design/netlist/se_receiver_dm.spice with its .subckt declaration line reordered to the
+* extracted header's pin order) -- the swap point klt pex re-points at the extracted
+* netlist for the extracted-side leg. Every DUT instance line's nets are written in
+* that same order, so one positional instance line serves both legs with the same
+* net-to-pin mapping. The request supplies the .lib corner section, .temp and the
+* supply sweep (vsup).
+*
+* Stimulus (unchanged from the committed bench): one DC sweep of the line input DM
+* from 0 V to 3.0 V in 1 mV steps (3001 points), ideal source. 3.0 V is the lowest
+* matrix supply, so the input never exceeds the receiver's own rail.
+
+
+.include "se_receiver_dm_pex_dut.spice"
+
+vsup vdd 0 dc 3.3
+vi vdd vddr dc 0
+vin in 0 dc 0
+ehalf half 0 vol='v(vdd)/2'
+xrx in rxdm vddr 0 se_receiver_dm

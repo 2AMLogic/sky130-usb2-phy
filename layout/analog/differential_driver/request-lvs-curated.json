@@ -1,0 +1,39 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout",
+  "layout": {
+    "file": "differential_driver.gds",
+    "top": "differential_driver",
+    "deck": "sky130"
+  },
+  "reference": {
+    "netlist": "../../../design/netlist/differential_driver.spice",
+    "top": "differential_driver",
+    "form": "subckt-call",
+    "deck": "sky130"
+  },
+  "options": {
+    "compare_mos_flavour": true,
+    "combine_devices": [
+      "nfet__hvi",
+      "pfet__hvi"
+    ],
+    "compare_parameters": {
+      "res_generic_po": [
+        "R",
+        "L",
+        "W"
+      ],
+      "res_xhigh_po": [
+        "R",
+        "L",
+        "W"
+      ],
+      "sky130_fd_pr__model__cap_mim": [
+        "C",
+        "A",
+        "P"
+      ]
+    }
+  }
+}

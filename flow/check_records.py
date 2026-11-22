@@ -1507,11 +1507,14 @@ def check_analog_layout(
                 "accepts for this record's date (the decks and models must match the pinned PDK)",
             )
 
-    # 9g. the frozen report copies exist, match their hashes, and cover all four checks.
+    # 9g. every report from this run has a frozen, hash-anchored copy.
     artifacts = meta.get("provenance", {}).get("artifacts")
     if isinstance(artifacts, list):
         names = {Path(str(a.get("path", ""))).name for a in artifacts if isinstance(a, dict)}
-        missing = sorted(set(ANALOG_REPORT_NAMES) - names)
+        required = set(ANALOG_REPORT_NAMES)
+        if f"layout/analog/{meta.get('block')}/request-lvs-curated.json" in hashed:
+            required.update(("lvs-curated-baseline-report.json", "lvs-curated-report.json"))
+        missing = sorted(required - names)
         if missing:
             findings.add(tag, f"{name}: provenance.artifacts omits report(s) {missing}")
         check_hashed_entries(artifacts, name, "artifacts", tag, findings)
@@ -1666,7 +1669,7 @@ def run_klt_checks(artifacts_root: Path, findings: Findings) -> str:
                 f"klt drc --check {report.relative_to(REPO_ROOT)} exited "
                 f"{result.returncode}: {result.stdout.strip() or result.stderr.strip()}",
             )
-    for report in sorted(artifacts_root.glob("*/lvs-report.json")):
+    for report in sorted(artifacts_root.glob("*/lvs-*report.json")):
         result = subprocess.run(
             ["klt", "lvs", "--check", str(report), "--format", "json"],
             capture_output=True,

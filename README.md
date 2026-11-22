@@ -20,7 +20,7 @@ limitations recorded in the characterization report; real-UTMI place-and-route
 remains pending. The FS line driver, differential and single-ended receivers,
 and trimmed D+ pull-up have schematic-level sky130 simulation evidence, and
 each of those five leaves now has committed GDS with a clean `klt drc` record,
-a matching `klt lvs` record and a `clean_partial` `klt erc` record — leaf-level
+a matching PDK-runset LVS record and a `clean_partial` `klt erc` record — leaf-level
 only; of the graded T1 rows behind those checks, DRC (item 3, analog) reads
 `met` under the 0.9.2 grader pin while LVS and supply-ERC (items 4 and 11)
 are still `unmet`. One
@@ -62,18 +62,17 @@ pull-up, and a digital UTMI layer.
   Driver signal-quality and static results pass all 45 corners. All five
   leaves now have committed layout: the GDS streams and their generators are
   pinned by hash (T1 item 2.analog reads `pass`), and each leaf's latest
-  frozen record reads DRC `clean`, LVS `match` and supply-ERC `clean_partial`.
+  frozen record reads DRC `clean`, PDK-runset LVS `match` and supply-ERC `clean_partial`.
   Of those three checks, DRC is signed off: the pinned grader (klt 0.9.2)
   carries
   [klayout-tools#5044](https://github.com/2AMLogic/klayout-tools/issues/5044)
   (fixed upstream 2026-11-06), so the five leaves' clean reports grade as a
   per-cell set and T1 item 3 (analog) reads `met` in the committed report.
-  Items 4 and 11 (analog) still grade `unmet`, for a reason that is about
-  the design and not the grader's shape: item 4's real blocker is
-  `runset_unrecognised_device` — the sky130 runset declares device classes
-  no layout device uses — and item 11's graded reason under 0.9.2 is
-  `check_failed` (under the 0.9.1 pin it read `lvs_did_not_pass`, gated on
-  item 4). The reports
+  Item 4 (analog) grades `unmet / check_failed` with curated LVS. The D+
+  pull-up matches all 20 devices. The driver and three receivers each have
+  a bias-resistor length mismatch tracked in #406. Item 11 (analog) pairs
+  each supply-ERC report with the same curated LVS and grades
+  `unmet / lvs_did_not_pass`. The reports
   also disclose their own gaps: LVS `power_connectivity` is `unchecked`, ERC
   antenna levels are `pass_partial`, and each DRC report lists layers present
   in the stream with no rules. The D+ pull-up
@@ -96,7 +95,7 @@ pull-up, and a digital UTMI layer.
 
   **Layout, mismatch and integrated PHY behaviour — the partial state, not one
   word.** *Layout:* each of the five leaves has committed GDS with a clean
-  `klt drc` record (0 violations), a matching `klt lvs` record and a
+  `klt drc` record (0 violations), a matching PDK-runset LVS record and a
   `clean_partial` `klt erc` record; the differential receiver additionally has
   the repo's first committed `klt pex` record (deliberately uncited — item 7
   takes a single citation and one leaf is not the partition), and the other
