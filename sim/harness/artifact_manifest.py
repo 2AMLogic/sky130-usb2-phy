@@ -100,29 +100,38 @@ def tracked_files(repo: Path) -> tuple[list[str] | None, str]:
 
 def committed_duplicates(repo: Path, manifest: dict, label: str, tracked: list[str]) -> list[str]:
     """Stored objects whose bytes are also committed (see the module docstring for the match rule)."""
-    entries = [e for e in manifest["entries"] if isinstance(e, dict) and isinstance(e.get("sha256"), str)]
-    by_size: dict[int, list[dict]] = {}
-    for e in entries:
-        if isinstance(e.get("size"), int):
-            by_size.setdefault(e["size"], []).append(e)
+    entries = []
+    for e in manifest["entries"]:
+        if not (isinstance(e, dict) and isinstance(e.get("sha256"), str)):
+            continue
+        parts = (e.get("name") or "").split("/")
+        entries.append((e, parts[-2] if len(parts) >= 3 else None, parts[-1]))
+    run_dirs = {rd for _, rd, _ in entries if rd is not None}
+    has_unscoped = any(rd is None for _, rd, _ in entries)
     problems = []
     for rel in tracked:
         if rel.startswith("manifests/"):
             continue
         dirs, base = rel.split("/")[:-1], rel.rsplit("/", 1)[-1]
-        for e in entries:
-            parts = (e.get("name") or "").split("/")
-            run_dir = parts[-2] if len(parts) >= 3 else None
-            if run_dir and run_dir in dirs and base == parts[-1]:
-                problems.append(f"{label}: stored object {e['name']} is also committed at {rel}")
-        cands = by_size.get((repo / rel).stat().st_size if (repo / rel).is_file() else -1)
-        if not cands:
+        stem = Path(rel).stem
+        if not has_unscoped and not (run_dirs.intersection(dirs) or stem in run_dirs):
             continue
-        digest = sha256_file(repo / rel)
-        for e in cands:
-            parts = (e.get("name") or "").split("/")
-            run_dir = parts[-2] if len(parts) >= 3 else None
-            if e["sha256"] == digest and (run_dir is None or run_dir in dirs or Path(rel).stem == run_dir):
+        scoped = [(e, rd, eb) for e, rd, eb in entries if rd is None or rd in dirs or stem == rd]
+        for e, rd, eb in scoped:
+            if rd and rd in dirs and base == eb:
+                problems.append(f"{label}: stored object {e['name']} is also committed at {rel}")
+        sizes = {e["size"] for e, _, _ in scoped if isinstance(e.get("size"), int)}
+        if not sizes:
+            continue
+        path = repo / rel
+        if not path.is_file():
+            continue
+        fsize = path.stat().st_size
+        if fsize not in sizes:
+            continue
+        digest = sha256_file(path)
+        for e, rd, eb in scoped:
+            if isinstance(e.get("size"), int) and e["size"] == fsize and e["sha256"] == digest:
                 problems.append(f"{label}: stored object {e.get('name') or e['sha256']} "
                                 f"(sha256 {digest[:12]}...) has its bytes committed at {rel}")
     return problems
