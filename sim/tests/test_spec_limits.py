@@ -20,6 +20,7 @@ SIM = Path(__file__).resolve().parents[1]
 ROWS = json.loads(sl.ROWS_FILE.read_text())
 ROW_IDS = {r["id"] for r in ROWS["rows"]}
 DRIVER_STATIC = json.loads((SIM / "driver-static/testbench/tb.json").read_text())
+DRIVER_SQ = json.loads((SIM / "driver-signal-quality/testbench/tb.json").read_text())
 
 
 def limited_request(tb=None, experiment="driver-static"):
@@ -82,6 +83,39 @@ def test_driver_static_limit_values_match_the_ratified_rows():
         assert limits[n]["limits"] == vol
     for n in ("rout_high_dp_ohm", "rout_low_dp_ohm", "rout_high_dm_ohm", "rout_low_dm_ohm"):
         assert limits[n]["row"] == "6-05" and limits[n]["limits"] == rout
+
+
+# ---- driver-signal-quality: the mapping matches the tb and the ratified numbers ----
+
+def test_driver_sq_measurements_all_exist_with_equivalent_checks():
+    limits = sl.measurement_limits("driver-signal-quality", DRIVER_SQ)
+    assert limits, "driver-signal-quality must be mapped"
+    for name in limits:
+        assert name in DRIVER_SQ["measure"]
+        assert name in DRIVER_SQ["checks"]
+
+
+def test_driver_sq_limit_values_match_the_ratified_rows():
+    limits = sl.measurement_limits("driver-signal-quality", DRIVER_SQ)
+    # tr/tf scale raw seconds to ns, so the emitted bounds are the row numbers
+    # divided by the scale (klt grades the raw value)
+    tr = {"min": 4e-09, "max": 2e-08}
+    tr_match = {"min": 0.9, "max": 1.1}
+    vcross = {"min": 1.3, "max": 2.0}
+    for n in ("trise_dp_ns", "tfall_dp_ns", "trise_dm_ns", "tfall_dm_ns"):
+        assert limits[n]["row"] == "6-06" and limits[n]["limits"] == tr
+    for n in ("trf_dp_ratio", "trf_dm_ratio", "trf_x1_ratio", "trf_x2_ratio"):
+        assert limits[n]["row"] == "6-06" and limits[n]["limits"] == tr_match
+    for n in ("vcross_rise_v", "vcross_fall_v"):
+        assert limits[n]["row"] == "6-07" and limits[n]["limits"] == vcross
+
+
+def test_driver_sq_engineering_only_measurements_carry_no_limits():
+    # monotonic-edge slopes, single-crossing times and the OE transition pad
+    # currents are engineering criteria, not ratified rows
+    limits = sl.measurement_limits("driver-signal-quality", DRIVER_SQ)
+    for n in ("slope_rise_dp_min_vns", "tx_first_ns", "oe_xb_dp_on_ma", "tpd_rise_dp_ns"):
+        assert n not in limits
 
 
 def test_unmapped_bench_leaves_the_request_untouched():

@@ -600,6 +600,10 @@ and `per_supply` checks from earlier experiments are reused).
   Rise/fall time per line and direction, four matching pairings, rising and
   falling crossover, single-crossing, masked-slope monotonicity; plus
   enable/disable transitions into a pad forced to VDD/2 (engineering data).
+  Since the limit-carrying re-run (issue #401), `driver-signal-quality`'s
+  request carries `measurements[].limits` for rows 6-06 (rise/fall time and
+  matching) and 6-07 (crossover voltage) from the ratified row table; see
+  "Spec-row limits in the request".
 - `driver-static` (one DC sweep of the leakage-forcing source): VOH (15 kohm to
   ground and, as the literal reading of the ratified row, 1.5 kohm to 3.6 V), VOL
   (1.5 kohm to 3.6 V), total output resistance high and low, the 16-combination
