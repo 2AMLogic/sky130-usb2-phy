@@ -39,6 +39,7 @@
     "anchor_top_level_pins": null,
     "strict_top_level_pin_count": false,
     "compare_mos_flavour": true,
+    "ignore_mos_bulk": false,
     "supply_nets": [
       "GND",
       "VCC",
@@ -51,7 +52,7 @@
   },
   "hints_applied": null,
   "constant_nets_applied": null,
-  "status": "mismatch",
+  "status": "match",
   "power_connectivity": {
     "status": "unchecked",
     "reason": "reference.form is 'subckt-call', whose reference netlist carries its own power/ground pins and nets -- they take part in the ordinary compare, so this check (which exists to cover the signal-only 'gate-level-verilog' form) does not apply",
@@ -69,10 +70,67 @@
     "reason": null,
     "device_classes": [],
     "device_count": 0,
+    "inspected_count": 10,
     "findings": [],
     "finding_count": 0
   },
   "device_parameter_coverage": [
+    {
+      "class": "nfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 6,
+      "reference_devices": 6,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "pfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 4,
+      "reference_devices": 4,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
     {
       "class": "res_xhigh_po",
       "device_kind": "resistor",
@@ -95,27 +153,23 @@
       ]
     }
   ],
-  "mismatch_count": 7,
-  "error_count": 3,
+  "mismatch_count": 4,
+  "error_count": 0,
   "category_counts": {
     "device.geometry_not_compared": 1,
-    "device.property": 2,
-    "topology": 4
+    "topology": 3
   },
-  "category_error_counts": {
-    "device.property": 2,
-    "topology": 1
-  },
+  "category_error_counts": {},
   "counts": {
     "nets": {
       "layout": 10,
       "reference": 10,
-      "matched": 7
+      "matched": 10
     },
     "devices": {
       "layout": 13,
       "reference": 13,
-      "matched": 12
+      "matched": 13
     },
     "pins": {
       "layout": 4,
@@ -141,28 +195,28 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.12",
     "netgen_binary": null,
-    "layout_sha256": "ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb",
+    "layout_sha256": "67abfd416f3a19df3d671f0a3811c876df8a8a999e822931c3df92460cfc8056",
     "reference_sha256": "3ce8e5cf0d64871e845d11c592035cdee07cc01e18168411c78eb4a26dacfa8d",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.2.dev111+g978f7464fae1",
-    "klt_git_commit": "978f7464fae1eb23946929da55afd088736602ae",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@978f7464fae1eb23946929da55afd088736602ae",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
       "name": "sky130",
-      "content_hash": "sha256:029ef177c1f4e872c13cc81093f94a02a9bbfe1f51939a88194a83532d60bf7c",
-      "released": true
+      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "released": false
     },
     "input": {
-      "content_hash": "sha256:ee6f4488fdc51adaa3825284a21ac532a7d8356bbf6be516a00c49a86a7839fb",
+      "content_hash": "sha256:67abfd416f3a19df3d671f0a3811c876df8a8a999e822931c3df92460cfc8056",
       "role": "layout"
     },
-    "klayout_version_mismatch": true
+    "klayout_version_mismatch": false
   },
   "mismatches": [
     {
@@ -191,64 +245,6 @@
         "layout_devices": 3,
         "reference_devices": 3
       },
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "matched device parameter 'r' differs",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "\\$22",
-        "reference": "BIAS",
-        "class": "res_xhigh_po"
-      },
-      "property": {
-        "name": "r",
-        "layout": 198553.1914893617,
-        "reference": 198581.56028368798
-      },
-      "details": null,
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "matched device parameter 'l_um' differs",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "\\$22",
-        "reference": "BIAS",
-        "class": "res_xhigh_po"
-      },
-      "property": {
-        "name": "l_um",
-        "layout": 139.98,
-        "reference": 140.0
-      },
-      "details": null,
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "topology",
-      "severity": "error",
-      "description": "nets were paired despite a name/identity conflict",
-      "side": "both",
-      "net": {
-        "layout": "\\$2",
-        "reference": "IBIASN"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
       "circuit": null,
       "instance": null,
       "subcircuit": null
@@ -308,38 +304,73 @@
   "net_correspondence": [
     {
       "layout": "\\$6",
+      "layout_id": 4,
       "reference": "AMPOUT",
+      "reference_id": 8,
       "pin": false
     },
     {
       "layout": "\\$7",
+      "layout_id": 5,
       "reference": "BUF1",
+      "reference_id": 9,
       "pin": false
     },
     {
       "layout": "DM",
+      "layout_id": 7,
       "reference": "DM",
+      "reference_id": 2,
       "pin": true
     },
     {
+      "layout": "\\$2",
+      "layout_id": 0,
+      "reference": "IBIASN",
+      "reference_id": 5,
+      "pin": false
+    },
+    {
       "layout": "\\$3",
+      "layout_id": 1,
       "reference": "LOADDIODE",
+      "reference_id": 7,
       "pin": false
     },
     {
       "layout": "RXDM",
+      "layout_id": 6,
       "reference": "RXDM",
+      "reference_id": 3,
       "pin": true
     },
     {
       "layout": "\\$4",
+      "layout_id": 2,
       "reference": "TAIL",
+      "reference_id": 6,
       "pin": false
     },
     {
+      "layout": "VDD",
+      "layout_id": 8,
+      "reference": "VDD",
+      "reference_id": 0,
+      "pin": true
+    },
+    {
       "layout": "\\$5",
+      "layout_id": 3,
       "reference": "VREF",
+      "reference_id": 4,
       "pin": false
+    },
+    {
+      "layout": "VSS",
+      "layout_id": 9,
+      "reference": "VSS",
+      "reference_id": 1,
+      "pin": true
     }
   ]
 }

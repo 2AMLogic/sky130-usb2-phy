@@ -49,6 +49,7 @@
     "anchor_top_level_pins": null,
     "strict_top_level_pin_count": false,
     "compare_mos_flavour": true,
+    "ignore_mos_bulk": false,
     "supply_nets": [
       "GND",
       "VCC",
@@ -61,7 +62,7 @@
   },
   "hints_applied": null,
   "constant_nets_applied": null,
-  "status": "mismatch",
+  "status": "match",
   "power_connectivity": {
     "status": "unchecked",
     "reason": "reference.form is 'subckt-call', whose reference netlist carries its own power/ground pins and nets -- they take part in the ordinary compare, so this check (which exists to cover the signal-only 'gate-level-verilog' form) does not apply",
@@ -79,10 +80,67 @@
     "reason": null,
     "device_classes": [],
     "device_count": 0,
+    "inspected_count": 73,
     "findings": [],
     "finding_count": 0
   },
   "device_parameter_coverage": [
+    {
+      "class": "nfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 37,
+      "reference_devices": 37,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "pfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 36,
+      "reference_devices": 36,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
     {
       "class": "res_generic_po",
       "device_kind": "resistor",
@@ -142,28 +200,24 @@
       ]
     }
   ],
-  "mismatch_count": 9,
-  "error_count": 3,
+  "mismatch_count": 6,
+  "error_count": 0,
   "category_counts": {
     "device.geometry_not_compared": 2,
     "device.placeholder_value": 1,
-    "device.property": 2,
-    "topology": 4
+    "topology": 3
   },
-  "category_error_counts": {
-    "device.property": 2,
-    "topology": 1
-  },
+  "category_error_counts": {},
   "counts": {
     "nets": {
       "layout": 47,
       "reference": 47,
-      "matched": 44
+      "matched": 47
     },
     "devices": {
       "layout": 80,
       "reference": 80,
-      "matched": 79
+      "matched": 80
     },
     "pins": {
       "layout": 8,
@@ -189,28 +243,28 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.12",
     "netgen_binary": null,
-    "layout_sha256": "2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+    "layout_sha256": "14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
     "reference_sha256": "bed3319d65789db0a7d1a14831e113eb957cd1998d3cc58d4dc539dd5ea2fdd0",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.2.dev111+g978f7464fae1",
-    "klt_git_commit": "978f7464fae1eb23946929da55afd088736602ae",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@978f7464fae1eb23946929da55afd088736602ae",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
       "name": "sky130",
-      "content_hash": "sha256:029ef177c1f4e872c13cc81093f94a02a9bbfe1f51939a88194a83532d60bf7c",
-      "released": true
+      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "released": false
     },
     "input": {
-      "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+      "content_hash": "sha256:14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
       "role": "layout"
     },
-    "klayout_version_mismatch": true
+    "klayout_version_mismatch": false
   },
   "mismatches": [
     {
@@ -300,64 +354,6 @@
       "subcircuit": null
     },
     {
-      "category": "device.property",
-      "severity": "error",
-      "description": "matched device parameter 'r' differs",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "\\$356",
-        "reference": "B",
-        "class": "res_xhigh_po"
-      },
-      "property": {
-        "name": "r",
-        "layout": 42567.375886524824,
-        "reference": 42553.1914893617
-      },
-      "details": null,
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "matched device parameter 'l_um' differs",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "\\$356",
-        "reference": "B",
-        "class": "res_xhigh_po"
-      },
-      "property": {
-        "name": "l_um",
-        "layout": 30.01,
-        "reference": 30.0
-      },
-      "details": null,
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "topology",
-      "severity": "error",
-      "description": "nets were paired despite a name/identity conflict",
-      "side": "both",
-      "net": {
-        "layout": "\\$7",
-        "reference": "VBN"
-      },
-      "device": null,
-      "property": null,
-      "details": null,
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
       "category": "topology",
       "severity": "warning",
       "description": "device class has no counterpart on the other side, but no devices of this class were extracted either -- not a real topology mismatch: 'nfet'",
@@ -412,222 +408,331 @@
   "net_correspondence": [
     {
       "layout": "DM",
+      "layout_id": 37,
       "reference": "DM",
+      "reference_id": 7,
       "pin": true
     },
     {
       "layout": "DP",
+      "layout_id": 45,
       "reference": "DP",
+      "reference_id": 6,
       "pin": true
     },
     {
       "layout": "DRVEN",
+      "layout_id": 0,
       "reference": "DRVEN",
+      "reference_id": 4,
       "pin": true
     },
     {
       "layout": "\\$6",
+      "layout_id": 4,
       "reference": "EN",
+      "reference_id": 10,
       "pin": false
     },
     {
       "layout": "\\$5",
+      "layout_id": 3,
       "reference": "ENB",
+      "reference_id": 8,
       "pin": false
     },
     {
       "layout": "\\$4",
+      "layout_id": 2,
       "reference": "ENX",
+      "reference_id": 9,
       "pin": false
     },
     {
       "layout": "\\$43",
+      "layout_id": 41,
       "reference": "KNX_DM",
+      "reference_id": 45,
       "pin": false
     },
     {
       "layout": "\\$41",
+      "layout_id": 39,
       "reference": "KNX_DP",
+      "reference_id": 28,
       "pin": false
     },
     {
       "layout": "\\$33",
+      "layout_id": 31,
       "reference": "KPX_DM",
+      "reference_id": 42,
       "pin": false
     },
     {
       "layout": "\\$19",
+      "layout_id": 17,
       "reference": "KPX_DP",
+      "reference_id": 25,
       "pin": false
     },
     {
       "layout": "\\$35",
+      "layout_id": 33,
       "reference": "KSNB_DM",
+      "reference_id": 44,
       "pin": false
     },
     {
       "layout": "\\$21",
+      "layout_id": 19,
       "reference": "KSNB_DP",
+      "reference_id": 27,
       "pin": false
     },
     {
       "layout": "\\$34",
+      "layout_id": 32,
       "reference": "KSN_DM",
+      "reference_id": 43,
       "pin": false
     },
     {
       "layout": "\\$20",
+      "layout_id": 18,
       "reference": "KSN_DP",
+      "reference_id": 26,
       "pin": false
     },
     {
       "layout": "\\$32",
+      "layout_id": 30,
       "reference": "KSPB_DM",
+      "reference_id": 41,
       "pin": false
     },
     {
       "layout": "\\$18",
+      "layout_id": 16,
       "reference": "KSPB_DP",
+      "reference_id": 24,
       "pin": false
     },
     {
       "layout": "\\$31",
+      "layout_id": 29,
       "reference": "KSP_DM",
+      "reference_id": 40,
       "pin": false
     },
     {
       "layout": "\\$17",
+      "layout_id": 15,
       "reference": "KSP_DP",
+      "reference_id": 23,
       "pin": false
     },
     {
       "layout": "\\$42",
+      "layout_id": 40,
       "reference": "NBX_DM",
+      "reference_id": 33,
       "pin": false
     },
     {
       "layout": "\\$40",
+      "layout_id": 38,
       "reference": "NBX_DP",
+      "reference_id": 16,
       "pin": false
     },
     {
       "layout": "\\$26",
+      "layout_id": 24,
       "reference": "NB_DM",
+      "reference_id": 34,
       "pin": false
     },
     {
       "layout": "\\$12",
+      "layout_id": 10,
       "reference": "NB_DP",
+      "reference_id": 17,
       "pin": false
     },
     {
       "layout": "\\$30",
+      "layout_id": 28,
       "reference": "NG_DM",
+      "reference_id": 38,
       "pin": false
     },
     {
       "layout": "\\$16",
+      "layout_id": 14,
       "reference": "NG_DP",
+      "reference_id": 21,
       "pin": false
     },
     {
       "layout": "\\$27",
+      "layout_id": 25,
       "reference": "NONB_DM",
+      "reference_id": 35,
       "pin": false
     },
     {
       "layout": "\\$13",
+      "layout_id": 11,
       "reference": "NONB_DP",
+      "reference_id": 18,
       "pin": false
     },
     {
       "layout": "OE",
+      "layout_id": 35,
       "reference": "OE",
+      "reference_id": 5,
       "pin": true
     },
     {
       "layout": "\\$36",
+      "layout_id": 34,
       "reference": "OUTI_DM",
+      "reference_id": 46,
       "pin": false
     },
     {
       "layout": "\\$22",
+      "layout_id": 20,
       "reference": "OUTI_DP",
+      "reference_id": 29,
       "pin": false
     },
     {
       "layout": "\\$23",
+      "layout_id": 21,
       "reference": "PAX_DM",
+      "reference_id": 31,
       "pin": false
     },
     {
       "layout": "\\$9",
+      "layout_id": 7,
       "reference": "PAX_DP",
+      "reference_id": 14,
       "pin": false
     },
     {
       "layout": "\\$24",
+      "layout_id": 22,
       "reference": "PA_DM",
+      "reference_id": 30,
       "pin": false
     },
     {
       "layout": "\\$10",
+      "layout_id": 8,
       "reference": "PA_DP",
+      "reference_id": 13,
       "pin": false
     },
     {
       "layout": "\\$29",
+      "layout_id": 27,
       "reference": "PG_DM",
+      "reference_id": 36,
       "pin": false
     },
     {
       "layout": "\\$15",
+      "layout_id": 13,
       "reference": "PG_DP",
+      "reference_id": 19,
       "pin": false
     },
     {
       "layout": "\\$25",
+      "layout_id": 23,
       "reference": "PON_DM",
+      "reference_id": 32,
       "pin": false
     },
     {
       "layout": "\\$11",
+      "layout_id": 9,
       "reference": "PON_DP",
+      "reference_id": 15,
       "pin": false
     },
     {
       "layout": "TXDM",
+      "layout_id": 1,
       "reference": "TXDM",
+      "reference_id": 3,
       "pin": true
     },
     {
       "layout": "TXDP",
+      "layout_id": 36,
       "reference": "TXDP",
+      "reference_id": 2,
       "pin": true
     },
     {
-      "layout": "\\$8",
-      "reference": "VBP",
+      "layout": "\\$7",
+      "layout_id": 5,
+      "reference": "VBN",
+      "reference_id": 11,
       "pin": false
     },
     {
+      "layout": "\\$8",
+      "layout_id": 6,
+      "reference": "VBP",
+      "reference_id": 12,
+      "pin": false
+    },
+    {
+      "layout": "VDD",
+      "layout_id": 42,
+      "reference": "VDD",
+      "reference_id": 0,
+      "pin": true
+    },
+    {
+      "layout": "VSS",
+      "layout_id": 46,
+      "reference": "VSS",
+      "reference_id": 1,
+      "pin": true
+    },
+    {
       "layout": "\\$46",
+      "layout_id": 44,
       "reference": "XN_DM",
+      "reference_id": 39,
       "pin": false
     },
     {
       "layout": "\\$45",
+      "layout_id": 43,
       "reference": "XN_DP",
+      "reference_id": 22,
       "pin": false
     },
     {
       "layout": "\\$28",
+      "layout_id": 26,
       "reference": "XP_DM",
+      "reference_id": 37,
       "pin": false
     },
     {
       "layout": "\\$14",
+      "layout_id": 12,
       "reference": "XP_DP",
+      "reference_id": 20,
       "pin": false
     }
   ]

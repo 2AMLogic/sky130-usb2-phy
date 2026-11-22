@@ -39,6 +39,7 @@
     "anchor_top_level_pins": null,
     "strict_top_level_pin_count": false,
     "compare_mos_flavour": true,
+    "ignore_mos_bulk": false,
     "supply_nets": [
       "GND",
       "VCC",
@@ -69,10 +70,67 @@
     "reason": null,
     "device_classes": [],
     "device_count": 0,
+    "inspected_count": 15,
     "findings": [],
     "finding_count": 0
   },
   "device_parameter_coverage": [
+    {
+      "class": "nfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 5,
+      "reference_devices": 5,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "pfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 10,
+      "reference_devices": 10,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
     {
       "class": "res_generic_po",
       "device_kind": "resistor",
@@ -137,28 +195,28 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.13",
+    "engine_version": "0.30.12",
     "netgen_binary": null,
     "layout_sha256": "7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
     "reference_sha256": "b824c18d57e4e493b1b733cf8d3670ef5eada615f2b5f32f2e796ef7170d20e3",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.2.dev111+g978f7464fae1",
-    "klt_git_commit": "978f7464fae1eb23946929da55afd088736602ae",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@978f7464fae1eb23946929da55afd088736602ae",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.12",
     "pdk": null,
     "deck": {
       "name": "sky130",
-      "content_hash": "sha256:029ef177c1f4e872c13cc81093f94a02a9bbfe1f51939a88194a83532d60bf7c",
-      "released": true
+      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "released": false
     },
     "input": {
       "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
       "role": "layout"
     },
-    "klayout_version_mismatch": true
+    "klayout_version_mismatch": false
   },
   "mismatches": [
     {
@@ -246,92 +304,128 @@
   "net_correspondence": [
     {
       "layout": "DP",
+      "layout_id": 15,
       "reference": "DP",
+      "reference_id": 0,
       "pin": true
     },
     {
       "layout": "\\$12",
+      "layout_id": 10,
       "reference": "N0",
+      "reference_id": 13,
       "pin": false
     },
     {
       "layout": "\\$13",
+      "layout_id": 11,
       "reference": "N1",
+      "reference_id": 14,
       "pin": false
     },
     {
       "layout": "\\$14",
+      "layout_id": 12,
       "reference": "N2",
+      "reference_id": 15,
       "pin": false
     },
     {
       "layout": "\\$15",
+      "layout_id": 13,
       "reference": "N3",
+      "reference_id": 16,
       "pin": false
     },
     {
       "layout": "\\$16",
+      "layout_id": 14,
       "reference": "N4",
+      "reference_id": 17,
       "pin": false
     },
     {
       "layout": "PU_EN",
+      "layout_id": 0,
       "reference": "PU_EN",
+      "reference_id": 3,
       "pin": true
     },
     {
       "layout": "\\$3",
+      "layout_id": 1,
       "reference": "PU_ENB",
+      "reference_id": 8,
       "pin": false
     },
     {
       "layout": "TRIM0",
+      "layout_id": 2,
       "reference": "TRIM0",
+      "reference_id": 4,
       "pin": true
     },
     {
       "layout": "\\$5",
+      "layout_id": 3,
       "reference": "TRIM0B",
+      "reference_id": 9,
       "pin": false
     },
     {
       "layout": "TRIM1",
+      "layout_id": 4,
       "reference": "TRIM1",
+      "reference_id": 5,
       "pin": true
     },
     {
       "layout": "\\$7",
+      "layout_id": 5,
       "reference": "TRIM1B",
+      "reference_id": 10,
       "pin": false
     },
     {
       "layout": "TRIM2",
+      "layout_id": 6,
       "reference": "TRIM2",
+      "reference_id": 6,
       "pin": true
     },
     {
       "layout": "\\$9",
+      "layout_id": 7,
       "reference": "TRIM2B",
+      "reference_id": 11,
       "pin": false
     },
     {
       "layout": "TRIM3",
+      "layout_id": 8,
       "reference": "TRIM3",
+      "reference_id": 7,
       "pin": true
     },
     {
       "layout": "\\$11",
+      "layout_id": 9,
       "reference": "TRIM3B",
+      "reference_id": 12,
       "pin": false
     },
     {
       "layout": "VPU",
+      "layout_id": 16,
       "reference": "VPU",
+      "reference_id": 1,
       "pin": true
     },
     {
       "layout": "VSS",
+      "layout_id": 17,
       "reference": "VSS",
+      "reference_id": 2,
       "pin": true
     }
   ]

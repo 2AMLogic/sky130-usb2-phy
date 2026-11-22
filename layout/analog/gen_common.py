@@ -328,21 +328,39 @@ def xhigh_resistor(
     Both terminal heads are at the top, outside the `poly_res` marker, so the
     SKY130 runset sees exactly two terminals. Returns the (x, y) centre of each
     head's met1 pad and the x of the right edge of the body.
+
+    Snapping the leg height to the 0.005 um grid repeats one rounding error
+    across every leg, so the drawn centreline drifts off the netlist length
+    (30.01 um on the four-leg 30 um driver XRB, 139.98 um on the fourteen-leg
+    140 um receiver XRBIAS, #406). The first bottom U-turn absorbs the residual:
+    moving that one bend by half of it changes both adjoining legs equally, so
+    the area/width length lands exactly on the netlist value while the two
+    heads and every other leg stay put, and the marker and implant still cover
+    the corrected body.
     """
     w = XHIGH_W
     pitch = w + XHIGH_GAP
     n = legs
     # centreline: n legs of `leg` + (n-1) links of `pitch`
     leg = snap((length - (n - 1) * pitch) / n)
-    # leg centreline x_i; vertical centreline from yb to yt
+    resid = round(length - (n * leg + (n - 1) * pitch), 6)
+    drop = resid / 2
+    assert resid == 0 or abs(drop - snap(drop)) < 1e-9, (
+        f"centreline residual {resid} um cannot be absorbed by one grid-aligned bend"
+    )
+    # leg centreline x_i; vertical centreline from yb to yt. The first bottom
+    # U-turn sits at `bend`: `drop` below yb when the legs are short (drop < 0
+    # pulls it up), lengthening legs 0 and 1 by `drop` each.
     xs = [x0 + w / 2 + i * pitch for i in range(n)]
     yb = y0 + w / 2
+    bend = snap(yb - drop)
     yt = yb + leg
     region = db.Region()
-    for x in xs:
-        region.insert(db.DBox(x - w / 2, yb - w / 2, x + w / 2, yt + w / 2).to_itype(DBU))
+    for i, x in enumerate(xs):
+        ybot = bend if i < 2 else yb
+        region.insert(db.DBox(x - w / 2, ybot - w / 2, x + w / 2, yt + w / 2).to_itype(DBU))
     for i in range(n - 1):
-        y = yb if i % 2 == 0 else yt
+        y = (bend if i == 0 else yb) if i % 2 == 0 else yt
         region.insert(db.DBox(xs[i] - w / 2, y - w / 2, xs[i + 1] + w / 2, y + w / 2).to_itype(DBU))
     region.merge()
     # The first and last leg are free at the top: trim them to the centreline
@@ -353,7 +371,9 @@ def xhigh_resistor(
     cv.cell.shapes(cv.idx["poly"]).insert(region)
     # With two legs there is no top link: the marker ends at the head edge, or the gap
     # between the two cut-outs would leave a sliver narrower than urpm.width.1.
-    marker = db.Region(db.DBox(x0, y0, xs[-1] + w / 2, yt + (0 if n == 2 else w / 2)).to_itype(DBU))
+    marker = db.Region(
+        db.DBox(x0, min(y0, bend - w / 2), xs[-1] + w / 2, yt + (0 if n == 2 else w / 2)).to_itype(DBU)
+    )
     for x in (xs[0], xs[-1]):
         marker -= db.Region(db.DBox(x - w / 2 - 0.01, yt, x + w / 2 + 0.01, yt + w).to_itype(DBU))
     cv.cell.shapes(cv.idx["poly_res"]).insert(marker)
