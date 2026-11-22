@@ -203,6 +203,42 @@ def test_cross_check_flags_missing_envelope_verdict():
     assert any("no limit verdict" in p for p in problems)
 
 
+def test_cross_check_flags_unrecognised_envelope_status():
+    # a third per-measurement status must fail closed, not fall through
+    # uncounted while the record still reads PASS
+    corners = [corner_envelope(("tt", 27, 3.3), {"voh_dp_v": 3.2})]
+    corners[0]["measurements"][0]["status"] = "error"
+    results = [{"corner_id": mx.corner_id("tt", 27, 3.3), "status": "ok",
+                "measurements": {"voh_dp_v": 3.2}}]
+    problems, summary = _cross(corners, results)
+    assert any("voh_dp_v" in p and "error" in p for p in problems)
+    assert summary["voh_dp_v"]["envelope"] == {"pass": 0, "fail": 0}
+
+
+def test_cross_check_flags_unrecognised_status_without_harness_verdict():
+    # fail closed regardless of the harness verdict: the measurement value is
+    # absent, so har is None, and the status must still surface
+    corners = [corner_envelope(("tt", 27, 3.3), {"voh_dp_v": 3.2})]
+    corners[0]["measurements"][0]["status"] = "error"
+    results = [{"corner_id": mx.corner_id("tt", 27, 3.3), "status": "ok",
+                "measurements": {}}]
+    problems, _ = _cross(corners, results)
+    assert any("voh_dp_v" in p and "error" in p for p in problems)
+
+
+def test_cross_check_flags_unrecognised_status_alongside_a_pass():
+    # one errored limited measurement in a corner whose other limited
+    # measurement passes: exactly one problem, the passing one still counted
+    corners = [corner_envelope(("tt", 27, 3.3), {"voh_dp_v": 3.2, "vol_dp_v": 0.1})]
+    corners[0]["measurements"][1]["status"] = "error"  # vol_dp_v
+    results = [{"corner_id": mx.corner_id("tt", 27, 3.3), "status": "ok",
+                "measurements": {"voh_dp_v": 3.2, "vol_dp_v": 0.1}}]
+    problems, summary = _cross(corners, results)
+    assert len(problems) == 1 and "vol_dp_v" in problems[0] and "error" in problems[0]
+    assert summary["voh_dp_v"]["envelope"] == {"pass": 1, "fail": 0}
+    assert summary["vol_dp_v"]["envelope"] == {"pass": 0, "fail": 0}
+
+
 def test_render_cross_table_lists_every_limited_measurement():
     mapping = sl.measurement_limits("driver-static", DRIVER_STATIC)
     summary = {n: {"envelope": {"pass": 45, "fail": 0}, "harness": {"pass": 45, "fail": 0},
