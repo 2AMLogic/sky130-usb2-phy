@@ -8,14 +8,31 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-22
+
+- **PR #427**: refactor(sim): share one leaf pex runner and its exact-pair gate
+- **PR #423**: feat(sim): map driver-signal-quality rows 6-06/6-07 limits; 45-point re-run with envelope-graded bounds
+- **PR #422**: fix: fail spec_limits cross_check closed on unrecognised envelope statuses
+- **PR #420**: refactor: share the D+ and D− single-ended receiver PEX runner
+- **PR #411**: feat(sim): generate spec-row limits in the klt sim request; driver-static limit-carrying 45-point re-run (rows 6-04, 6-05)
+- **Issue #425** (closed): Consolidate the remaining klt pex leaf runners onto one shared harness and retire diff-receiver-pex's inline count-only equivalence gate
+- **Issue #419** (closed): Share the D+ and D− single-ended receiver PEX runner
+- **Issue #412** (closed): spec_limits.cross_check: an envelope limit status that is neither pass nor fail is silently uncounted
+
 ### 2026-11-21
 
+- **PR #415**: feat: klt pex post-layout records for the single-ended receivers (PASS) and the D+ pull-up (FAIL, layout follow-up #414)
+- **PR #407**: feat: grade analog leaves with curated LVS and passive geometry checks
+- **Issue #400** (closed): T1 items 4 and 11 (analog): probe the curated klt lvs engine on the five leaves and record, per leaf, which LVS route can be graded met
 - **Issue #403**: T1 item 7 (analog): klt pex reports for the se_receiver_dp, se_receiver_dm and dplus_pullup leaves
 - **Issue #414** (open): dplus_pullup layout iteration: poly-head parasitics push every trim code above the ratified window (the FAIL post-layout record's follow-up)
 - 2AMLogic/klayout-tools#6990 (open, upstream): klt pex errors the whole envelope on a DUT-internal-node measurement (no portable-subset option)
 
 ### 2026-11-20
 
+- **PR #409**: chore(signoff): re-pin grader to klayout-tools 0.9.2 and regrade
+- **Issue #410** (closed): signoff CI: read the grading klt pin from signoff/toolchain.json instead of a third hand-edited copy
+- **Issue #399** (closed): Re-pin the signoff grader from klt 0.9.1 to the 0.9.2 release and regrade (item 3 analog grades met, 9 -> 10 of 22)
 - **Issue #193** (closed): Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
 
 ### 2026-11-18
