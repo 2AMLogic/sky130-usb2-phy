@@ -1,11 +1,11 @@
 {
   "schema_version": 3,
   "engine": "klayout-runset",
-  "layout": "/workspace/work/2amlogic-sky130-usb2-phy-bd997fcb/.loom/worktrees/2amlogic-sky130-usb2-phy-bd997fcb/issue-400/layout/analog/se_receiver_dp/se_receiver_dp.gds",
-  "reference": "/workspace/work/2amlogic-sky130-usb2-phy-bd997fcb/.loom/worktrees/2amlogic-sky130-usb2-phy-bd997fcb/issue-400/design/netlist/se_receiver_dp.spice",
+  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-432/layout/analog/se_receiver_dp/se_receiver_dp.gds",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-432/design/netlist/se_receiver_dp.spice",
   "top": "se_receiver_dp",
   "reference_top": "se_receiver_dp",
-  "deck_file": "/home/loom/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
+  "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
   "deck_vars": {
     "convert_subckts": "true",
     "scale": "true",
@@ -849,7 +849,7 @@
       "role": "layout"
     },
     "runset": {
-      "deck_file": "/home/loom/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
+      "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
       "deck_vars": {
         "convert_subckts": "true",
         "scale": "true",
