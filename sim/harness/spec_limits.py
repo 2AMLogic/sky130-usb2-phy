@@ -251,7 +251,9 @@ def cross_check(report: dict, results: list[dict], tb: dict, mapping: dict[str, 
     harness's post-hoc re-check of the same bound on the scaled value. Any
     disagreement is returned as a problem string (the runner fails the record
     on it); the summary counts per measurement feed the record's cross-check
-    table.
+    table. A per-measurement envelope status other than pass/fail (e.g. an
+    error) is itself a problem whatever the harness says -- the check fails
+    closed on a status it did not enumerate.
     """
     envelope: dict[str, dict[str, str]] = {}
     for c in report.get("corners") or []:
@@ -287,6 +289,9 @@ def cross_check(report: dict, results: list[dict], tb: dict, mapping: dict[str, 
             elif klt is None and har is not None:
                 problems.append(f"{cid}: {name} graded by the harness but the envelope reports "
                                 "no limit verdict for it")
+            elif klt is not None and klt not in ("pass", "fail"):
+                problems.append(f"{cid}: {name} envelope limit status {klt!r} is neither "
+                                "'pass' nor 'fail'")
     return problems, summary
 
 
