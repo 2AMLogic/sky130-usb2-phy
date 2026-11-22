@@ -1,15 +1,10 @@
 """Exact-pair schematic-leg equivalence gate for the klt pex leaf runners.
 
-Shared by every leaf pex bench (sim/diff-receiver-pex, sim/se-receiver-dp-pex,
-sim/se-receiver-dm-pex and sim/dplus-pullup-pex) through the one leaf runner,
-sim/harness/pex_runner.py; until issue #425 sim/diff-receiver-pex kept a count-only
-inline gate of its own. The lesson that shaped this helper: the committed schematic
-reference report covers far more corners than a two-corner `klt pex` bench requests
-(225 versus 2 here; 45 versus 2 for the differential receiver), so a delta with the
-right *number* of rows and the reference value in each is not evidence the
-requested bench ran -- rows lifted from unrequested corners would pass a count-only
-check. The expected (corner id, raw measurement name) pairs are therefore derived
-from the pex bench's own requested units, and the schematic leg is equivalent only
+All leaf benches use this gate through sim/harness/pex_runner.py. Each
+committed schematic reference covers more corners than its PEX request. A
+delta with the expected row count can contain matching reference values for
+unrequested corners. The expected (corner id, raw measurement name) pairs come
+from the bench's requested units. The schematic leg is equivalent only
 when the envelope's delta carries every expected pair exactly once, nothing extra,
 finite values throughout, and each schematic_value equal to the committed record's
 value at relative deviation <= 1e-6. Toolchain-free: pure functions over committed
@@ -92,7 +87,7 @@ def check_equivalence(envelope: dict, tb: dict, reference_report: dict,
         seen[key] = row
     for key in sorted(set(seen) - set(expected), key=lambda k: (k[0] or "", k[1] or "")):
         fail(key[0], key[1], "delta row is not a requested (corner, measurement) pair of "
-             "testbench/tb.json", committed.get(key), seen[key].get("schematic_value"))
+             "the testbench", committed.get(key), seen[key].get("schematic_value"))
 
     for key in expected:
         row = seen.get(key)

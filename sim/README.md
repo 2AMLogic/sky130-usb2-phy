@@ -302,11 +302,12 @@ instance lines reordered to the same sequence. One `klt pex` call per bench
 `sf_-40c_3.60v`; signal quality: `tb-sq.json`, rows 6-06/6-07 with the
 decision-record 0008 crossover load, at tt + `fs_100c_3.60v` +
 `sf_-40c_3.60v` + `fs_100c_3.00v` -- each bench's binding corners, derived
-from its committed 45-point record's margins). `run.py`'s equivalence gate
-requires each schematic leg to reproduce that bench's committed record at
-relative deviation <= 1e-6 (this run: 171/171 and 204/204 rows at 0), an
-envelope status of `pass`, and a delta of exactly corners x measurements
-distinct rows.
+from its committed 45-point record's margins). The shared equivalence gate
+checks exactly the corner and measurement pairs requested in `tb-static.json`
+or `tb-sq.json`. The committed runs reproduced all 171 static pairs and all
+204 signal-quality pairs at zero relative deviation. By default, or with
+`--bench both`, the runner finishes static and then signal quality and returns
+the first nonzero exit code.
 
 ```bash
 python3 sim/diff-driver-pex/run.py --dry-run    # pre-flight, no extraction
@@ -343,28 +344,25 @@ the binding corner of the leaf's committed 225-point resistor-set record
 the binding corner may be a resistor-set section, which the request expresses
 as that section's process name.
 
-The equivalence gate is shared by all four leaf benches
-(`sim/harness/pex_equivalence.py`, regression tests in
-`sim/tests/test_pex_equivalence.py`): it derives the expected
-(corner, measurement) pairs from each bench's own requested units (14 rows per
-receiver, 52 for the pull-up, 36 for the differential receiver) and fails on any
-missing, duplicate, unexpected or non-finite row -- the committed reference
-covers 225 corners (45 for the differential receiver), so rows lifted from
-unrequested corners must fail, not pass vacuously. The receiver benches carry 7
+All five leaves use the equivalence gate in `sim/harness/pex_equivalence.py`,
+covered by `sim/tests/test_pex_equivalence.py`. The gate requires a `pass`
+envelope containing every requested (corner, measurement) pair exactly once,
+with finite schematic values matching the committed reference at relative
+deviation <= 1e-6. Rows from any other corner in the reference fail the gate.
+The receiver benches carry 7
 of the committed bench's 8 measurements: `vref_v` probes a DUT-internal node by
 name and is not extraction-portable (2AMLogic/klayout-tools#6990). `run.py` also
 grades the extracted leg (`grading.json` in each run's manifest): the receivers
 against the bench's own window/output-level checks, the pull-up through
 `sim/harness/trim.py` over the 16 extracted code voltages.
 
-All four leaf pex `run.py` files are thin entry points over one shared runner,
-`sim/harness/pex_runner.py` (issues #419 and #425; regression tests in
-`sim/tests/test_pex_runner.py`): each bench supplies only its leaf name, deck,
-pin-order shim, committed reference record and bench directory -- every command,
-per-leaf deck and evidence path is unchanged. The receivers' extracted-leg
-grading is their shared specialization in `sim/harness/se_receiver_pex.py`; the
-pull-up's trim evaluator stays in its own `run.py`; the differential receiver
-grades nothing and writes `equivalence.json` only.
+Each leaf calls `sim/harness/pex_runner.py` with its leaf name, deck, pin-order
+shim, committed reference record and bench directory. The driver also names
+the static and signal-quality variants for its requests and run IDs.
+`sim/tests/test_pex_runner.py` exercises all five entry points. The single-ended
+receivers share extracted-leg grading in `sim/harness/se_receiver_pex.py`.
+The pull-up's trim evaluator lives in its own `run.py`. The differential
+receiver and driver write `equivalence.json` only.
 
 Cold start (one leaf shown; the other two differ only in directory):
 
