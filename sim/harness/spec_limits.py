@@ -106,6 +106,20 @@ BENCH_ROWS: dict[str, dict[str, tuple[str, str]]] = {
         "rout_high_dm_ohm": ("6-05", "rout"),
         "rout_low_dm_ohm": ("6-05", "rout"),
     },
+    # rise/fall per line and edge direction, the four rise/fall matching ratios
+    # (same line and cross-line), and the crossover voltage per edge direction
+    "driver-signal-quality": {
+        "trise_dp_ns": ("6-06", "tr"),
+        "tfall_dp_ns": ("6-06", "tr"),
+        "trise_dm_ns": ("6-06", "tr"),
+        "tfall_dm_ns": ("6-06", "tr"),
+        "trf_dp_ratio": ("6-06", "tr_match"),
+        "trf_dm_ratio": ("6-06", "tr_match"),
+        "trf_x1_ratio": ("6-06", "tr_match"),
+        "trf_x2_ratio": ("6-06", "tr_match"),
+        "vcross_rise_v": ("6-07", "vcross"),
+        "vcross_fall_v": ("6-07", "vcross"),
+    },
 }
 
 
