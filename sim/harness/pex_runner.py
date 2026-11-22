@@ -29,6 +29,11 @@ per corner, from the delta rows. A grading FAIL never changes the exit code --
 only equivalence does -- and `Bench.summarize`, when given, adds the bench's own
 lines over the grading to the end-of-run report.
 
+For a bench with `check_nonzero_envelope` (the differential driver, whose extracted
+leg is expected to fail) a nonzero `klt pex` exit and a fail/error envelope status are
+retained and staged, and the equivalence verdict covers the schematic leg alone, so
+exit 0 keeps its meaning.
+
 Exit codes: 0, the schematic leg is equivalent; 2, klt pex refused or failed (its
 stdout/stderr kept under the stage dir); 3, the schematic leg is not equivalent;
 4, the run id's snapshot already exists.
@@ -86,7 +91,10 @@ class Bench:
     summarize: Callable[[dict], Iterable[str]] | None = None
     polarity: str = ""      # "D+" or "D-": docstrings and diagnostics only
     variant: str = ""       # distinguishes tb-<variant>.json and its staged run and snapshot
-    check_nonzero_envelope: bool = False  # drivers retain envelopes with failed extracted rows
+    # Drivers: klt pex exits nonzero with envelope status fail/error for the failing
+    # extracted leg. Retain that envelope, and judge only the schematic leg (the
+    # envelope-status row is skipped); every other bench keeps both checks.
+    check_nonzero_envelope: bool = False
 
     @property
     def suffix(self) -> str:
@@ -215,7 +223,8 @@ def run_bench(cfg: Bench, args: argparse.Namespace, repo: Path) -> int:
 
     tb = json.loads(cfg.tb(repo).read_text())
     ok, rows = pex_equivalence.check_equivalence(envelope, tb,
-                                                 json.loads(cfg.reference_report.read_text()))
+                                                 json.loads(cfg.reference_report.read_text()),
+                                                 require_pass_status=not cfg.check_nonzero_envelope)
     (stage / "equivalence.json").write_text(json.dumps(
         {"reference_record": str(cfg.reference_report.relative_to(REPO)), "rel_tol": REL_TOL,
          "equivalent": ok, "rows": rows}, indent=1) + "\n")

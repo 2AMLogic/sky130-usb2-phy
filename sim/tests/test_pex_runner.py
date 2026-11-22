@@ -132,6 +132,11 @@ def envelope_from_reference(cfg, *, corners=None, extracted_tweak=None, schemati
             "passed": len(delta), "failed": 0, "errored": 0}
 
 
+def cfg_measure(cfg):
+    """One measurement name of this bench."""
+    return json.loads(cfg.tb().read_text())["measurements"][0]["name"]
+
+
 def fake_klt(monkeypatch, envelope, returncode=0):
     """Replace every subprocess the shared runner launches: `klt pex` writes the
     fixture envelope to the request's --envelope-out (or answers a dry-run); git
@@ -356,21 +361,48 @@ def test_both_driver_benches_run_and_return_the_first_error(monkeypatch, argv, r
 
 @pytest.mark.parametrize("cfg", DRIVER.BENCHES, ids=lambda cfg: cfg.variant)
 def test_driver_stages_negative_extracted_evidence(tmp_path, monkeypatch, cfg):
-    # klt returns a nonzero exit for failing extracted rows. A returned envelope
-    # still goes through the schematic equivalence gate and evidence staging.
+    # klt returns a nonzero exit and a top-level status of fail (static) / error (sq)
+    # for failing extracted rows, as both committed runs recorded. The retained
+    # envelope is staged and only the schematic leg decides the exit code.
+    status = {"static": "fail", "sq": "error"}[cfg.variant]
     env = envelope_from_reference(cfg)
-    env["delta"][0].update(status="fail", extracted_value=None)
-    env.update(passed=len(env["delta"]) - 1, failed=1)
-    fake_klt(monkeypatch, env, returncode=1)
+    env["delta"][0].update(status=status, extracted_value=None)
+    env.update(status=status, passed=len(env["delta"]) - 1, failed=int(status == "fail"),
+               errored=int(status == "error"))
+    fake_klt(monkeypatch, env, returncode=3 if status == "fail" else 4)
     freeze_clock(monkeypatch)
     scratch = scratch_repo(tmp_path, cfg)
     stage = tmp_path / "work" / f"{RID}{cfg.suffix}"
     assert invoke(cfg, ["--stage-dir", str(stage.parent)], scratch) == 0
     assert json.loads((stage / "pex-envelope.json").read_text()) == env
-    assert json.loads((stage / "equivalence.json").read_text())["equivalent"]
+    equivalence = json.loads((stage / "equivalence.json").read_text())
+    assert equivalence["equivalent"]
+    assert all(r["verdict"] == "ok" for r in equivalence["rows"])
 
 
-@pytest.mark.parametrize("bench", ["se-receiver-dp-pex", "se-receiver-dm-pex"])
+@pytest.mark.parametrize("cfg", DRIVER.BENCHES, ids=lambda cfg: cfg.variant)
+def test_driver_schematic_mismatch_still_exits_3_under_a_failing_envelope(
+        tmp_path, monkeypatch, cfg):
+    env = envelope_from_reference(
+        cfg, schematic_tweak=((TT, cfg_measure(cfg)), 1e-3))
+    env.update(status="fail", failed=1)
+    fake_klt(monkeypatch, env, returncode=3)
+    freeze_clock(monkeypatch)
+    scratch = scratch_repo(tmp_path, cfg)
+    assert invoke(cfg, ["--stage-dir", str(tmp_path / "work")], scratch) == 3
+
+
+@pytest.mark.parametrize("cfg", [c for n, c in CONFIGS.items() if c not in DRIVER.BENCHES],
+                         ids=lambda cfg: cfg.bench)
+def test_non_driver_benches_still_require_a_passing_envelope_status(cfg):
+    env = envelope_from_reference(cfg)
+    env["status"] = "fail"
+    tb = json.loads(cfg.tb().read_text())
+    ok, rows = pex_equivalence.check_equivalence(env, tb, reference_of(cfg))
+    assert not ok and rows[0]["verdict"] == "envelope status 'fail' != 'pass'"
+
+
+@pytest.mark.parametrize("bench", ["se-receiver-dp-pex", "se-receiver-dm-pex"])@pytest.mark.parametrize("bench", ["se-receiver-dp-pex", "se-receiver-dm-pex"])
 def test_receiver_extracted_leg_failure_is_graded_not_exit_changing(
         tmp_path, monkeypatch, capsys, bench):
     """Preserved behavior: an extracted-leg bound violation FAILs its check in
@@ -520,3 +552,12 @@ def test_klt_pex_failure_keeps_its_evidence_and_exits_2(tmp_path, monkeypatch, b
     assert (stage / "pex-stderr.txt").read_text() == "boom"
     assert (stage / "command.txt").is_file()
     assert not (cfg.bench_dir(scratch) / "netlist-snapshots").exists()
+
+
+@pytest.mark.parametrize("variant", ["static", "sq"])
+def test_single_driver_bench_selection_runs_only_that_bench(monkeypatch, variant):
+    calls = []
+    monkeypatch.setattr(pex_runner, "run_bench",
+                        lambda cfg, args, repo: calls.append(cfg.variant) or 0)
+    assert DRIVER.main(DRIVER.BENCHES, ["--bench", variant]) == 0
+    assert calls == [variant]

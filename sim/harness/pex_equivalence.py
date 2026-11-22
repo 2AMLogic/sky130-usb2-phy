@@ -52,10 +52,13 @@ def committed_values(reference_report: dict) -> dict[tuple[str, str], float]:
 
 
 def check_equivalence(envelope: dict, tb: dict, reference_report: dict,
-                      rel_tol: float = REL_TOL) -> tuple[bool, list[dict]]:
+                      rel_tol: float = REL_TOL,
+                      require_pass_status: bool = True) -> tuple[bool, list[dict]]:
     """Grade a klt pex envelope's schematic leg against the committed record.
 
-    Equivalent (True) only when: the envelope status is ``pass``; the delta's
+    Equivalent (True) only when: the envelope status is ``pass`` (unless
+    `require_pass_status` is False, for a bench whose extracted leg is expected to
+    fail: the envelope status then reflects that leg, not the schematic leg); the delta's
     (corner_id, spec_row) set is exactly the requested bench's expected pairs, each
     appearing exactly once (missing, duplicate and unexpected rows all fail); every
     schematic_value is a finite number; and each is within rel_tol (relative) of the
@@ -74,7 +77,7 @@ def check_equivalence(envelope: dict, tb: dict, reference_report: dict,
         rows.append({"corner_id": cid, "measurement": name, "committed": want,
                      "schematic": got, "verdict": verdict})
 
-    if envelope.get("status") != "pass":
+    if require_pass_status and envelope.get("status") != "pass":
         fail("-", "(envelope)", f"envelope status {envelope.get('status')!r} != 'pass'")
 
     seen: dict[tuple[str, str], dict] = {}
