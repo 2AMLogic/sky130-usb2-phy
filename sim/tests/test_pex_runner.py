@@ -402,7 +402,7 @@ def test_non_driver_benches_still_require_a_passing_envelope_status(cfg):
     assert not ok and rows[0]["verdict"] == "envelope status 'fail' != 'pass'"
 
 
-@pytest.mark.parametrize("bench", ["se-receiver-dp-pex", "se-receiver-dm-pex"])@pytest.mark.parametrize("bench", ["se-receiver-dp-pex", "se-receiver-dm-pex"])
+@pytest.mark.parametrize("bench", ["se-receiver-dp-pex", "se-receiver-dm-pex"])
 def test_receiver_extracted_leg_failure_is_graded_not_exit_changing(
         tmp_path, monkeypatch, capsys, bench):
     """Preserved behavior: an extracted-leg bound violation FAILs its check in
