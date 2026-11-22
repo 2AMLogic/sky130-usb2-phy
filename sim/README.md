@@ -129,6 +129,24 @@ mints a new record id. Compare corner values with the old record's
 `report.json`. Never edit the old one. To supersede, pass
 `--supersedes <record-id>`.
 
+### Spec-row limits in the request (`harness/spec_limits.py`, issue #401)
+
+The grader credits a spec row only for a bound `klt sim` itself checked: an
+envelope whose request declared no `limits` grades `no_limits_checked`, however
+this repo's own post-hoc records read. For a bench mapped in `BENCH_ROWS`,
+`run_corners.py` writes `measurements[].limits` into the request, generated
+from the ratified row table `signoff/spec/analog-rows.json` (`ROW_BOUNDS`
+holds each row's numbers once; a bench maps measurement names to row ids, never
+to values), and fails closed if the mapping references a row the table does not
+declare, a measurement the testbench does not define, or a tb.json check that
+is not the row's own numbers. After the run the harness re-derives the same
+verdicts from the tb.json checks and the record states both sides
+("Spec limits (envelope) and harness cross-check"); any per-corner
+disagreement is a problem that fails the record. Engineering-only bounds
+(truth tables, leakage, per-supply logic levels) stay harness checks: klt
+limits are absolute `min`/`max`, and a spec row without a number (6-08, 6-10)
+is evidenced by the envelope's other rows rather than a limit.
+
 ## Stored evidence (fleet artifact store)
 
 New recorded runs do not commit their raw outputs. `run_corners.py` stages the request, frozen
@@ -587,7 +605,9 @@ and `per_supply` checks from earlier experiments are reused).
   (1.5 kohm to 3.6 V), total output resistance high and low, the 16-combination
   enable truth table (both lines), disabled-pad leakage over 0-3.6 V forcing.
   VOH/VOL load readings: `spec/decision-records/0004-fs-driver-voh-vol-load-conditions.md`
-  (proposed).
+  (proposed). Since the limit-carrying re-run (issue #401), `driver-static`'s request
+  carries `measurements[].limits` for rows 6-04 (VOH/VOL) and 6-05 (output
+  resistance) from the ratified row table; see "Spec-row limits in the request".
 
 ```bash
 python3 sim/run_corners.py driver-signal-quality --klt-runner-version-check warn

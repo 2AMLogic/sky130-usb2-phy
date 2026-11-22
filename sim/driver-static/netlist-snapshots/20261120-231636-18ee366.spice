@@ -1,0 +1,285 @@
+* driver-static -- sky130 FS line driver (design/differential_driver.sch): static levels, output
+* resistance, enable truth table and disabled-pad leakage (issue #112)
+*
+* Circuit body for `klt sim`. The design netlist (design/netlist/differential_driver.spice) is
+* appended by the runner (tb.json "include") and frozen into the immutable snapshot. The request
+* supplies the .lib corner section, .temp and the supply value of `vsup` (3.0 / 3.3 / 3.6 V).
+*
+* Standalone input-domain contract (design/README.md): TXDP, TXDM, DRVEN and OE are VDD-domain
+* CMOS logic (logic 1 = VDD, logic 0 = VSS). Here logic 1 is wired to the supply node `vdd` and
+* logic 0 to ground, so the inputs track the corner supply exactly. The 1.8 V core -> VDD level
+* shifter is outside the cell and is not modelled.
+*
+* Instances (each an independent copy of the driver; only the pad loads differ):
+*   tt_*      enable truth table: all four TXDP/TXDM data combinations x all four DRVEN/OE
+*             combinations, each pad loaded by 10 kohm to VDD/2 (node `mid`), so a driven 1, a
+*             driven 0 and a released (high-impedance) pad are three distinct voltages.
+*   voh_*     VOH: driven high into 15 kohm to ground (USB 2.0 section 7.1.1.1 VOH load).
+*   voh15_*   VOH: driven high into 1.5 kohm to 3.6 V (the ratified row's parenthetical read
+*             literally for VOH; reported separately, see the record Method and DR-0004).
+*   vol_*     VOL: driven low into 1.5 kohm to 3.6 V (USB 2.0 section 7.1.1.1 VOL load).
+*   rh_*/rl_* total enabled output resistance: pad forced 0.3 V away from the rail the driver
+*             pulls to; R = 0.3 V / |pad current|; includes FET on-resistance and RSER.
+*   lka/lkb   disabled-driver pad leakage: pad forced by the swept source vf (0 to 3.6 V).
+*             lka: disabled by OE=0 (DRVEN=1, TXDP=1), D+ swept, D- held at VDD/2.
+*             lkb: disabled by DRVEN=0 (OE=1, TXDM=1), D- swept, D+ held at VDD/2.
+*   xq        enabled, driving J (TXDP=1, TXDM=0) into open pads, on its own supply branch
+*             (vsupq) so its static supply current is read separately.
+*
+* Analysis: one DC sweep of vf (the leakage forcing source, 0-3.65 V); all other quantities are
+* sweep-independent and are read at the first sweep point (AT=0).
+
+vsup vdd 0 dc 3.3
+ehalf mid 0 vol='v(vdd)/2'
+vpu pu 0 dc 3.6
+vf f 0 dc 0
+
+xtt_d00_e00 vdd 0 0 0 0 0 tt_dp_d00_e00 tt_dm_d00_e00 differential_driver
+rttp_d00_e00 tt_dp_d00_e00 mid 10k
+rttm_d00_e00 tt_dm_d00_e00 mid 10k
+xtt_d00_e01 vdd 0 0 0 0 vdd tt_dp_d00_e01 tt_dm_d00_e01 differential_driver
+rttp_d00_e01 tt_dp_d00_e01 mid 10k
+rttm_d00_e01 tt_dm_d00_e01 mid 10k
+xtt_d00_e10 vdd 0 0 0 vdd 0 tt_dp_d00_e10 tt_dm_d00_e10 differential_driver
+rttp_d00_e10 tt_dp_d00_e10 mid 10k
+rttm_d00_e10 tt_dm_d00_e10 mid 10k
+xtt_d00_e11 vdd 0 0 0 vdd vdd tt_dp_d00_e11 tt_dm_d00_e11 differential_driver
+rttp_d00_e11 tt_dp_d00_e11 mid 10k
+rttm_d00_e11 tt_dm_d00_e11 mid 10k
+xtt_d01_e00 vdd 0 0 vdd 0 0 tt_dp_d01_e00 tt_dm_d01_e00 differential_driver
+rttp_d01_e00 tt_dp_d01_e00 mid 10k
+rttm_d01_e00 tt_dm_d01_e00 mid 10k
+xtt_d01_e01 vdd 0 0 vdd 0 vdd tt_dp_d01_e01 tt_dm_d01_e01 differential_driver
+rttp_d01_e01 tt_dp_d01_e01 mid 10k
+rttm_d01_e01 tt_dm_d01_e01 mid 10k
+xtt_d01_e10 vdd 0 0 vdd vdd 0 tt_dp_d01_e10 tt_dm_d01_e10 differential_driver
+rttp_d01_e10 tt_dp_d01_e10 mid 10k
+rttm_d01_e10 tt_dm_d01_e10 mid 10k
+xtt_d01_e11 vdd 0 0 vdd vdd vdd tt_dp_d01_e11 tt_dm_d01_e11 differential_driver
+rttp_d01_e11 tt_dp_d01_e11 mid 10k
+rttm_d01_e11 tt_dm_d01_e11 mid 10k
+xtt_d10_e00 vdd 0 vdd 0 0 0 tt_dp_d10_e00 tt_dm_d10_e00 differential_driver
+rttp_d10_e00 tt_dp_d10_e00 mid 10k
+rttm_d10_e00 tt_dm_d10_e00 mid 10k
+xtt_d10_e01 vdd 0 vdd 0 0 vdd tt_dp_d10_e01 tt_dm_d10_e01 differential_driver
+rttp_d10_e01 tt_dp_d10_e01 mid 10k
+rttm_d10_e01 tt_dm_d10_e01 mid 10k
+xtt_d10_e10 vdd 0 vdd 0 vdd 0 tt_dp_d10_e10 tt_dm_d10_e10 differential_driver
+rttp_d10_e10 tt_dp_d10_e10 mid 10k
+rttm_d10_e10 tt_dm_d10_e10 mid 10k
+xtt_d10_e11 vdd 0 vdd 0 vdd vdd tt_dp_d10_e11 tt_dm_d10_e11 differential_driver
+rttp_d10_e11 tt_dp_d10_e11 mid 10k
+rttm_d10_e11 tt_dm_d10_e11 mid 10k
+xtt_d11_e00 vdd 0 vdd vdd 0 0 tt_dp_d11_e00 tt_dm_d11_e00 differential_driver
+rttp_d11_e00 tt_dp_d11_e00 mid 10k
+rttm_d11_e00 tt_dm_d11_e00 mid 10k
+xtt_d11_e01 vdd 0 vdd vdd 0 vdd tt_dp_d11_e01 tt_dm_d11_e01 differential_driver
+rttp_d11_e01 tt_dp_d11_e01 mid 10k
+rttm_d11_e01 tt_dm_d11_e01 mid 10k
+xtt_d11_e10 vdd 0 vdd vdd vdd 0 tt_dp_d11_e10 tt_dm_d11_e10 differential_driver
+rttp_d11_e10 tt_dp_d11_e10 mid 10k
+rttm_d11_e10 tt_dm_d11_e10 mid 10k
+xtt_d11_e11 vdd 0 vdd vdd vdd vdd tt_dp_d11_e11 tt_dm_d11_e11 differential_driver
+rttp_d11_e11 tt_dp_d11_e11 mid 10k
+rttm_d11_e11 tt_dm_d11_e11 mid 10k
+
+xvoh vdd 0 vdd vdd vdd vdd voh_dp voh_dm differential_driver
+rvohp voh_dp 0 15k
+rvohm voh_dm 0 15k
+xvoh15 vdd 0 vdd vdd vdd vdd voh15_dp voh15_dm differential_driver
+rvoh15p voh15_dp pu 1.5k
+rvoh15m voh15_dm pu 1.5k
+xvol vdd 0 0 0 vdd vdd vol_dp vol_dm differential_driver
+rvolp vol_dp pu 1.5k
+rvolm vol_dm pu 1.5k
+
+xrh vdd 0 vdd vdd vdd vdd rh_dp rh_dm differential_driver
+ehf hf 0 vol='v(vdd)-0.3'
+vsrhp hf rh_dp 0
+vsrhm hf rh_dm 0
+brhp rhv_dp 0 v='0.3/max(-i(vsrhp),1e-12)'
+brhm rhv_dm 0 v='0.3/max(-i(vsrhm),1e-12)'
+xrl vdd 0 0 0 vdd vdd rl_dp rl_dm differential_driver
+vlf lf 0 dc 0.3
+vsrlp lf rl_dp 0
+vsrlm lf rl_dm 0
+brlp rlv_dp 0 v='0.3/max(i(vsrlp),1e-12)'
+brlm rlv_dm 0 v='0.3/max(i(vsrlm),1e-12)'
+
+xlka vdd 0 vdd 0 vdd 0 lka_dp lka_dm differential_driver
+vsap lka_dp f 0
+vsam lka_dm mid 0
+xlkb vdd 0 0 vdd 0 vdd lkb_dp lkb_dm differential_driver
+vsbm lkb_dm f 0
+vsbp lkb_dp mid 0
+
+vsupq vdd vddq 0
+xq vddq 0 vdd 0 vdd vdd q_dp q_dm differential_driver
+
+* ---- included: ../../../design/netlist/differential_driver.spice ----
+* differential_driver -- exported by design/export_netlist.sh from design/differential_driver.sch (xschem, sky130 symbols)
+* Do not edit: edit the schematic and re-run the export.
+** sch_path: design/differential_driver.sch
+.subckt differential_driver VDD VSS TXDP TXDM DRVEN OE DP DM
+*.iopin VDD
+*.iopin VSS
+*.ipin TXDP
+*.ipin TXDM
+*.ipin DRVEN
+*.ipin OE
+*.iopin DP
+*.iopin DM
+XMP_ENA ENB DRVEN VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_ENB ENB OE VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58
++ nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_ENA ENB DRVEN ENX VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_ENB ENX OE VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58
++ nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_ENI EN ENB VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58 ps=8.58
++ nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_ENI EN ENB VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58 ps=4.58
++ nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XRB VBN VDD VSS sky130_fd_pr__res_xhigh_po_1p41 L=30 mult=1 m=1
+XMNB VBN VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58 ps=8.58
++ nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMNB2 VBP VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58 ps=8.58
++ nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMPB VBP VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58 ps=16.58
++ nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PA1_DP PA_DP TXDP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PA2_DP PA_DP EN VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA1_DP PA_DP TXDP PAX_DP VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA2_DP PAX_DP EN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PINV_DP PON_DP PA_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PINV_DP PON_DP PA_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB1_DP NBX_DP TXDP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB2_DP NB_DP ENB NBX_DP VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB1_DP NB_DP TXDP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB2_DP NB_DP ENB VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NINV_DP NONB_DP NB_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NINV_DP NONB_DP NB_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_POFF_DP PG_DP PON_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSW_DP PG_DP PON_DP XP_DP VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=16 nf=1 ad=4.64 as=4.64
++ pd=32.58 ps=32.58 nrd=0.0181 nrs=0.0181 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSRC_DP XP_DP VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=25 m=25
+XMN_NOFF_DP NG_DP NONB_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8
++ pd=40.58 ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSW_DP NG_DP NONB_DP XN_DP VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSRC_DP XN_DP VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=8 m=8
+XMP_KREP_DP KSP_DP PG_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9 pd=20.58
++ ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KBIAS_DP KSP_DP VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINV_DP KSPB_DP KSP_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINV_DP KSPB_DP KSP_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK1_DP PG_DP PON_DP KPX_DP VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK2_DP KPX_DP KSPB_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KREPN_DP KSN_DP NG_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KBIASN_DP KSN_DP VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINVN_DP KSNB_DP KSN_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINVN_DP KSNB_DP KSN_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK1N_DP NG_DP NONB_DP KNX_DP VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK2N_DP KNX_DP KSNB_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XCP_DP PG_DP OUTI_DP sky130_fd_pr__cap_mim_m3_1 W=42 L=42 MF=1 m=1
+XCN_DP NG_DP OUTI_DP sky130_fd_pr__cap_mim_m3_1 W=24 L=24 MF=1 m=1
+XMP_OUT_DP OUTI_DP PG_DP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=40 m=40
+XMN_OUT_DP OUTI_DP NG_DP VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=13 m=13
+XRSER_DP DP OUTI_DP sky130_fd_pr__res_generic_po W=20 L=10.8 m=1
+XMP_PA1_DM PA_DM TXDM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PA2_DM PA_DM EN VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA1_DM PA_DM TXDM PAX_DM VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PA2_DM PAX_DM EN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58 pd=4.58
++ ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_PINV_DM PON_DM PA_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PINV_DM PON_DM PA_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB1_DM NBX_DM TXDM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NB2_DM NB_DM ENB NBX_DM VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB1_DM NB_DM TXDM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NB2_DM NB_DM ENB VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29 pd=2.58
++ ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NINV_DM NONB_DM NB_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_NINV_DM NONB_DM NB_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_POFF_DM PG_DM PON_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSW_DM PG_DM PON_DM XP_DM VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=16 nf=1 ad=4.64 as=4.64
++ pd=32.58 ps=32.58 nrd=0.0181 nrs=0.0181 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_PSRC_DM XP_DM VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=25 m=25
+XMN_NOFF_DM NG_DM NONB_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8
++ pd=40.58 ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSW_DM NG_DM NONB_DM XN_DM VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=8 nf=1 ad=2.32 as=2.32
++ pd=16.58 ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_NSRC_DM XN_DM VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=8 m=8
+XMP_KREP_DM KSP_DM PG_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=10 nf=1 ad=2.9 as=2.9 pd=20.58
++ ps=20.58 nrd=0.029 nrs=0.029 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KBIAS_DM KSP_DM VBN VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=1 W=4 nf=1 ad=1.16 as=1.16 pd=8.58
++ ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINV_DM KSPB_DM KSP_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINV_DM KSPB_DM KSP_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK1_DM PG_DM PON_DM KPX_DM VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KICK2_DM KPX_DM KSPB_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KREPN_DM KSN_DM NG_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KBIASN_DM KSN_DM VBP VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=1 W=8 nf=1 ad=2.32 as=2.32 pd=16.58
++ ps=16.58 nrd=0.0362 nrs=0.0362 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KINVN_DM KSNB_DM KSN_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=2 nf=1 ad=0.58 as=0.58
++ pd=4.58 ps=4.58 nrd=0.145 nrs=0.145 sa=0 sb=0 sd=0 mult=1 m=1
+XMN_KINVN_DM KSNB_DM KSN_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=1 nf=1 ad=0.29 as=0.29
++ pd=2.58 ps=2.58 nrd=0.29 nrs=0.29 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK1N_DM NG_DM NONB_DM KNX_DM VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XMP_KICK2N_DM KNX_DM KSNB_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=4 nf=1 ad=1.16 as=1.16
++ pd=8.58 ps=8.58 nrd=0.0725 nrs=0.0725 sa=0 sb=0 sd=0 mult=1 m=1
+XCP_DM PG_DM OUTI_DM sky130_fd_pr__cap_mim_m3_1 W=42 L=42 MF=1 m=1
+XCN_DM NG_DM OUTI_DM sky130_fd_pr__cap_mim_m3_1 W=24 L=24 MF=1 m=1
+XMP_OUT_DM OUTI_DM PG_DM VDD VDD sky130_fd_pr__pfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=40 m=40
+XMN_OUT_DM OUTI_DM NG_DM VSS VSS sky130_fd_pr__nfet_g5v0d10v5 L=0.5 W=20 nf=1 ad=5.8 as=5.8 pd=40.58
++ ps=40.58 nrd=0.0145 nrs=0.0145 sa=0 sb=0 sd=0 mult=13 m=13
+XRSER_DM DM OUTI_DM sky130_fd_pr__res_generic_po W=20 L=10.8 m=1
+.ends
