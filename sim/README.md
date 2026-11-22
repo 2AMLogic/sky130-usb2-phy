@@ -304,7 +304,11 @@ decision-record 0008 crossover load, at tt + `fs_100c_3.60v` +
 `sf_-40c_3.60v` + `fs_100c_3.00v` -- each bench's binding corners, derived
 from its committed 45-point record's margins). The shared equivalence gate
 checks exactly the corner and measurement pairs requested in `tb-static.json`
-or `tb-sq.json`. The committed runs reproduced all 171 static pairs and all
+or `tb-sq.json`, and -- because the driver's extracted leg is expected to fail
+-- skips the envelope-status row these two benches would otherwise fail on: the
+verdict and the exit code cover the schematic leg alone, and the extracted
+outcome is read from the record's `klt pex` status, never from the exit code.
+The committed runs reproduced all 171 static pairs and all
 204 signal-quality pairs at zero relative deviation. By default, or with
 `--bench both`, the runner finishes static and then signal quality and returns
 the first nonzero exit code.
@@ -345,10 +349,14 @@ the binding corner may be a resistor-set section, which the request expresses
 as that section's process name.
 
 All five leaves use the equivalence gate in `sim/harness/pex_equivalence.py`,
-covered by `sim/tests/test_pex_equivalence.py`. The gate requires a `pass`
-envelope containing every requested (corner, measurement) pair exactly once,
-with finite schematic values matching the committed reference at relative
-deviation <= 1e-6. Rows from any other corner in the reference fail the gate.
+covered by `sim/tests/test_pex_equivalence.py`. The gate requires an envelope
+containing every requested (corner, measurement) pair exactly once, with finite
+schematic values matching the committed reference at relative deviation <=
+1e-6. Rows from any other corner in the reference fail the gate. Four of the
+five leaves additionally require the envelope's own top-level status to be
+`pass`; the two driver benches (`Bench.check_nonzero_envelope`) do not, because
+their extracted leg is expected to fail and that status reports it -- their
+equivalence verdict, and so their exit code, covers the schematic leg alone.
 The receiver benches carry 7
 of the committed bench's 8 measurements: `vref_v` probes a DUT-internal node by
 name and is not extraction-portable (2AMLogic/klayout-tools#6990). `run.py` also
