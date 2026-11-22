@@ -263,12 +263,15 @@ array. On the schematic leg that `.include` names
 `testbench/differential_receiver_pex_dut.spice`, a shim equal to
 `design/netlist/differential_receiver.spice` except that the `.subckt` pin
 order is reordered to the extracted header's, so one positional instance line
-serves both legs. Electrical identity is not assumed: `run.py`'s equivalence
-gate requires the run's schematic leg to reproduce the committed 45-point
-sensitivity report
+serves both legs. Electrical identity is not assumed: the equivalence gate, the
+shared exact-pair gate every leaf bench uses (`sim/harness/pex_equivalence.py`,
+described under the other leaf benches below), requires the run's schematic leg
+to reproduce the committed 45-point sensitivity report
 (`diff-receiver-sensitivity/corners/20261020-172719-ca4a45a/report.json`) at
-relative deviation <= 1e-6, an envelope status of `pass`, and a delta of
-exactly corners x measurements distinct rows.
+relative deviation <= 1e-6, an envelope status of `pass`, and a delta carrying
+exactly the requested corners x measurements pairs (36 rows), each once -- rows
+lifted from unrequested corners of the 45-point reference fail, not pass
+vacuously.
 
 Cold start:
 
@@ -302,24 +305,28 @@ the binding corner of the leaf's committed 225-point resistor-set record
 the binding corner may be a resistor-set section, which the request expresses
 as that section's process name.
 
-The equivalence gate is shared (`sim/harness/pex_equivalence.py`, regression
-tests in `sim/tests/test_pex_equivalence.py`): it derives the expected
+The equivalence gate is shared by all four leaf benches
+(`sim/harness/pex_equivalence.py`, regression tests in
+`sim/tests/test_pex_equivalence.py`): it derives the expected
 (corner, measurement) pairs from each bench's own requested units (14 rows per
-receiver, 52 for the pull-up) and fails on any missing, duplicate, unexpected
-or non-finite row -- the committed reference covers 225 corners, so rows
-lifted from unrequested corners must fail, not pass vacuously. The receiver
-benches carry 7 of the committed bench's 8 measurements: `vref_v` probes a
-DUT-internal node by name and is not extraction-portable
-(2AMLogic/klayout-tools#6990). `run.py` also grades the extracted leg
-(`grading.json` in each run's manifest): the receivers against the bench's own
-window/output-level checks, the pull-up through `sim/harness/trim.py` over the
-16 extracted code voltages.
+receiver, 52 for the pull-up, 36 for the differential receiver) and fails on any
+missing, duplicate, unexpected or non-finite row -- the committed reference
+covers 225 corners (45 for the differential receiver), so rows lifted from
+unrequested corners must fail, not pass vacuously. The receiver benches carry 7
+of the committed bench's 8 measurements: `vref_v` probes a DUT-internal node by
+name and is not extraction-portable (2AMLogic/klayout-tools#6990). `run.py` also
+grades the extracted leg (`grading.json` in each run's manifest): the receivers
+against the bench's own window/output-level checks, the pull-up through
+`sim/harness/trim.py` over the 16 extracted code voltages.
 
-The two receiver `run.py` files are thin entry points over one shared
-implementation, `sim/harness/se_receiver_pex.py` (issue #419; regression tests
-in `sim/tests/test_se_receiver_pex.py`): each bench supplies only its leaf
-name, deck, pin-order shim, committed reference record and bench directory --
-both commands, per-leaf decks and evidence paths are unchanged.
+All four leaf pex `run.py` files are thin entry points over one shared runner,
+`sim/harness/pex_runner.py` (issues #419 and #425; regression tests in
+`sim/tests/test_pex_runner.py`): each bench supplies only its leaf name, deck,
+pin-order shim, committed reference record and bench directory -- every command,
+per-leaf deck and evidence path is unchanged. The receivers' extracted-leg
+grading is their shared specialization in `sim/harness/se_receiver_pex.py`; the
+pull-up's trim evaluator stays in its own `run.py`; the differential receiver
+grades nothing and writes `equivalence.json` only.
 
 Cold start (one leaf shown; the other two differ only in directory):
 
