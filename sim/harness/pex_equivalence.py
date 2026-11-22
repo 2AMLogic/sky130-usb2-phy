@@ -1,10 +1,12 @@
 """Exact-pair schematic-leg equivalence gate for the klt pex leaf runners.
 
-Shared by sim/se-receiver-dp-pex, sim/se-receiver-dm-pex and sim/dplus-pullup-pex
-(`run.py`); sim/diff-receiver-pex predates it and keeps its inline gate. The lesson
-that shaped this helper: the committed schematic reference report covers far more
-corners than a two-corner `klt pex` bench requests (225 versus 2 here), so a delta
-with the right *number* of rows and the reference value in each is not evidence the
+Shared by every leaf pex bench (sim/diff-receiver-pex, sim/se-receiver-dp-pex,
+sim/se-receiver-dm-pex and sim/dplus-pullup-pex) through the one leaf runner,
+sim/harness/pex_runner.py; until issue #425 sim/diff-receiver-pex kept a count-only
+inline gate of its own. The lesson that shaped this helper: the committed schematic
+reference report covers far more corners than a two-corner `klt pex` bench requests
+(225 versus 2 here; 45 versus 2 for the differential receiver), so a delta with the
+right *number* of rows and the reference value in each is not evidence the
 requested bench ran -- rows lifted from unrequested corners would pass a count-only
 check. The expected (corner id, raw measurement name) pairs are therefore derived
 from the pex bench's own requested units, and the schematic leg is equivalent only
