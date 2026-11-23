@@ -449,8 +449,10 @@ def _assert_rxactive_eop_window(active_trace, sample_times_ns,
     high_idx = [i for i, v in enumerate(active_trace) if v]
     assert high_idx, "RxActive never asserted (SOP not recognized)"
     first, last = high_idx[0], high_idx[-1]
+    n_intervals = 1 + sum(1 for a, b in zip(high_idx, high_idx[1:])
+                          if b != a + 1)
     assert last - first + 1 == len(high_idx), (
-        f"RxActive asserted in {last - first + 1 - len(high_idx) + 1} disjoint "
+        f"RxActive asserted in {n_intervals} disjoint "
         f"intervals (dropped and re-asserted), expected exactly one"
     )
     # The fall event itself lies in (t_last_high, t_first_low]: bounding the
