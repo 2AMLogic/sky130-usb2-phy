@@ -41,6 +41,11 @@ def good_values(vpu, rs_=None, tc=1.0):
     rs_ = rs_ or codes_to_r()
     vals = {f"vdp_c{k:02d}_v": v_of(r, vpu) for k, r in enumerate(rs_)}
     vals.update(disabled_values())
+    # the request's two derived `expr` measurements (the row 6-14 bounds the
+    # envelope grades): the resistances at the extreme codes, as ngspice
+    # would return them from the same raw node voltages
+    vals["r_c00_ohm"] = rs_[0]
+    vals["r_c15_ohm"] = rs_[-1]
     return vals
 
 
@@ -194,13 +199,14 @@ def test_best_code_may_differ_per_corner():
 
 
 def test_codes_failing_the_window_do_not_fail_a_corner_that_has_one_passing_code():
-    # the window is existential: every other code is far outside [1425, 1575], that is fine
+    # the window is existential: a monotone ladder with exactly one code inside
+    # [1425, 1575] passes every check, reachability bounds included
     def one_code(p, t, v):
-        rs_ = [4000.0] * 16
-        rs_[11] = 1575.0 - 1e-3
-        return {f"vdp_c{k:02d}_v": v_of(r, v) for k, r in enumerate(rs_)} | {}
+        rs_ = [4000.0] * 11 + [1574.999] + [1300.0 - 50.0 * k for k in range(4)]
+        return {f"vdp_c{k:02d}_v": v_of(r, v) for k, r in enumerate(rs_)} | {
+            "r_c00_ohm": rs_[0], "r_c15_ohm": rs_[-1]}
     results, problems = rs.evaluate(report(per_corner=lambda p, t, v: one_code(p, t, v) if (p, t, v) == ("fs", 27, 3.3) else None),
-                                    MATRIX.points(), {**TB, "checks": {k: x for k, x in TB["checks"].items() if k != "r_c00_ohm"}})
+                                    MATRIX.points(), TB)
     assert problems == []
 
 
@@ -234,16 +240,25 @@ def test_failure_names_corner_id_and_value():
 
 
 def test_flat_resistance_across_the_grid_is_flagged():
-    rep = report(per_corner=lambda p, t, v: {f"vdp_c{k:02d}_v": v_of(1900.0 - 52 * k, v) for k in range(16)})
+    rep = report(per_corner=lambda p, t, v: {f"vdp_c{k:02d}_v": v_of(1900.0 - 52 * k, v) for k in range(16)}
+                 | {"r_c00_ohm": 1900.0, "r_c15_ohm": 1900.0 - 52 * 15})
     _, probs = evaluate(rep)
-    assert any("r_c00_ohm spread" in p for p in probs), probs
+    assert any("range_ohm spread" in p for p in probs), probs
 
 
 # ---- tb.json and design consistency (the ratified window and load are not relaxed)
 
 def test_ratified_row_and_load_are_unrelaxed():
     assert (CFG["lo_ohm"], CFG["hi_ohm"], CFG["target_ohm"], CFG["load_ohm"], CFG["codes"]) == (1425, 1575, 1500, 15000, 16)
-    assert not any(k.startswith(("r_c", "best_")) and ("min" in v or "max" in v) for k, v in TB["checks"].items())
+    # the window itself stays existential (tb.json "trim", never a per-code
+    # check); the only numeric r_c* bounds are the row's two one-sided
+    # reachability endpoints on the extreme codes, and the harness-integrity
+    # spread rides the ladder's trim span
+    assert TB["checks"]["r_c00_ohm"] == {"min": 1425.0}
+    assert TB["checks"]["r_c15_ohm"] == {"max": 1575.0}
+    assert TB["checks"]["range_ohm"] == {"min_spread_pct": 5.0}
+    assert not any(k.startswith(("r_c", "best_")) and k not in ("r_c00_ohm", "r_c15_ohm")
+                   and ("min" in v or "max" in v) for k, v in TB["checks"].items())
     deck = (EXP / "testbench/dplus_pullup_tb.spice").read_text()
     assert len(re.findall(r"^rld\d\d dp\d\d 0 15k$", deck, re.M)) == 16
     assert re.search(r"^vsup vdd 0 dc 3\.3$", deck, re.M)
@@ -258,7 +273,31 @@ def test_every_measure_name_is_declared_and_prefix_matches():
     assert all(f"vdp_c{k:02d}_v" in names for k in range(16))
     assert {"voff_d1_v", "voff_d0_v", "ioff_dz_na", "ioff_dh_na", "isup_dz_na"} <= names
     for n, m in TB["measure"].items():
-        assert f".meas dc {n} " in m["spice"]
+        # exactly one measurement form: a verbatim .meas card or a derived
+        # ngspice expression klt evaluates after the analysis
+        assert ("spice" in m) != ("expr" in m), f"{n} must declare exactly one form"
+        if "spice" in m:
+            assert f".meas dc {n} " in m["spice"]
+    assert TB["measure"]["r_c00_ohm"]["expr"] == "vecmin(15000*(v(vdd)-v(dp00))/v(dp00))"
+    assert TB["measure"]["r_c15_ohm"]["expr"] == "vecmin(15000*(v(vdd)-v(dp15))/v(dp15))"
+
+
+def test_straddling_ladder_with_no_code_inside_fails_via_the_existential():
+    # the two reachability bounds alone say the ladder SPANS the window: codes
+    # 0..14 above its ceiling, code 15 below its floor, nothing inside. Both
+    # envelope-graded checks pass; the corner still fails through the harness
+    # trim analysis ("no trim code inside"), which is what distinguishes an
+    # actual in-window code from two codes on opposite sides of the window
+    ladder = [1580.0 + 200.0 * (14 - k) for k in range(15)] + [1420.0]
+    assert all(r > 1575.0 for r in ladder[:15]) and ladder[15] < 1425.0
+    assert ladder[0] >= 1425.0 and ladder[15] <= 1575.0  # spanning: both bounds pass
+    def straddle(p, t, v):
+        return {f"vdp_c{k:02d}_v": v_of(r, v) for k, r in enumerate(ladder)} | {
+            "r_c00_ohm": ladder[0], "r_c15_ohm": ladder[-1]}
+    results, probs = rs.evaluate(report(per_corner=straddle), MATRIX.points(), TB)
+    assert any("no trim code inside" in p for p in probs), probs
+    assert not any("r_c00_ohm" in p or "r_c15_ohm" in p for p in probs), probs
+    assert all(r["status"] == "failed" for r in results)
 
 
 def test_design_netlist_uses_only_sky130_devices_and_documented_pins():
@@ -333,7 +372,11 @@ def _rewrite(sim, rid, mutate_report):
 def test_committed_pass_record_rederives_and_is_complete():
     cdir = EXP / "corners" / PASS_RID
     rep = json.loads((cdir / "report.json").read_text())
-    results, problems = rs.evaluate(rep, MATRIX.points(), TB)
+    # the record's own frozen tb.json, as the lint re-derives it: a later
+    # testbench revision (the issue #401 expr measurements) must not change
+    # what an append-only record already claimed
+    ftb = json.loads((cdir / "tb.json").read_text())
+    results, problems = rs.evaluate(rep, MATRIX.points(), ftb)
     assert problems == [] and len(results) == 45
     assert all(r["measurements"]["n_in_window"] >= 1 for r in results)
     assert rs.job_id(rep) and lint.lint_experiment(EXP) == []

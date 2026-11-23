@@ -168,6 +168,8 @@ def fake_report(matrix, tamper=None):
         vals.update({"voff_d1_v": 2e-6, "voff_d0_v": 2e-6, "ioff_d1_na": 0.1, "ioff_d0_na": 0.1,
                      "ioff_dz_na": 0.1, "ioff_dh_na": -0.001, "isup_d1_na": 0.1, "isup_d0_na": 0.1,
                      "isup_dz_na": 0.1, "isup_dh_na": 0.01})
+        # the two derived `expr` measurements carrying row 6-14's bounds
+        vals.update(r_c00_ohm=1950.0 * rscale, r_c15_ohm=(1950.0 - 52.0 * 15) * rscale)
         return {n: x / float(TB["measure"][n].get("scale", 1.0)) for n, x in vals.items()}
     return synthetic_report(matrix, values_for, tamper=tamper,
                             environment=full_environment(matrix), provenance=full_provenance(matrix))

@@ -81,10 +81,15 @@ ROW_BOUNDS: dict[str, dict[str, dict]] = {
     },
     # "FS device D+ pull-up 1.5 kOhm +/-5%": 1.425-1.575 kohm. Two roles for the
     # trim-code existential ("at least one code inside", a different code may be
-    # chosen per corner): the smallest per-code effective resistance must reach
-    # the window's floor and the largest must reach its ceiling. R_eff is
-    # strictly decreasing in V(DP), so these are the resistances at the
-    # maximum- and minimum-V(DP) codes respectively.
+    # chosen per corner), each named for the window endpoint it guards: the
+    # LARGEST per-code effective resistance must reach at least the window's
+    # floor (r_eff_min, {"min": 1425}), and the SMALLEST must reach at most the
+    # window's ceiling (r_eff_max, {"max": 1575}). R_eff is strictly decreasing
+    # in V(DP), so these are the resistances at the minimum-V(DP) code (code 0,
+    # the untrimmed ladder) and the maximum-V(DP) code (code 15) respectively.
+    # The two one-sided bounds alone say the ladder SPANS the window; the
+    # existential itself ("a code is inside", the harness trim analysis) is what
+    # turns spanning into compliance -- see the dplus-pullup-tolerance mapping.
     "6-14": {
         "r_eff_min": {"min": 1425.0, "unit": "ohm"},
         "r_eff_max": {"max": 1575.0, "unit": "ohm"},
@@ -128,6 +133,34 @@ BENCH_ROWS: dict[str, dict[str, tuple[str, str]]] = {
         "vth_cm0p80_v": ("6-09", "vth_diff"),
         "vth_cm1p65_v": ("6-09", "vth_diff"),
         "vth_cm2p50_v": ("6-09", "vth_diff"),
+    },
+    # the D+ / D- single-ended switching threshold: the first rising crossing
+    # through VDD/2 must lie inside (0.8, 2.0) V. The tb.json check spells the
+    # row's endpoints strictly (gt/lt), so an endpoint value passes the
+    # envelope's inclusive bound and fails the harness cross-check -- that
+    # disagreement is surfaced per corner, never absorbed. The last-crossing,
+    # output-level, VREF and supply-current probes stay harness checks
+    "se-receiver-dp-thresholds": {
+        "vth_v": ("6-11", "vth_se"),
+    },
+    "se-receiver-dm-thresholds": {
+        "vth_v": ("6-11", "vth_se"),
+    },
+    # row 6-14's trim-code existential, carried by the two extreme codes: the
+    # code-0 resistance (the ladder's largest, at the minimum V(DP)) must
+    # reach at least the window floor, the code-15 resistance (the smallest)
+    # at most its ceiling. Both are request `expr` measurements (ngspice
+    # derives them from the raw V(DP) after the analysis), so `klt sim` grades
+    # the same numbers the harness recomputes. Spanning is necessary, not
+    # sufficient: a ladder that straddles the window with no code inside
+    # (or a non-monotonic ladder whose extremes are not at codes 0/15) is
+    # caught by the harness trim analysis ("no trim code inside" / the
+    # n_nonmonotonic data), which fails the corner and the record while the
+    # envelope's two reachability verdicts alone read pass -- the record
+    # states both, and the cross-check table never claims more than spanning
+    "dplus-pullup-tolerance": {
+        "r_c00_ohm": ("6-14", "r_eff_min"),
+        "r_c15_ohm": ("6-14", "r_eff_max"),
     },
 }
 
