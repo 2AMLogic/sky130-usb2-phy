@@ -10,6 +10,10 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-23
 
+- **PR #452**: feat(sim): finish Part A -- rows 6-11/6-14 limits in klt sim for the last three benches
+- **PR #405**: fix: declare one-sided receiver negative controls not_applicable so item 6 rows 6-09/6-11 grade met
+- **Issue #402** (closed): T1 item 6 (analog): rows 6-09 and 6-11 fail on undetected negative controls; give each measurement a detecting control or a declared not_applicable one and re-derive the yield reports
+- **Issue #401** (closed): T1 item 5 (analog): finish the three remaining 45-point bench runs with spec limits in klt sim
 - **PR #457**: fix: report true interval count in RxActive EOP-window assertion message
 - **PR #455**: test: stub tool_version/_git in resistor-sets sandbox and guard against subprocess launches
 - **PR #454**: test: stub klt/git lookups in the sim sandbox fixture
