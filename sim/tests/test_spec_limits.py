@@ -125,6 +125,8 @@ def test_unmapped_bench_leaves_the_request_untouched():
 
 
 def test_apply_writes_limits_and_units_into_the_request():
+    # driver-static is all scale 1.0 (raw == display), so the row unit still
+    # belongs beside the raw limits; under scale the unit is skipped (below)
     request, mapping = limited_request()
     by_name = {m["name"]: m for m in request["measurements"]}
     assert set(by_name) >= set(mapping)
@@ -141,6 +143,53 @@ def test_limits_are_emitted_in_raw_units_under_scale():
     tb["measure"]["voh_dp_v"]["scale"] = 1000.0  # raw mV, harness checks V
     limits = sl.measurement_limits("driver-static", tb)
     assert limits["voh_dp_v"]["limits"] == {"min": 0.0028, "max": 0.0036}
+    # display_limits keeps the row's own numbers in the unit `unit` names
+    assert limits["voh_dp_v"]["display_limits"] == {"min": 2.8, "max": 3.6}
+
+
+# ---- issue #424: the emitted unit must agree with the emitted numbers ----
+
+def test_driver_sq_entry_carries_raw_limits_and_display_limits():
+    # limits stays raw (what klt grades, pre-scale); display_limits is the
+    # row's ratified numbers in the display unit the `unit` string names
+    limits = sl.measurement_limits("driver-signal-quality", DRIVER_SQ)
+    tr = limits["trise_dp_ns"]
+    assert tr["limits"] == {"min": 4e-09, "max": 2e-08}
+    assert tr["display_limits"] == {"min": 4.0, "max": 20.0}
+    assert tr["unit"] == "ns" and tr["scale"] == 1e9
+
+
+def test_apply_writes_raw_limits_but_no_display_unit_under_scale():
+    # the graded request declares raw limits; a display-unit name beside them
+    # would misstate the numbers by the scale factor (no raw-unit name is
+    # derivable: tb.json measures and the built request carry none)
+    request, mapping = limited_request(tb=DRIVER_SQ, experiment="driver-signal-quality")
+    by_name = {m["name"]: m for m in request["measurements"]}
+    for n in ("trise_dp_ns", "tfall_dp_ns", "trise_dm_ns", "tfall_dm_ns"):
+        assert by_name[n]["limits"] == {"min": 4e-09, "max": 2e-08}
+        assert "unit" not in by_name[n]
+    # the same bench's scale-1 measurements still carry the row unit
+    for n in ("vcross_rise_v", "vcross_fall_v"):
+        assert by_name[n].get("unit") == "V"
+    # ratios: the row carries no unit, so neither does the request
+    for n in ("trf_dp_ratio", "trf_dm_ratio", "trf_x1_ratio", "trf_x2_ratio"):
+        assert "unit" not in by_name[n]
+
+
+def test_render_cross_states_display_limits_with_the_display_unit():
+    # row 6-06 must read ">= 4 and <= 20 ns", never the raw 4e-09..2e-08
+    # beside "ns" (the committed e260498 record read exactly that; records
+    # are append-only, so the correction lands in the next record)
+    mapping = sl.measurement_limits("driver-signal-quality", DRIVER_SQ)
+    summary = {n: {"envelope": {"pass": 45, "fail": 0}, "harness": {"pass": 45, "fail": 0},
+                   "disagree": 0} for n in mapping}
+    lines = sl.render_cross(summary, mapping)
+    row = next(l for l in lines if "`trise_dp_ns`" in l)
+    assert ">= 4 and <= 20 ns" in row
+    assert "4e-09" not in row and "2e-08" not in row
+    # scale-1 rows render exactly as before
+    vcross = next(l for l in lines if "`vcross_rise_v`" in l)
+    assert ">= 1.3 and <= 2 V" in vcross
 
 
 # ---- fail-closed: drift between the mapping, the tb and the row table ----
