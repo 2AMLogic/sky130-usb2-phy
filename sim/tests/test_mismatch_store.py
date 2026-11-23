@@ -84,21 +84,20 @@ def test_run_mismatch_exits_4_when_store_unavailable(monkeypatch, capsys):
 
 # ---- grading + recording with every klt verb stubbed -----------------------------------------
 
-def graded(tree, monkeypatch):
-    spec = synth_spec()
-    rid = "20261023-120000-abc1234"
+def graded(tree, monkeypatch, spec, corners, rid):
     work = runner.WORK_DIR / "x-mismatch" / rid
     work.mkdir(parents=True, exist_ok=True)
     (work / "klt-stderr.txt").write_text("")
     (work / "klt-batch-set.json").write_text("{}")
     campaigns = []
-    for kind in ("nominal", "control"):
-        stem = mm.campaign_stem("r", "tt", kind)
-        (work / f"{stem}.spice").write_text(f"* {kind}\n")
-        (work / f"{stem}.request.json").write_text("{}")
-        (work / f"{stem}.report.json").write_text("{}")
-        campaigns.append({"receiver": "r", "corner": "tt", "kind": kind, "stem": stem, "job_ids": ["j"],
-                          "report": work / f"{stem}.report.json", "exec_pdk": {}})
+    for c in corners:
+        for kind in ("nominal", "control"):
+            stem = mm.campaign_stem("r", c, kind)
+            (work / f"{stem}.spice").write_text(f"* {kind}\n")
+            (work / f"{stem}.request.json").write_text("{}")
+            (work / f"{stem}.report.json").write_text("{}")
+            campaigns.append({"receiver": "r", "corner": c, "kind": kind, "stem": stem, "job_ids": ["j"],
+                              "report": work / f"{stem}.report.json", "exec_pdk": {}})
     yld = {"status": "pass", "measurements": [ymeas("vth"), ymeas("lvl", negative_control=None)]}
 
     def fake_run(cmd, cwd, env=None):
@@ -111,7 +110,7 @@ def graded(tree, monkeypatch):
 
 
 def record(tree, monkeypatch):
-    spec, rid, work, campaigns = graded(tree, monkeypatch)
+    spec, rid, work, campaigns = graded(tree, monkeypatch, synth_spec(), ["tt"], "20261023-120000-abc1234")
     status = mm._grade_and_record(spec, tree, work, rid, __import__("datetime").datetime.now(), "klt", ENV,
                                   campaigns, [], True, "")
     return status, rid
@@ -435,34 +434,8 @@ def tree4(tmp_path, monkeypatch):
     return exp
 
 
-def graded4(tree4, monkeypatch, corners, rid="20261114-130000-abc1234"):
-    spec = spec4()
-    work = runner.WORK_DIR / "x-mismatch" / rid
-    work.mkdir(parents=True, exist_ok=True)
-    (work / "klt-stderr.txt").write_text("")
-    (work / "klt-batch-set.json").write_text("{}")
-    campaigns = []
-    for c in corners:
-        for kind in ("nominal", "control"):
-            stem = mm.campaign_stem("r", c, kind)
-            (work / f"{stem}.spice").write_text(f"* {kind}\n")
-            (work / f"{stem}.request.json").write_text("{}")
-            (work / f"{stem}.report.json").write_text("{}")
-            campaigns.append({"receiver": "r", "corner": c, "kind": kind, "stem": stem, "job_ids": ["j"],
-                              "report": work / f"{stem}.report.json", "exec_pdk": {}})
-    yld = {"status": "pass", "measurements": [ymeas("vth"), ymeas("lvl", negative_control=None)]}
-
-    def fake_run(cmd, cwd, env=None):
-        out = json.dumps(yld) if cmd[1] == "yield" else "{}"
-        return type("P", (), {"returncode": 0, "stdout": out, "stderr": ""})()
-
-    monkeypatch.setattr(mm, "_run", fake_run)
-    monkeypatch.setattr(runner, "tool_version", lambda c: "klt test")
-    return spec, rid, work, campaigns
-
-
 def test_corner_scoped_stored_record_lints_clean_end_to_end(tree4, monkeypatch):
-    spec, rid, work, campaigns = graded4(tree4, monkeypatch, ["tt"])
+    spec, rid, work, campaigns = graded(tree4, monkeypatch, spec4(), ["tt"], "20261114-130000-abc1234")
     status = mm._grade_and_record(spec, tree4, work, rid, datetime.datetime.now(), "klt", ENV,
                                   campaigns, [], True, "", None, [spec["corners"][0]])
     assert status == 0
@@ -470,7 +443,8 @@ def test_corner_scoped_stored_record_lints_clean_end_to_end(tree4, monkeypatch):
 
 
 def test_full_stored_record_edited_to_under_declare_is_rejected(tree4, monkeypatch):
-    spec, rid, work, campaigns = graded4(tree4, monkeypatch, ["tt", "binding", "fs100v36", "sf40v36"])
+    spec, rid, work, campaigns = graded(tree4, monkeypatch, spec4(),
+                                        ["tt", "binding", "fs100v36", "sf40v36"], "20261114-130000-abc1234")
     status = mm._grade_and_record(spec, tree4, work, rid, datetime.datetime.now(), "klt", ENV,
                                   campaigns, [], True, "")
     assert status == 0
