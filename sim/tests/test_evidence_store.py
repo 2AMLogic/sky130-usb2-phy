@@ -6,7 +6,6 @@
 import hashlib
 import json
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -18,7 +17,6 @@ from test_harness import sandbox, stub_klt  # noqa: F401  (fixtures)
 
 REPO = Path(__file__).resolve().parents[2]
 REAL_PREFLIGHT = es.preflight
-RID = r"\d{8}-\d{6}-[0-9a-f]{7}"
 
 
 # ---- preflight: every failure mode fails closed, before simulating ----------------------------
