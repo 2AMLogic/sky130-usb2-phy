@@ -182,7 +182,13 @@ def _require_equivalent(name: str, bounds: dict, check) -> None:
 
 
 def measurement_limits(experiment: str, tb: dict, rows: dict | None = None) -> dict[str, dict]:
-    """{measurement name: {"row", "role", "limits", ["unit"]}} for a mapped bench.
+    """{measurement name: {"row", "role", "limits", "display_limits", "scale",
+    ["unit"]}} for a mapped bench.
+
+    `limits` is raw (what `klt sim` grades, pre-scale); `display_limits` is the
+    row's own numbers in the tb.json `scale`d unit the `unit` string names.
+    `unit` describes `display_limits`, so it may only be emitted beside `limits`
+    when raw == display (scale 1.0).
 
     `{}` for a bench with no mapping (its requests are unchanged). Fails closed
     (`SpecLimitError`) when the mapping references a row the table does not
@@ -212,9 +218,12 @@ def measurement_limits(experiment: str, tb: dict, rows: dict | None = None) -> d
         scale = float(measure[name].get("scale", 1.0))
         if scale <= 0:
             raise SpecLimitError(f"{experiment}/{name}: non-positive scale {scale}")
-        # klt grades the raw (pre-scale) value: convert the row bounds to raw units.
+        # klt grades the raw (pre-scale) value: convert the row bounds to raw
+        # units, keeping the row's own numbers (the display-unit bounds the
+        # `unit` string names) for the record's limits column.
         limits = {k: float(v) / scale for k, v in bounds.items() if k in ("min", "max")}
-        entry = {"row": row, "role": role, "limits": limits}
+        entry = {"row": row, "role": role, "limits": limits, "scale": scale,
+                 "display_limits": {k: float(v) for k, v in bounds.items() if k in ("min", "max")}}
         if bounds.get("unit"):
             entry["unit"] = bounds["unit"]
         out[name] = entry
@@ -226,6 +235,12 @@ def apply(request: dict, experiment: str, tb: dict, rows: dict | None = None) ->
 
     Returns the mapping `measurement_limits` produced (empty for an unmapped
     bench, whose request is left untouched).
+
+    `unit` names the display (scaled) unit, so it is only written when raw ==
+    display (scale 1.0); beside non-unity-scale raw `limits` it would misstate
+    the numbers by the scale factor, and no raw-unit name is derivable from
+    tb.json or the request builder (measurements carry `spice` and `scale`
+    only) -- so the measurement's own `unit`, if any, is left untouched.
     """
     mapping = measurement_limits(experiment, tb, rows)
     if not mapping:
@@ -236,7 +251,7 @@ def apply(request: dict, experiment: str, tb: dict, rows: dict | None = None) ->
         if m is None:
             raise SpecLimitError(f"{experiment}/{name}: not in the built request's measurements")
         m["limits"] = dict(entry["limits"])
-        if entry.get("unit"):
+        if entry.get("unit") and entry["scale"] == 1.0:
             m.setdefault("unit", entry["unit"])
     return mapping
 
@@ -310,12 +325,17 @@ def cross_check(report: dict, results: list[dict], tb: dict, mapping: dict[str, 
 
 
 def render_cross(summary: dict[str, dict], mapping: dict[str, dict]) -> list[str]:
-    """The record's cross-check table: per measurement, both verdicts and the disagreement count."""
+    """The record's cross-check table: per measurement, both verdicts and the disagreement count.
+
+    The limits column prints `display_limits` -- the row's ratified numbers in
+    the unit the `unit` string names -- never the raw request `limits` those
+    entries carry for grading (which the scale converts).
+    """
     lines = ["| measurement | row | limits | envelope pass/fail | harness pass/fail | disagreements |",
              "|---|---|---|---|---|---|"]
     for name in sorted(summary):
         entry = mapping[name]
-        b = entry["limits"]
+        b = entry.get("display_limits") or entry["limits"]
         parts = []
         if "min" in b:
             parts.append(f">= {b['min']:g}")
