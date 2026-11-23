@@ -5,7 +5,6 @@ No klt, ngspice or PDK is needed; `klt sim` is replaced by a stub.
 
 import copy
 import json
-import math
 import shutil
 from pathlib import Path
 
@@ -106,6 +105,9 @@ def sandbox(tmp_path, monkeypatch):
     monkeypatch.setattr(runner, "WORK_DIR", tmp_path / "work")
     monkeypatch.setattr(runner, "check_env", lambda m: {
         "open_pdks_commit": m.pdk["open_pdks_commit"], "lib_sha256": m.pdk["lib_sha256"]})
+    monkeypatch.setattr(runner, "tool_version", lambda cmd: "klt test")
+    monkeypatch.setattr(runner, "_git", lambda *a: "abcdef0" if "--short=7" in a
+                        else ("abcdef0" * 5 + "abcde" if "rev-parse" in a else ""))
     return sim
 
 
@@ -140,14 +142,8 @@ def test_batch_success_writes_a_record_the_lint_accepts(sandbox, monkeypatch, tm
 
 def test_backend_error_fails_without_any_local_run(sandbox, monkeypatch, tmp_path):
     calls = stub_klt(monkeypatch, tmp_path, error="batch submit failed: no credentials")
-    real_run = runner.subprocess.run
-
-    def guarded(cmd, *a, **k):
-        if cmd[0] == "ngspice" or cmd[:2] == ["klt", "sim"]:
-            raise AssertionError(f"a simulator was launched after a backend error: {cmd}")
-        return real_run(cmd, *a, **k)
-
-    monkeypatch.setattr(runner.subprocess, "run", guarded)
+    monkeypatch.setattr(runner.subprocess, "run",
+                        lambda cmd, *a, **k: pytest.fail(f"a subprocess was launched during a mocked run: {cmd}"))
     assert runner.run("smoke-inverter", "batch", True, {}) == 2
     assert calls == ["batch"]  # exactly one attempt, on batch, no fallback
     rec = next((sandbox / "smoke-inverter/records").glob("*.md")).read_text()
