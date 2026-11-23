@@ -340,13 +340,24 @@ EXPERIMENT_REQUEST_REQUIREMENTS: dict[str, dict[str, tuple[str, ...]]] = {
 
 
 class Findings:
-    """Collects failures, each tagged with the check that produced it."""
+    """Collects failures, each tagged with the check that produced it.
+
+    Warnings are a separate channel: they mark shapes the evidence should not
+    gain *again* (issue #442's forked supersede chains and duplicate same-sha
+    tips) but that committed append-only history already legitimately holds,
+    so they never turn the lint red.
+    """
 
     def __init__(self) -> None:
         self.items: list[tuple[str, str]] = []
+        self.warnings: list[tuple[str, str]] = []
 
     def add(self, check: str, message: str) -> None:
         self.items.append((check, message))
+
+    def warn(self, check: str, message: str) -> None:
+        """Record a warning; unlike `add`, this never affects the exit code."""
+        self.warnings.append((check, message))
 
     def __bool__(self) -> bool:
         return bool(self.items)
@@ -356,6 +367,13 @@ class Findings:
             return
         width = max(len(check) for check, _ in self.items)
         for check, message in self.items:
+            print(f"  [{check.ljust(width)}]  {message}", file=stream)
+
+    def report_warnings(self, stream=sys.stdout) -> None:
+        if not self.warnings:
+            return
+        width = max(len(check) for check, _ in self.warnings)
+        for check, message in self.warnings:
             print(f"  [{check.ljust(width)}]  {message}", file=stream)
 
 
@@ -1319,6 +1337,65 @@ def check_netlist_delta_disclosure(
             )
 
 
+def find_chain_anomalies(parsed: list[tuple[Path, dict]]) -> list[str]:
+    """Warn-only scan of one experiment's supersede graph (issue #442).
+
+    A forked chain -- one record named in `supersedes` by two or more records
+    -- or two standing tips at the same (git sha, corner) is a double
+    `run_checks.py --record` pass leaving two parallel histories behind (found
+    in #438). The committed records are append-only and cannot be rewritten,
+    so these shapes are reported as warnings, never findings: they say "a
+    human should reconcile which tip is canonical", not "the evidence is
+    corrupt". Like `check_netlist_delta_disclosure`, this is a pure helper
+    over `(path, meta)` pairs so the test suite can drive it standalone.
+    """
+    messages: list[str] = []
+
+    # Shape 1 -- forked chain: one target, several successors.
+    children: dict[str, list[str]] = {}
+    for _, meta in parsed:
+        record_id = meta.get("record_id")
+        prior = meta.get("supersedes")
+        if not isinstance(record_id, str) or not record_id:
+            continue
+        if not isinstance(prior, str) or not prior.strip():
+            continue
+        children.setdefault(prior.strip(), []).append(record_id)
+    for target, successors in sorted(children.items()):
+        if len(successors) < 2:
+            continue
+        messages.append(
+            f"supersedes chain forked at {target}: {len(successors)} records "
+            f"name it in `supersedes` ({', '.join(sorted(successors))})"
+        )
+
+    # Shape 2 -- duplicate tips: standing records sharing (git sha, corner).
+    # Only records nothing supersedes count: a re-mint at an unmoved HEAD
+    # (same sha, superseding its own predecessor) leaves one tip and is the
+    # legitimate way to repair a record. The corner component keeps one
+    # digital mint pass -- legitimately one record per committed corner at
+    # one sha -- from looking like a fork.
+    superseded = superseded_record_ids([meta for _, meta in parsed])
+    tips: dict[tuple[str, str], list[str]] = {}
+    for _, meta in parsed:
+        record_id = meta.get("record_id")
+        if not isinstance(record_id, str) or record_id in superseded:
+            continue
+        match = RECORD_ID_RE.match(record_id)
+        if match is None:
+            continue  # a malformed id is `record-id`'s finding, not this warning's
+        key = (match.group("sha"), match.group("corner"))
+        tips.setdefault(key, []).append(record_id)
+    for (sha, corner), members in sorted(tips.items()):
+        if len(members) < 2:
+            continue
+        messages.append(
+            f"{len(members)} standing records share git sha {sha} and corner "
+            f"{corner} ({', '.join(sorted(members))})"
+        )
+    return messages
+
+
 # --------------------------------------------------------------------------
 # Rule 9 -- analog layout records
 # --------------------------------------------------------------------------
@@ -1716,6 +1793,8 @@ def lint_experiment(
 
     superseded = superseded_record_ids([meta for _, meta in parsed])
     check_netlist_delta_disclosure(parsed, findings)
+    for message in find_chain_anomalies(parsed):
+        findings.warn("chain", message)
 
     for path, meta in parsed:
         if meta.get("experiment") != experiment:
@@ -1827,6 +1906,10 @@ def main(argv: list[str] | None = None, findings: Findings | None = None) -> int
             print(f"  klt --check  : {experiment}: {klt_status}")
 
     print()
+    if findings.warnings:
+        print(f"WARN -- {len(findings.warnings)} warning(s) (advisory, not failures):")
+        findings.report_warnings()
+        print()
     if findings:
         print(f"FAIL -- {len(findings.items)} finding(s):")
         findings.report()
