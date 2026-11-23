@@ -14,7 +14,9 @@ collector `Ports`, the device builder `mos`, and the two poly-resistor builders
 `xhigh_resistor` (serpentine `res_xhigh_po`, carrying the two-leg `urpm.width.1`
 marker guard) and `res_generic_po` (straight bar); and, since #339, the channel
 router -- the trunk/via geometry constants, the placement predicate factory
-`make_conflicts(ty_of)` and the per-net trunk + via-stack loop `route_nets`.
+`make_conflicts(ty_of)` and the per-net trunk + via-stack loop `route_nets`;
+and, since #432, the PMOS-row placement search `find_row_x` (one `_NullCanvas`
+pass, then a draw-free grid scan) the leaves previously duplicated.
 
 `klayout.db` only, no timestamps. A change here must leave every committed GDS
 byte-identical (`gen.py --check` for all five leaves).
@@ -160,6 +162,58 @@ def make_conflicts(ty_of: dict[str, float]) -> Callable[[tuple, tuple], bool]:
         return abs(xa - xb) < (0.45 if na == nb else 0.52)
 
     return conflicts
+
+
+class _NullCanvas:
+    """No-op stand-in for `Canvas`: accepts every draw call, draws nothing.
+
+    `mos()` computes each landing pad's coordinates from its `x0` argument
+    alone and never reads the canvas back, so a placement pass over a
+    `_NullCanvas` yields exactly the `Ports` a real pass would -- without the
+    `klayout.db.Layout`, cell and 23 layer registrations each `Canvas`
+    construction pays for (#432).
+    """
+
+    def rect(self, layer: str, x0: float, y0: float, x1: float, y1: float) -> None:
+        pass
+
+    def centred(self, layer: str, cx: float, cy: float, w: float, h: float) -> None:
+        pass
+
+    def label(self, layer: str, text: str, x: float, y: float) -> None:
+        pass
+
+
+def find_row_x(
+    place_fn: Callable[[Canvas, Ports, float], float],
+    fixed_ports: Ports,
+    ty_of: dict[str, float],
+    start0: float,
+) -> float:
+    """Search the PMOS row's x offset, drawing nothing (the #432 hoist).
+
+    `place_fn(canvas, ports, start)` is the leaf's PMOS-row placement pass
+    (`place_p` / `place_small`). One `_NullCanvas` pass at `start = 0.0`
+    collects the row's landing pads at their x-relative offsets; every
+    candidate offset is then `start0 + k * GRID`, and the pad list at a
+    candidate is the base list with `x + start` substituted (valid because
+    `mos()` is strictly linear in `x0` and never reads the canvas back).
+    Returns the first offset at which no shifted pad conflicts -- per
+    `make_conflicts(ty_of)` -- with any pad already in `fixed_ports`. Same
+    stepping and predicate as the leaf loops this replaces, so the chosen
+    `start`, the drawn GDS and the caller's stderr line are unchanged.
+    """
+    conflicts = make_conflicts(ty_of)
+    base = Ports()
+    place_fn(_NullCanvas(), base, 0.0)
+    start = start0
+    while any(
+        conflicts((n, x + start, y, k), b_)
+        for (n, x, y, k) in base.items
+        for b_ in fixed_ports.items
+    ):
+        start += GRID
+    return start
 
 
 def route_nets(
