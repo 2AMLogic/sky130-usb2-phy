@@ -88,7 +88,7 @@
       "members": [
         {
           "path": "verification/test_usb_rx.py",
-          "sha256": "sha256:22b6af091cabae9f533410f0ab68fb2d80cfd1465e3415fb23ac15845b77da36",
+          "sha256": "sha256:8c8f0727ce18df8f1ac110751bb1db091f7d9796298d8f6a439bbee16237d928",
           "role": "testbench"
         },
         {
@@ -161,6 +161,112 @@
       ]
     },
     {
+      "id": "diff-driver-pex",
+      "partition": "analog",
+      "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics",
+      "cold_start": "python3 sim/diff-driver-pex/run.py",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/diff-driver-pex/testbench/tb-static.json",
+          "sha256": "sha256:494914ed9bba17ddaa249fefe60c452f57e573b918d1d13ea11f4f4d91533fbf",
+          "role": "klt sim request (static bench, 3 corners: tt_27c_3.30v, fs_-40c_3.60v, sf_-40c_3.60v) driving both klt pex legs"
+        },
+        {
+          "path": "sim/diff-driver-pex/testbench/tb-sq.json",
+          "sha256": "sha256:08daac891c1ac3ffd548f49eaec18636f503853ebefcab41eeb79052346c6f45",
+          "role": "klt sim request (signal-quality bench, 4 corners: tt_27c_3.30v, fs_100c_3.60v, sf_-40c_3.60v, fs_100c_3.00v) driving both klt pex legs"
+        },
+        {
+          "path": "sim/diff-driver-pex/testbench/driver_static_pex_tb.spice",
+          "sha256": "sha256:b216f79a97f3d99ed9830910525de3065521ad1e175d8bf7c57c348026260487",
+          "role": "testbench netlist (static bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+        },
+        {
+          "path": "sim/diff-driver-pex/testbench/driver_sq_pex_tb.spice",
+          "sha256": "sha256:8d6ad3eb60681402eab4b6688a3272ea3435a434a9884fbb59a436d8091ba893",
+          "role": "testbench netlist (signal-quality bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+        },
+        {
+          "path": "sim/diff-driver-pex/testbench/differential_driver_pex_dut.spice",
+          "sha256": "sha256:a6d3eceedafd000a35810de82f6b424df1a2484da8af3b92bd57debde132ff9a",
+          "role": "schematic-leg DUT shim (design/netlist/differential_driver.spice with the .subckt declaration pin order matched to the extracted header)"
+        }
+      ]
+    },
+    {
+      "id": "se-receiver-dp-pex",
+      "partition": "analog",
+      "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics (klt pex --extract-only probe confirmed the header pin order)",
+      "cold_start": "python3 sim/se-receiver-dp-pex/run.py",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/se-receiver-dp-pex/testbench/tb.json",
+          "sha256": "sha256:42c741f084a77daa3ae1bb8d3b6d9018305319accf63412b02798c1827df3faf",
+          "role": "klt sim request (2 corners: tt_27c_3.30v, ff_lh_100c_3.00v) driving both klt pex legs"
+        },
+        {
+          "path": "sim/se-receiver-dp-pex/testbench/se_rx_dp_pex_tb.spice",
+          "sha256": "sha256:bd207e9e6dc2323ce948006209ab97fe2b08afcefd9ad49da97709bcf4b8114f",
+          "role": "testbench netlist (bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+        },
+        {
+          "path": "sim/se-receiver-dp-pex/testbench/se_receiver_dp_pex_dut.spice",
+          "sha256": "sha256:6726d8343344ec8569b6db55bdc9c82b3ed9f9e1fed25b078cdaf6d516024e1c",
+          "role": "schematic-leg DUT shim (design/netlist/se_receiver_dp.spice with the .subckt declaration pin order matched to the extracted header)"
+        }
+      ]
+    },
+    {
+      "id": "se-receiver-dm-pex",
+      "partition": "analog",
+      "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics (klt pex --extract-only probe confirmed the header pin order)",
+      "cold_start": "python3 sim/se-receiver-dm-pex/run.py",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/se-receiver-dm-pex/testbench/tb.json",
+          "sha256": "sha256:9b96b9e9f6c9f40c304e19e93976bef29cebce008501e86e2e7c69d0c5b8385c",
+          "role": "klt sim request (2 corners: tt_27c_3.30v, ff_lh_100c_3.00v) driving both klt pex legs"
+        },
+        {
+          "path": "sim/se-receiver-dm-pex/testbench/se_rx_dm_pex_tb.spice",
+          "sha256": "sha256:1a6444fa51041ef04cffde4405ff08dc223501ce00241a6b3a4d628688c007ec",
+          "role": "testbench netlist (bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+        },
+        {
+          "path": "sim/se-receiver-dm-pex/testbench/se_receiver_dm_pex_dut.spice",
+          "sha256": "sha256:2019e12d070897a446adb0a7076f71e00ec722bff0d3d7a92452decfd34a5641",
+          "role": "schematic-leg DUT shim (design/netlist/se_receiver_dm.spice with the .subckt declaration pin order matched to the extracted header)"
+        }
+      ]
+    },
+    {
+      "id": "dplus-pullup-pex",
+      "partition": "analog",
+      "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics (klt pex --extract-only probe confirmed the header pin order)",
+      "cold_start": "python3 sim/dplus-pullup-pex/run.py",
+      "cold_start_doc": "sim/README.md",
+      "members": [
+        {
+          "path": "sim/dplus-pullup-pex/testbench/tb.json",
+          "sha256": "sha256:da444623af2a6f32b2799983196481a0e9fbacdbcb4a415e2f2e4118ce67ad71",
+          "role": "klt sim request (2 corners: tt_27c_3.30v, fs_hl_100c_3.00v) driving both klt pex legs"
+        },
+        {
+          "path": "sim/dplus-pullup-pex/testbench/dplus_pullup_pex_tb.spice",
+          "sha256": "sha256:a7facf8ff01aea6352d549bb350f7f1361d8ec106cdf9578c9cebc881f0c6943",
+          "role": "testbench netlist (bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+        },
+        {
+          "path": "sim/dplus-pullup-pex/testbench/dplus_pullup_pex_dut.spice",
+          "sha256": "sha256:6a3f1f5f16dc8bc5ca0b97e1946acc96748f2d6043eeacd170d90b08338e4d9d",
+          "role": "schematic-leg DUT shim (design/netlist/dplus_pullup.spice with the .subckt declaration pin order matched to the extracted header)"
+        }
+      ]
+    },
+    {
       "id": "diff-receiver-mismatch",
       "partition": "analog",
       "engine": "ngspice via klt sim (Monte Carlo mismatch, batch fleet) + klt yield",
@@ -188,7 +294,7 @@
       "members": [
         {
           "path": "sim/diff-receiver-sensitivity/testbench/tb.json",
-          "sha256": "sha256:cb41149e144f2d34b4af9b9f6006dc180bf9e8bae09da04e1896b0d1cce14af7",
+          "sha256": "sha256:8494e79293826938b73542a518ab189d679745c785e415d31a3d1a945a085d4c",
           "role": "testbench definition"
         },
         {

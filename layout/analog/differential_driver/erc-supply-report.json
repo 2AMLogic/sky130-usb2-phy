@@ -1892,318 +1892,16 @@
     ],
     "skipped": [
       {
-        "id": "antenna:[\"gate0\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate0\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate1\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate1\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate10\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate10\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate11\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate11\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate12\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate12\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate13\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate13\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate14\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate14\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate15\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate15\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate16\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate16\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate17\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate17\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate18\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate18\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate19\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate19\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate2\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate2\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate20\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate20\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate21\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate21\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate22\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate22\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate23\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate23\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate24\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate24\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate25\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate25\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate3\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate3\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate4\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate4\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate5\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate5\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate6\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate6\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate7\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate7\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate8\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate8\",\"met4\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate9\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate9\",\"met4\"]",
-        "reason": "missing_antenna_limit"
+        "id": "antenna:[\"levels\"]",
+        "reason": "missing_antenna_limit",
+        "count": 52
       }
     ],
     "inapplicable": [
       {
-        "id": "antenna:[\"gate0\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate1\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate10\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate11\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate12\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate13\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate14\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate15\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate16\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate17\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate18\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate19\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate2\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate20\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate21\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate22\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate23\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate24\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate25\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate3\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate4\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate5\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate6\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate7\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate8\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate9\",\"poly\"]",
-        "reason": "gate_reference_level"
+        "id": "antenna:[\"gate_reference_levels\"]",
+        "reason": "gate_reference_level",
+        "count": 26
       }
     ],
     "unknown": [],
@@ -2277,10 +1975,10 @@
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.9.3.dev310+ga638216e7fea",
-    "klt_git_commit": "a638216e7fea94067a1727f58053bb8cd0b7b329",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@a638216e7fea94067a1727f58053bb8cd0b7b329",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.14",
     "pdk": {
       "name": "sky130",
       "source": "built-in",
@@ -2288,7 +1986,7 @@
     },
     "deck": null,
     "input": {
-      "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+      "content_hash": "sha256:14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
       "role": "layout"
     },
     "spec": {
@@ -2299,7 +1997,7 @@
         "name": "xhigh_po_resistor_body",
         "body_layer": "66/13",
         "on": "poly",
-        "body_area_um2": 474.3141
+        "body_area_um2": 474.3
       }
     ],
     "net_exclusions": [],

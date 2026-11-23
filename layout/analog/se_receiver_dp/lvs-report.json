@@ -1,8 +1,11 @@
 {
   "schema_version": 3,
   "engine": "klayout-runset",
-  "layout": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-339/layout/analog/se_receiver_dp/se_receiver_dp.gds",
-  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-339/design/netlist/se_receiver_dp.spice",
+  "layout": {
+    "path": "layout/analog/se_receiver_dp/se_receiver_dp.gds",
+    "scope": "repo"
+  },
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-406/design/netlist/se_receiver_dp.spice",
   "top": "se_receiver_dp",
   "reference_top": "se_receiver_dp",
   "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
@@ -827,17 +830,17 @@
   "environment": {
     "engine": "klayout-runset",
     "engine_version": "0.30.12",
-    "klayout_binary": "/usr/bin/klayout",
+    "klayout_binary": "klayout",
     "netgen_binary": null,
-    "layout_sha256": "5f93831299c35f9033cb73edffbaeaf008b58d51bb6e8984c60537a21473fe9f",
+    "layout_sha256": "cd3a3f7a6b7ff8cc582a535d65c261d18fc805cfe5535b9eb785488358f98df2",
     "reference_sha256": "e4d5d15316be7f26ba3a7dd06727c17537083808e5e96a03604f3e44d6413ef6",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.3.dev310+ga638216e7fea",
-    "klt_git_commit": "a638216e7fea94067a1727f58053bb8cd0b7b329",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@a638216e7fea94067a1727f58053bb8cd0b7b329",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sky130.lvs",
@@ -845,7 +848,7 @@
       "released": null
     },
     "input": {
-      "content_hash": "sha256:5f93831299c35f9033cb73edffbaeaf008b58d51bb6e8984c60537a21473fe9f",
+      "content_hash": "sha256:cd3a3f7a6b7ff8cc582a535d65c261d18fc805cfe5535b9eb785488358f98df2",
       "role": "layout"
     },
     "runset": {

@@ -412,54 +412,16 @@
     ],
     "skipped": [
       {
-        "id": "antenna:[\"gate0\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate1\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate2\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate3\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate4\",\"met3\"]",
-        "reason": "missing_antenna_limit"
-      },
-      {
-        "id": "antenna:[\"gate5\",\"met3\"]",
-        "reason": "missing_antenna_limit"
+        "id": "antenna:[\"levels\"]",
+        "reason": "missing_antenna_limit",
+        "count": 6
       }
     ],
     "inapplicable": [
       {
-        "id": "antenna:[\"gate0\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate1\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate2\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate3\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate4\",\"poly\"]",
-        "reason": "gate_reference_level"
-      },
-      {
-        "id": "antenna:[\"gate5\",\"poly\"]",
-        "reason": "gate_reference_level"
+        "id": "antenna:[\"gate_reference_levels\"]",
+        "reason": "gate_reference_level",
+        "count": 6
       }
     ],
     "unknown": [],
@@ -512,10 +474,10 @@
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.9.3.dev310+ga638216e7fea",
-    "klt_git_commit": "a638216e7fea94067a1727f58053bb8cd0b7b329",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@a638216e7fea94067a1727f58053bb8cd0b7b329",
-    "klayout_version": "0.30.13",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.14",
     "pdk": {
       "name": "sky130",
       "source": "built-in",
@@ -523,7 +485,7 @@
     },
     "deck": null,
     "input": {
-      "content_hash": "sha256:3e1055d4eea9ea96d21a834ec8263579879596c09b7cc3a5c4e3798feceba540",
+      "content_hash": "sha256:d5ff844d9d1957bfb9dadab95fe505174af1122c22966d36aa407a86a53cfbc8",
       "role": "layout"
     },
     "spec": {
@@ -534,7 +496,7 @@
         "name": "xhigh_po_resistor_body",
         "body_layer": "66/13",
         "on": "poly",
-        "body_area_um2": 197.3718
+        "body_area_um2": 197.4
       }
     ],
     "net_exclusions": [],

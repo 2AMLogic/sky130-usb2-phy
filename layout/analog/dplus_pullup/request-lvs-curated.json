@@ -1,0 +1,29 @@
+{
+  "schema": "klt.lvs.request/1",
+  "engine": "klayout",
+  "layout": {
+    "file": "dplus_pullup.gds",
+    "top": "dplus_pullup",
+    "deck": "sky130"
+  },
+  "reference": {
+    "netlist": "../../../design/netlist/dplus_pullup.spice",
+    "top": "dplus_pullup",
+    "form": "subckt-call",
+    "deck": "sky130"
+  },
+  "options": {
+    "compare_mos_flavour": true,
+    "combine_devices": [
+      "nfet__hvi",
+      "pfet__hvi"
+    ],
+    "compare_parameters": {
+      "res_generic_po": [
+        "R",
+        "L",
+        "W"
+      ]
+    }
+  }
+}

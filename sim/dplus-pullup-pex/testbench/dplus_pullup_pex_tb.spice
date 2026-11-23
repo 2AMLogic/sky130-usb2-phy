@@ -1,0 +1,80 @@
+* dplus-pullup-pex -- sky130 trimmed D+ pull-up tolerance, post-layout (klt pex)
+*
+* Post-layout counterpart of sim/dplus-pullup-tolerance: identical circuit body, measurements and
+* checks. The single .include below names the schematic-leg DUT shim (dplus_pullup_pex_dut.spice:
+* design/netlist/dplus_pullup.spice with its .subckt declaration line reordered to the
+* extracted header's pin order) -- the swap point klt pex re-points at the extracted
+* netlist for the extracted-side leg. Every DUT instance line's nets are written in
+* that same order, so one positional instance line serves both legs with the same
+* net-to-pin mapping. The request supplies the .lib corner section, .temp and the
+* supply sweep (vsup, which is the pull-up supply VPU).
+*
+* Circuit (unchanged from the committed bench): enabled state = 16 pull-up instances,
+* one per trim code (TRIM3..TRIM0 = bits of the code), TRIM bits and PU_EN tied hard
+* to the VPU rail or ground, D+ loaded by 15 kohm to ground; disabled state (PU_EN=0)
+* = four conditions (d1/d0 loaded, dz D+ forced to 0 V, dh D+ forced to VPU), each
+* fed through a 0 V ammeter. The dummy two-point DC sweep (vdum) gives the .meas
+* AT= probes an interval; see sim/dplus-pullup-tolerance/testbench/dplus_pullup_tb.spice.
+
+
+.include "dplus_pullup_pex_dut.spice"
+
+vsup vdd 0 dc 3.3
+
+* ---- enabled: 16 instances, one per trim code (TRIM3..TRIM0 = bits of the code)
+xpu00 dp00 vdd 0 0 0 0 vdd 0 dplus_pullup
+rld00 dp00 0 15k
+xpu01 dp01 vdd vdd 0 0 0 vdd 0 dplus_pullup
+rld01 dp01 0 15k
+xpu02 dp02 vdd 0 vdd 0 0 vdd 0 dplus_pullup
+rld02 dp02 0 15k
+xpu03 dp03 vdd vdd vdd 0 0 vdd 0 dplus_pullup
+rld03 dp03 0 15k
+xpu04 dp04 vdd 0 0 vdd 0 vdd 0 dplus_pullup
+rld04 dp04 0 15k
+xpu05 dp05 vdd vdd 0 vdd 0 vdd 0 dplus_pullup
+rld05 dp05 0 15k
+xpu06 dp06 vdd 0 vdd vdd 0 vdd 0 dplus_pullup
+rld06 dp06 0 15k
+xpu07 dp07 vdd vdd vdd vdd 0 vdd 0 dplus_pullup
+rld07 dp07 0 15k
+xpu08 dp08 vdd 0 0 0 vdd vdd 0 dplus_pullup
+rld08 dp08 0 15k
+xpu09 dp09 vdd vdd 0 0 vdd vdd 0 dplus_pullup
+rld09 dp09 0 15k
+xpu10 dp10 vdd 0 vdd 0 vdd vdd 0 dplus_pullup
+rld10 dp10 0 15k
+xpu11 dp11 vdd vdd vdd 0 vdd vdd 0 dplus_pullup
+rld11 dp11 0 15k
+xpu12 dp12 vdd 0 0 vdd vdd vdd 0 dplus_pullup
+rld12 dp12 0 15k
+xpu13 dp13 vdd vdd 0 vdd vdd vdd 0 dplus_pullup
+rld13 dp13 0 15k
+xpu14 dp14 vdd 0 vdd vdd vdd vdd 0 dplus_pullup
+rld14 dp14 0 15k
+xpu15 dp15 vdd vdd vdd vdd vdd vdd 0 dplus_pullup
+rld15 dp15 0 15k
+
+* ---- disabled (PU_EN = 0)
+* d1 / d0: loaded by the host 15 kohm; ammeter vm* in series with the load
+vid1 vdd vpd1 dc 0
+xpud1 dpd1 0 vdd vdd vdd vdd vpd1 0 dplus_pullup
+rldd1 dpd1 dmd1 15k
+vmd1 dmd1 0 dc 0
+vid0 vdd vpd0 dc 0
+xpud0 dpd0 0 0 0 0 0 vpd0 0 dplus_pullup
+rldd0 dpd0 dmd0 15k
+vmd0 dmd0 0 dc 0
+* dz: D+ forced to 0 V (vfzdz measures the current into the forcing source)
+vidz vdd vpdz dc 0
+xpudz dpdz 0 vdd vdd vdd vdd vpdz 0 dplus_pullup
+vfzdz dpdz 0 dc 0
+* dh: D+ forced to VPU (current from the forcing source into D+)
+vidh vdd vpdh dc 0
+xpudh dpdh 0 vdd vdd vdd vdd vpdh 0 dplus_pullup
+vfzdh vdd dpdh dc 0
+
+* Dummy source the two-point DC sweep (`dc vdum 0 1 1`) runs over: it gives `.meas ... AT=0` an interval while
+* keeping `.meas dc` available on fleet runners that predate expression measurements (see sim/README.md).
+vdum dum 0 dc 0
+rdum dum 0 1k
