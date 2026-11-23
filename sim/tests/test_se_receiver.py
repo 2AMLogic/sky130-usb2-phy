@@ -31,8 +31,8 @@ def good_values(vdd):
             "rxd_at_vil_v": 1e-9, "rxd_at_vih_v": vdd, "vref_v": 0.425 * vdd, "isup_ua": 125e-6}
 
 
-def report(tamper=None):
-    return synthetic_report(MATRIX, lambda p, t, v: good_values(v), tamper=tamper)
+def report(tamper=None, matrix=MATRIX):
+    return synthetic_report(matrix, lambda p, t, v: good_values(v), tamper=tamper)
 
 
 def set_both(idx, value):
@@ -132,24 +132,6 @@ def test_record_discloses_method_and_no_monte_carlo():
 RES = mx.load_by_id(mx.RESISTOR_SETS_ID)
 
 
-def rreport(tamper=None):
-    rep = report()
-    base = rep["corners"][0]
-    rep["corners"] = []
-    for p, t, v in RES.points():
-        c = json.loads(json.dumps(base))
-        c.update(corner_id=mx.corner_id(p, t, v), process=p, supply_v={"vsup": v}, temperature_c=float(t))
-        for m in c["measurements"]:
-            if m["name"] in ("rxd_high_min_v", "rxd_at_vih_v"):
-                m["value"] = v
-            elif m["name"] == "vref_v":
-                m["value"] = 0.425 * v
-        rep["corners"].append(c)
-    if tamper:
-        tamper(rep)
-    return rep
-
-
 @pytest.mark.parametrize("lbl", LINES)
 def test_variant_resolution_preserves_policy_and_selects_225(lbl):
     tb = tb_of(lbl)
@@ -171,7 +153,7 @@ def test_variant_resolution_preserves_policy_and_selects_225(lbl):
 
 @pytest.mark.parametrize("lbl", LINES)
 def test_variant_good_225_grid_passes(lbl):
-    results, probs = rs.evaluate(rreport(), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))
+    results, probs = rs.evaluate(report(matrix=RES), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))
     assert probs == [] and len(results) == 225
 
 
@@ -189,7 +171,7 @@ def test_variant_good_225_grid_passes(lbl):
     (lambda r: r["corners"].__setitem__(1, r["corners"][0]), "dup"),
 ])
 def test_variant_grid_rejects_bad_receivers(lbl, tamper, needle):
-    probs = rs.evaluate(rreport(tamper), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))[1]
+    probs = rs.evaluate(report(tamper, matrix=RES), RES.points(), rs.resolve_tb(tb_of(lbl), "resistor-sets"))[1]
     assert any(needle in p for p in probs), probs
 
 
