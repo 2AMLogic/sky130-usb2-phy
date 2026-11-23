@@ -147,7 +147,7 @@
   "record": {
     "netlist_provenance": "schematic-derived netlist: xschem export of design/differential_receiver.sch (design/netlist/differential_receiver.spice, byte-identical to the deck frozen in the snapshot below) plus the testbench deck; no layout, no parasitic extraction",
     "statistical_convention": "deterministic PVT corners only (5 process x 3 temperature x 3 supply); mismatch / Monte Carlo was NOT run, so input offset from device mismatch is not covered by this record",
-    "bounds": "the engineering criteria in the Method section (tb.json checks)",
+    "bounds": "the ratified limits and engineering criteria in the Method section (tb.json checks)",
     "footer": "Scope: schematic-level electrical evidence for one block against the ratified differential-sensitivity and common-mode rows. It does not claim layout, DRC/LVS, mismatch, level shifting or signoff, and does not relax any target. A FAIL record is evidence of failure, not compliance.",
     "detailed": true,
     "method": [
