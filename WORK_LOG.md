@@ -10,6 +10,12 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-23
 
+- **PR #457**: fix: report true interval count in RxActive EOP-window assertion message
+- **PR #455**: test: stub tool_version/_git in resistor-sets sandbox and guard against subprocess launches
+- **PR #454**: test: stub klt/git lookups in the sim sandbox fixture
+- **Issue #453** (closed): test_resistor_sets.sandbox still launches real klt --version and git (same gap as #447)
+- **Issue #451** (closed): Wrong interval count in _assert_rxactive_eop_window's disjoint-interval assertion message
+- **Issue #447** (closed): Stub tool_version and _git in test_harness.sandbox and drop the subprocess passthrough
 - **PR #450**: test(usb_rx): bound RxActive EOP deassertion by an independent window, not the trace's own shape
 - **PR #449**: test(sim): route receiver 225-point variant reports through synthetic_report
 - **PR #448**: test: share the synthetic campaign builder in mismatch-store tests
