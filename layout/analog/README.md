@@ -165,8 +165,13 @@ means re-running that search, not hand-placing it.
   (66/13) and `urpm` (79/20) over the body but **not** over the two contact heads,
   `psdm` over everything. The runset reads `L` as area / width, so a serpentine
   is fine and its mitred corners count once; `gen.py` sizes the legs so the
-  centreline is the netlist's `L` (checked: 139.98 um against 140 um, inside the
-  runset's 0.5 % tolerance).
+  centreline is the netlist's `L`. Snapping one leg height to the 0.005 um grid
+  used to leave the drawn length 0.01-0.02 um off (30.01/139.98 um, #406);
+  `gen_common.xhigh_resistor` now moves the first bottom U-turn by half the
+  snap residual, which changes both its adjoining legs equally, and the
+  area/width length lands exactly on the netlist `L` (30.00 and 140.00 um
+  measured on the regenerated streams, the 14/19 um two-leg dividers
+  unchanged).
 * The runset needs `convert_subckts=true scale=true` to read the xschem netlists
   (set in `request-lvs.json`; klayout-tools#3989).
 
@@ -175,8 +180,12 @@ means re-running that search, not hand-placing it.
 The records use the producer from the initial probe, klt
 `0.9.2.dev111+g978f7464fae1`. Its curated DRC lists 54 unmodelled rules.
 The preceding records from `0.9.3.dev310+ga638216e7fea` list 347. The
-curated DRC rules checked and skipped, native DRC rule categories and ERC
-checks are identical for each leaf across these two sets of records.
+records minted for the #406 bias-resistor repair (and the D+ pull-up control
+re-run that the shared-generator change made stale) use klt
+`0.9.3.dev2626+g0e5dd121c7d2` with KLayout 0.30.12, whose curated DRC also
+lists 347 unmodelled rules. The curated DRC rules checked and skipped, native
+DRC rule categories and ERC checks are identical for each leaf across these
+sets of records.
 
 Both curated comparisons use the committed GDS and `design/netlist/<leaf>.spice`
 with the sky130 subcircuit-call reader. The first preserves the default comparison
@@ -193,11 +202,11 @@ give layout / reference / matched devices.
 
 | Leaf | Curated baseline (all mismatch) | Cited curated LVS | Device class unrecognised | Open issue |
 |---|---:|---|---|---|
-| `differential_driver` | 356/244/82 | [mismatch (80/80/79)](../../flow/analog-layout-differential_driver/artifacts/20261120-195713-745d347-differential_driver/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
-| `differential_receiver` | 21/20/19 | [mismatch (11/11/10)](../../flow/analog-layout-differential_receiver/artifacts/20261120-195744-745d347-differential_receiver/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
-| `dplus_pullup` | 265/40/10 | [match (20/20/20)](../../flow/analog-layout-dplus_pullup/artifacts/20261120-195759-745d347-dplus_pullup/lvs-curated-report.json) | None | None |
-| `se_receiver_dm` | 23/22/21 | [mismatch (13/13/12)](../../flow/analog-layout-se_receiver_dm/artifacts/20261120-195829-745d347-se_receiver_dm/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
-| `se_receiver_dp` | 23/22/21 | [mismatch (13/13/12)](../../flow/analog-layout-se_receiver_dp/artifacts/20261120-195900-745d347-se_receiver_dp/lvs-curated-report.json) | None | [chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406) |
+| `differential_driver` | 356/244/82 | [match (80/80/80)](../../flow/analog-layout-differential_driver/artifacts/20261122-001306-eb818d5-differential_driver/lvs-curated-report.json) | None | None |
+| `differential_receiver` | 21/20/19 | [match (11/11/11)](../../flow/analog-layout-differential_receiver/artifacts/20261122-001342-eb818d5-differential_receiver/lvs-curated-report.json) | None | None |
+| `dplus_pullup` | 265/40/10 | [match (20/20/20)](../../flow/analog-layout-dplus_pullup/artifacts/20261122-001541-eb818d5-dplus_pullup/lvs-curated-report.json) | None | None |
+| `se_receiver_dm` | 23/22/21 | [match (13/13/13)](../../flow/analog-layout-se_receiver_dm/artifacts/20261122-001414-eb818d5-se_receiver_dm/lvs-curated-report.json) | None | None |
+| `se_receiver_dp` | 23/22/21 | [match (13/13/13)](../../flow/analog-layout-se_receiver_dp/artifacts/20261122-001442-eb818d5-se_receiver_dp/lvs-curated-report.json) | None | None |
 
 The curated LVS envelopes report aggregate counts. For the per-class census
 below, each pair gives SPICE X-card instances before multiplier expansion /
@@ -216,11 +225,12 @@ The frozen runset `device_census` independently gives counts after combining.
 | `se_receiver_dm` | 6/9 | 4/11 | 0/0 | 3/3 | 0/0 |
 | `se_receiver_dp` | 6/9 | 4/11 | 0/0 | 3/3 | 0/0 |
 
-- **Bias resistor.** The driver compares 30.01 µm extracted against 30.00 µm
-  specified. Each receiver compares 139.98 µm against 140.00 µm. Each selected
-  report has two `device.property` errors (length and resistance) and a
-  `topology` error on the associated bias net (`VBN` or `IBIASN`). The runset
-  accepts these lengths at its own tolerance. [Chip #406](https://github.com/2AMLogic/sky130-usb2-phy/issues/406)
+- **Bias resistor.** The generator now draws the exact netlist lengths: XRB
+  measures 30.00 µm and each XRBIAS 140.00 µm at the 1.41 µm width (#406's
+  first-bottom-U-turn correction in `gen_common.xhigh_resistor`), so every
+  selected report reads `match` with complete device counts and no
+  `device.property` or bias-net `topology` errors. The two-leg 14 and 19 µm
+  VREF dividers and the D+ pull-up control are unchanged.
 - **Driver MIM reference.** The curated reader accepts all four original
   X-cards (two 42 × 42 µm and two 24 × 24 µm plates) and compares their area
   and perimeter. Its `device_parameter_coverage` records four devices on each

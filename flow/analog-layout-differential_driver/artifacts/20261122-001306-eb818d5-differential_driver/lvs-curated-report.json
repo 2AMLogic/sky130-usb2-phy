@@ -1,0 +1,739 @@
+{
+  "schema_version": 3,
+  "engine": "klayout",
+  "layout": {
+    "path": "layout/analog/differential_driver/differential_driver.gds",
+    "scope": "repo"
+  },
+  "reference": {
+    "path": "design/netlist/differential_driver.spice",
+    "scope": "repo"
+  },
+  "top": "differential_driver",
+  "reference_top": "DIFFERENTIAL_DRIVER",
+  "reference_conversion": {
+    "form": "subckt-call",
+    "deck": "sky130",
+    "device_map": null
+  },
+  "parameter_tolerance": null,
+  "options": {
+    "combine_devices": [
+      "nfet__hvi",
+      "pfet__hvi"
+    ],
+    "combine_devices_per_circuit": null,
+    "combine_devices_max_attempts": 5,
+    "flatten_layout": false,
+    "flatten_reference": false,
+    "netgen_setup": null,
+    "parameter_tolerance": null,
+    "compare_parameters": {
+      "res_generic_po": [
+        "R",
+        "L",
+        "W"
+      ],
+      "res_xhigh_po": [
+        "R",
+        "L",
+        "W"
+      ],
+      "sky130_fd_pr__model__cap_mim": [
+        "C",
+        "A",
+        "P"
+      ]
+    },
+    "power_connectivity": null,
+    "anchor_top_level_pins": null,
+    "strict_top_level_pin_count": false,
+    "compare_mos_flavour": true,
+    "ignore_mos_bulk": false,
+    "supply_nets": [
+      "GND",
+      "VCC",
+      "VDD",
+      "VGND",
+      "VPWR",
+      "VSS"
+    ],
+    "finfet_bulk": null
+  },
+  "hints_applied": null,
+  "constant_nets_applied": null,
+  "status": "match",
+  "power_connectivity": {
+    "status": "unchecked",
+    "reason": "reference.form is 'subckt-call', whose reference netlist carries its own power/ground pins and nets -- they take part in the ordinary compare, so this check (which exists to cover the signal-only 'gate-level-verilog' form) does not apply",
+    "power_pins": [],
+    "power_pins_derivation": null,
+    "instance_count": 0,
+    "expected_nets": null,
+    "unchecked_expected_pins": [],
+    "excluded_pins": [],
+    "findings": [],
+    "finding_count": 0
+  },
+  "body_verification": {
+    "status": "verified",
+    "reason": null,
+    "device_classes": [],
+    "device_count": 0,
+    "inspected_count": 73,
+    "findings": [],
+    "finding_count": 0
+  },
+  "device_parameter_coverage": [
+    {
+      "class": "nfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 37,
+      "reference_devices": 37,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "pfet__hvi",
+      "device_kind": "mos",
+      "layout_devices": 36,
+      "reference_devices": 36,
+      "compared": [
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "AS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "AD",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PS",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "PD",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "res_generic_po",
+      "device_kind": "resistor",
+      "layout_devices": 2,
+      "reference_devices": 2,
+      "compared": [
+        "R",
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "A",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "P",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "res_xhigh_po",
+      "device_kind": "resistor",
+      "layout_devices": 1,
+      "reference_devices": 1,
+      "compared": [
+        "R",
+        "L",
+        "W"
+      ],
+      "not_compared": [
+        {
+          "parameter": "A",
+          "reason": "secondary"
+        },
+        {
+          "parameter": "P",
+          "reason": "secondary"
+        }
+      ]
+    },
+    {
+      "class": "sky130_fd_pr__model__cap_mim",
+      "device_kind": "capacitor",
+      "layout_devices": 4,
+      "reference_devices": 4,
+      "compared": [
+        "A",
+        "P"
+      ],
+      "not_compared": [
+        {
+          "parameter": "C",
+          "reason": "placeholder_value"
+        }
+      ]
+    }
+  ],
+  "mismatch_count": 6,
+  "error_count": 0,
+  "category_counts": {
+    "device.geometry_not_compared": 2,
+    "device.placeholder_value": 1,
+    "topology": 3
+  },
+  "category_error_counts": {},
+  "counts": {
+    "nets": {
+      "layout": 47,
+      "reference": 47,
+      "matched": 47
+    },
+    "devices": {
+      "layout": 80,
+      "reference": 80,
+      "matched": 80
+    },
+    "pins": {
+      "layout": 8,
+      "reference": 8,
+      "matched": 8
+    }
+  },
+  "device_classes": [
+    "nfet",
+    "pfet",
+    "pnp",
+    "sky130_fd_pr__model__cap_mim",
+    "sky130_fd_pr__model__cap_mim_m4",
+    "resistor",
+    "diode_pw2nd_05v5",
+    "diode_pw2nd_05v5_lvt",
+    "diode_pw2nd_05v5_nvt",
+    "diode_pw2nd_11v0",
+    "diode_pd2nw_05v5",
+    "diode_pd2nw_05v5_lvt",
+    "diode_pd2nw_05v5_hvt",
+    "diode_pd2nw_11v0"
+  ],
+  "environment": {
+    "engine": "klayout",
+    "engine_version": "0.30.12",
+    "netgen_binary": null,
+    "layout_sha256": "14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
+    "reference_sha256": "bed3319d65789db0a7d1a14831e113eb957cd1998d3cc58d4dc539dd5ea2fdd0",
+    "extracted_netlist": null
+  },
+  "provenance": {
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.12",
+    "pdk": null,
+    "deck": {
+      "name": "sky130",
+      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "released": false
+    },
+    "input": {
+      "content_hash": "sha256:14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
+      "role": "layout"
+    },
+    "klayout_version_mismatch": false
+  },
+  "mismatches": [
+    {
+      "category": "device.geometry_not_compared",
+      "severity": "warning",
+      "description": "device class 'res_generic_po' is a resistor class, whose ['A', 'P'] parameter(s) KLayout declares *secondary*: kdb.NetlistComparer compares primary parameters only, so none of them took part in this compare and each is NOT verified -- this resistor's geometry could differ between the two sides by any amount and this run would still report 'match'. The compared parameter(s) were ['R', 'L', 'W']. Name them in options.compare_parameters to compare them (see docs/cli/lvs.md, 'device.geometry_not_compared')",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "res_generic_po"
+      },
+      "property": null,
+      "details": {
+        "device_kind": "resistor",
+        "compared_parameters": [
+          "R",
+          "L",
+          "W"
+        ],
+        "not_compared_parameters": [
+          "A",
+          "P"
+        ],
+        "layout_devices": 2,
+        "reference_devices": 2
+      },
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.geometry_not_compared",
+      "severity": "warning",
+      "description": "device class 'res_xhigh_po' is a resistor class, whose ['A', 'P'] parameter(s) KLayout declares *secondary*: kdb.NetlistComparer compares primary parameters only, so none of them took part in this compare and each is NOT verified -- this resistor's geometry could differ between the two sides by any amount and this run would still report 'match'. The compared parameter(s) were ['R', 'L', 'W']. Name them in options.compare_parameters to compare them (see docs/cli/lvs.md, 'device.geometry_not_compared')",
+      "side": "both",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "res_xhigh_po"
+      },
+      "property": null,
+      "details": {
+        "device_kind": "resistor",
+        "compared_parameters": [
+          "R",
+          "L",
+          "W"
+        ],
+        "not_compared_parameters": [
+          "A",
+          "P"
+        ],
+        "layout_devices": 1,
+        "reference_devices": 1
+      },
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "device.placeholder_value",
+      "severity": "warning",
+      "description": "reference device class 'SKY130_FD_PR__MODEL__CAP_MIM' was converted from a subcircuit call (request.reference.form: \"subckt-call\"), so its 'C' value is the literal 0 placeholder on all 4 reference instance(s) -- klt lvs has no PDK sheet-resistance/capacitance-per-area data to compute a real one. 'C' was therefore excluded from this compare on both sides (layout: 4 instance(s), C 1.17024e-12..3.5599200000000004e-12) and the two sides were paired on topology alone -- that dimension of the compare is not independently verified. Supply a reference in the plain-element form carrying real 'C' values to compare it (see docs/cli/lvs.md, 'device.placeholder_value')",
+      "side": "reference",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "SKY130_FD_PR__MODEL__CAP_MIM"
+      },
+      "property": null,
+      "details": {
+        "parameter": "C",
+        "device_kind": "capacitor",
+        "reference_devices": 4,
+        "layout_devices": 4,
+        "layout_values": [
+          1.17024e-12,
+          3.5599200000000004e-12
+        ]
+      },
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "topology",
+      "severity": "warning",
+      "description": "device class has no counterpart on the other side, but no devices of this class were extracted either -- not a real topology mismatch: 'nfet'",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "nfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "topology",
+      "severity": "warning",
+      "description": "device class has no counterpart on the other side, but no devices of this class were extracted either -- not a real topology mismatch: 'pfet'",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "pfet"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    },
+    {
+      "category": "topology",
+      "severity": "warning",
+      "description": "device class has no counterpart on the other side, but no devices of this class were extracted either -- not a real topology mismatch: 'pnp'",
+      "side": "layout",
+      "net": null,
+      "device": {
+        "layout": null,
+        "reference": null,
+        "class": "pnp"
+      },
+      "property": null,
+      "details": null,
+      "circuit": null,
+      "instance": null,
+      "subcircuit": null
+    }
+  ],
+  "net_correspondence": [
+    {
+      "layout": "DM",
+      "layout_id": 37,
+      "reference": "DM",
+      "reference_id": 7,
+      "pin": true
+    },
+    {
+      "layout": "DP",
+      "layout_id": 45,
+      "reference": "DP",
+      "reference_id": 6,
+      "pin": true
+    },
+    {
+      "layout": "DRVEN",
+      "layout_id": 0,
+      "reference": "DRVEN",
+      "reference_id": 4,
+      "pin": true
+    },
+    {
+      "layout": "\\$6",
+      "layout_id": 4,
+      "reference": "EN",
+      "reference_id": 10,
+      "pin": false
+    },
+    {
+      "layout": "\\$5",
+      "layout_id": 3,
+      "reference": "ENB",
+      "reference_id": 8,
+      "pin": false
+    },
+    {
+      "layout": "\\$4",
+      "layout_id": 2,
+      "reference": "ENX",
+      "reference_id": 9,
+      "pin": false
+    },
+    {
+      "layout": "\\$43",
+      "layout_id": 41,
+      "reference": "KNX_DM",
+      "reference_id": 45,
+      "pin": false
+    },
+    {
+      "layout": "\\$41",
+      "layout_id": 39,
+      "reference": "KNX_DP",
+      "reference_id": 28,
+      "pin": false
+    },
+    {
+      "layout": "\\$33",
+      "layout_id": 31,
+      "reference": "KPX_DM",
+      "reference_id": 42,
+      "pin": false
+    },
+    {
+      "layout": "\\$19",
+      "layout_id": 17,
+      "reference": "KPX_DP",
+      "reference_id": 25,
+      "pin": false
+    },
+    {
+      "layout": "\\$35",
+      "layout_id": 33,
+      "reference": "KSNB_DM",
+      "reference_id": 44,
+      "pin": false
+    },
+    {
+      "layout": "\\$21",
+      "layout_id": 19,
+      "reference": "KSNB_DP",
+      "reference_id": 27,
+      "pin": false
+    },
+    {
+      "layout": "\\$34",
+      "layout_id": 32,
+      "reference": "KSN_DM",
+      "reference_id": 43,
+      "pin": false
+    },
+    {
+      "layout": "\\$20",
+      "layout_id": 18,
+      "reference": "KSN_DP",
+      "reference_id": 26,
+      "pin": false
+    },
+    {
+      "layout": "\\$32",
+      "layout_id": 30,
+      "reference": "KSPB_DM",
+      "reference_id": 41,
+      "pin": false
+    },
+    {
+      "layout": "\\$18",
+      "layout_id": 16,
+      "reference": "KSPB_DP",
+      "reference_id": 24,
+      "pin": false
+    },
+    {
+      "layout": "\\$31",
+      "layout_id": 29,
+      "reference": "KSP_DM",
+      "reference_id": 40,
+      "pin": false
+    },
+    {
+      "layout": "\\$17",
+      "layout_id": 15,
+      "reference": "KSP_DP",
+      "reference_id": 23,
+      "pin": false
+    },
+    {
+      "layout": "\\$42",
+      "layout_id": 40,
+      "reference": "NBX_DM",
+      "reference_id": 33,
+      "pin": false
+    },
+    {
+      "layout": "\\$40",
+      "layout_id": 38,
+      "reference": "NBX_DP",
+      "reference_id": 16,
+      "pin": false
+    },
+    {
+      "layout": "\\$26",
+      "layout_id": 24,
+      "reference": "NB_DM",
+      "reference_id": 34,
+      "pin": false
+    },
+    {
+      "layout": "\\$12",
+      "layout_id": 10,
+      "reference": "NB_DP",
+      "reference_id": 17,
+      "pin": false
+    },
+    {
+      "layout": "\\$30",
+      "layout_id": 28,
+      "reference": "NG_DM",
+      "reference_id": 38,
+      "pin": false
+    },
+    {
+      "layout": "\\$16",
+      "layout_id": 14,
+      "reference": "NG_DP",
+      "reference_id": 21,
+      "pin": false
+    },
+    {
+      "layout": "\\$27",
+      "layout_id": 25,
+      "reference": "NONB_DM",
+      "reference_id": 35,
+      "pin": false
+    },
+    {
+      "layout": "\\$13",
+      "layout_id": 11,
+      "reference": "NONB_DP",
+      "reference_id": 18,
+      "pin": false
+    },
+    {
+      "layout": "OE",
+      "layout_id": 35,
+      "reference": "OE",
+      "reference_id": 5,
+      "pin": true
+    },
+    {
+      "layout": "\\$36",
+      "layout_id": 34,
+      "reference": "OUTI_DM",
+      "reference_id": 46,
+      "pin": false
+    },
+    {
+      "layout": "\\$22",
+      "layout_id": 20,
+      "reference": "OUTI_DP",
+      "reference_id": 29,
+      "pin": false
+    },
+    {
+      "layout": "\\$23",
+      "layout_id": 21,
+      "reference": "PAX_DM",
+      "reference_id": 31,
+      "pin": false
+    },
+    {
+      "layout": "\\$9",
+      "layout_id": 7,
+      "reference": "PAX_DP",
+      "reference_id": 14,
+      "pin": false
+    },
+    {
+      "layout": "\\$24",
+      "layout_id": 22,
+      "reference": "PA_DM",
+      "reference_id": 30,
+      "pin": false
+    },
+    {
+      "layout": "\\$10",
+      "layout_id": 8,
+      "reference": "PA_DP",
+      "reference_id": 13,
+      "pin": false
+    },
+    {
+      "layout": "\\$29",
+      "layout_id": 27,
+      "reference": "PG_DM",
+      "reference_id": 36,
+      "pin": false
+    },
+    {
+      "layout": "\\$15",
+      "layout_id": 13,
+      "reference": "PG_DP",
+      "reference_id": 19,
+      "pin": false
+    },
+    {
+      "layout": "\\$25",
+      "layout_id": 23,
+      "reference": "PON_DM",
+      "reference_id": 32,
+      "pin": false
+    },
+    {
+      "layout": "\\$11",
+      "layout_id": 9,
+      "reference": "PON_DP",
+      "reference_id": 15,
+      "pin": false
+    },
+    {
+      "layout": "TXDM",
+      "layout_id": 1,
+      "reference": "TXDM",
+      "reference_id": 3,
+      "pin": true
+    },
+    {
+      "layout": "TXDP",
+      "layout_id": 36,
+      "reference": "TXDP",
+      "reference_id": 2,
+      "pin": true
+    },
+    {
+      "layout": "\\$7",
+      "layout_id": 5,
+      "reference": "VBN",
+      "reference_id": 11,
+      "pin": false
+    },
+    {
+      "layout": "\\$8",
+      "layout_id": 6,
+      "reference": "VBP",
+      "reference_id": 12,
+      "pin": false
+    },
+    {
+      "layout": "VDD",
+      "layout_id": 42,
+      "reference": "VDD",
+      "reference_id": 0,
+      "pin": true
+    },
+    {
+      "layout": "VSS",
+      "layout_id": 46,
+      "reference": "VSS",
+      "reference_id": 1,
+      "pin": true
+    },
+    {
+      "layout": "\\$46",
+      "layout_id": 44,
+      "reference": "XN_DM",
+      "reference_id": 39,
+      "pin": false
+    },
+    {
+      "layout": "\\$45",
+      "layout_id": 43,
+      "reference": "XN_DP",
+      "reference_id": 22,
+      "pin": false
+    },
+    {
+      "layout": "\\$28",
+      "layout_id": 26,
+      "reference": "XP_DM",
+      "reference_id": 37,
+      "pin": false
+    },
+    {
+      "layout": "\\$14",
+      "layout_id": 12,
+      "reference": "XP_DP",
+      "reference_id": 20,
+      "pin": false
+    }
+  ]
+}
