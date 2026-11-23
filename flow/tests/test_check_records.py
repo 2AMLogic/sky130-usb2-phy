@@ -1651,3 +1651,166 @@ def test_pure_helper_reports_directly(tmp_path: Path):
     clean = check_records.Findings()
     check_records.check_netlist_delta_disclosure(metas, clean)
     assert not clean, clean.items
+
+
+# --------------------------------------------------------------------------
+# Chain anomalies -- forked supersede chains and duplicate same-sha tips
+# (issue #442)
+#
+# A double `run_checks.py --record` pass (found via #438) leaves one parent
+# with two successors, each of which gains its own standing tip at the same
+# git sha. The records are append-only and cannot be rewritten, so both
+# shapes stay green; the lint warns instead, and a warning never changes the
+# exit code. Like the Rule 8f tests above, each test clones an
+# otherwise-valid standing record and corrupts only the `record_id` /
+# `supersedes` graph.
+# --------------------------------------------------------------------------
+def chain_record(
+    sandbox: Path, stem: str, supersedes: str | None, corner: str = "tt_025C_1v80"
+) -> str:
+    """Clone a standing sandbox record under a fresh id; return the new id.
+
+    The cloning recipe of `synth_netlist_record` minus the netlist fields: a
+    chain test mints only the `record_id` / `supersedes` edge under test, so
+    the clone must pass every other rule as-is.
+    """
+    records_dir = sandbox / "smoke-utmi_stub" / "records"
+    source = pdn_record(sandbox)
+    meta = read_meta(source)
+    meta["corner"] = corner
+    record_id = f"{stem}-{corner}"
+    meta["record_id"] = record_id
+    meta["supersedes"] = supersedes
+    clone = records_dir / f"{record_id}.md"
+    shutil.copy2(source, clone)
+    write_meta(clone, meta)
+    rebuild_manifest(records_dir)
+    return record_id
+
+
+def chain_warnings(findings: check_records.Findings) -> list[str]:
+    return [message for check, message in findings.warnings if check == "chain"]
+
+
+def test_forked_supersedes_chain_warns(sandbox: Path):
+    parent = chain_record(sandbox, "20261201-000000-aaa1111", None)
+    chain_record(sandbox, "20261202-000000-bbb2222", parent)
+    chain_record(sandbox, "20261203-000000-ccc3333", parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert not findings.items, findings.items
+    assert any(
+        f"forked at {parent}" in message for message in chain_warnings(findings)
+    ), findings.warnings
+    assert any(
+        "bbb2222" in message and "ccc3333" in message
+        for message in chain_warnings(findings)
+    ), findings.warnings
+
+
+def test_duplicate_same_sha_same_corner_tips_warn(sandbox: Path):
+    chain_record(sandbox, "20261201-000000-beef202", None)
+    chain_record(sandbox, "20261201-000930-beef202", None)
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert not findings.items, findings.items
+    assert any(
+        "share git sha beef202" in message and "tt_025C_1v80" in message
+        for message in chain_warnings(findings)
+    ), findings.warnings
+
+
+def test_distinct_corners_at_one_sha_do_not_warn(sandbox: Path):
+    """One digital mint pass legitimately records every corner at one sha."""
+    chain_record(sandbox, "20261201-000000-cafe404", None, corner="tt_025C_1v80")
+    chain_record(sandbox, "20261201-000930-cafe404", None, corner="ff_n40C_1v95")
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert not findings.warnings, findings.warnings
+
+
+def test_linear_supersedes_chain_does_not_warn(sandbox: Path):
+    first = chain_record(sandbox, "20261201-000000-aaa1111", None)
+    second = chain_record(sandbox, "20261202-000000-bbb2222", first)
+    chain_record(sandbox, "20261203-000000-ccc3333", second)
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert not findings.warnings, findings.warnings
+
+
+def test_same_sha_re_mint_chain_does_not_warn(sandbox: Path):
+    """A record repaired at an unmoved HEAD supersedes its own sha: one tip."""
+    first = chain_record(sandbox, "20261201-000000-aaa1111", None)
+    chain_record(sandbox, "20261201-000930-aaa1111", first)
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert not findings.warnings, findings.warnings
+
+
+def test_chain_anomalies_warn_but_never_fail(sandbox: Path):
+    """The exact #438 shape: fork + duplicate tips, still exit 0."""
+    parent = chain_record(sandbox, "20261201-000000-aaa1111", None)
+    chain_record(sandbox, "20261202-000000-bbb2222", parent)
+    chain_record(sandbox, "20261203-000000-bbb2222", parent)
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert not findings.items, findings.items
+    messages = chain_warnings(findings)
+    assert any("forked" in message for message in messages), findings.warnings
+    assert any(
+        "share git sha bbb2222" in message for message in messages
+    ), findings.warnings
+
+
+def test_single_absent_supersedes_target_does_not_warn(sandbox: Path):
+    chain_record(
+        sandbox, "20261201-000000-bbb2222", "20250101-000000-aaaaaaa-tt_025C_1v80"
+    )
+
+    code, findings = run_lint(sandbox)
+    assert code == 0, findings.items
+    assert not findings.warnings, findings.warnings
+
+
+def test_find_chain_anomalies_is_pure_over_parsed_metas(tmp_path: Path):
+    def record(record_id: str, supersedes: str | None) -> tuple[Path, dict]:
+        path = tmp_path / f"{record_id}.md"
+        return (path, {"record_id": record_id, "supersedes": supersedes})
+
+    parent = "20261201-000000-aaa1111-tt_025C_1v80"
+    forked = [
+        record(parent, None),
+        record("20261202-000000-bbb2222-tt_025C_1v80", parent),
+        record("20261203-000000-ccc3333-tt_025C_1v80", parent),
+        record("20261204-000000-ddddddd-tt_025C_1v80", "   "),
+        record("20261205-000000-eeeeeee-tt_025C_1v80", None),
+    ]
+    messages = check_records.find_chain_anomalies(forked)
+    assert len(messages) == 1, messages
+    assert parent in messages[0], messages
+    assert "bbb2222" in messages[0] and "ccc3333" in messages[0]
+
+    dupes = [
+        record("20261201-000000-beef202-tt_025C_1v80", None),
+        record("20261201-000930-beef202-tt_025C_1v80", None),
+        record("20261201-001000-beef202-ff_n40C_1v95", None),
+    ]
+    messages = check_records.find_chain_anomalies(dupes)
+    assert len(messages) == 1, messages
+    assert "beef202" in messages[0] and "tt_025C_1v80" in messages[0]
+    assert "ff_n40C_1v95" not in messages[0]
+
+    first = "20261201-000000-aaa1111-tt_025C_1v80"
+    second = "20261202-000000-bbb2222-tt_025C_1v80"
+    linear = [
+        record(first, None),
+        record(second, first),
+        record("20261203-000000-ccc3333-tt_025C_1v80", second),
+    ]
+    assert check_records.find_chain_anomalies(linear) == []
