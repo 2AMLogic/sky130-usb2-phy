@@ -5,7 +5,7 @@ sim/se-receiver-dm-pex/run.py (two 238-line copies) onto one shared implementati
 issue #425 moved that implementation to sim/harness/pex_runner.py and put the two
 remaining leaf runners on it -- sim/diff-receiver-pex/run.py, which also gave up
 its count-only inline equivalence gate for the shared exact-pair gate, and
-sim/dplus-pullup-pex/run.py. Each entry point is now a thin `Bench` config (plus,
+sim/dplus-pullup-pex/run.py. Each entry point supplies thin `Bench` configs (plus,
 for the pull-up, its own extracted-leg trim evaluator). What must not regress:
 each entry point still selects its OWN layout, testbench and reference record,
 stages and freezes its snapshot beneath its OWN bench directory, composes the
@@ -41,7 +41,7 @@ from harness import pex_equivalence, pex_runner, runner  # noqa: E402
 
 
 def load_entry(bench):
-    """Load one bench's run.py as a module (four files share the name `run`)."""
+    """Load one leaf's run.py as a module."""
     spec = importlib.util.spec_from_file_location(f"{bench.replace('-', '_')}_run",
                                                   SIM / bench / "run.py")
     mod = importlib.util.module_from_spec(spec)
@@ -50,29 +50,39 @@ def load_entry(bench):
 
 
 ENTRY = {bench: load_entry(bench) for bench in (
-    "diff-receiver-pex", "se-receiver-dp-pex", "se-receiver-dm-pex", "dplus-pullup-pex")}
+    "diff-receiver-pex", "se-receiver-dp-pex", "se-receiver-dm-pex", "dplus-pullup-pex",
+    "diff-driver-pex")}
+DRIVER = ENTRY["diff-driver-pex"]
+CONFIGS = {name: mod.BENCH for name, mod in ENTRY.items() if mod is not DRIVER}
+CONFIGS.update({f"{cfg.bench}-{cfg.variant}": cfg for cfg in DRIVER.BENCHES})
 RID = "20261201-120000-deadbee"  # frozen clock + patched head_sha; never a committed run id
 TT = "tt/3.300V/27C"
 
 # Per bench, the committed facts each entry point must keep (sim/README.md): the
-# leaf, the binding corner it requests beside tt, the equivalence rows (2 corners
-# x its measurements) and a corner of its committed reference it does NOT request
-# -- lifting that corner's rows into the delta is what a count-only gate passed.
+# leaf, the binding corners requested beside tt, the equivalence row count and
+# one unrequested reference corner whose rows passed a count-only gate.
 FACTS = {
-    "diff-receiver-pex": {"leaf": "differential_receiver", "binding": "sf/3.000V/100C",
+    "diff-receiver-pex": {"leaf": "differential_receiver", "binding": ["sf/3.000V/100C"],
                           "rows": 36, "unrequested": "ff/3.000V/-40C"},
-    "se-receiver-dp-pex": {"leaf": "se_receiver_dp", "binding": "ff_lh/3.000V/100C",
+    "se-receiver-dp-pex": {"leaf": "se_receiver_dp", "binding": ["ff_lh/3.000V/100C"],
                            "rows": 14, "unrequested": "sf/3.000V/100C"},
-    "se-receiver-dm-pex": {"leaf": "se_receiver_dm", "binding": "ff_lh/3.000V/100C",
+    "se-receiver-dm-pex": {"leaf": "se_receiver_dm", "binding": ["ff_lh/3.000V/100C"],
                            "rows": 14, "unrequested": "sf/3.000V/100C"},
-    "dplus-pullup-pex": {"leaf": "dplus_pullup", "binding": "fs_hl/3.000V/100C",
+    "dplus-pullup-pex": {"leaf": "dplus_pullup", "binding": ["fs_hl/3.000V/100C"],
                          "rows": 52, "unrequested": "sf/3.000V/100C"},
+    "diff-driver-pex-static": {"leaf": "differential_driver",
+                               "binding": ["fs/3.600V/-40C", "sf/3.600V/-40C"],
+                               "rows": 171, "unrequested": "tt/3.000V/-40C"},
+    "diff-driver-pex-sq": {"leaf": "differential_driver",
+                           "binding": ["fs/3.600V/100C", "sf/3.600V/-40C", "fs/3.000V/100C"],
+                           "rows": 204, "unrequested": "tt/3.000V/-40C"},
 }
 # the benches whose committed run already froze the shared composition (deck +
 # inlined includes) and must keep doing so byte-for-byte. diff-receiver-pex's
 # committed run (20261115-051001) predates that convention (issue #315) and froze
 # the bare deck, so for it only the composition a new run writes is pinned.
-COMPOSED = ("se-receiver-dp-pex", "se-receiver-dm-pex", "dplus-pullup-pex")
+COMPOSED = ("se-receiver-dp-pex", "se-receiver-dm-pex", "dplus-pullup-pex",
+            "diff-driver-pex-static", "diff-driver-pex-sq")
 # grading checks per run (per corner: 8 receiver checks, 2 voff bounds + 1 trim)
 CHECKS = {"se-receiver-dp-pex": 16, "se-receiver-dm-pex": 16, "dplus-pullup-pex": 6}
 # each graded bench's own end-of-run lines over a passing grading (Bench.summarize);
@@ -86,7 +96,7 @@ SUMMARY = {
 
 
 def cfg_of(bench):
-    return ENTRY[bench].BENCH
+    return CONFIGS[bench]
 
 
 def reference_of(cfg):
@@ -122,7 +132,12 @@ def envelope_from_reference(cfg, *, corners=None, extracted_tweak=None, schemati
             "passed": len(delta), "failed": 0, "errored": 0}
 
 
-def fake_klt(monkeypatch, envelope):
+def cfg_measure(cfg):
+    """One measurement name of this bench."""
+    return json.loads(cfg.tb().read_text())["measurements"][0]["name"]
+
+
+def fake_klt(monkeypatch, envelope, returncode=0):
     """Replace every subprocess the shared runner launches: `klt pex` writes the
     fixture envelope to the request's --envelope-out (or answers a dry-run); git
     answers a fixed short sha. Returns the recorded klt command lines."""
@@ -138,7 +153,7 @@ def fake_klt(monkeypatch, envelope):
             out = Path(cmd[cmd.index("--envelope-out") + 1])
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(json.dumps(envelope))
-        return types.SimpleNamespace(returncode=0, stdout=stdout, stderr="")
+        return types.SimpleNamespace(returncode=returncode, stdout=stdout, stderr="")
 
     monkeypatch.setattr(pex_runner.subprocess, "run", run)
     return calls
@@ -168,7 +183,7 @@ def scratch_repo(tmp_path, cfg):
 
 
 def committed_snapshot(cfg):
-    snaps = sorted((cfg.bench_dir() / "netlist-snapshots").glob("*.spice"))
+    snaps = sorted((cfg.bench_dir() / "netlist-snapshots").glob(f"*{cfg.suffix}.spice"))
     assert len(snaps) == 1  # one committed run per bench today
     return snaps[0]
 
@@ -180,38 +195,47 @@ def composed_snapshot(cfg, repo):
     return runner.snapshot_body(deck.parent, cfg.deck, pex_runner.deck_includes(deck))
 
 
+def invoke(cfg, argv, repo):
+    if cfg.variant:
+        return DRIVER.main(DRIVER.BENCHES, ["--bench", cfg.variant, *argv], repo=repo)
+    return ENTRY[cfg.bench].main(cfg, argv, repo=repo)
+
+
 def run_main(cfg, monkeypatch, tmp_path, envelope):
     calls = fake_klt(monkeypatch, envelope)
     freeze_clock(monkeypatch)
     scratch = scratch_repo(tmp_path, cfg)
-    rc = pex_runner.main(cfg, ["--stage-dir", str(tmp_path / "work")], repo=scratch)
-    return calls, scratch, tmp_path / "work" / RID, rc
+    rc = invoke(cfg, ["--stage-dir", str(tmp_path / "work")], repo=scratch)
+    return calls, scratch, tmp_path / "work" / (RID + cfg.suffix), rc
 
 
-@pytest.mark.parametrize("bench", list(ENTRY))
+@pytest.mark.parametrize("bench", list(FACTS))
 def test_each_entry_point_owns_its_leaf_facts(bench):
-    """Four commands, four leaves: every per-bench fact matches the committed one
+    """Every per-bench fact matches the committed one
     and every referenced file exists in the tracked tree at its leaf-named path."""
     cfg, facts = cfg_of(bench), FACTS[bench]
-    assert cfg.bench == bench and cfg.leaf == facts["leaf"]
+    assert cfg.bench + cfg.suffix == bench and cfg.leaf == facts["leaf"]
     assert cfg.gds().is_file() and cfg.leaf in str(cfg.gds())
     assert cfg.tb().is_file() and cfg.deck_path().is_file() and cfg.shim_path().is_file()
-    assert cfg.reference_report.is_file() and bench.replace("-pex", "") in str(cfg.reference_report)
-    assert cfg.bench_dir(Path("x" * 60)) == Path("x" * 60) / "sim" / bench
+    reference = {"static": "driver-static", "sq": "driver-signal-quality"}.get(
+        cfg.variant, bench.removesuffix("-pex"))
+    assert cfg.reference_report.is_file()
+    assert cfg.reference_report.relative_to(SIM).parts[0].startswith(reference)
+    assert cfg.bench_dir(Path("scratch")) == Path("scratch/sim") / cfg.bench
     requested = list(dict.fromkeys(cid for cid, _ in pex_equivalence.expected_pairs(
         json.loads(cfg.tb().read_text()))))
-    assert requested == [TT, facts["binding"]] and facts["unrequested"] not in requested
+    assert requested == [TT, *facts["binding"]] and facts["unrequested"] not in requested
 
 
-def test_the_four_benches_are_four_distinct_leaves():
-    benches = [cfg_of(bench) for bench in ENTRY]
-    assert len({p.leaf for p in benches}) == len({p.bench for p in benches}) == 4
-    assert len({p.deck for p in benches}) == len({p.shim for p in benches}) == 4
-    assert len({p.reference_report for p in benches}) == 4
+def test_bench_configs_cover_five_distinct_leaves():
+    benches = list(CONFIGS.values())
+    assert len({p.leaf for p in benches}) == len({p.bench for p in benches}) == 5
+    assert len({p.shim for p in benches}) == 5
+    assert len({p.deck for p in benches}) == len({p.reference_report for p in benches}) == 6
     assert {p.polarity for p in benches if p.polarity} == {"D+", "D-"}
-    # only the differential receiver grades nothing (equivalence.json alone); the
+    # the differential receiver and driver grade nothing (equivalence.json alone); the
     # receivers share one evaluator, the pull-up brings its own
-    assert [p.bench for p in benches if p.grade_extracted is None] == ["diff-receiver-pex"]
+    assert {p.bench for p in benches if p.grade_extracted is None} == {"diff-receiver-pex", "diff-driver-pex"}
     assert cfg_of("se-receiver-dp-pex").grade_extracted is cfg_of("se-receiver-dm-pex").grade_extracted
     assert cfg_of("dplus-pullup-pex").grade_extracted is not cfg_of("se-receiver-dp-pex").grade_extracted
     assert all((p.grade_extracted is None) == (p.summarize is None) for p in benches)
@@ -231,7 +255,7 @@ def test_no_entry_point_keeps_a_private_copy_of_the_flow(bench):
     assert "subprocess" not in source and "argparse" not in source
 
 
-@pytest.mark.parametrize("bench", list(ENTRY))
+@pytest.mark.parametrize("bench", list(FACTS))
 def test_matching_leg_grades_and_freezes_under_the_own_bench(tmp_path, monkeypatch, capsys, bench):
     """The happy path per entry point: own GDS and testbench in the klt command, own
     reference record in equivalence.json, grading exactly where the bench has an
@@ -247,8 +271,8 @@ def test_matching_leg_grades_and_freezes_under_the_own_bench(tmp_path, monkeypat
     assert cmd[cmd.index("--top"):cmd.index("--top") + 2] == ["--top", cfg.leaf]
     joined = " ".join(cmd)
     for other, of in FACTS.items():
-        if other != bench:
-            assert f"{of['leaf']}/{of['leaf']}.gds" not in joined and f"sim/{other}/" not in joined
+        if of["leaf"] != cfg.leaf:
+            assert f"{of['leaf']}/{of['leaf']}.gds" not in joined and f"sim/{cfg_of(other).bench}/" not in joined
     # own committed reference record
     equiv = json.loads((stage / "equivalence.json").read_text())
     assert equiv["equivalent"] and len(equiv["rows"]) == facts["rows"]
@@ -260,15 +284,15 @@ def test_matching_leg_grades_and_freezes_under_the_own_bench(tmp_path, monkeypat
         grading = json.loads((stage / "grading.json").read_text())
         assert grading["all_pass"] and grading["leaf"] == cfg.leaf and grading["leg"] == "extracted"
         assert sum(len(c["checks"]) for c in grading["corners"].values()) == CHECKS[bench]
-        assert set(grading["corners"]) == {TT, facts["binding"]}
+        assert set(grading["corners"]) == {TT, *facts["binding"]}
         assert all(line in out for line in SUMMARY[bench])
     else:
         assert not (stage / "grading.json").exists()
         assert "grading" not in out and "trim" not in out
     assert f"equivalence vs {equiv['reference_record']}: OK ({facts['rows']} rows)" in out
-    assert f"store with: python3 sim/run_store_evidence.py {bench} {stage}" in out
+    assert f"store with: python3 sim/run_store_evidence.py {cfg.bench} {stage}" in out
     # staged bench inputs and the snapshot land in the own bench directory
-    snap = scratch / "sim" / bench / "netlist-snapshots" / f"{RID}.spice"
+    snap = cfg.bench_dir(scratch) / "netlist-snapshots" / f"{RID}{cfg.suffix}.spice"
     assert snap.read_bytes() == composed_snapshot(cfg, scratch)
     if bench in COMPOSED:
         assert snap.read_bytes() == committed_snapshot(cfg).read_bytes()
@@ -276,7 +300,7 @@ def test_matching_leg_grades_and_freezes_under_the_own_bench(tmp_path, monkeypat
         assert (stage / f.name).read_bytes() == f.read_bytes()
 
 
-@pytest.mark.parametrize("bench", list(ENTRY))
+@pytest.mark.parametrize("bench", list(FACTS))
 def test_mismatching_schematic_leg_exits_3(tmp_path, monkeypatch, capsys, bench):
     cfg, facts = cfg_of(bench), FACTS[bench]
     name = measurements_of(cfg)[0]
@@ -297,7 +321,7 @@ def test_mismatching_schematic_leg_exits_3(tmp_path, monkeypatch, capsys, bench)
         assert json.loads((stage / "grading.json").read_text())["all_pass"]
 
 
-@pytest.mark.parametrize("bench", list(ENTRY))
+@pytest.mark.parametrize("bench", list(FACTS))
 def test_rows_lifted_from_an_unrequested_corner_exit_3(tmp_path, monkeypatch, capsys, bench):
     """The count-only gap #425 closed: a passing envelope with the right number of
     rows and the committed reference value in each, but the requested binding
@@ -305,20 +329,77 @@ def test_rows_lifted_from_an_unrequested_corner_exit_3(tmp_path, monkeypatch, ca
     sim/diff-receiver-pex's inline gate exited 0 on this shape; every entry point
     must now exit 3."""
     cfg, facts = cfg_of(bench), FACTS[bench]
-    env = envelope_from_reference(cfg, corners=[TT, facts["unrequested"]])
-    n_meas = facts["rows"] // 2
+    env = envelope_from_reference(cfg, corners=[TT, *facts["binding"][:-1], facts["unrequested"]])
+    n_meas = len(measurements_of(cfg))
     assert len(env["delta"]) == facts["rows"] and env["status"] == "pass"  # what a count-only gate checks
     _, _, stage, rc = run_main(cfg, monkeypatch, tmp_path / bench, env)
     assert rc == 3
     equiv = json.loads((stage / "equivalence.json").read_text())
     assert not equiv["equivalent"]
     verdicts = [r["verdict"] for r in equiv["rows"]]
-    # three groups of n_meas rows: the unrequested rows (rejected), the intact tt
-    # rows (ok) and one failure per requested pair now absent from the envelope
+    # Each substituted row produces one unexpected and one missing pair.
     assert sum(v.startswith("missing delta row") for v in verdicts) == n_meas
     assert sum(v.startswith("delta row is not a requested") for v in verdicts) == n_meas
-    assert verdicts.count("ok") == n_meas and len(verdicts) == 3 * n_meas
-    assert f"{2 * n_meas} MISMATCH(ES) ({3 * n_meas} rows)" in capsys.readouterr().out
+    assert verdicts.count("ok") == facts["rows"] - n_meas
+    assert f"{2 * n_meas} MISMATCH(ES) ({facts['rows'] + n_meas} rows)" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize(("results", "expected"), [((2, 3), 2), ((3, 4), 3), ((0, 4), 4)])
+@pytest.mark.parametrize("argv", [[], ["--bench", "both"]])
+def test_both_driver_benches_run_and_return_the_first_error(monkeypatch, argv, results, expected):
+    calls = []
+    outcomes = iter(results)
+
+    def run_bench(cfg, args, repo):
+        calls.append(cfg.variant)
+        return next(outcomes)
+
+    monkeypatch.setattr(pex_runner, "run_bench", run_bench)
+    assert DRIVER.main(DRIVER.BENCHES, argv) == expected
+    assert calls == ["static", "sq"]
+
+
+@pytest.mark.parametrize("cfg", DRIVER.BENCHES, ids=lambda cfg: cfg.variant)
+def test_driver_stages_negative_extracted_evidence(tmp_path, monkeypatch, cfg):
+    # klt returns a nonzero exit and a top-level status of fail (static) / error (sq)
+    # for failing extracted rows, as both committed runs recorded. The retained
+    # envelope is staged and only the schematic leg decides the exit code.
+    status = {"static": "fail", "sq": "error"}[cfg.variant]
+    env = envelope_from_reference(cfg)
+    env["delta"][0].update(status=status, extracted_value=None)
+    env.update(status=status, passed=len(env["delta"]) - 1, failed=int(status == "fail"),
+               errored=int(status == "error"))
+    fake_klt(monkeypatch, env, returncode=3 if status == "fail" else 4)
+    freeze_clock(monkeypatch)
+    scratch = scratch_repo(tmp_path, cfg)
+    stage = tmp_path / "work" / f"{RID}{cfg.suffix}"
+    assert invoke(cfg, ["--stage-dir", str(stage.parent)], scratch) == 0
+    assert json.loads((stage / "pex-envelope.json").read_text()) == env
+    equivalence = json.loads((stage / "equivalence.json").read_text())
+    assert equivalence["equivalent"]
+    assert all(r["verdict"] == "ok" for r in equivalence["rows"])
+
+
+@pytest.mark.parametrize("cfg", DRIVER.BENCHES, ids=lambda cfg: cfg.variant)
+def test_driver_schematic_mismatch_still_exits_3_under_a_failing_envelope(
+        tmp_path, monkeypatch, cfg):
+    env = envelope_from_reference(
+        cfg, schematic_tweak=((TT, cfg_measure(cfg)), 1e-3))
+    env.update(status="fail", failed=1)
+    fake_klt(monkeypatch, env, returncode=3)
+    freeze_clock(monkeypatch)
+    scratch = scratch_repo(tmp_path, cfg)
+    assert invoke(cfg, ["--stage-dir", str(tmp_path / "work")], scratch) == 3
+
+
+@pytest.mark.parametrize("cfg", [c for n, c in CONFIGS.items() if c not in DRIVER.BENCHES],
+                         ids=lambda cfg: cfg.bench)
+def test_non_driver_benches_still_require_a_passing_envelope_status(cfg):
+    env = envelope_from_reference(cfg)
+    env["status"] = "fail"
+    tb = json.loads(cfg.tb().read_text())
+    ok, rows = pex_equivalence.check_equivalence(env, tb, reference_of(cfg))
+    assert not ok and rows[0]["verdict"] == "envelope status 'fail' != 'pass'"
 
 
 @pytest.mark.parametrize("bench", ["se-receiver-dp-pex", "se-receiver-dm-pex"])
@@ -349,7 +430,7 @@ def test_pullup_trim_grading_pass_or_fail_never_changes_the_exit_code(
     halving every tt code voltage roughly doubles R_eff, so no code lands in the
     window (FAIL, best code reported); no tt code voltage at all is a FAIL that
     lists the problems instead of a best code."""
-    cfg, binding = cfg_of("dplus-pullup-pex"), FACTS["dplus-pullup-pex"]["binding"]
+    cfg, binding = cfg_of("dplus-pullup-pex"), FACTS["dplus-pullup-pex"]["binding"][0]
     codes = {f"vdp_c{k:02d}_v" for k in range(16)}
 
     def tt_code_rows(delta):
@@ -414,7 +495,7 @@ def test_pullup_trim_grading_pass_or_fail_never_changes_the_exit_code(
     assert f"extracted trim at {TT}: FAIL {corner['trim_problems']}" in out
 
 
-@pytest.mark.parametrize("bench", list(ENTRY))
+@pytest.mark.parametrize("bench", list(FACTS))
 def test_second_write_of_the_same_run_id_is_refused(tmp_path, monkeypatch, bench):
     """Append-only, both ways: the direct snapshot writer raises, and a re-run of
     the same run id through the entry point surfaces it as exit 4 -- the refused
@@ -422,36 +503,36 @@ def test_second_write_of_the_same_run_id_is_refused(tmp_path, monkeypatch, bench
     cfg = cfg_of(bench)
     scratch = scratch_repo(tmp_path, cfg)
     composed = composed_snapshot(cfg, scratch)
-    snap = pex_runner.write_snapshot(cfg, RID, scratch)
-    assert snap == scratch / "sim" / bench / "netlist-snapshots" / f"{RID}.spice"
+    snap = pex_runner.write_snapshot(cfg, RID + cfg.suffix, scratch)
+    assert snap == cfg.bench_dir(scratch) / "netlist-snapshots" / f"{RID}{cfg.suffix}.spice"
     assert snap.read_bytes() == composed
     with pytest.raises(FileExistsError, match="append-only"):
-        pex_runner.write_snapshot(cfg, RID, scratch)
+        pex_runner.write_snapshot(cfg, RID + cfg.suffix, scratch)
     assert snap.read_bytes() == composed
     fake_klt(monkeypatch, envelope_from_reference(cfg))
     freeze_clock(monkeypatch)
-    rc = pex_runner.main(cfg, ["--stage-dir", str(tmp_path / "work")], repo=scratch)
+    rc = invoke(cfg, ["--stage-dir", str(tmp_path / "work")], repo=scratch)
     assert rc == 4
     assert snap.read_bytes() == composed
 
 
-@pytest.mark.parametrize("bench", list(ENTRY))
+@pytest.mark.parametrize("bench", list(FACTS))
 def test_dry_run_is_a_pre_flight_without_extraction(tmp_path, monkeypatch, capsys, bench):
     cfg = cfg_of(bench)
     calls = fake_klt(monkeypatch, None)
     freeze_clock(monkeypatch)
     scratch = scratch_repo(tmp_path, cfg)
-    rc = pex_runner.main(cfg, ["--dry-run", "--stage-dir", str(tmp_path / "work")], repo=scratch)
+    rc = invoke(cfg, ["--dry-run", "--stage-dir", str(tmp_path / "work")], repo=scratch)
     assert rc == 0
     cmd = calls[-1]
     assert "--dry-run" in cmd and "-o" not in cmd and "--envelope-out" not in cmd
     assert str(cfg.gds(scratch)) in cmd and cmd[cmd.index("--top") + 1] == cfg.leaf
-    assert (tmp_path / "work/dry-run/dry-run-stdout.json").is_file()
+    assert (tmp_path / "work" / f"dry-run{cfg.suffix}" / "dry-run-stdout.json").is_file()
     assert "dry-run: status=accepted" in capsys.readouterr().out
-    assert not (scratch / "sim" / bench / "netlist-snapshots").exists()
+    assert not (cfg.bench_dir(scratch) / "netlist-snapshots").exists()
 
 
-@pytest.mark.parametrize("bench", list(ENTRY))
+@pytest.mark.parametrize("bench", list(FACTS))
 def test_klt_pex_failure_keeps_its_evidence_and_exits_2(tmp_path, monkeypatch, bench):
     """A refused klt pex call (non-zero exit, no envelope) keeps stdout/stderr under
     the stage dir as committed evidence and exits 2."""
@@ -465,9 +546,18 @@ def test_klt_pex_failure_keeps_its_evidence_and_exits_2(tmp_path, monkeypatch, b
 
     monkeypatch.setattr(pex_runner.subprocess, "run", run)
     scratch = scratch_repo(tmp_path, cfg)
-    rc = pex_runner.main(cfg, ["--stage-dir", str(tmp_path / "work")], repo=scratch)
-    stage = tmp_path / "work" / RID
+    rc = invoke(cfg, ["--stage-dir", str(tmp_path / "work")], repo=scratch)
+    stage = tmp_path / "work" / (RID + cfg.suffix)
     assert rc == 2
     assert (stage / "pex-stderr.txt").read_text() == "boom"
     assert (stage / "command.txt").is_file()
-    assert not (scratch / "sim" / bench / "netlist-snapshots").exists()
+    assert not (cfg.bench_dir(scratch) / "netlist-snapshots").exists()
+
+
+@pytest.mark.parametrize("variant", ["static", "sq"])
+def test_single_driver_bench_selection_runs_only_that_bench(monkeypatch, variant):
+    calls = []
+    monkeypatch.setattr(pex_runner, "run_bench",
+                        lambda cfg, args, repo: calls.append(cfg.variant) or 0)
+    assert DRIVER.main(DRIVER.BENCHES, ["--bench", variant]) == 0
+    assert calls == [variant]
