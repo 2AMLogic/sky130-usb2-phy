@@ -7,6 +7,7 @@ imported there, and these monitors need `cocotb`.
 
 import cocotb
 from cocotb.triggers import ReadOnly, RisingEdge
+from cocotb.utils import get_sim_time
 
 
 class Monitor:
@@ -34,6 +35,12 @@ class RxMonitor(Monitor):
         self.bytes = []
         self.saw_error = False
         self.active_trace = []  # one bool per clk_utmi edge
+        # Sim time (ns) of each active_trace sample, parallel to it, so a
+        # test can reason about *when* RxActive changed relative to the
+        # driven stimulus rather than only about the trace's own shape
+        # (issue #441: the EOP-boundary check needs an independent time
+        # reference; the trace alone cannot provide one).
+        self.sample_times_ns = []
 
     @property
     def saw_active(self):
@@ -48,3 +55,4 @@ class RxMonitor(Monitor):
             if self.dut.RxError.value:
                 self.saw_error = True
             self.active_trace.append(bool(self.dut.RxActive.value))
+            self.sample_times_ns.append(get_sim_time(units="ns"))

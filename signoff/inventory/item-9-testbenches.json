@@ -88,7 +88,7 @@
       "members": [
         {
           "path": "verification/test_usb_rx.py",
-          "sha256": "sha256:22b6af091cabae9f533410f0ab68fb2d80cfd1465e3415fb23ac15845b77da36",
+          "sha256": "sha256:b38584703747a8a0cf4feac3181f1b7bef3c55e8a6199e2dd8832096b4c61008",
           "role": "testbench"
         },
         {

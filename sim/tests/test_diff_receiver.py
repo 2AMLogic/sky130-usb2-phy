@@ -7,16 +7,14 @@ the smoke record prose stays unchanged. They say nothing about the circuit itsel
 that is the recorded 45-corner run.
 """
 
-import copy
 import json
 import re
-import shutil
 from pathlib import Path
 
 import pytest
 
 from conftest import meas, render, render_manifest, synthetic_report
-from harness import evidence_lint as lint, matrix as mx, results as rs, runner
+from harness import matrix as mx, results as rs, runner
 
 SIM = Path(__file__).resolve().parents[1]
 REPO = SIM.parent
@@ -39,10 +37,10 @@ def good_values(vdd):
     return out
 
 
-def report(tamper=None):
+def report(tamper=None, matrix=MATRIX):
     def values_for(p, t, v):
         return {n: x * (-1.0 if n.startswith("isup") else 1.0) for n, x in good_values(v).items()}
-    return synthetic_report(MATRIX, values_for, tamper=tamper)
+    return synthetic_report(matrix, values_for, tamper=tamper)
 
 
 def problems_of(tamper=None):
@@ -181,23 +179,8 @@ RES = mx.load_by_id(mx.RESISTOR_SETS_ID)
 VTB = rs.resolve_tb(TB, "resistor-sets")
 
 
-def rreport(tamper=None):
-    rep = report()
-    rep["corners"] = []
-    for p, t, v in RES.points():
-        c = json.loads(json.dumps(report()["corners"][0]))
-        c.update(corner_id=mx.corner_id(p, t, v), process=p, supply_v={"vsup": v}, temperature_c=float(t))
-        for m in c["measurements"]:
-            if m["name"].startswith(("rxd_pos", "rxd_p200")):
-                m["value"] = v
-        rep["corners"].append(c)
-    if tamper:
-        tamper(rep)
-    return rep
-
-
 def rproblems(tamper=None):
-    return rs.evaluate(rreport(tamper), RES.points(), VTB)[1]
+    return rs.evaluate(report(tamper, matrix=RES), RES.points(), VTB)[1]
 
 
 def test_variant_keeps_checks_stimulus_and_selects_225_matrix():
@@ -216,7 +199,7 @@ def test_variant_keeps_checks_stimulus_and_selects_225_matrix():
 
 
 def test_good_225_grid_passes_all_675_combinations():
-    results, probs = rs.evaluate(rreport(), RES.points(), VTB)
+    results, probs = rs.evaluate(report(matrix=RES), RES.points(), VTB)
     assert probs == [] and len(results) == 225
     assert 225 * len(CMS) == 675
 

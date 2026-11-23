@@ -205,7 +205,14 @@ What it covers (mapping to issue #13's acceptance criteria):
   (`test_bit_stuff_violation_asserts_rxerror`, paired with a negative
   control, `test_no_bit_stuff_violation_on_clean_all_ones`).
 - **EOP detection / `RxActive` deassertion at the correct byte boundary**
-  (`test_eop_deasserts_rxactive_at_correct_boundary`).
+  (`test_eop_deasserts_rxactive_at_correct_boundary`, paired with negative
+  controls `test_eop_window_check_rejects_dropped_rxactive`): `RxActive`
+  must form exactly one contiguous interval whose observed fall lands in
+  the window bounded by the driven EOP's SE0-to-J transition and the EOP
+  end plus the receive path's documented synchronization latency — a
+  boundary independent of the monitored trace, which replaces the circular
+  trailing-sum check issue #441 found there (a mid-packet drop and an
+  early final drop both fail the check even with correct bytes).
 - **`LineState` matches the driven sequence** (`test_linestate_matches_driven_sequence`,
   using a latency-agnostic de-duplicated-subsequence comparison — see the
   test file's module docstring for why an absolute-timestamp comparison
