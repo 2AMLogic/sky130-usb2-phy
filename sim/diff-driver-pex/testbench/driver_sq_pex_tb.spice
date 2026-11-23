@@ -1,0 +1,63 @@
+* driver-sq-pex -- sky130 FS line driver into the 50 pF test load, post-layout (klt pex)
+*
+* Post-layout counterpart of sim/driver-signal-quality: identical circuit body,
+* measurements and checks (the decision-record 0008 crossover load: 50 pF per line, no
+* resistor). The single .include below names the schematic-leg DUT shim
+* (differential_driver_pex_dut.spice: design/netlist/differential_driver.spice with its
+* .subckt declaration line reordered to the extracted header's pin order) -- the swap
+* point klt pex re-points at the extracted netlist for the extracted-side leg. Every
+* differential_driver instance line's nets are reordered to the same pin sequence (same
+* net-to-pin mapping on both legs). The request supplies the .lib corner section, .temp
+* and the supply value of vsup (3.0 / 3.3 / 3.6 V here).
+
+.include "differential_driver_pex_dut.spice"
+
+
+vsup vdd 0 dc 3.3
+ehalf mid 0 vol='v(vdd)/2'
+
+* ---- xa: signal quality ----
+vctl ctl 0 pulse(0 1 100n 0.5n 0.5n 100n 400n)
+btxdp txdp 0 v='v(vdd)*v(ctl)'
+btxdm txdm 0 v='v(vdd)*(1-v(ctl))'
+xa dm dp vdd vdd txdm txdp vdd 0 differential_driver
+cdp dp 0 50p
+cdm dm 0 50p
+* line voltages as a fraction of the corner supply (10 % / 90 % thresholds follow the supply)
+bdpn dpn 0 v='v(dp)/v(vdd)'
+bdmn dmn 0 v='v(dm)/v(vdd)'
+* overshoot above VDD and undershoot below VSS (engineering data)
+bovp ovp 0 v='v(dp)-v(vdd)'
+bovm ovm 0 v='v(dm)-v(vdd)'
+bunp unp 0 v='-v(dp)'
+bunm unm 0 v='-v(dm)'
+* slope in V/ns (ddt in its own B source; a ddt() inside a conditional expression evaluates to 0),
+* masked to the 10 %..90 % band of the line's own edge: outside the band the mask is +1 for the
+* rising and -1 for the falling window, so MIN/MAX over an edge window sees only in-band slope
+bddp ddp 0 v='ddt(v(dp))*1e-9'
+bddm ddm 0 v='ddt(v(dm))*1e-9'
+bsrp srp 0 v='(v(dpn) > 0.1 && v(dpn) < 0.9) ? v(ddp) : 1'
+bsfp sfp 0 v='(v(dpn) > 0.1 && v(dpn) < 0.9) ? v(ddp) : -1'
+bsrm srm 0 v='(v(dmn) > 0.1 && v(dmn) < 0.9) ? v(ddm) : 1'
+bsfm sfm 0 v='(v(dmn) > 0.1 && v(dmn) < 0.9) ? v(ddm) : -1'
+
+* ---- xb, xc: enable / disable transitions into a pad forced to VDD/2 ----
+voet oet 0 pulse(0 1 100n 0.5n 0.5n 100n 400n)
+boe oe 0 v='v(vdd)*v(oet)'
+bhi hi 0 v='v(vdd)'
+xb xb_dm xb_dp vdd oe 0 hi vdd 0 differential_driver
+vsbp xb_dp mid 0
+vsbm xb_dm mid 0
+xc xc_dm xc_dp vdd oe hi 0 vdd 0 differential_driver
+vscp xc_dp mid 0
+vscm xc_dm mid 0
+* absolute pad current, and the wrong-polarity part of it (a pad driven high should only source,
+* one driven low only sink; positive current = out of the driver)
+babp abp 0 v='abs(i(vsbp))'
+babm abm 0 v='abs(i(vsbm))'
+bacp acp 0 v='abs(i(vscp))'
+bacm acm 0 v='abs(i(vscm))'
+bwbp wbp 0 v='max(-i(vsbp),0)'
+bwbm wbm 0 v='max(i(vsbm),0)'
+bwcp wcp 0 v='max(i(vscp),0)'
+bwcm wcm 0 v='max(-i(vscm),0)'

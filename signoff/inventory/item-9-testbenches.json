@@ -161,6 +161,40 @@
    ]
   },
   {
+   "id": "diff-driver-pex",
+   "partition": "analog",
+   "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics",
+   "cold_start": "python3 sim/diff-driver-pex/run.py",
+   "cold_start_doc": "sim/README.md",
+   "members": [
+    {
+     "path": "sim/diff-driver-pex/testbench/tb-static.json",
+     "sha256": "sha256:494914ed9bba17ddaa249fefe60c452f57e573b918d1d13ea11f4f4d91533fbf",
+     "role": "klt sim request (static bench, 3 corners: tt_27c_3.30v, fs_-40c_3.60v, sf_-40c_3.60v) driving both klt pex legs"
+    },
+    {
+     "path": "sim/diff-driver-pex/testbench/tb-sq.json",
+     "sha256": "sha256:08daac891c1ac3ffd548f49eaec18636f503853ebefcab41eeb79052346c6f45",
+     "role": "klt sim request (signal-quality bench, 4 corners: tt_27c_3.30v, fs_100c_3.60v, sf_-40c_3.60v, fs_100c_3.00v) driving both klt pex legs"
+    },
+    {
+     "path": "sim/diff-driver-pex/testbench/driver_static_pex_tb.spice",
+     "sha256": "sha256:b216f79a97f3d99ed9830910525de3065521ad1e175d8bf7c57c348026260487",
+     "role": "testbench netlist (static bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+    },
+    {
+     "path": "sim/diff-driver-pex/testbench/driver_sq_pex_tb.spice",
+     "sha256": "sha256:8d6ad3eb60681402eab4b6688a3272ea3435a434a9884fbb59a436d8091ba893",
+     "role": "testbench netlist (signal-quality bench body with the in-deck DUT .include klt pex swaps; DUT instance nets in the extracted pin order)"
+    },
+    {
+     "path": "sim/diff-driver-pex/testbench/differential_driver_pex_dut.spice",
+     "sha256": "sha256:a6d3eceedafd000a35810de82f6b424df1a2484da8af3b92bd57debde132ff9a",
+     "role": "schematic-leg DUT shim (design/netlist/differential_driver.spice with the .subckt declaration pin order matched to the extracted header)"
+    }
+   ]
+  },
+  {
    "id": "se-receiver-dp-pex",
    "partition": "analog",
    "engine": "ngspice via klt pex (schematic + extracted legs, batch fleet); extracted netlist from klt extract --parasitics (klt pex --extract-only probe confirmed the header pin order)",

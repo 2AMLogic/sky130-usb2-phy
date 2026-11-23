@@ -1,0 +1,100 @@
+* driver-static-pex -- sky130 FS line driver, static bench, post-layout (klt pex)
+*
+* Post-layout counterpart of sim/driver-static: identical circuit body, measurements and
+* checks. The single .include below names the schematic-leg DUT shim
+* (differential_driver_pex_dut.spice: design/netlist/differential_driver.spice with its
+* .subckt declaration line reordered to the extracted header's pin order) -- the swap
+* point klt pex re-points at the extracted netlist for the extracted-side leg. Every
+* differential_driver instance line's nets are reordered to the same pin sequence (same
+* net-to-pin mapping on both legs). The request supplies the .lib corner section, .temp
+* and the supply value of vsup (3.3 / 3.6 V here).
+
+.include "differential_driver_pex_dut.spice"
+
+
+vsup vdd 0 dc 3.3
+ehalf mid 0 vol='v(vdd)/2'
+vpu pu 0 dc 3.6
+vf f 0 dc 0
+
+xtt_d00_e00 tt_dm_d00_e00 tt_dp_d00_e00 0 0 0 0 vdd 0 differential_driver
+rttp_d00_e00 tt_dp_d00_e00 mid 10k
+rttm_d00_e00 tt_dm_d00_e00 mid 10k
+xtt_d00_e01 tt_dm_d00_e01 tt_dp_d00_e01 0 vdd 0 0 vdd 0 differential_driver
+rttp_d00_e01 tt_dp_d00_e01 mid 10k
+rttm_d00_e01 tt_dm_d00_e01 mid 10k
+xtt_d00_e10 tt_dm_d00_e10 tt_dp_d00_e10 vdd 0 0 0 vdd 0 differential_driver
+rttp_d00_e10 tt_dp_d00_e10 mid 10k
+rttm_d00_e10 tt_dm_d00_e10 mid 10k
+xtt_d00_e11 tt_dm_d00_e11 tt_dp_d00_e11 vdd vdd 0 0 vdd 0 differential_driver
+rttp_d00_e11 tt_dp_d00_e11 mid 10k
+rttm_d00_e11 tt_dm_d00_e11 mid 10k
+xtt_d01_e00 tt_dm_d01_e00 tt_dp_d01_e00 0 0 vdd 0 vdd 0 differential_driver
+rttp_d01_e00 tt_dp_d01_e00 mid 10k
+rttm_d01_e00 tt_dm_d01_e00 mid 10k
+xtt_d01_e01 tt_dm_d01_e01 tt_dp_d01_e01 0 vdd vdd 0 vdd 0 differential_driver
+rttp_d01_e01 tt_dp_d01_e01 mid 10k
+rttm_d01_e01 tt_dm_d01_e01 mid 10k
+xtt_d01_e10 tt_dm_d01_e10 tt_dp_d01_e10 vdd 0 vdd 0 vdd 0 differential_driver
+rttp_d01_e10 tt_dp_d01_e10 mid 10k
+rttm_d01_e10 tt_dm_d01_e10 mid 10k
+xtt_d01_e11 tt_dm_d01_e11 tt_dp_d01_e11 vdd vdd vdd 0 vdd 0 differential_driver
+rttp_d01_e11 tt_dp_d01_e11 mid 10k
+rttm_d01_e11 tt_dm_d01_e11 mid 10k
+xtt_d10_e00 tt_dm_d10_e00 tt_dp_d10_e00 0 0 0 vdd vdd 0 differential_driver
+rttp_d10_e00 tt_dp_d10_e00 mid 10k
+rttm_d10_e00 tt_dm_d10_e00 mid 10k
+xtt_d10_e01 tt_dm_d10_e01 tt_dp_d10_e01 0 vdd 0 vdd vdd 0 differential_driver
+rttp_d10_e01 tt_dp_d10_e01 mid 10k
+rttm_d10_e01 tt_dm_d10_e01 mid 10k
+xtt_d10_e10 tt_dm_d10_e10 tt_dp_d10_e10 vdd 0 0 vdd vdd 0 differential_driver
+rttp_d10_e10 tt_dp_d10_e10 mid 10k
+rttm_d10_e10 tt_dm_d10_e10 mid 10k
+xtt_d10_e11 tt_dm_d10_e11 tt_dp_d10_e11 vdd vdd 0 vdd vdd 0 differential_driver
+rttp_d10_e11 tt_dp_d10_e11 mid 10k
+rttm_d10_e11 tt_dm_d10_e11 mid 10k
+xtt_d11_e00 tt_dm_d11_e00 tt_dp_d11_e00 0 0 vdd vdd vdd 0 differential_driver
+rttp_d11_e00 tt_dp_d11_e00 mid 10k
+rttm_d11_e00 tt_dm_d11_e00 mid 10k
+xtt_d11_e01 tt_dm_d11_e01 tt_dp_d11_e01 0 vdd vdd vdd vdd 0 differential_driver
+rttp_d11_e01 tt_dp_d11_e01 mid 10k
+rttm_d11_e01 tt_dm_d11_e01 mid 10k
+xtt_d11_e10 tt_dm_d11_e10 tt_dp_d11_e10 vdd 0 vdd vdd vdd 0 differential_driver
+rttp_d11_e10 tt_dp_d11_e10 mid 10k
+rttm_d11_e10 tt_dm_d11_e10 mid 10k
+xtt_d11_e11 tt_dm_d11_e11 tt_dp_d11_e11 vdd vdd vdd vdd vdd 0 differential_driver
+rttp_d11_e11 tt_dp_d11_e11 mid 10k
+rttm_d11_e11 tt_dm_d11_e11 mid 10k
+
+xvoh voh_dm voh_dp vdd vdd vdd vdd vdd 0 differential_driver
+rvohp voh_dp 0 15k
+rvohm voh_dm 0 15k
+xvoh15 voh15_dm voh15_dp vdd vdd vdd vdd vdd 0 differential_driver
+rvoh15p voh15_dp pu 1.5k
+rvoh15m voh15_dm pu 1.5k
+xvol vol_dm vol_dp vdd vdd 0 0 vdd 0 differential_driver
+rvolp vol_dp pu 1.5k
+rvolm vol_dm pu 1.5k
+
+xrh rh_dm rh_dp vdd vdd vdd vdd vdd 0 differential_driver
+ehf hf 0 vol='v(vdd)-0.3'
+vsrhp hf rh_dp 0
+vsrhm hf rh_dm 0
+brhp rhv_dp 0 v='0.3/max(-i(vsrhp),1e-12)'
+brhm rhv_dm 0 v='0.3/max(-i(vsrhm),1e-12)'
+xrl rl_dm rl_dp vdd vdd 0 0 vdd 0 differential_driver
+vlf lf 0 dc 0.3
+vsrlp lf rl_dp 0
+vsrlm lf rl_dm 0
+brlp rlv_dp 0 v='0.3/max(i(vsrlp),1e-12)'
+brlm rlv_dm 0 v='0.3/max(i(vsrlm),1e-12)'
+
+xlka lka_dm lka_dp vdd 0 0 vdd vdd 0 differential_driver
+vsap lka_dp f 0
+vsam lka_dm mid 0
+xlkb lkb_dm lkb_dp 0 vdd vdd 0 vdd 0 differential_driver
+vsbm lkb_dm f 0
+vsbp lkb_dp mid 0
+
+vsupq vdd vddq 0
+xq q_dm q_dp vdd vdd 0 vdd vddq 0 differential_driver

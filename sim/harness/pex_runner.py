@@ -1,20 +1,10 @@
-"""The one post-layout (klt pex) leaf runner behind all four leaf pex benches.
+"""Shared post-layout (klt pex) runner for the leaf benches.
 
-sim/diff-receiver-pex/run.py (differential_receiver), sim/dplus-pullup-pex/run.py
-(dplus_pullup), sim/se-receiver-dp-pex/run.py (se_receiver_dp) and
-sim/se-receiver-dm-pex/run.py (se_receiver_dm) are thin entry points: each
-supplies a `Bench` with its own leaf name, deck, pin-order DUT shim, committed
-schematic reference record and bench directory, then calls `main` here. All four
-CLI commands and every bench's per-leaf evidence stay as they were; only the
-flow is shared, so a submission, equivalence-gate or staging fix lands in one
-place. See sim/README.md; regression tests in sim/tests/test_pex_runner.py.
-
-Each bench submits its own testbench/tb.json -- the leaf's committed schematic
-bench re-run at tt_27c_3.30v and at the binding corner of its committed record --
-to `klt pex` against the committed leaf GDS, checks the schematic leg of the
-report against that record's committed values, grades the extracted leg where the
-bench supplies an evaluator, and stages an evidence directory for
-`python3 sim/run_store_evidence.py <bench> <stage-dir>`.
+Each entry point supplies its leaf, deck, DUT shim and committed schematic
+reference. The differential driver supplies two requests in one bench directory.
+Each run submits its request against the committed leaf GDS, checks the
+schematic leg against the reference, grades the extracted leg where the bench
+supplies an evaluator, and stages evidence for sim/run_store_evidence.py.
 
     python3 sim/<bench>/run.py --dry-run    # pre-flight, no extraction
     python3 sim/<bench>/run.py              # batch run, equivalence gate, staging
@@ -27,17 +17,22 @@ reproduces the committed numbers. The gate derives the expected (corner id,
 measurement) pairs from the bench's own requested corners x measurements and
 fails on any missing, duplicate, unexpected or non-finite row -- the committed
 reference covers far more corners than a bench requests (45 for the differential
-receiver, 225 for the other three leaves), so rows lifted from unrequested
-corners must fail, not pass vacuously.
+receiver and driver, 225 for the three smaller leaves). Rows from unrequested
+corners fail the gate.
 
 grading.json is written only for a bench whose `Bench` carries `grade_extracted`:
 the receivers' window/output-level checks (sim/harness/se_receiver_pex.py) and
-the pull-up's trim evaluation (its run.py); the differential receiver writes only
-equivalence.json. klt pex grades only the request's declared supply-absolute
+the pull-up's trim evaluation (its run.py). The differential receiver and driver
+write only equivalence.json. klt pex grades only the request's declared supply-absolute
 limits, so a bench's supply-relative or cross-row criteria are evaluated there,
 per corner, from the delta rows. A grading FAIL never changes the exit code --
 only equivalence does -- and `Bench.summarize`, when given, adds the bench's own
 lines over the grading to the end-of-run report.
+
+For a bench with `check_nonzero_envelope` (the differential driver, whose extracted
+leg is expected to fail) a nonzero `klt pex` exit and a fail/error envelope status are
+retained and staged, and the equivalence verdict covers the schematic leg alone, so
+exit 0 keeps its meaning.
 
 Exit codes: 0, the schematic leg is equivalent; 2, klt pex refused or failed (its
 stdout/stderr kept under the stage dir); 3, the schematic leg is not equivalent;
@@ -95,6 +90,15 @@ class Bench:
     grade_extracted: Callable[[Bench, dict, dict], dict] | None = None
     summarize: Callable[[dict], Iterable[str]] | None = None
     polarity: str = ""      # "D+" or "D-": docstrings and diagnostics only
+    variant: str = ""       # distinguishes tb-<variant>.json and its staged run and snapshot
+    # Drivers: klt pex exits nonzero with envelope status fail/error for the failing
+    # extracted leg. Retain that envelope, and judge only the schematic leg (the
+    # envelope-status row is skipped); every other bench keeps both checks.
+    check_nonzero_envelope: bool = False
+
+    @property
+    def suffix(self) -> str:
+        return f"-{self.variant}" if self.variant else ""
 
     def gds(self, repo: Path = REPO) -> Path:
         return repo / f"layout/analog/{self.leaf}/{self.leaf}.gds"
@@ -103,7 +107,7 @@ class Bench:
         return repo / "sim" / self.bench
 
     def tb(self, repo: Path = REPO) -> Path:
-        return self.bench_dir(repo) / "testbench" / "tb.json"
+        return self.bench_dir(repo) / "testbench" / f"tb{self.suffix}.json"
 
     def deck_path(self, repo: Path = REPO) -> Path:
         return self.bench_dir(repo) / "testbench" / self.deck
@@ -155,18 +159,34 @@ def pex_cmd(cfg: Bench, stage: Path, backend: str, wait: int, dry_run: bool,
     return cmd + ["--format", "json"]
 
 
-def main(cfg: Bench, argv=None, repo: Path = REPO) -> int:
+def main(cfg: Bench | tuple[Bench, ...], argv=None, repo: Path = REPO) -> int:
+    benches = (cfg,) if isinstance(cfg, Bench) else cfg
     ap = argparse.ArgumentParser(
-        description=f"Post-layout (klt pex) runner for the {cfg.leaf} leaf. See sim/README.md.")
+        description=f"Post-layout (klt pex) runner for the {benches[0].leaf} leaf. See sim/README.md.")
     ap.add_argument("--dry-run", action="store_true", help="klt pex pre-flight, nothing extracted")
     ap.add_argument("--backend", choices=("batch", "local"), default="batch")
     ap.add_argument("--wait-for-capacity", type=int, default=600)
-    ap.add_argument("--stage-dir", type=Path, default=repo / f"sim/.work/{cfg.bench}")
+    ap.add_argument("--stage-dir", type=Path, default=repo / "sim/.work" / benches[0].bench)
+    if len(benches) > 1:
+        ap.add_argument("--bench", choices=[b.variant for b in benches] + ["both"], default="both")
     args = ap.parse_args(argv)
+    if len(benches) > 1 and args.bench != "both":
+        benches = tuple(b for b in benches if b.variant == args.bench)
 
+    first_error = 0
+    for bench in benches:
+        if bench.variant:
+            print(f"[{bench.variant}] {bench.tb(repo).name}")
+        result = run_bench(bench, args, repo)
+        if result and not first_error:
+            first_error = result
+    return first_error
+
+
+def run_bench(cfg: Bench, args: argparse.Namespace, repo: Path) -> int:
     started = time.monotonic()
     if args.dry_run:
-        stage = args.stage_dir / "dry-run"
+        stage = args.stage_dir / f"dry-run{cfg.suffix}"
         stage.mkdir(parents=True, exist_ok=True)
         cmd = pex_cmd(cfg, stage, args.backend, args.wait_for_capacity, True, repo)
         r = subprocess.run(cmd, cwd=repo, capture_output=True, text=True)
@@ -180,7 +200,8 @@ def main(cfg: Bench, argv=None, repo: Path = REPO) -> int:
               f"units={[u['corner_id'] for u in envelope['testbenches'][0]['sim']['units']]}")
         return 0
 
-    rid = f"{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d-%H%M%S')}-{head_sha(repo)}"
+    timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d-%H%M%S")
+    rid = f"{timestamp}-{head_sha(repo)}{cfg.suffix}"
     stage = args.stage_dir / rid
     stage.mkdir(parents=True, exist_ok=True)
     cmd = pex_cmd(cfg, stage, args.backend, args.wait_for_capacity, False, repo)
@@ -190,15 +211,20 @@ def main(cfg: Bench, argv=None, repo: Path = REPO) -> int:
     elapsed = time.monotonic() - started
     (stage / "pex-stdout.json").write_text(r.stdout)
     (stage / "pex-stderr.txt").write_text(r.stderr)
-    if r.returncode != 0 or not (stage / "pex-envelope.json").is_file():
+    envelope_path = stage / "pex-envelope.json"
+    if not envelope_path.is_file() or (r.returncode and not cfg.check_nonzero_envelope):
         print(f"klt pex failed (exit {r.returncode}, {elapsed:.0f}s); envelope and stderr "
               f"kept under {stage} (a failed attempt is committed evidence per AC 6)", file=sys.stderr)
         return 2
-    envelope = json.loads((stage / "pex-envelope.json").read_text())
+    if r.returncode:
+        print(f"klt pex exited {r.returncode}; checking and staging the returned envelope",
+              file=sys.stderr)
+    envelope = json.loads(envelope_path.read_text())
 
     tb = json.loads(cfg.tb(repo).read_text())
     ok, rows = pex_equivalence.check_equivalence(envelope, tb,
-                                                 json.loads(cfg.reference_report.read_text()))
+                                                 json.loads(cfg.reference_report.read_text()),
+                                                 require_pass_status=not cfg.check_nonzero_envelope)
     (stage / "equivalence.json").write_text(json.dumps(
         {"reference_record": str(cfg.reference_report.relative_to(REPO)), "rel_tol": REL_TOL,
          "equivalent": ok, "rows": rows}, indent=1) + "\n")
