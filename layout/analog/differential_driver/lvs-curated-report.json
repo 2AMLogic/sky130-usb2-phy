@@ -243,7 +243,7 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.12",
+    "engine_version": "0.30.14",
     "netgen_binary": null,
     "layout_sha256": "14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
     "reference_sha256": "bed3319d65789db0a7d1a14831e113eb957cd1998d3cc58d4dc539dd5ea2fdd0",
@@ -253,7 +253,7 @@
     "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
     "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
     "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klayout_version": "0.30.12",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sky130",
@@ -264,7 +264,7 @@
       "content_hash": "sha256:14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
       "role": "layout"
     },
-    "klayout_version_mismatch": false
+    "klayout_version_mismatch": true
   },
   "mismatches": [
     {

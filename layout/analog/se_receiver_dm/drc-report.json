@@ -1001,7 +1001,7 @@
     "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
     "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
     "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klayout_version": "0.30.12",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sky130",
@@ -1012,6 +1012,6 @@
       "content_hash": "sha256:67abfd416f3a19df3d671f0a3811c876df8a8a999e822931c3df92460cfc8056",
       "role": "layout"
     },
-    "klayout_version_mismatch": false
+    "klayout_version_mismatch": true
   }
 }
