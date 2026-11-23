@@ -228,6 +228,9 @@ def sandbox(tmp_path, monkeypatch):
         return {"open_pdks_commit": m.pdk["open_pdks_commit"], "lib_sha256": m.pdk["lib_sha256"], "sections": ev}
 
     monkeypatch.setattr(runner, "check_env", env)
+    monkeypatch.setattr(runner, "tool_version", lambda cmd: "klt test")
+    monkeypatch.setattr(runner, "_git", lambda *a: "abcdef0" if "--short=7" in a
+                        else ("abcdef0" * 5 + "abcde" if "rev-parse" in a else ""))
 
     def fake(request_path, outdir, backend, workdir, pdk_root=None):
         req = json.loads(Path(request_path).read_text())
@@ -241,6 +244,8 @@ def sandbox(tmp_path, monkeypatch):
         return rep, "", 0
 
     monkeypatch.setattr(runner, "invoke_klt", fake)
+    monkeypatch.setattr(runner.subprocess, "run",
+                        lambda cmd, *a, **k: pytest.fail(f"a subprocess was launched during a mocked run: {cmd}"))
     return sim
 
 

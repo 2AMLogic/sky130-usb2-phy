@@ -2,6 +2,22 @@
 
 Sections moved byte-for-byte from [WORK_LOG.md](../WORK_LOG.md) by `loom-daemon work-docs archive`.
 
+### 2026-09-22
+
+- **Issue #81** (closed): docs: rtl/README.md cites DR-0001 'Decision 6 (bit-rate timing)' which does not exist
+- **PR #83**: docs: re-point usb_tx_serializer DR-0001 citation from nonexistent Decision 6 to Decision 1
+
+### 2026-09-21
+
+- **Issue #79** (closed): 2am: reuse rule 9 — reconcile the shared USB protocol RTL with gf180-usb2-phy — this repo is master by lineage; the twin vendors with stamps
+- **PR #80**: docs: record DR-0002 shared-RTL classification and canonical interfaces
+- **Issue #76** (closed): Guard trigger review: worktree-write-confinement DENY on /tmp scratch output for klt erc comparisons
+- **PR #78**: docs: establish .loom/tmp/ in-worktree scratch convention for agent sessions
+- **Issue #73** (closed): Commit a klt signoff block manifest so this block's T1 state is graded, not hand-read
+- **PR #75**: feat(signoff): grade this block's T1 state via a klt signoff block manifest
+- **Issue #72** (closed): T1 item 11 (power delivery, structural): no klt erc supply spec or report in this repo
+- **PR #74**: feat: add T1 item 11 erc supply spec and report for utmi_stub
+
 ### 2026-09-19
 
 - **Issue #64** (closed): Regenerate docs/characterization.md against the post-PDN records (#59 superseded the six it indexes)

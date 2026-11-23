@@ -8,8 +8,39 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-23
+
+- **PR #457**: fix: report true interval count in RxActive EOP-window assertion message
+- **PR #455**: test: stub tool_version/_git in resistor-sets sandbox and guard against subprocess launches
+- **PR #454**: test: stub klt/git lookups in the sim sandbox fixture
+- **Issue #453** (closed): test_resistor_sets.sandbox still launches real klt --version and git (same gap as #447)
+- **Issue #451** (closed): Wrong interval count in _assert_rxactive_eop_window's disjoint-interval assertion message
+- **Issue #447** (closed): Stub tool_version and _git in test_harness.sandbox and drop the subprocess passthrough
+- **PR #450**: test(usb_rx): bound RxActive EOP deassertion by an independent window, not the trace's own shape
+- **PR #449**: test(sim): route receiver 225-point variant reports through synthetic_report
+- **PR #448**: test: share the synthetic campaign builder in mismatch-store tests
+- **PR #446**: feat(sim): map diff-receiver-sensitivity row 6-09 limits; 45-point re-run with envelope-graded bounds
+- **PR #445**: feat: warn on forked supersede chains and duplicate same-sha record tips
+- **Issue #444** (closed): Share the synthetic campaign builder in mismatch-store tests
+- **PR #443**: fix: keep spec-limit unit metadata consistent with the numbers it describes
+- **Issue #442** (closed): check_records.py should flag forked supersede chains and duplicate same-sha tips
+- **Issue #441** (closed): Replace the circular RxActive end-of-packet assertion in the receive test
+- **PR #440**: docs: point analog LVS citations at the manifest-cited 6beff8e records
+- **Issue #439** (closed): Build 225-point synthetic reports in receiver tests through conftest.synthetic_report
+- **Issue #438** (closed): Analog-layout evidence lineage: README cites an uncited record set, stale 10-of-22 count, and a forked supersede chain from a double mint
+- **PR #437**: test: pin find_row_x's chosen PMOS-row offset per leaf to exact equality
+- **Issue #435** (closed): diff-driver-pex static record: the "97%" attribution figure understates its own table (98.9%)
+- **Issue #434** (closed): find_row_x: the receivers' chosen PMOS-row offset rests on 1.09e-12 um of `start += GRID` float drift
+- **Issue #426** (closed): Fold sim/diff-driver-pex/run.py onto the shared leaf pex runner and exact-pair gate once #416 lands
+- **Issue #424** (closed): spec_limits: emitted `unit` describes raw-unit `limits` with the display unit (record table reads "4e-09 … 2e-08 ns")
+- **PR #421**: fix: absorb the xhigh serpentine snap residual in one U-turn so bias resistors draw exact netlist lengths
+- **PR #416**: sim: add diff-driver-pex post-layout bench for the differential_driver leaf
+- **Issue #406** (closed): Reconcile xhigh poly bias resistor lengths in the driver and three receivers
+
 ### 2026-11-22
 
+- **PR #433**: perf(layout): draw-free find_row_x() replaces throwaway Canvas churn in the PMOS row search
+- **Issue #432** (closed): Stop constructing throwaway Canvas layouts inside the analog PMOS row placement search
 - **PR #430**: perf(sim): scope committed_duplicates to run_dir before statting or hashing
 - **PR #427**: refactor(sim): share one leaf pex runner and its exact-pair gate
 - **PR #423**: feat(sim): map driver-signal-quality rows 6-06/6-07 limits; 45-point re-run with envelope-graded bounds
@@ -344,20 +375,4 @@ by the Guide triage agent. Newest entries first.
 
 - **Issue #87** (closed): Guard trigger review: loom:installed-file-write false-denies a same-command cd-then-relative-write into a scratch dir
 - **PR #88**: test: add regression test + resync pin for the #87 installed-file-write false DENY
-
-### 2026-09-22
-
-- **Issue #81** (closed): docs: rtl/README.md cites DR-0001 'Decision 6 (bit-rate timing)' which does not exist
-- **PR #83**: docs: re-point usb_tx_serializer DR-0001 citation from nonexistent Decision 6 to Decision 1
-
-### 2026-09-21
-
-- **Issue #79** (closed): 2am: reuse rule 9 — reconcile the shared USB protocol RTL with gf180-usb2-phy — this repo is master by lineage; the twin vendors with stamps
-- **PR #80**: docs: record DR-0002 shared-RTL classification and canonical interfaces
-- **Issue #76** (closed): Guard trigger review: worktree-write-confinement DENY on /tmp scratch output for klt erc comparisons
-- **PR #78**: docs: establish .loom/tmp/ in-worktree scratch convention for agent sessions
-- **Issue #73** (closed): Commit a klt signoff block manifest so this block's T1 state is graded, not hand-read
-- **PR #75**: feat(signoff): grade this block's T1 state via a klt signoff block manifest
-- **Issue #72** (closed): T1 item 11 (power delivery, structural): no klt erc supply spec or report in this repo
-- **PR #74**: feat: add T1 item 11 erc supply spec and report for utmi_stub
 
