@@ -351,6 +351,11 @@ def _sealed_copy(tmp_path):
     sim.mkdir(parents=True)
     shutil.copy(SIM / "corners.json", sim / "corners.json")
     shutil.copytree(EXP, sim / "dplus-pullup-tolerance", ignore=shutil.ignore_patterns("__pycache__"))
+    # store-cited records (post-#194) resolve their manifests against the
+    # scratch repo root, so the committed manifests travel with the copy
+    (tmp_path / "manifests/artifacts").mkdir(parents=True, exist_ok=True)
+    for m in sorted((REPO / "manifests/artifacts").glob("*.manifest.json")):
+        shutil.copy(m, tmp_path / "manifests/artifacts" / m.name)
     return sim
 
 

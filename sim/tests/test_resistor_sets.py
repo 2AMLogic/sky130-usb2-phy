@@ -211,6 +211,11 @@ def sandbox(tmp_path, monkeypatch):
     shutil.copytree(EXP / "netlist-snapshots", sim / EXP.name / "netlist-snapshots")
     (tmp_path / "design/netlist").mkdir(parents=True)
     shutil.copy(SIM.parent / "design/netlist/dplus_pullup.spice", tmp_path / "design/netlist/dplus_pullup.spice")
+    # store-cited records (post-#194) resolve their manifests against the
+    # scratch repo root, so the committed manifests travel with the sandbox
+    (tmp_path / "manifests/artifacts").mkdir(parents=True, exist_ok=True)
+    for m in sorted((SIM.parent / "manifests/artifacts").glob("*.manifest.json")):
+        shutil.copy(m, tmp_path / "manifests/artifacts" / m.name)
     for f in ("corners.json", "corners-resistor-sets.json"):
         shutil.copy(SIM / f, sim / f)
     monkeypatch.setattr(mx, "SIM_DIR", sim)
@@ -279,7 +284,11 @@ def _reseal(sim, rid, edit):
 
 def _variant_rid(sim):
     for p in sorted((sim / EXP.name / "records").glob("*.md")):
-        if "manifest sha256" in p.read_text() and "- **Status**: PASS" in p.read_text():
+        text = p.read_text()
+        # the resistor-set variant's own record (45-point store-cited records
+        # of the base experiment also live here and are not materializable
+        # from this sandbox's stage)
+        if "manifest sha256" in text and "- **Status**: PASS" in text and "225 points" in text:
             return p.stem
 
 
