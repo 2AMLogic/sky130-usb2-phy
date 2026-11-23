@@ -133,7 +133,7 @@ of guessing. **Uncited is not the only route to `unmet`:** items 5 and
 curated LVS now matches after #406). Read each row's `reason` rather than
 inferring one from this list.
 
-**10 of 22 is a different number from the #29 hand-read's "1/10 pass (1 N/A)", and
+**11 of 22 is a different number from the #29 hand-read's "1/10 pass (1 N/A)", and
 both are honest reads of different questions.** The hand-read asked "does
 this repo contain the artifact the item describes?" — and for item 9 it
 does. The manifest asks "is there a passing, fresh, machine-readable

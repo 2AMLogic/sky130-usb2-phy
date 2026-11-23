@@ -182,8 +182,12 @@ The records use the producer from the initial probe, klt
 The preceding records from `0.9.3.dev310+ga638216e7fea` list 347. The
 records minted for the #406 bias-resistor repair (and the D+ pull-up control
 re-run that the shared-generator change made stale) use klt
-`0.9.3.dev2626+g0e5dd121c7d2` with KLayout 0.30.12, whose curated DRC also
-lists 347 unmodelled rules. The curated DRC rules checked and skipped, native
+`0.9.3.dev2626+g0e5dd121c7d2`, whose curated DRC also lists 347 unmodelled
+rules. In the cited records the KLayout module is 0.30.14
+(`lvs-curated-report.json`, `drc-report.json`, `erc-supply-report.json`);
+0.30.12 is only the `/usr/bin/klayout` deck binary that
+`drc-native-report.json` records (with `klayout_module_version: 0.30.14`).
+The curated DRC rules checked and skipped, native
 DRC rule categories and ERC checks are identical for each leaf across these
 sets of records.
 
@@ -202,11 +206,23 @@ give layout / reference / matched devices.
 
 | Leaf | Curated baseline (all mismatch) | Cited curated LVS | Device class unrecognised | Open issue |
 |---|---:|---|---|---|
-| `differential_driver` | 356/244/82 | [match (80/80/80)](../../flow/analog-layout-differential_driver/artifacts/20261122-001306-eb818d5-differential_driver/lvs-curated-report.json) | None | None |
-| `differential_receiver` | 21/20/19 | [match (11/11/11)](../../flow/analog-layout-differential_receiver/artifacts/20261122-001342-eb818d5-differential_receiver/lvs-curated-report.json) | None | None |
-| `dplus_pullup` | 265/40/10 | [match (20/20/20)](../../flow/analog-layout-dplus_pullup/artifacts/20261122-001541-eb818d5-dplus_pullup/lvs-curated-report.json) | None | None |
-| `se_receiver_dm` | 23/22/21 | [match (13/13/13)](../../flow/analog-layout-se_receiver_dm/artifacts/20261122-001414-eb818d5-se_receiver_dm/lvs-curated-report.json) | None | None |
-| `se_receiver_dp` | 23/22/21 | [match (13/13/13)](../../flow/analog-layout-se_receiver_dp/artifacts/20261122-001442-eb818d5-se_receiver_dp/lvs-curated-report.json) | None | None |
+| `differential_driver` | 356/244/82 | [match (80/80/80)](../../flow/analog-layout-differential_driver/artifacts/20261123-000447-6beff8e-differential_driver/lvs-curated-report.json) | None | None |
+| `differential_receiver` | 21/20/19 | [match (11/11/11)](../../flow/analog-layout-differential_receiver/artifacts/20261123-000453-6beff8e-differential_receiver/lvs-curated-report.json) | None | None |
+| `dplus_pullup` | 265/40/10 | [match (20/20/20)](../../flow/analog-layout-dplus_pullup/artifacts/20261123-000436-6beff8e-dplus_pullup/lvs-curated-report.json) | None | None |
+| `se_receiver_dm` | 23/22/21 | [match (13/13/13)](../../flow/analog-layout-se_receiver_dm/artifacts/20261123-000459-6beff8e-se_receiver_dm/lvs-curated-report.json) | None | None |
+| `se_receiver_dp` | 23/22/21 | [match (13/13/13)](../../flow/analog-layout-se_receiver_dp/artifacts/20261123-000505-6beff8e-se_receiver_dp/lvs-curated-report.json) | None | None |
+
+Per leaf the `6beff8e` re-mint exists twice: the `supersedes` fields of the
+records show two complete, clean tips at the same git sha, minted ~90
+seconds apart during PR #421's conflict repair (apparently a double
+`run_checks.py --record` pass over the five leaves, once superseding the
+branch's `eb818d5` records and once superseding main's `1c6e2b3` re-mints).
+Both chains ran the same committed GDS — the reports'
+`provenance.input.content_hash` values are equal — with identical verdicts
+and device counts. The manifest cites the `eb818d5`-descended chain (driver
+`20261123-000447`), the one this section's producer history describes; the
+`1c6e2b3`-descended chain (driver `20261123-000313`) is an unreferenced
+duplicate tip, kept because records are append-only.
 
 The curated LVS envelopes report aggregate counts. For the per-class census
 below, each pair gives SPICE X-card instances before multiplier expansion /
