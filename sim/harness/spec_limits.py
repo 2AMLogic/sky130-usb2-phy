@@ -120,6 +120,15 @@ BENCH_ROWS: dict[str, dict[str, tuple[str, str]]] = {
         "vcross_rise_v": ("6-07", "vcross"),
         "vcross_fall_v": ("6-07", "vcross"),
     },
+    # the input-referred differential threshold at each of row 6-10's three
+    # common-mode test conditions (0.8 / 1.65 / 2.5 V, one receiver instance
+    # per condition); 6-10 itself carries no number, so it is evidenced by
+    # these limits holding at every condition, not by a bound of its own
+    "diff-receiver-sensitivity": {
+        "vth_cm0p80_v": ("6-09", "vth_diff"),
+        "vth_cm1p65_v": ("6-09", "vth_diff"),
+        "vth_cm2p50_v": ("6-09", "vth_diff"),
+    },
 }
 
 

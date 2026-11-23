@@ -21,6 +21,7 @@ ROWS = json.loads(sl.ROWS_FILE.read_text())
 ROW_IDS = {r["id"] for r in ROWS["rows"]}
 DRIVER_STATIC = json.loads((SIM / "driver-static/testbench/tb.json").read_text())
 DRIVER_SQ = json.loads((SIM / "driver-signal-quality/testbench/tb.json").read_text())
+DIFF_RX = json.loads((SIM / "diff-receiver-sensitivity/testbench/tb.json").read_text())
 
 
 def limited_request(tb=None, experiment="driver-static"):
@@ -115,6 +116,40 @@ def test_driver_sq_engineering_only_measurements_carry_no_limits():
     # currents are engineering criteria, not ratified rows
     limits = sl.measurement_limits("driver-signal-quality", DRIVER_SQ)
     for n in ("slope_rise_dp_min_vns", "tx_first_ns", "oe_xb_dp_on_ma", "tpd_rise_dp_ns"):
+        assert n not in limits
+
+
+# ---- diff-receiver-sensitivity: the mapping matches the tb and the ratified numbers ----
+
+def test_diff_rx_measurements_all_exist_with_equivalent_checks():
+    limits = sl.measurement_limits("diff-receiver-sensitivity", DIFF_RX)
+    assert limits, "diff-receiver-sensitivity must be mapped"
+    for name in limits:
+        assert name in DIFF_RX["measure"]
+        assert name in DIFF_RX["checks"]
+
+
+def test_diff_rx_limit_values_match_the_ratified_rows():
+    limits = sl.measurement_limits("diff-receiver-sensitivity", DIFF_RX)
+    # vth_* has no scale, so the emitted bounds are the row numbers in V
+    vth = {"min": -0.2, "max": 0.2}
+    for n in ("vth_cm0p80_v", "vth_cm1p65_v", "vth_cm2p50_v"):
+        assert limits[n]["row"] == "6-09" and limits[n]["limits"] == vth
+
+
+def test_diff_rx_maps_every_common_mode_test_condition():
+    # row 6-10's range is exercised as the three test conditions; a condition
+    # dropping out of the mapping would silently lose its 6-09 evidence
+    limits = sl.measurement_limits("diff-receiver-sensitivity", DIFF_RX)
+    assert set(limits) == {"vth_cm0p80_v", "vth_cm1p65_v", "vth_cm2p50_v"}
+
+
+def test_diff_rx_engineering_only_measurements_carry_no_limits():
+    # the per-supply output-level probes (polarity, boundary, beyond-boundary)
+    # and the bias-current sanity bound are engineering criteria, not rows
+    limits = sl.measurement_limits("diff-receiver-sensitivity", DIFF_RX)
+    for n in ("rxd_pos_min_cm0p80_v", "rxd_neg_max_cm1p65_v", "rxd_p200_cm2p50_v",
+              "rxd_m200_cm0p80_v", "isup_ua_cm1p65"):
         assert n not in limits
 
 

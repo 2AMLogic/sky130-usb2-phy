@@ -241,6 +241,11 @@ The method, thresholds and output bounds are declared in
   Defaults are the smoke wording, so smoke records render exactly as before;
   `detailed` adds per-measurement ranges and lists every failure with its
   corner id.
+  Since the limit-carrying re-run (issue #401), `diff-receiver-sensitivity`'s
+  request carries `measurements[].limits` for row 6-09 (the input-referred
+  threshold at each of the three common-mode conditions; 6-10 has no number
+  and is evidenced by those limits holding at every condition); see
+  "Spec-row limits in the request".
 
 Records: `diff-receiver-sensitivity/records/`. No Monte Carlo is run; each
 record says so. Record `20261009-121939-0555da1` ran on fleet runner klt 0.5.0
