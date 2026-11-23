@@ -4,7 +4,7 @@
 Issue #402 (branch (b) of its "What to do"): the October 2026 receiver
 mismatch campaigns seed a deterministic negative control that, on ten
 measurement instances, cannot degrade the measurement by construction. The
-grader (klt 0.9.1) refuses those reports (`negative_control_not_detected`),
+then-pinned grader (klt 0.9.1) refused those reports (`negative_control_not_detected`),
 and klayout-tools#4523 gave `klt yield` the per-measurement declaration that
 says so. This script re-derives the six committed sample sets with exactly
 that declaration on the affected measurements, changing nothing else: every

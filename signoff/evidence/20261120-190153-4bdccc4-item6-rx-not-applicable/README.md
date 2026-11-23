@@ -5,7 +5,7 @@
 - **Why this exists**: issue #402, branch (b). The October 2026 receiver
   mismatch campaigns seed a deterministic negative control that, on ten
   measurement instances, cannot degrade the measurement by construction. The
-  pinned grader (klt 0.9.1) refused all six cited reports with
+  then-pinned grader (klt 0.9.1) refused all six cited reports with
   `negative_control_not_detected`; klayout-tools#4523 (shipped 2026-10-28)
   gave `klt yield` the per-measurement
   `{"not_applicable": true, "reason": "..."}` declaration for exactly this
@@ -17,9 +17,10 @@
     (campaign [`sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/`](../../../sim/diff-receiver-mismatch/campaigns/20261020-202512-a78d2ac/)) — rows 6-09
   - [`sim/se-receiver-mismatch/records/20261020-202608-a78d2ac.md`](../../../sim/se-receiver-mismatch/records/20261020-202608-a78d2ac.md)
     (campaign [`sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/`](../../../sim/se-receiver-mismatch/campaigns/20261020-202608-a78d2ac/)) — rows 6-11
-- **Tool**: `klt yield` of the pinned registry wheel
-  `klayout-tools[yield]==0.9.1` (`signoff/toolchain.json`), same wheel that
-  grades the manifest.
+- **Tool**: `klt yield` of the registry wheel `klayout-tools[yield]==0.9.1`
+  (the grader pin at the time of derivation). The manifest is graded by the
+  currently pinned `0.9.2` (`signoff/toolchain.json`), which reads the
+  declaration; producer and grader are pinned separately.
 
 ## Transformation
 
@@ -71,8 +72,10 @@ empirical yield. The only moved numbers are renderings of **degenerate**
 (zero-variance) populations, where the 0.9.1 producer reports
 `normality.verdict: "degenerate"` (statistic `null`, stddev `0.0`) and
 omits the meaningless parametric `normal` estimate that the 0.7.1 producer
-of the October reports printed — the October reports were produced by klt
-0.7.1; these are produced by the same 0.9.1 wheel that grades them.
+of the October reports printed (the per-measurement warning text moves with
+it: the Anderson-Darling non-normality warning gives way to the
+bounded-from-below one) — the October reports were produced by klt
+0.7.1; these are produced by the 0.9.1 wheel (graded by the pinned 0.9.2).
 
 ## Citation
 
