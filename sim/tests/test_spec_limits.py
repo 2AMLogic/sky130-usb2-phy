@@ -22,6 +22,9 @@ ROW_IDS = {r["id"] for r in ROWS["rows"]}
 DRIVER_STATIC = json.loads((SIM / "driver-static/testbench/tb.json").read_text())
 DRIVER_SQ = json.loads((SIM / "driver-signal-quality/testbench/tb.json").read_text())
 DIFF_RX = json.loads((SIM / "diff-receiver-sensitivity/testbench/tb.json").read_text())
+SE_RX_DP = json.loads((SIM / "se-receiver-dp-thresholds/testbench/tb.json").read_text())
+SE_RX_DM = json.loads((SIM / "se-receiver-dm-thresholds/testbench/tb.json").read_text())
+PULLUP = json.loads((SIM / "dplus-pullup-tolerance/testbench/tb.json").read_text())
 
 
 def limited_request(tb=None, experiment="driver-static"):
@@ -151,6 +154,158 @@ def test_diff_rx_engineering_only_measurements_carry_no_limits():
     for n in ("rxd_pos_min_cm0p80_v", "rxd_neg_max_cm1p65_v", "rxd_p200_cm2p50_v",
               "rxd_m200_cm0p80_v", "isup_ua_cm1p65"):
         assert n not in limits
+
+
+# ---- se-receiver-dp/dm-thresholds: the mapping matches the tb and the ratified numbers ----
+
+def test_se_rx_measurements_all_exist_with_equivalent_checks():
+    for bench, tb in (("se-receiver-dp-thresholds", SE_RX_DP), ("se-receiver-dm-thresholds", SE_RX_DM)):
+        limits = sl.measurement_limits(bench, tb)
+        assert limits, f"{bench} must be mapped"
+        for name in limits:
+            assert name in tb["measure"]
+            assert name in tb["checks"]
+
+
+def test_se_rx_limit_values_match_the_ratified_row():
+    # row 6-11: the switching threshold must sit inside (0.8, 2.0) V. The tb
+    # check spells the endpoints strictly (gt/lt); the row's inclusive bounds
+    # are the same numbers, emitted unscaled (vth_v carries no scale)
+    vth = {"min": 0.8, "max": 2.0}
+    for bench, tb in (("se-receiver-dp-thresholds", SE_RX_DP), ("se-receiver-dm-thresholds", SE_RX_DM)):
+        limits = sl.measurement_limits(bench, tb)
+        assert limits["vth_v"]["row"] == "6-11"
+        assert limits["vth_v"]["limits"] == vth
+        assert limits["vth_v"]["display_limits"] == vth
+        assert limits["vth_v"]["unit"] == "V"
+
+
+def test_se_rx_maps_only_the_first_crossing():
+    # the last-crossing/single-crossing, output-level, VREF and supply-current
+    # probes are engineering criteria; only the first rising crossing carries
+    # the row (mapping vth_last_v would also need its `same_as` key honoured,
+    # which no request limit can express)
+    for bench, tb in (("se-receiver-dp-thresholds", SE_RX_DP), ("se-receiver-dm-thresholds", SE_RX_DM)):
+        limits = sl.measurement_limits(bench, tb)
+        assert set(limits) == {"vth_v"}
+        for n in ("vth_last_v", "rxd_low_max_v", "rxd_high_min_v", "rxd_at_vil_v",
+                  "rxd_at_vih_v", "vref_v", "isup_ua"):
+            assert n not in limits
+
+
+# ---- dplus-pullup-tolerance: the mapping matches the tb and the ratified numbers ----
+
+def test_pullup_measurements_all_exist_with_equivalent_checks():
+    limits = sl.measurement_limits("dplus-pullup-tolerance", PULLUP)
+    assert limits, "dplus-pullup-tolerance must be mapped"
+    for name in limits:
+        assert name in PULLUP["measure"]
+        assert name in PULLUP["checks"]
+
+
+def test_pullup_limit_values_match_the_ratified_row():
+    # row 6-14's trim-code existential, carried by the two extreme codes as
+    # one-sided reachability bounds: the largest per-code resistance (code 0)
+    # must reach at least the window floor, the smallest (code 15) at most its
+    # ceiling. The expr measurements are unscaled ohm, so raw == display
+    limits = sl.measurement_limits("dplus-pullup-tolerance", PULLUP)
+    assert limits["r_c00_ohm"]["row"] == "6-14" and limits["r_c00_ohm"]["role"] == "r_eff_min"
+    assert limits["r_c00_ohm"]["limits"] == {"min": 1425.0}
+    assert limits["r_c15_ohm"]["role"] == "r_eff_max"
+    assert limits["r_c15_ohm"]["limits"] == {"max": 1575.0}
+    for n in ("r_c00_ohm", "r_c15_ohm"):
+        assert limits[n]["display_limits"] == limits[n]["limits"]
+        assert limits[n]["unit"] == "ohm" and limits[n]["scale"] == 1.0
+
+
+def test_pullup_extreme_code_mapping_matches_the_monotone_ladder():
+    # the recorded 2026-10-20 grid: r_c00 spans 1787-2026 ohm (above the
+    # window) and r_c15 1031-1219 ohm (below it), so the mapped pairing is the
+    # only one the ratified existential can hold -- the swapped pairing
+    # (r_c00 <= 1575, r_c15 >= 1425) would fail all 45 corners
+    limits = sl.measurement_limits("dplus-pullup-tolerance", PULLUP)
+    assert limits["r_c00_ohm"]["limits"] == {"min": 1425.0}, "code 0 is the LARGEST resistance"
+    assert limits["r_c15_ohm"]["limits"] == {"max": 1575.0}, "code 15 is the SMALLEST"
+
+
+def test_pullup_expr_measurements_declare_exactly_one_form():
+    # the derived request measurements are ngspice `expr` entries (klt
+    # evaluates them after the analysis and grades their limits like any
+    # .meas card); the raw code voltages stay .meas cards
+    for n, m in PULLUP["measure"].items():
+        assert ("spice" in m) != ("expr" in m), f"{n} must declare exactly one measurement form"
+    assert PULLUP["measure"]["r_c00_ohm"]["expr"].startswith("vecmin(15000*(v(vdd)-v(dp00))")
+    assert PULLUP["measure"]["r_c15_ohm"]["expr"].startswith("vecmin(15000*(v(vdd)-v(dp15))")
+
+
+def test_pullup_engineering_only_measurements_carry_no_limits():
+    # the disabled-state voltage/leakage probes, the raw code voltages and the
+    # per-corner trim selections (best code, steps, count in window) are
+    # harness-derived engineering data, not mapped rows
+    limits = sl.measurement_limits("dplus-pullup-tolerance", PULLUP)
+    for n in ("vdp_c00_v", "vdp_c15_v", "voff_d1_v", "voff_d0_v", "ioff_dz_na", "isup_dh_na"):
+        assert n not in limits
+
+
+def test_pullup_zero_qualifying_codes_fails_both_verdicts():
+    # a corner whose ladder does not even reach the window floor: the envelope
+    # limit verdict on r_c00_ohm is fail and the harness re-check of the same
+    # bound agrees (the corner itself then dies in the trim analysis with
+    # "no trim code inside", which is what turns spanning into compliance)
+    tb = PULLUP
+    mapping = sl.measurement_limits("dplus-pullup-tolerance", tb)
+    r_short = 1300.0  # every code below 1425: nothing reaches the floor
+    corners = [corner_envelope(("tt", 27, 3.3), {"r_c00_ohm": r_short, "r_c15_ohm": r_short - 400})]
+    corners[0]["measurements"][0]["status"] = "fail"  # r_c00_ohm below its floor
+    results = [{"corner_id": mx.corner_id("tt", 27, 3.3), "status": "failed",
+                "measurements": {"r_c00_ohm": r_short, "r_c15_ohm": r_short - 400}}]
+    problems, summary = sl.cross_check({"corners": corners}, results, tb, mapping)
+    assert problems == []
+    assert summary["r_c00_ohm"] == {"envelope": {"pass": 0, "fail": 1},
+                                    "harness": {"pass": 0, "fail": 1}, "disagree": 0}
+    assert summary["r_c15_ohm"]["harness"] == {"pass": 1, "fail": 0}
+
+
+def test_pullup_roles_carry_one_sided_bounds_only():
+    # the envelope can never claim "a code is inside" by itself: each mapped
+    # role carries exactly ONE bound (a reachability endpoint), so two codes on
+    # opposite sides of the window pass both envelope verdicts -- the
+    # in-window claim is the harness trim analysis's alone (the straddling
+    # corner failing via "no trim code inside" is pinned in test_dplus_pullup.py)
+    assert sl.ROW_BOUNDS["6-14"]["r_eff_min"] == {"min": 1425.0, "unit": "ohm"}
+    assert sl.ROW_BOUNDS["6-14"]["r_eff_max"] == {"max": 1575.0, "unit": "ohm"}
+    ladder = [1580.0 + 200.0 * (14 - k) for k in range(15)] + [1420.0]
+    assert ladder[0] >= 1425.0 and ladder[-1] <= 1575.0  # spanning: both bounds pass
+    assert not any(1425.0 <= r <= 1575.0 for r in ladder), "ladder must straddle, not enter, the window"
+    from conftest import v_of
+    from harness import trim as trimmod
+    derived, problems = trimmod.analyse([v_of(r, 3.3) for r in ladder], 3.3, PULLUP["trim"])
+    assert derived["n_in_window"] == 0.0
+    assert any("no trim code inside" in p for p in problems)
+
+
+def test_pullup_request_carries_the_expr_measurements_with_limits():
+    from harness import results as rs
+    request = rs.build_request(PULLUP, mx.load(), backend="batch")
+    mapping = sl.apply(request, "dplus-pullup-tolerance", PULLUP)
+    by_name = {m["name"]: m for m in request["measurements"]}
+    assert by_name["r_c00_ohm"]["expr"].startswith("vecmin(")
+    assert by_name["r_c00_ohm"]["limits"] == {"min": 1425.0}
+    assert by_name["r_c00_ohm"]["unit"] == "ohm"
+    assert by_name["r_c15_ohm"]["limits"] == {"max": 1575.0}
+    assert by_name["vdp_c00_v"]["spice"].startswith(".meas dc")
+    assert "limits" not in by_name["vdp_c00_v"]
+
+
+def test_se_rx_request_carries_the_threshold_limits():
+    from harness import results as rs
+    for bench, tb in (("se-receiver-dp-thresholds", SE_RX_DP), ("se-receiver-dm-thresholds", SE_RX_DM)):
+        request = rs.build_request(tb, mx.load(), backend="batch")
+        mapping = sl.apply(request, bench, tb)
+        by_name = {m["name"]: m for m in request["measurements"]}
+        assert by_name["vth_v"]["limits"] == {"min": 0.8, "max": 2.0}
+        assert by_name["vth_v"]["unit"] == "V"
+        assert "limits" not in by_name["vth_last_v"]
 
 
 def test_unmapped_bench_leaves_the_request_untouched():

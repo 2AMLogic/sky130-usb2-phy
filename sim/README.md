@@ -145,7 +145,11 @@ verdicts from the tb.json checks and the record states both sides
 disagreement is a problem that fails the record. Engineering-only bounds
 (truth tables, leakage, per-supply logic levels) stay harness checks: klt
 limits are absolute `min`/`max`, and a spec row without a number (6-08, 6-10)
-is evidenced by the envelope's other rows rather than a limit.
+is evidenced by the envelope's other rows rather than a limit. A mapped
+measurement may be a derived `expr` (ngspice evaluates it after the
+analysis; `dplus-pullup-tolerance`'s two extreme-code resistances are the
+first example) -- klt grades an `expr` entry's `limits` exactly like a
+`.meas` card's.
 
 ## Stored evidence (fleet artifact store)
 
@@ -412,6 +416,13 @@ minimum over 2.0-3.0 V, the 0.8 V / 2.0 V boundary probes, the internal
   more than once (non-monotonic) fails, as does an inverted one (no rising
   crossing at all).
 
+Since the limit-carrying re-run (issue #401), both benches' requests carry
+`measurements[].limits` for row 6-11 on `vth_v` (the row's inclusive
+0.8/2.0 V endpoints; the tb.json check stays strictly `gt`/`lt`, so an
+endpoint value would pass the envelope and fail the harness cross-check --
+surfaced per corner, never absorbed); see
+"Spec-row limits in the request".
+
 Records: `se-receiver-dp-thresholds/records/`, `se-receiver-dm-thresholds/records/`.
 No Monte Carlo is run; each record says so. Both ran on fleet runner klt
 0.5.0 against client 0.7.0 with the version check in `warn` mode, as above.
@@ -630,6 +641,21 @@ code minimises `|R_eff - target_ohm|` with ties to the lowest code. Derived data
 stored in `evidence.json` next to the preserved raw measurements in `report.json`.
 Another optional `record` key, `corner_table`, prints a per-corner table of chosen
 derived columns in the record.
+
+Since the limit-carrying re-run (issue #401), the request also carries row
+6-14's window as `measurements[].limits` the envelope itself grades: the two
+extreme-code resistances are derived on the execution host as `expr`
+measurements (`r_c00_ohm`, `r_c15_ohm` -- ngspice evaluates
+`15000*(V(VDD)-V(DP))/V(DP)` after the analysis; `vecmin` reduces over the
+dummy two-point sweep, whose points are identical) with one-sided reachability
+bounds: `r_c00_ohm` >= 1425 ohm (the largest per-code resistance must reach at
+least the window floor) and `r_c15_ohm` <= 1575 ohm (the smallest at most its
+ceiling). The two bounds say the ladder *spans* the window -- necessary, not
+sufficient: a straddling ladder with no code inside passes both and only the
+harness trim analysis above ("no trim code inside") turns spanning into
+compliance; the record states both verdicts. The harness-integrity spread
+check moved from `r_c00_ohm` to `range_ohm` (the ladder's trim span) when
+`r_c00_ohm` gained the ratified bound; see "Spec-row limits in the request".
 
 Records: `dplus-pullup-tolerance/records/`. The first two attempts
 (`20261009-172121-d85f0dc`, `20261009-172711-d85f0dc`) are FAIL records: the batch
