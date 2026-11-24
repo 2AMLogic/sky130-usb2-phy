@@ -5,6 +5,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
 import json  # noqa: E402
+import shutil  # noqa: E402
 
 import pytest  # noqa: E402
 
@@ -39,6 +40,18 @@ def _guard(real):
             raise AssertionError("a test reached the real `klt artifact put`")
         return real(cmd, *a, **k)
     return run
+
+
+def copy_committed_record(src_exp: Path, dst_exp: Path, rid: str) -> None:
+    """Copy one self-contained committed record (`records/<rid>.md`,
+    `netlist-snapshots/<rid>.spice`, `corners/<rid>/`) into a scratch experiment
+    tree, without the rest of the append-only history."""
+    (dst_exp / "records").mkdir(parents=True, exist_ok=True)
+    (dst_exp / "netlist-snapshots").mkdir(parents=True, exist_ok=True)
+    shutil.copy(src_exp / "records" / f"{rid}.md", dst_exp / "records" / f"{rid}.md")
+    shutil.copy(src_exp / "netlist-snapshots" / f"{rid}.spice",
+                dst_exp / "netlist-snapshots" / f"{rid}.spice")
+    shutil.copytree(src_exp / "corners" / rid, dst_exp / "corners" / rid)
 
 
 # ---- synthetic `klt sim` report builders shared by the analog self-tests ----
