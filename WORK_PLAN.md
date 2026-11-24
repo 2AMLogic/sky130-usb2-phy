@@ -6,7 +6,7 @@ machine-generated and is overwritten wholesale on each update; nothing
 outside the markers is touched by automation.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-23T12:54:01Z (snapshot; compare against live labels)_
+_Generated: 2026-11-24T03:50:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -29,14 +29,13 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-_None._
+- **#413**: Parse ngspice library sections once per simulation preflight
 
 ## In Progress
 
 Issues currently being built (`loom:building`).
 
-- **#413**: Parse ngspice library sections once per simulation preflight
-- **#414**: dplus_pullup layout iteration: enabled-path parasitic resistance (contacted poly heads) pushes every trim code above the ratified 1.5 kohm +/-5% window
+_None._
 
 ## PRs Awaiting Review
 
@@ -77,8 +76,8 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 1 |
-| Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
+| Ready (`loom:issue`) | 1 |
+| In Progress (`loom:building`) | 0 |
 | PRs awaiting review | 1 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 5 |
