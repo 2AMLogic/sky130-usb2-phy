@@ -15,7 +15,7 @@ of record and wins where this file disagrees with it.
 The ladder is the klayout-tools design-evidence checklist, graded by
 `klt signoff` (pinned to the 0.9.2 release) and enforced in CI by
 [`signoff/check.py`](../signoff/check.py). The block is `mixed-signal`, so each
-of the 11 items is graded per partition: **10 of 22 rows `met`, 1
+of the 11 items is graded per partition: **11 of 22 rows `met`, 1
 `not_applicable`, `tier: null`.** Tracker: #23.
 
 | Item | Analog (five leaves) | Digital (`usb_utmi_top`) |
@@ -23,14 +23,14 @@ of the 11 items is graded per partition: **10 of 22 rows `met`, 1
 | 1 Design sources | met (#219) | met (#206) |
 | 2 Layout | met: five leaf GDS + generators (#167, #220, #221, #222) | unmet, `no_evidence` (#207) |
 | 3 DRC clean | met: five clean reports grade as a per-cell set under klt 0.9.2 (#399) | unmet, `no_evidence` (#117) |
-| 4 LVS clean | unmet, `check_failed`. Curated LVS matches the D+ pull-up and finds bias-resistor mismatches in four leaves (#406) | unmet, `no_evidence` (#117) |
+| 4 LVS clean | met: the #406 repair sizes the bias resistors to their exact netlist lengths, all five curated comparisons match | unmet, `no_evidence` (#117) |
 | 5 Corner verification | unmet, `no_evidence`: nothing cited yet | unmet, `no_evidence` (#117, #118) |
 | 6 Monte Carlo | unmet, `negative_control_not_detected`; rows 6-06, 6-14 uncovered (#223) | not applicable (#208) |
 | 7 Post-layout | unmet, `no_evidence` | unmet, `no_evidence` (#209) |
 | 8 Characterization report | met (#218) | met |
 | 9 Testbenches shipped | met | met |
 | 10 Repo hygiene | met | met |
-| 11 Power delivery | unmet, `lvs_did_not_pass` with the curated LVS and supply-ERC reports | unmet, `no_evidence` (#117) |
+| 11 Power delivery | unmet, `substrate_isolation_undecidable`: the curated LVS and supply-ERC reports now pass; the grader wants the ERC request to name the deck/PDK family or `ties[].isolation_boxes` asserted | unmet, `no_evidence` (#117) |
 
 What is evidenced behind those rows:
 
@@ -83,10 +83,14 @@ partition and "6 of 22"; the report is current.
 
 ## Next
 
-- **Items 4 and 11 (analog): LVS and power delivery.** Correct the driver
-  and three receiver bias-resistor lengths tracked in #406. Re-run the
-  curated LVS comparisons and their paired supply-ERC checks, then grade
-  the five leaves. Done when both analog rows read `met`.
+- **Item 11 (analog): power delivery.** The #406 bias-resistor repair landed:
+  item 4 (analog) reads `met` with all five curated LVS comparisons matching.
+  What keeps item 11 `unmet` is no longer LVS — the grader's
+  `substrate_isolation_undecidable` refusal wants an ERC request naming the
+  deck/PDK family (so isolation layers can be measured) or
+  `ties[].isolation_boxes` asserted in the ERC spec, neither of which the
+  committed `erc-supply-spec.json` declares. Done when item 11 analog reads
+  `met`.
 - **Item 6 (analog): finish #223.** The driver rise/fall matching campaign
   (`sim/driver-matching-mismatch/`, declared, not run) needs more compute time
   than one build session; the pull-up record needs citing under row 6-14. Also

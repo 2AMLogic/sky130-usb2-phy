@@ -60,6 +60,12 @@
     "vdp_c15_v": {
       "spice": ".meas dc vdp_c15_v FIND v(dp15) AT=0"
     },
+    "r_c00_ohm": {
+      "expr": "vecmin(15000*(v(vdd)-v(dp00))/v(dp00))"
+    },
+    "r_c15_ohm": {
+      "expr": "vecmin(15000*(v(vdd)-v(dp15))/v(dp15))"
+    },
     "voff_d1_v": {
       "spice": ".meas dc voff_d1_v FIND v(dpd1) AT=0"
     },
@@ -115,13 +121,19 @@
       "max": 0.8
     },
     "r_c00_ohm": {
+      "min": 1425.0
+    },
+    "r_c15_ohm": {
+      "max": 1575.0
+    },
+    "range_ohm": {
       "min_spread_pct": 5.0
     }
   },
   "record": {
     "netlist_provenance": "schematic-derived netlist: xschem export of design/dplus_pullup.sch (design/netlist/dplus_pullup.spice, byte-identical to the deck frozen in the snapshot below) plus the testbench deck; no layout, no parasitic extraction",
     "statistical_convention": "deterministic PVT corners only (5 process x 3 temperature x 3 supply); mismatch / Monte Carlo was NOT run. The process sections of the pinned PDK select the typical resistor parameter set at every process corner (res_typical__cap_typical), so this grid exercises the MOS corners and temperature on the ladder, not the resistor sheet-resistance spread",
-    "bounds": "the engineering criteria in the Method section (tb.json trim and checks)",
+    "bounds": "the ratified limits and engineering criteria in the Method section (tb.json trim and checks)",
     "footer": "Scope: schematic-level electrical evidence for one block against the ratified D+ pull-up resistance row. PASS means some trim code per corner is inside 1.425-1.575 kohm; it does not show that one calibration code survives voltage and temperature, and does not cover resistor sheet-resistance spread (see design/README.md), mismatch, the pull-up supply (VPU is an input), trim storage, layout, DRC/LVS or integrated-PHY behaviour. It does not relax any target. A FAIL record is evidence of failure, not compliance.",
     "detailed": true,
     "corner_table": [
@@ -138,10 +150,11 @@
       "Stimulus: 16 pull-up instances (PU_EN = VPU), one per trim code 0..15, TRIM<i> = bit i of the code (TRIM<i> = 1 shorts ladder segment i, code 0 = maximum resistance), each with the host's 15 kohm from D+ to ground. Control inputs sit at 0 or VPU (the documented control domain, no thick-oxide gate sees more than VPU). VPU = the swept supply `vsup` (3.0 / 3.3 / 3.6 V).",
       "Raw measurement: V(DP) per code (`vdp_cNN_v`, DC operating point). Derived by sim/harness/trim.py and recomputed by the record lint from the raw envelope: I_load = V(DP)/15000 ohm [A, from D+ into the load, i.e. out of the pull-up]; R_eff = (VPU - V(DP))/I_load [ohm]. R_eff therefore includes the enable switch, the ladder and the bypass switches. A code with V(DP) not finite, not > 0 (zero current) or not < VPU yields no resistance and fails the corner.",
       "Acceptance (existential over codes, within each corner): at least one code with 1425 <= R_eff <= 1575 ohm, inclusive bounds, at each of the 45 unique corners. The bound is NOT applied to every code. All 16 codes must be present and finite at every corner, even when another code passes. Best code = smallest |R_eff - 1500|, ties to the lowest code. Missing, duplicate or unexpected corners, a failed simulation, missing/non-finite code data or a corner with no passing code make the record FAIL.",
+      "Row 6-14 in the request (issue #401): the code-0 and code-15 effective resistances are also derived on the execution host as `expr` measurements (`r_c00_ohm`, `r_c15_ohm`, ngspice evaluates 15000*(V(VDD)-V(DP))/V(DP) from the raw node voltages after the analysis; `vecmin` reduces over the dummy two-point sweep, whose points are identical) and carry the row's window as two one-sided reachability limits the envelope itself grades per corner: `r_c00_ohm` >= 1425 ohm (the LARGEST per-code resistance, the untrimmed ladder at code 0, must reach at least the window floor) and `r_c15_ohm` <= 1575 ohm (the SMALLEST, at code 15, at most the ceiling). The two bounds say the ladder SPANS the window -- they are necessary, not sufficient: a ladder straddling the window with no code inside passes both envelope bounds, and only the harness trim analysis above (the existential `n_in_window` >= 1, which fails the corner with 'no trim code inside') turns spanning into compliance. The record states both verdicts and the envelope never claims more than spanning.",
       "Per-corner derived data: `r_cNN_ohm` (all codes), `best_code`, `best_r_ohm`, `best_err_ohm`, `n_in_window`, `step_cNN_ohm` (R(code-1) - R(code), positive = resistance falls), `step_min_ohm`, `step_max_ohm`, `range_ohm` (R(code 0) - R(code 15)), `n_nonmonotonic` (adjacent pairs where resistance does not fall).",
       "Limit of the selection: the best code is chosen independently per corner. That proves the trim range and step cover every corner; it does not prove that a single calibration code is valid across voltage and temperature after trim at one condition.",
       "Disabled state (PU_EN = 0): `voff_d1_v` / `voff_d0_v` = V(DP) with TRIM=1111 / 0000 and the 15 kohm host load; `ioff_*_na` = current delivered into D+ by the pull-up (positive out of the pull-up) for d1 and d0 (through the load), dz (D+ forced to 0 V) and dh (D+ forced to VPU); `isup_*_na` = current drawn from VPU by each disabled instance. Only a sanity criterion is applied: D+ must stay at or below 0.8 V (the ratified single-ended VIL) with the 15 kohm load, i.e. not pulled up. No leakage limit is ratified, none is invented, and these records do not claim leakage compliance.",
-      "`r_c00_ohm` spread >= 5 % across the grid is a harness-integrity bound (temperature and MOS corner sections took effect), not a spec row."
+      "`range_ohm` (the ladder's trim span) spreading >= 5 % across the grid is a harness-integrity bound (temperature and MOS corner sections took effect), not a spec row."
     ]
   },
   "variants": {
@@ -154,10 +167,11 @@
           "Stimulus: 16 pull-up instances (PU_EN = VPU), one per trim code 0..15, TRIM<i> = bit i of the code (TRIM<i> = 1 shorts ladder segment i, code 0 = maximum resistance), each with the host's 15 kohm from D+ to ground. Control inputs sit at 0 or VPU (the documented control domain, no thick-oxide gate sees more than VPU). VPU = the swept supply `vsup` (3.0 / 3.3 / 3.6 V).",
           "Raw measurement: V(DP) per code (`vdp_cNN_v`, DC operating point). Derived by sim/harness/trim.py and recomputed by the record lint from the raw envelope: I_load = V(DP)/15000 ohm [A, from D+ into the load, i.e. out of the pull-up]; R_eff = (VPU - V(DP))/I_load [ohm]. R_eff therefore includes the enable switch, the ladder and the bypass switches. A code with V(DP) not finite, not > 0 (zero current) or not < VPU yields no resistance and fails the corner.",
           "Acceptance (existential over codes, within each corner): at least one code with 1425 <= R_eff <= 1575 ohm, inclusive bounds, at each unique corner of the selected matrix (45 for the base experiment, 225 for the resistor-sets variant). The bound is NOT applied to every code. All 16 codes must be present and finite at every corner, even when another code passes. Best code = smallest |R_eff - 1500|, ties to the lowest code. Missing, duplicate or unexpected corners, a failed simulation, missing/non-finite code data or a corner with no passing code make the record FAIL.",
+          "Row 6-14 in the request (issue #401): the code-0 and code-15 effective resistances are also derived on the execution host as `expr` measurements (`r_c00_ohm`, `r_c15_ohm`, ngspice evaluates 15000*(V(VDD)-V(DP))/V(DP) from the raw node voltages after the analysis; `vecmin` reduces over the dummy two-point sweep, whose points are identical) and carry the row's window as two one-sided reachability limits the envelope itself grades per corner: `r_c00_ohm` >= 1425 ohm (the LARGEST per-code resistance, the untrimmed ladder at code 0, must reach at least the window floor) and `r_c15_ohm` <= 1575 ohm (the SMALLEST, at code 15, at most the ceiling). The two bounds say the ladder SPANS the window -- they are necessary, not sufficient: a ladder straddling the window with no code inside passes both envelope bounds, and only the harness trim analysis above (the existential `n_in_window` >= 1, which fails the corner with 'no trim code inside') turns spanning into compliance. The record states both verdicts and the envelope never claims more than spanning.",
           "Per-corner derived data: `r_cNN_ohm` (all codes), `best_code`, `best_r_ohm`, `best_err_ohm`, `n_in_window`, `step_cNN_ohm` (R(code-1) - R(code), positive = resistance falls), `step_min_ohm`, `step_max_ohm`, `range_ohm` (R(code 0) - R(code 15)), `n_nonmonotonic` (adjacent pairs where resistance does not fall).",
           "Limit of the selection: the best code is chosen independently per corner. That proves the trim range and step cover every corner; it does not prove that a single calibration code is valid across voltage and temperature after trim at one condition.",
           "Disabled state (PU_EN = 0): `voff_d1_v` / `voff_d0_v` = V(DP) with TRIM=1111 / 0000 and the 15 kohm host load; `ioff_*_na` = current delivered into D+ by the pull-up (positive out of the pull-up) for d1 and d0 (through the load), dz (D+ forced to 0 V) and dh (D+ forced to VPU); `isup_*_na` = current drawn from VPU by each disabled instance. Only a sanity criterion is applied: D+ must stay at or below 0.8 V (the ratified single-ended VIL) with the 15 kohm load, i.e. not pulled up. No leakage limit is ratified, none is invented, and these records do not claim leakage compliance.",
-          "`r_c00_ohm` spread >= 5 % across the grid is a harness-integrity bound (temperature and MOS corner sections took effect), not a spec row.",
+          "`range_ohm` (the ladder's trim span) spreading >= 5 % across the grid is a harness-integrity bound (temperature and MOS corner sections took effect), not a spec row.",
           "Resistor coverage: each point's process section is one of 25 pinned-library sections = 5 MOS corners x {typical, ll, hh, hl, lh}; the section -> (MOS file, resistor set, capacitor set) mapping and the resolved library includes are recorded in evidence.json (`sections`) and checked by the lint against the approved map. The bare sections `ll`, `hh`, `hl`, `lh` carry the tt MOS corner.",
           "Compatibility: this record is a supplement to, not a replacement for, the 45-point records (res_typical only); those records are unchanged and keep their own frozen matrix."
         ],

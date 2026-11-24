@@ -18,13 +18,12 @@ import sys
 from pathlib import Path
 
 from gen_common import (
-    GRID,
     L,
     STRIP_W,
     TRUNK_PITCH,
     Canvas,
     Ports,
-    make_conflicts,
+    find_row_x,
     mos,
     route_nets,
     run_gds,
@@ -144,15 +143,8 @@ def build(top: str, din: str, rxout: str, vref: str = "VREF", *, differential: b
     # within met2 space of an NMOS one that shares channel y-range.
     nets_order = ["IBIASN", "TAIL", "LOADDIODE", "AMPOUT", "BUF1", din, vref, rxout]
     ty_of = {n: CH_Y0 + 0.6 + i * TRUNK_PITCH for i, n in enumerate(nets_order)}
-    conflicts = make_conflicts(ty_of)
 
-    start = 0.8 + STRIP_W + 0.9
-    while True:
-        scratch = Ports()
-        place_p(Canvas(top, L), scratch, start)
-        if not any(conflicts(a_, b_) for a_ in scratch.items for b_ in ports.items):
-            break
-        start += GRID
+    start = find_row_x(place_p, ports, ty_of, 0.8 + STRIP_W + 0.9)
     print(f"PMOS row placed at x={start:.3f}", file=sys.stderr)
     p_x1 = place_p(cv, ports, start)
 

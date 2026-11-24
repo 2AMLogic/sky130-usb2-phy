@@ -168,6 +168,8 @@ def fake_report(matrix, tamper=None):
         vals.update({"voff_d1_v": 2e-6, "voff_d0_v": 2e-6, "ioff_d1_na": 0.1, "ioff_d0_na": 0.1,
                      "ioff_dz_na": 0.1, "ioff_dh_na": -0.001, "isup_d1_na": 0.1, "isup_d0_na": 0.1,
                      "isup_dz_na": 0.1, "isup_dh_na": 0.01})
+        # the two derived `expr` measurements carrying row 6-14's bounds
+        vals.update(r_c00_ohm=1950.0 * rscale, r_c15_ohm=(1950.0 - 52.0 * 15) * rscale)
         return {n: x / float(TB["measure"][n].get("scale", 1.0)) for n, x in vals.items()}
     return synthetic_report(matrix, values_for, tamper=tamper,
                             environment=full_environment(matrix), provenance=full_provenance(matrix))
@@ -209,6 +211,11 @@ def sandbox(tmp_path, monkeypatch):
     shutil.copytree(EXP / "netlist-snapshots", sim / EXP.name / "netlist-snapshots")
     (tmp_path / "design/netlist").mkdir(parents=True)
     shutil.copy(SIM.parent / "design/netlist/dplus_pullup.spice", tmp_path / "design/netlist/dplus_pullup.spice")
+    # store-cited records (post-#194) resolve their manifests against the
+    # scratch repo root, so the committed manifests travel with the sandbox
+    (tmp_path / "manifests/artifacts").mkdir(parents=True, exist_ok=True)
+    for m in sorted((SIM.parent / "manifests/artifacts").glob("*.manifest.json")):
+        shutil.copy(m, tmp_path / "manifests/artifacts" / m.name)
     for f in ("corners.json", "corners-resistor-sets.json"):
         shutil.copy(SIM / f, sim / f)
     monkeypatch.setattr(mx, "SIM_DIR", sim)
@@ -221,6 +228,9 @@ def sandbox(tmp_path, monkeypatch):
         return {"open_pdks_commit": m.pdk["open_pdks_commit"], "lib_sha256": m.pdk["lib_sha256"], "sections": ev}
 
     monkeypatch.setattr(runner, "check_env", env)
+    monkeypatch.setattr(runner, "tool_version", lambda cmd: "klt test")
+    monkeypatch.setattr(runner, "_git", lambda *a: "abcdef0" if "--short=7" in a
+                        else ("abcdef0" * 5 + "abcde" if "rev-parse" in a else ""))
 
     def fake(request_path, outdir, backend, workdir, pdk_root=None):
         req = json.loads(Path(request_path).read_text())
@@ -234,6 +244,8 @@ def sandbox(tmp_path, monkeypatch):
         return rep, "", 0
 
     monkeypatch.setattr(runner, "invoke_klt", fake)
+    monkeypatch.setattr(runner.subprocess, "run",
+                        lambda cmd, *a, **k: pytest.fail(f"a subprocess was launched during a mocked run: {cmd}"))
     return sim
 
 
@@ -277,7 +289,11 @@ def _reseal(sim, rid, edit):
 
 def _variant_rid(sim):
     for p in sorted((sim / EXP.name / "records").glob("*.md")):
-        if "manifest sha256" in p.read_text() and "- **Status**: PASS" in p.read_text():
+        text = p.read_text()
+        # the resistor-set variant's own record (45-point store-cited records
+        # of the base experiment also live here and are not materializable
+        # from this sandbox's stage)
+        if "manifest sha256" in text and "- **Status**: PASS" in text and "225 points" in text:
             return p.stem
 
 

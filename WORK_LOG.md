@@ -8,14 +8,68 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-23
+
+- **PR #452**: feat(sim): finish Part A -- rows 6-11/6-14 limits in klt sim for the last three benches
+- **PR #405**: fix: declare one-sided receiver negative controls not_applicable so item 6 rows 6-09/6-11 grade met
+- **Issue #402** (closed): T1 item 6 (analog): rows 6-09 and 6-11 fail on undetected negative controls; give each measurement a detecting control or a declared not_applicable one and re-derive the yield reports
+- **Issue #401** (closed): T1 item 5 (analog): finish the three remaining 45-point bench runs with spec limits in klt sim
+- **PR #457**: fix: report true interval count in RxActive EOP-window assertion message
+- **PR #455**: test: stub tool_version/_git in resistor-sets sandbox and guard against subprocess launches
+- **PR #454**: test: stub klt/git lookups in the sim sandbox fixture
+- **Issue #453** (closed): test_resistor_sets.sandbox still launches real klt --version and git (same gap as #447)
+- **Issue #451** (closed): Wrong interval count in _assert_rxactive_eop_window's disjoint-interval assertion message
+- **Issue #447** (closed): Stub tool_version and _git in test_harness.sandbox and drop the subprocess passthrough
+- **PR #450**: test(usb_rx): bound RxActive EOP deassertion by an independent window, not the trace's own shape
+- **PR #449**: test(sim): route receiver 225-point variant reports through synthetic_report
+- **PR #448**: test: share the synthetic campaign builder in mismatch-store tests
+- **PR #446**: feat(sim): map diff-receiver-sensitivity row 6-09 limits; 45-point re-run with envelope-graded bounds
+- **PR #445**: feat: warn on forked supersede chains and duplicate same-sha record tips
+- **Issue #444** (closed): Share the synthetic campaign builder in mismatch-store tests
+- **PR #443**: fix: keep spec-limit unit metadata consistent with the numbers it describes
+- **Issue #442** (closed): check_records.py should flag forked supersede chains and duplicate same-sha tips
+- **Issue #441** (closed): Replace the circular RxActive end-of-packet assertion in the receive test
+- **PR #440**: docs: point analog LVS citations at the manifest-cited 6beff8e records
+- **Issue #439** (closed): Build 225-point synthetic reports in receiver tests through conftest.synthetic_report
+- **Issue #438** (closed): Analog-layout evidence lineage: README cites an uncited record set, stale 10-of-22 count, and a forked supersede chain from a double mint
+- **PR #437**: test: pin find_row_x's chosen PMOS-row offset per leaf to exact equality
+- **Issue #435** (closed): diff-driver-pex static record: the "97%" attribution figure understates its own table (98.9%)
+- **Issue #434** (closed): find_row_x: the receivers' chosen PMOS-row offset rests on 1.09e-12 um of `start += GRID` float drift
+- **Issue #426** (closed): Fold sim/diff-driver-pex/run.py onto the shared leaf pex runner and exact-pair gate once #416 lands
+- **Issue #424** (closed): spec_limits: emitted `unit` describes raw-unit `limits` with the display unit (record table reads "4e-09 … 2e-08 ns")
+- **PR #421**: fix: absorb the xhigh serpentine snap residual in one U-turn so bias resistors draw exact netlist lengths
+- **PR #416**: sim: add diff-driver-pex post-layout bench for the differential_driver leaf
+- **Issue #406** (closed): Reconcile xhigh poly bias resistor lengths in the driver and three receivers
+
+### 2026-11-22
+
+- **PR #433**: perf(layout): draw-free find_row_x() replaces throwaway Canvas churn in the PMOS row search
+- **Issue #432** (closed): Stop constructing throwaway Canvas layouts inside the analog PMOS row placement search
+- **PR #430**: perf(sim): scope committed_duplicates to run_dir before statting or hashing
+- **PR #427**: refactor(sim): share one leaf pex runner and its exact-pair gate
+- **PR #423**: feat(sim): map driver-signal-quality rows 6-06/6-07 limits; 45-point re-run with envelope-graded bounds
+- **PR #422**: fix: fail spec_limits cross_check closed on unrecognised envelope statuses
+- **PR #420**: refactor: share the D+ and D− single-ended receiver PEX runner
+- **PR #411**: feat(sim): generate spec-row limits in the klt sim request; driver-static limit-carrying 45-point re-run (rows 6-04, 6-05)
+- **Issue #428** (closed): Scope artifact_manifest.committed_duplicates to run_dir before statting and hashing tracked files
+- **Issue #425** (closed): Consolidate the remaining klt pex leaf runners onto one shared harness and retire diff-receiver-pex's inline count-only equivalence gate
+- **Issue #419** (closed): Share the D+ and D− single-ended receiver PEX runner
+- **Issue #412** (closed): spec_limits.cross_check: an envelope limit status that is neither pass nor fail is silently uncounted
+
 ### 2026-11-21
 
-- **Issue #403**: T1 item 7 (analog): klt pex reports for the se_receiver_dp, se_receiver_dm and dplus_pullup leaves
+- **PR #415**: feat: klt pex post-layout records for the single-ended receivers (PASS) and the D+ pull-up (FAIL, layout follow-up #414)
+- **PR #407**: feat: grade analog leaves with curated LVS and passive geometry checks
+- **Issue #400** (closed): T1 items 4 and 11 (analog): probe the curated klt lvs engine on the five leaves and record, per leaf, which LVS route can be graded met
+- **Issue #403** (closed): T1 item 7 (analog): klt pex reports for the se_receiver_dp, se_receiver_dm and dplus_pullup leaves
 - **Issue #414** (open): dplus_pullup layout iteration: poly-head parasitics push every trim code above the ratified window (the FAIL post-layout record's follow-up)
 - 2AMLogic/klayout-tools#6990 (open, upstream): klt pex errors the whole envelope on a DUT-internal-node measurement (no portable-subset option)
 
 ### 2026-11-20
 
+- **PR #409**: chore(signoff): re-pin grader to klayout-tools 0.9.2 and regrade
+- **Issue #410** (closed): signoff CI: read the grading klt pin from signoff/toolchain.json instead of a third hand-edited copy
+- **Issue #399** (closed): Re-pin the signoff grader from klt 0.9.1 to the 0.9.2 release and regrade (item 3 analog grades met, 9 -> 10 of 22)
 - **Issue #193** (closed): Adopt the common artifact store for sim evidence (manifests in git, bytes via klt artifact)
 
 ### 2026-11-18
@@ -325,20 +379,4 @@ by the Guide triage agent. Newest entries first.
 
 - **Issue #87** (closed): Guard trigger review: loom:installed-file-write false-denies a same-command cd-then-relative-write into a scratch dir
 - **PR #88**: test: add regression test + resync pin for the #87 installed-file-write false DENY
-
-### 2026-09-22
-
-- **Issue #81** (closed): docs: rtl/README.md cites DR-0001 'Decision 6 (bit-rate timing)' which does not exist
-- **PR #83**: docs: re-point usb_tx_serializer DR-0001 citation from nonexistent Decision 6 to Decision 1
-
-### 2026-09-21
-
-- **Issue #79** (closed): 2am: reuse rule 9 — reconcile the shared USB protocol RTL with gf180-usb2-phy — this repo is master by lineage; the twin vendors with stamps
-- **PR #80**: docs: record DR-0002 shared-RTL classification and canonical interfaces
-- **Issue #76** (closed): Guard trigger review: worktree-write-confinement DENY on /tmp scratch output for klt erc comparisons
-- **PR #78**: docs: establish .loom/tmp/ in-worktree scratch convention for agent sessions
-- **Issue #73** (closed): Commit a klt signoff block manifest so this block's T1 state is graded, not hand-read
-- **PR #75**: feat(signoff): grade this block's T1 state via a klt signoff block manifest
-- **Issue #72** (closed): T1 item 11 (power delivery, structural): no klt erc supply spec or report in this repo
-- **PR #74**: feat: add T1 item 11 erc supply spec and report for utmi_stub
 

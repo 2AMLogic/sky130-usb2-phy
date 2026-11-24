@@ -1975,10 +1975,10 @@
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.9.3.dev2575+g6bd18bbc8637",
-    "klt_git_commit": "6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.14",
     "pdk": {
       "name": "sky130",
       "source": "built-in",
@@ -1986,7 +1986,7 @@
     },
     "deck": null,
     "input": {
-      "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+      "content_hash": "sha256:14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
       "role": "layout"
     },
     "spec": {
@@ -1997,7 +1997,7 @@
         "name": "xhigh_po_resistor_body",
         "body_layer": "66/13",
         "on": "poly",
-        "body_area_um2": 474.3141
+        "body_area_um2": 474.3
       }
     ],
     "net_exclusions": [],

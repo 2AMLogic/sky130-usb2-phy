@@ -37,7 +37,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from gen_common import (  # noqa: E402
-    GRID,
     L,
     LIC,
     LIC_PITCH,
@@ -45,7 +44,7 @@ from gen_common import (  # noqa: E402
     TRUNK_PITCH,
     Canvas,
     Ports,
-    make_conflicts,
+    find_row_x,
     mos,
     route_nets,
     run_gds,
@@ -209,14 +208,9 @@ def build() -> Canvas:
             px = mos(c, pts, "p", px, ROW_Y, 4.0, ["VPU", drain], [gate], "VPU", P_RAIL_Y) + gap
         return px - gap
 
-    conflicts = make_conflicts(ty_of)
-    start = 0.8 + STRIP_W + 0.9
-    while True:
-        scratch = Ports()
-        place_small(Canvas(TOP, L), scratch, start)
-        if not any(conflicts(a_, b_) for a_ in scratch.items for b_ in ports.items):
-            break
-        start += GRID
+    # Shift the small PMOS row until none of its met2 drops comes within met2
+    # space of an NMOS/resistor drop that shares a channel y-range.
+    start = find_row_x(place_small, ports, ty_of, 0.8 + STRIP_W + 0.9)
     print(f"small PMOS row placed at x={start:.3f}", file=sys.stderr)
     nw_x0 = start - 0.9 - STRIP_W
     x = place_small(cv, ports, start) + gap

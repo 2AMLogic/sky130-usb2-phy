@@ -62,7 +62,7 @@
   },
   "hints_applied": null,
   "constant_nets_applied": null,
-  "status": "mismatch",
+  "status": "match",
   "power_connectivity": {
     "status": "unchecked",
     "reason": "reference.form is 'subckt-call', whose reference netlist carries its own power/ground pins and nets -- they take part in the ordinary compare, so this check (which exists to cover the signal-only 'gate-level-verilog' form) does not apply",
@@ -200,28 +200,24 @@
       ]
     }
   ],
-  "mismatch_count": 9,
-  "error_count": 3,
+  "mismatch_count": 6,
+  "error_count": 0,
   "category_counts": {
     "device.geometry_not_compared": 2,
     "device.placeholder_value": 1,
-    "device.property": 2,
-    "topology": 4
+    "topology": 3
   },
-  "category_error_counts": {
-    "device.property": 2,
-    "topology": 1
-  },
+  "category_error_counts": {},
   "counts": {
     "nets": {
       "layout": 47,
       "reference": 47,
-      "matched": 44
+      "matched": 47
     },
     "devices": {
       "layout": 80,
       "reference": 80,
-      "matched": 79
+      "matched": 80
     },
     "pins": {
       "layout": 8,
@@ -247,17 +243,17 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.12",
+    "engine_version": "0.30.14",
     "netgen_binary": null,
-    "layout_sha256": "2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+    "layout_sha256": "14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
     "reference_sha256": "bed3319d65789db0a7d1a14831e113eb957cd1998d3cc58d4dc539dd5ea2fdd0",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.3.dev2575+g6bd18bbc8637",
-    "klt_git_commit": "6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@6bd18bbc8637f6d767b3c24e77bd5db7a39e4bbe",
-    "klayout_version": "0.30.12",
+    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
+    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
+    "klayout_version": "0.30.14",
     "pdk": null,
     "deck": {
       "name": "sky130",
@@ -265,10 +261,10 @@
       "released": false
     },
     "input": {
-      "content_hash": "sha256:2ae488493e6ebbd869207710d956e5507f35337927909f099b856f87a83a3bd0",
+      "content_hash": "sha256:14f907e4759507df7f92285e3aa54e95b07c338e4be354ccda39deebf46d6a16",
       "role": "layout"
     },
-    "klayout_version_mismatch": false
+    "klayout_version_mismatch": true
   },
   "mismatches": [
     {
@@ -353,66 +349,6 @@
           3.5599200000000004e-12
         ]
       },
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "matched device parameter 'r' differs",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "\\$356",
-        "reference": "B",
-        "class": "res_xhigh_po"
-      },
-      "property": {
-        "name": "r",
-        "layout": 42567.375886524824,
-        "reference": 42553.1914893617
-      },
-      "details": null,
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "device.property",
-      "severity": "error",
-      "description": "matched device parameter 'l_um' differs",
-      "side": "both",
-      "net": null,
-      "device": {
-        "layout": "\\$356",
-        "reference": "B",
-        "class": "res_xhigh_po"
-      },
-      "property": {
-        "name": "l_um",
-        "layout": 30.01,
-        "reference": 30.0
-      },
-      "details": null,
-      "circuit": null,
-      "instance": null,
-      "subcircuit": null
-    },
-    {
-      "category": "topology",
-      "severity": "error",
-      "description": "nets were paired despite a name/identity conflict",
-      "side": "both",
-      "net": {
-        "layout": "\\$7",
-        "layout_id": 5,
-        "reference": "VBN",
-        "reference_id": 11
-      },
-      "device": null,
-      "property": null,
-      "details": null,
       "circuit": null,
       "instance": null,
       "subcircuit": null
@@ -744,11 +680,32 @@
       "pin": true
     },
     {
+      "layout": "\\$7",
+      "layout_id": 5,
+      "reference": "VBN",
+      "reference_id": 11,
+      "pin": false
+    },
+    {
       "layout": "\\$8",
       "layout_id": 6,
       "reference": "VBP",
       "reference_id": 12,
       "pin": false
+    },
+    {
+      "layout": "VDD",
+      "layout_id": 42,
+      "reference": "VDD",
+      "reference_id": 0,
+      "pin": true
+    },
+    {
+      "layout": "VSS",
+      "layout_id": 46,
+      "reference": "VSS",
+      "reference_id": 1,
+      "pin": true
     },
     {
       "layout": "\\$46",

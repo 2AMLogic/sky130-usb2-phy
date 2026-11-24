@@ -16,7 +16,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from . import HARNESS_VERSION, evidence_store as es, matrix as mx, pdk_pin, results as rs
+from . import HARNESS_VERSION, evidence_store as es, matrix as mx, pdk_pin, results as rs, spec_limits
 from .integrity import sha256_bytes, sha256_file  # noqa: F401  (re-exported)
 from .evidence_store import StoreUnavailable  # noqa: F401  (re-exported for the CLI)
 
@@ -126,6 +126,9 @@ def allocate_record_id(records_dir: Path, now: _dt.datetime) -> str:
 def invoke_klt(request_path: Path, outdir: Path, backend: str, workdir: Path,
                pdk_root: str | None = None) -> tuple[dict, str, int]:
     cmd = [KLT, "sim", str(request_path), "--format", "json", "-o", str(outdir), "--backend", backend]
+    if backend == "batch":
+        # wait out a fleet capacity refusal instead of failing the recorded run (2am#6872)
+        cmd += ["--wait-for-capacity", "600"]
     try:
         # pin the submitting host's klt to the checked install (local environment only; a request
         # field would be shipped to the fleet): with two installs of the PDK variant on the host
@@ -282,6 +285,19 @@ def render_record(rid: str, m: dict, manifest_sha: str, parts: dict, stored: tup
                 lines += ["No corner produced a measurement; the per-corner table is omitted."]
         lines += ["", "## Failures (corner id: measurement and value)", ""]
         lines += [f"- {p}" for p in m["problems"]] if m["problems"] else ["- none"]
+    sl = parts.get("spec_limits") or {}
+    if sl.get("mapping"):
+        lines += ["", "## Spec limits (envelope) and harness cross-check", "",
+                  "The request declared `measurements[].limits` generated from the ratified row "
+                  "table `signoff/spec/analog-rows.json` (sim/harness/spec_limits.py), so `klt sim` "
+                  "itself graded each bound per corner (column *envelope*). The harness re-derived "
+                  "the same verdicts post-hoc from the tb.json checks (column *harness*); any "
+                  "disagreement is listed under Failures and fails this record."]
+        if sl.get("summary"):
+            lines += [""] + spec_limits.render_cross(sl["summary"], sl["mapping"])
+        else:
+            lines += ["", "No corners ran: no envelope verdict exists to cross-check "
+                      "(the limits were declared in the request)."]
     lines += ["", meta["footer"], ""]
     return "\n".join(lines)
 
@@ -322,6 +338,10 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
     request = rs.build_request(tb, matrix, backend=backend, process=subset.get("process"),
                                temperature_c=subset.get("temperature_c"), supply_v=subset.get("supply_v"),
                                runner_version_check=runner_version_check, hosts=hosts)
+    try:
+        spec_map = spec_limits.apply(request, experiment, tb)
+    except spec_limits.SpecLimitError as exc:
+        raise RunError(f"spec limits: {exc}") from exc
     if full:
         problems = mx.check_request(request, matrix)
         if problems:
@@ -355,7 +375,8 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
     parts = {"body": body, "request_bytes": request_bytes, "tb_bytes": tb_path.read_bytes(),
              "matrix_bytes": matrix_path.read_bytes(), "claim": tb["claim"], "supersedes": supersedes,
              "record_meta": tb.get("record") or {},
-             "logs": {}, "stderr": "", "report": None}
+             "logs": {}, "stderr": "", "report": None,
+             "spec_limits": {"mapping": spec_map}}
 
     try:
         report, stderr, code = invoke_klt(work / "request.json", work / "klt-out", backend, work,
@@ -373,6 +394,10 @@ def run(experiment: str, backend: str, record: bool, subset: dict, supersedes: s
         return 2
 
     results, problems = rs.evaluate(report, points, tb)
+    if spec_map:
+        disagreements, cross_summary = spec_limits.cross_check(report, results, tb, spec_map)
+        problems += disagreements
+        parts["spec_limits"]["summary"] = cross_summary
     jid = rs.job_id(report)
     if backend == "batch" and not jid:
         problems.append("batch run but the report carries no remote job id")

@@ -68,16 +68,36 @@ while still checking every value transition the driven stimulus produced
 shows up, in order, exactly once each -- "matches the reference model's
 line state...at every sample point across a full packet" without
 depending on nailing an exact absolute-time alignment.
+
+---------------------------------------------------------------------
+RxActive end-of-packet window (issue #441)
+---------------------------------------------------------------------
+The EOP-boundary test bounds RxActive's deassertion with references
+*independent of the monitored trace*: the lower edge is the driven EOP's
+SE0->J transition (the earliest event the receive path could possibly
+react to -- `usb_bit_sync.v` anchors the EOP-terminating J's bit strobe
+CENTER_PHASE=6 clk_144 cycles after that dp edge, and `usb_rx_framer.v`
+drops `rx_active` only on that strobe), and the upper edge is the end of
+the driven EOP's J bit plus `EOP_DEASSERT_LATENCY_MAX_NS`, a budget
+assembled from the documented receive-path latencies (CDR strobe
+placement, framer registration, 2-flop CDC into clk_utmi, one monitor
+sampling period). The trace contributes only the *observation*: RxActive
+must form exactly one contiguous interval whose observed fall lands
+inside the window. Issue #441 replaced an earlier last-high-sample search
+plus trailing-sum check that was circular -- the sum after the last high
+sample is zero by construction, so it accepted any trace shape at all.
 """
 
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, ReadOnly, RisingEdge, Timer
+from cocotb.utils import get_sim_time
 
 from monitors import Monitor, RxMonitor
 from usbfs import scenarios
 from usbfs.linestate import LineState, to_dpdm
-from usbfs.timing import MAX_FREQ_OFFSET_PPM, TimingConfig
+from usbfs.packets import EOP_STATES
+from usbfs.timing import FS_BIT_PERIOD_NS, MAX_FREQ_OFFSET_PPM, TimingConfig
 from usbfs.transceiver import IdealTransceiver
 
 CLK144_PERIOD_NS_NOMINAL = 1000.0 / 144.0  # 6.9444... ns (144 MHz)
@@ -390,20 +410,168 @@ async def test_no_bit_stuff_violation_on_clean_all_ones(dut):
 # EOP detection / RxActive deassertion at the correct boundary.
 # ---------------------------------------------------------------------------
 
+# Upper bound on how long after the driven EOP's terminating J bit ends the
+# UTMI-side RxActive may take to fall, assembled from the receive path's
+# documented latencies (worst-case terms, each independently derivable from
+# the RTL this suite drives):
+#   - one FS bit period: `usb_bit_sync.v`'s CDR places the J cell's bit
+#     strobe within the J bit cell (CENTER_PHASE cycles after the SE0->J
+#     transition re-anchors the phase counter);
+#   - 3 clk_144 cycles: `usb_rx_framer.v` registers `eop_detected` off the
+#     strobe and drops `rx_active` on the following edge, plus margin for
+#     the input synchronizer's own registration;
+#   - 3 clk_utmi cycles: `usb_rx_cdc.v`'s 2-flop level synchronizer (the
+#     fall can land just after an edge, so two flops cost up to just under
+#     three periods);
+#   - 1 clk_utmi cycle: `RxMonitor` samples once per clk_utmi edge, so the
+#     fall is observed up to one period after it happens.
+EOP_DEASSERT_LATENCY_MAX_NS = (
+    FS_BIT_PERIOD_NS
+    + 3 * CLK144_PERIOD_NS_NOMINAL
+    + 3 * CLK_UTMI_PERIOD_NS_NOMINAL
+    + CLK_UTMI_PERIOD_NS_NOMINAL
+)
+
+
+def _assert_rxactive_eop_window(active_trace, sample_times_ns,
+                                window_lo_ns, window_hi_ns):
+    """Assert that RxActive framed exactly one packet and fell inside the
+    given deassertion window. Everything here is checked against the
+    caller-supplied window (derived from the driven stimulus and the
+    receive path's latency budget, never from the trace itself), so the
+    assertion can actually fail on a mis-timed drop -- unlike the
+    last-high-search + trailing-sum check it replaces (issue #441), whose
+    trailing sum was zero by construction.
+    """
+    assert active_trace, "RxActive trace is empty"
+    assert len(sample_times_ns) == len(active_trace)
+    assert not active_trace[-1], "RxActive never returned low (EOP not recognized)"
+    high_idx = [i for i, v in enumerate(active_trace) if v]
+    assert high_idx, "RxActive never asserted (SOP not recognized)"
+    first, last = high_idx[0], high_idx[-1]
+    n_intervals = 1 + sum(1 for a, b in zip(high_idx, high_idx[1:])
+                          if b != a + 1)
+    assert last - first + 1 == len(high_idx), (
+        f"RxActive asserted in {n_intervals} disjoint "
+        f"intervals (dropped and re-asserted), expected exactly one"
+    )
+    # The fall event itself lies in (t_last_high, t_first_low]: bounding the
+    # first low sample bounds the fall.
+    t_fall = sample_times_ns[last + 1]
+    assert t_fall >= window_lo_ns, (
+        f"RxActive fell at t={t_fall:.1f} ns, before the EOP window opened "
+        f"at t={window_lo_ns:.1f} ns (the SE0->J transition) -- an early or "
+        f"mid-packet drop"
+    )
+    assert t_fall <= window_hi_ns, (
+        f"RxActive fell at t={t_fall:.1f} ns, after the EOP window closed "
+        f"at t={window_hi_ns:.1f} ns (EOP end + receive-path latency budget)"
+    )
+
+
+async def _drive_packet_with_eop_timestamps(dut, scenario, idle_bit_times=4,
+                                            settle_utmi_cycles=30):
+    """Drive one packet split at its own EOP boundaries (per
+    `usbfs.packets.EOP_STATES`, which `scenarios`' parse() already
+    guarantees terminates every scenario) and return the monitor plus the
+    driven-stimulus timestamps the EOP window is measured from: the start
+    of the stuffed body, the start of EOP's SE0 pair, the SE0->J
+    transition, and the end of EOP's terminating J bit. Measuring the
+    boundaries from the drive sequence itself -- rather than re-deriving
+    them from bit arithmetic -- keeps the window independent of both the
+    monitor trace and the timing model's internals."""
+    assert tuple(scenario.states[-3:]) == EOP_STATES, (
+        f"scenario {scenario.name} does not terminate in a well-formed EOP"
+    )
+    tx = IdealTransceiver(dut.dp, dut.dm)
+    mon = RxMonitor(dut)
+    mon.start()
+
+    await tx.drive_idle(idle_bit_times)
+    t_body_start = get_sim_time(units="ns")
+    await tx.drive_states(scenario.states[:-3])  # SYNC + stuffed body
+    t_se0_start = get_sim_time(units="ns")
+    await tx.drive_states(scenario.states[-3:-1])  # EOP's two SE0 bit times
+    t_se0_to_j = get_sim_time(units="ns")
+    await tx.drive_states(scenario.states[-1:])  # EOP's terminating J bit
+    t_eop_end = get_sim_time(units="ns")
+    await tx.drive_idle(idle_bit_times)
+    await ClockCycles(dut.clk_utmi, settle_utmi_cycles)
+
+    mon.stop()
+    return mon, (t_body_start, t_se0_start, t_se0_to_j, t_eop_end)
+
 
 @cocotb.test()
 async def test_eop_deasserts_rxactive_at_correct_boundary(dut):
+    """RxActive asserts exactly once per packet and falls inside the window
+    bounded by the driven EOP (its SE0->J transition on the early side,
+    its end plus the receive path's synchronization-latency budget on the
+    late side) -- the byte comparison alone cannot see a dropped or stuck
+    RxActive."""
     await start_test(dut)
     scenario = scenarios.stuff_before_eop_payload()
-    mon = await _drive_and_receive(dut, scenario.states, settle_utmi_cycles=30)
+    mon, (_t_body_start, _t_se0_start, t_se0_to_j, t_eop_end) = (
+        await _drive_packet_with_eop_timestamps(dut, scenario)
+    )
 
     assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
-    # RxActive must eventually return low (EOP recognized) and stay low --
-    # no further bytes after the trace's last high sample.
-    assert mon.active_trace[-1] is False
-    last_active_idx = max(i for i, v in enumerate(mon.active_trace) if v)
-    trailing_high_count = sum(mon.active_trace[last_active_idx + 1:])
-    assert trailing_high_count == 0
+    _assert_rxactive_eop_window(
+        mon.active_trace, mon.sample_times_ns,
+        window_lo_ns=t_se0_to_j,
+        window_hi_ns=t_eop_end + EOP_DEASSERT_LATENCY_MAX_NS,
+    )
+
+
+@cocotb.test()
+async def test_eop_window_check_rejects_dropped_rxactive(dut):
+    """Negative controls for `test_eop_deasserts_rxactive_at_correct_boundary`
+    (issue #441): a mid-packet RxActive drop and an early final drop must
+    both FAIL the window check even though the received bytes are correct
+    -- the circular trailing-sum check this replaces accepted both. The
+    synthetic drop traces are the real clean run's trace (whose byte
+    stream is asserted correct here) truncated at the drop point, so only
+    *where RxActive falls* differs from the passing run above."""
+    await start_test(dut)
+    scenario = scenarios.stuff_before_eop_payload()
+    mon, (t_body_start, t_se0_start, t_se0_to_j, t_eop_end) = (
+        await _drive_packet_with_eop_timestamps(dut, scenario)
+    )
+
+    # The clean run's bytes are correct -- the negative controls below
+    # mis-time RxActive only, which is exactly the failure mode the byte
+    # comparison cannot catch.
+    assert bytes(mon.bytes) == scenarios.byte_stream_for_scenario(scenario)
+    window_lo, window_hi = t_se0_to_j, t_eop_end + EOP_DEASSERT_LATENCY_MAX_NS
+
+    def dropped_trace(t_drop_ns):
+        """The clean trace with RxActive forced low from the first sample
+        at/after `t_drop_ns` (the clean trace is a single contiguous
+        interval, so the truncation yields a shorter single interval)."""
+        drop_idx = next(i for i, t in enumerate(mon.sample_times_ns)
+                        if t >= t_drop_ns)
+        return (mon.active_trace[:drop_idx]
+                + [False] * (len(mon.active_trace) - drop_idx))
+
+    def must_fail(trace, why):
+        try:
+            _assert_rxactive_eop_window(trace, mon.sample_times_ns,
+                                        window_lo, window_hi)
+        except AssertionError:
+            return
+        raise AssertionError(f"EOP window check accepted {why}")
+
+    # Mid-packet drop: halfway through the stuffed body, long before any
+    # EOP signaling exists on the bus.
+    must_fail(dropped_trace((t_body_start + t_se0_start) / 2.0),
+              "a mid-packet RxActive drop")
+    # Early final drop: right as EOP's SE0 begins -- after the last byte
+    # has been deserialized, but two bit times before the window opens.
+    must_fail(dropped_trace(t_se0_start), "an early final RxActive drop")
+    # And the honest trace itself must pass the same check (pairing the
+    # controls with the positive case they are mutations of).
+    _assert_rxactive_eop_window(mon.active_trace, mon.sample_times_ns,
+                                window_lo, window_hi)
 
 
 # ---------------------------------------------------------------------------

@@ -6,7 +6,6 @@
 import hashlib
 import json
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -18,7 +17,6 @@ from test_harness import sandbox, stub_klt  # noqa: F401  (fixtures)
 
 REPO = Path(__file__).resolve().parents[2]
 REAL_PREFLIGHT = es.preflight
-RID = r"\d{8}-\d{6}-[0-9a-f]{7}"
 
 
 # ---- preflight: every failure mode fails closed, before simulating ----------------------------
@@ -272,6 +270,29 @@ def test_frozen_copy_of_a_committed_source_is_not_a_duplicate(tmp_path):
     tb = b'{"tb": 1}'
     r = make_repo(tmp_path, [entry("b/run/tb.json", tb)], {"sim/b/testbench/tb.json": tb})
     assert am.check_repo(r) == []
+
+
+def test_out_of_scope_identical_bytes_are_never_hashed(tmp_path, monkeypatch):
+    """The perf contract behind #428: a byte-identical committed source outside the entry's
+    run scope is skipped before any stat or sha256 read, not hashed and discarded."""
+    tb = b'{"tb": 1}'
+    r = make_repo(tmp_path, [entry("b/run/tb.json", tb)], {"sim/b/testbench/tb.json": tb})
+    monkeypatch.setattr(am, "sha256_file", lambda *a, **k: pytest.fail("hashed an out-of-scope file"))
+    assert am.check_repo(r) == []
+
+
+@pytest.mark.parametrize("name", [None, "tb.json"], ids=["unnamed", "short-name"])
+def test_unscoped_entry_flags_duplicate_bytes_anywhere(tmp_path, name):
+    """An entry with no run directory (`name` missing or with fewer than three segments)
+    still flags its bytes committed anywhere outside manifests/."""
+    data = b"loose bytes"
+    e = entry("b/run/tb.json", data)
+    if name is None:
+        e.pop("name")
+    else:
+        e["name"] = name
+    r = make_repo(tmp_path, [e], {"docs/notes/tb.json": data})
+    assert any("has its bytes committed" in p for p in am.check_repo(r))
 
 
 def test_cli_exit_codes(tmp_path):

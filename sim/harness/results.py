@@ -60,6 +60,14 @@ def build_request(
     hosts: int | None = None,
 ) -> dict:
     """The resolved `klt sim` request. Axes default to the full matrix."""
+    # A tb.json `measure` entry declares exactly one form (pinned by the
+    # per-bench tests): a verbatim `.meas` card (`spice`) or an ngspice
+    # expression klt evaluates after the analysis (`expr`, e.g. a derived
+    # resistance from raw node voltages) -- graded against `limits` the same
+    # way once spec_limits.apply maps a row onto it.
+    def _form(m: dict) -> dict:
+        return {"expr": m["expr"]} if "expr" in m else {"spice": m["spice"]}
+
     request = {
         "netlist": netlist,
         "engine": "ngspice",
@@ -71,7 +79,7 @@ def build_request(
             "temperature_c": list(temperature_c or matrix.temperature_c),
         },
         "analysis": {"kind": tb["analysis"]["kind"], "args": tb["analysis"].get("args", "")},
-        "measurements": [{"name": n, "spice": m["spice"]} for n, m in tb["measure"].items()],
+        "measurements": [{"name": n, **_form(m)} for n, m in tb["measure"].items()],
         "options": {"timeout_s": int(tb.get("timeout_s", DEFAULT_TIMEOUT_S)), "keep_artifacts": True},
     }
     if runner_version_check:
