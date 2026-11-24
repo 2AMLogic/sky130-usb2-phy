@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from conftest import RL, meas, render, render_manifest, synthetic_report, v_of
+from conftest import RL, copy_committed_record, meas, render, render_manifest, synthetic_report, v_of
 from harness import evidence_lint as lint, matrix as mx, results as rs, trim
 
 SIM = Path(__file__).resolve().parents[1]
@@ -346,16 +346,13 @@ PASS_RID = next((p.stem for p in RECORDS if "- **Status**: PASS" in p.read_text(
 
 
 def _sealed_copy(tmp_path):
-    """The committed experiment copied to a scratch sim tree."""
+    """The committed experiment copied to a scratch sim tree: the testbench plus
+    only the PASS record both callers mutate and check."""
     sim = tmp_path / "sim"
     sim.mkdir(parents=True)
     shutil.copy(SIM / "corners.json", sim / "corners.json")
-    shutil.copytree(EXP, sim / "dplus-pullup-tolerance", ignore=shutil.ignore_patterns("__pycache__"))
-    # store-cited records (post-#194) resolve their manifests against the
-    # scratch repo root, so the committed manifests travel with the copy
-    (tmp_path / "manifests/artifacts").mkdir(parents=True, exist_ok=True)
-    for m in sorted((REPO / "manifests/artifacts").glob("*.manifest.json")):
-        shutil.copy(m, tmp_path / "manifests/artifacts" / m.name)
+    shutil.copytree(EXP / "testbench", sim / "dplus-pullup-tolerance/testbench")
+    copy_committed_record(EXP, sim / "dplus-pullup-tolerance", PASS_RID)
     return sim
 
 

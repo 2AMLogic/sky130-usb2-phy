@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from conftest import RL, full_environment, full_provenance, synthetic_report, v_of
+from conftest import RL, copy_committed_record, full_environment, full_provenance, synthetic_report, v_of
 from harness import evidence_lint as lint, matrix as mx, results as rs, runner
 
 SIM = Path(__file__).resolve().parents[1]
@@ -24,6 +24,8 @@ TB = json.loads((EXP / "testbench/tb.json").read_text())
 LEGACY = mx.load()
 RES = mx.load_by_id(mx.RESISTOR_SETS_ID)
 VTB = rs.resolve_tb(TB, "resistor-sets")
+# the single self-contained legacy 45-point PASS record the sandbox seeds (Supersedes: (none))
+LEGACY45_RID = "20261009-172948-d85f0dc"
 
 
 def test_resistor_matrix_is_225_unique_points_over_25_sections():
@@ -209,17 +211,9 @@ def test_no_passing_code_at_a_resistor_corner_is_a_failure_not_relaxed():
 def sandbox(tmp_path, monkeypatch):
     sim = tmp_path / "sim"
     sim.mkdir()
-    shutil.copytree(EXP, sim / EXP.name, ignore=shutil.ignore_patterns("records", "corners", "netlist-snapshots", "__pycache__"))
-    shutil.copytree(EXP / "records", sim / EXP.name / "records")
-    shutil.copytree(EXP / "corners", sim / EXP.name / "corners")
-    shutil.copytree(EXP / "netlist-snapshots", sim / EXP.name / "netlist-snapshots")
+    shutil.copytree(EXP / "testbench", sim / EXP.name / "testbench")
     (tmp_path / "design/netlist").mkdir(parents=True)
     shutil.copy(SIM.parent / "design/netlist/dplus_pullup.spice", tmp_path / "design/netlist/dplus_pullup.spice")
-    # store-cited records (post-#194) resolve their manifests against the
-    # scratch repo root, so the committed manifests travel with the sandbox
-    (tmp_path / "manifests/artifacts").mkdir(parents=True, exist_ok=True)
-    for m in sorted((SIM.parent / "manifests/artifacts").glob("*.manifest.json")):
-        shutil.copy(m, tmp_path / "manifests/artifacts" / m.name)
     for f in ("corners.json", "corners-resistor-sets.json"):
         shutil.copy(SIM / f, sim / f)
     monkeypatch.setattr(mx, "SIM_DIR", sim)
@@ -253,17 +247,11 @@ def sandbox(tmp_path, monkeypatch):
     return sim
 
 
-def _new_rid(sim):
-    recs = sorted((sim / EXP.name / "records").glob("*.md"))
-    old = {p.stem for p in recs}
-    return old
-
-
 def test_variant_run_writes_a_225_point_record_the_lint_accepts(sandbox):
-    before = _new_rid(sandbox)
+    copy_committed_record(EXP, sandbox / EXP.name, LEGACY45_RID)
     assert lint.lint_all(sandbox) == []  # legacy 45-point records validate against their own matrix
     assert runner.run("dplus-pullup-tolerance", "batch", True, {}, variant="resistor-sets") == 0
-    new = sorted({p.stem for p in (sandbox / EXP.name / "records").glob("*.md")} - before)
+    new = sorted({p.stem for p in (sandbox / EXP.name / "records").glob("*.md")} - {LEGACY45_RID})
     assert len(new) == 1
     rid = new[0]
     rec = (sandbox / EXP.name / "records" / f"{rid}.md").read_text()
@@ -291,16 +279,6 @@ def _reseal(sim, rid, edit):
                            f"evidence.json sha256 `{lint.sha256_file(cdir / 'evidence.json')}`", recp.read_text()))
 
 
-def _variant_rid(sim):
-    for p in sorted((sim / EXP.name / "records").glob("*.md")):
-        text = p.read_text()
-        # the resistor-set variant's own record (45-point store-cited records
-        # of the base experiment also live here and are not materializable
-        # from this sandbox's stage)
-        if "manifest sha256" in text and "- **Status**: PASS" in text and "225 points" in text:
-            return p.stem
-
-
 def _materialize(sim, rid):
     """Turn the stored-evidence record into the historical committed form (corners/<rid>/ + evidence.json
     sha in Links) so the semantic re-derivation can be tampered with and re-sealed."""
@@ -314,8 +292,8 @@ def _materialize(sim, rid):
 
 
 def test_lint_rejects_resealed_tampering_of_a_resistor_set_record(sandbox):
-    test_variant_run_writes_a_225_point_record_the_lint_accepts(sandbox)
-    rid = _variant_rid(sandbox)
+    assert runner.run("dplus-pullup-tolerance", "batch", True, {}, variant="resistor-sets") == 0
+    rid = next(iter((sandbox / EXP.name / "records").glob("*.md"))).stem
     _materialize(sandbox, rid)
     assert lint.lint_all(sandbox) == []
     pristine = shutil.copytree(sandbox, sandbox.parent / "pristine")
@@ -352,7 +330,8 @@ def test_lint_rejects_resealed_tampering_of_a_resistor_set_record(sandbox):
         sim = sandbox.parent / f"t_{edit.__name__}"
         shutil.copytree(pristine, sim)
         _reseal(sim, rid, edit)
-        assert any(needle in p for p in lint.lint_all(sim)), (edit.__name__, lint.lint_all(sim)[:3])
+        probs = lint.lint_all(sim)
+        assert any(needle in p for p in probs), (edit.__name__, probs[:3])
 
 
 def test_variant_run_still_fails_closed_on_backend_error(sandbox, monkeypatch):
