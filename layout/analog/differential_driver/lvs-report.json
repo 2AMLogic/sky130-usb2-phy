@@ -5,7 +5,7 @@
     "path": "layout/analog/differential_driver/differential_driver.gds",
     "scope": "repo"
   },
-  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-406/layout/analog/differential_driver/lvs-reference.spice",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-414/layout/analog/differential_driver/lvs-reference.spice",
   "top": "differential_driver",
   "reference_top": "differential_driver",
   "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
@@ -701,6 +701,19 @@
       "SKY130_FD_PR__RES_XHIGH_PO_1P41": 1,
       "SKY130_FD_PR__MODEL__CAP_MIM": 4,
       "SKY130_FD_PR__RES_GENERIC_PO": 2
+    },
+    "reference_source": {
+      "SKY130_FD_PR__MODEL__CAP_MIM": 4,
+      "SKY130_FD_PR__NFET_G5V0D10V5": 37,
+      "SKY130_FD_PR__PFET_G5V0D10V5": 36,
+      "SKY130_FD_PR__RES_GENERIC_PO": 2,
+      "SKY130_FD_PR__RES_XHIGH_PO_1P41": 1
+    },
+    "reference_source_subcircuits": {
+      "SKY130_FD_PR__PFET_G5V0D10V5": 36,
+      "SKY130_FD_PR__NFET_G5V0D10V5": 37,
+      "SKY130_FD_PR__RES_XHIGH_PO_1P41": 1,
+      "SKY130_FD_PR__RES_GENERIC_PO": 2
     }
   },
   "mismatch_count": 0,
@@ -841,10 +854,10 @@
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
-    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klayout_version": "0.30.14",
+    "klt_version": "0.9.3.dev4558+g8750382abcd8",
+    "klt_git_commit": "8750382abcd8faa00277b632476edd78d6b0b2a9",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@8750382abcd8faa00277b632476edd78d6b0b2a9",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sky130.lvs",
@@ -1105,5 +1118,6 @@
       "reference": "XP_DP",
       "pin": false
     }
-  ]
+  ],
+  "mismatches_omitted": false
 }

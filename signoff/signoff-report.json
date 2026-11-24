@@ -147,7 +147,7 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "flow/analog-layout-differential_driver/artifacts/20261123-000447-6beff8e-differential_driver/drc-report.json",
+        "file": "flow/analog-layout-differential_driver/artifacts/20261124-015221-bc17801-differential_driver/drc-report.json",
         "command": null,
         "kind": "drc",
         "check_status": "clean",
@@ -244,34 +244,34 @@
       },
       "citations_graded": [
         {
-          "citation": "flow/analog-layout-differential_driver/artifacts/20261123-000447-6beff8e-differential_driver/drc-report.json",
+          "citation": "flow/analog-layout-differential_driver/artifacts/20261124-015221-bc17801-differential_driver/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-differential_receiver/artifacts/20261123-000453-6beff8e-differential_receiver/drc-report.json",
+          "citation": "flow/analog-layout-differential_receiver/artifacts/20261124-015156-bc17801-differential_receiver/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/drc-report.json",
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261124-015137-bc17801-dplus_pullup/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261123-000459-6beff8e-se_receiver_dm/drc-report.json",
+          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261124-015240-bc17801-se_receiver_dm/drc-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261123-000505-6beff8e-se_receiver_dp/drc-report.json",
+          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261124-015258-bc17801-se_receiver_dp/drc-report.json",
           "status": "met",
           "reason": null
         }
       ],
       "citations": [
         {
-          "file": "flow/analog-layout-differential_driver/artifacts/20261123-000447-6beff8e-differential_driver/drc-report.json",
+          "file": "flow/analog-layout-differential_driver/artifacts/20261124-015221-bc17801-differential_driver/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -367,7 +367,7 @@
           }
         },
         {
-          "file": "flow/analog-layout-differential_receiver/artifacts/20261123-000453-6beff8e-differential_receiver/drc-report.json",
+          "file": "flow/analog-layout-differential_receiver/artifacts/20261124-015156-bc17801-differential_receiver/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -481,7 +481,7 @@
           }
         },
         {
-          "file": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/drc-report.json",
+          "file": "flow/analog-layout-dplus_pullup/artifacts/20261124-015137-bc17801-dplus_pullup/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -596,7 +596,7 @@
           }
         },
         {
-          "file": "flow/analog-layout-se_receiver_dm/artifacts/20261123-000459-6beff8e-se_receiver_dm/drc-report.json",
+          "file": "flow/analog-layout-se_receiver_dm/artifacts/20261124-015240-bc17801-se_receiver_dm/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -710,7 +710,7 @@
           }
         },
         {
-          "file": "flow/analog-layout-se_receiver_dp/artifacts/20261123-000505-6beff8e-se_receiver_dp/drc-report.json",
+          "file": "flow/analog-layout-se_receiver_dp/artifacts/20261124-015258-bc17801-se_receiver_dp/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
@@ -850,7 +850,7 @@
       "reason": null,
       "graded_by_build": true,
       "citation": {
-        "file": "flow/analog-layout-differential_driver/artifacts/20261123-000447-6beff8e-differential_driver/lvs-curated-report.json",
+        "file": "flow/analog-layout-differential_driver/artifacts/20261124-015221-bc17801-differential_driver/lvs-curated-report.json",
         "command": null,
         "kind": "lvs",
         "check_status": "match",
@@ -860,34 +860,34 @@
       },
       "citations_graded": [
         {
-          "citation": "flow/analog-layout-differential_driver/artifacts/20261123-000447-6beff8e-differential_driver/lvs-curated-report.json",
+          "citation": "flow/analog-layout-differential_driver/artifacts/20261124-015221-bc17801-differential_driver/lvs-curated-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-differential_receiver/artifacts/20261123-000453-6beff8e-differential_receiver/lvs-curated-report.json",
+          "citation": "flow/analog-layout-differential_receiver/artifacts/20261124-015156-bc17801-differential_receiver/lvs-curated-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/lvs-curated-report.json",
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261124-015137-bc17801-dplus_pullup/lvs-curated-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261123-000459-6beff8e-se_receiver_dm/lvs-curated-report.json",
+          "citation": "flow/analog-layout-se_receiver_dm/artifacts/20261124-015240-bc17801-se_receiver_dm/lvs-curated-report.json",
           "status": "met",
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261123-000505-6beff8e-se_receiver_dp/lvs-curated-report.json",
+          "citation": "flow/analog-layout-se_receiver_dp/artifacts/20261124-015258-bc17801-se_receiver_dp/lvs-curated-report.json",
           "status": "met",
           "reason": null
         }
       ],
       "citations": [
         {
-          "file": "flow/analog-layout-differential_driver/artifacts/20261123-000447-6beff8e-differential_driver/lvs-curated-report.json",
+          "file": "flow/analog-layout-differential_driver/artifacts/20261124-015221-bc17801-differential_driver/lvs-curated-report.json",
           "command": null,
           "kind": "lvs",
           "check_status": "match",
@@ -896,7 +896,7 @@
           "exit_status": 0
         },
         {
-          "file": "flow/analog-layout-differential_receiver/artifacts/20261123-000453-6beff8e-differential_receiver/lvs-curated-report.json",
+          "file": "flow/analog-layout-differential_receiver/artifacts/20261124-015156-bc17801-differential_receiver/lvs-curated-report.json",
           "command": null,
           "kind": "lvs",
           "check_status": "match",
@@ -905,7 +905,7 @@
           "exit_status": 0
         },
         {
-          "file": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/lvs-curated-report.json",
+          "file": "flow/analog-layout-dplus_pullup/artifacts/20261124-015137-bc17801-dplus_pullup/lvs-curated-report.json",
           "command": null,
           "kind": "lvs",
           "check_status": "match",
@@ -914,7 +914,7 @@
           "exit_status": 0
         },
         {
-          "file": "flow/analog-layout-se_receiver_dm/artifacts/20261123-000459-6beff8e-se_receiver_dm/lvs-curated-report.json",
+          "file": "flow/analog-layout-se_receiver_dm/artifacts/20261124-015240-bc17801-se_receiver_dm/lvs-curated-report.json",
           "command": null,
           "kind": "lvs",
           "check_status": "match",
@@ -923,7 +923,7 @@
           "exit_status": 0
         },
         {
-          "file": "flow/analog-layout-se_receiver_dp/artifacts/20261123-000505-6beff8e-se_receiver_dp/lvs-curated-report.json",
+          "file": "flow/analog-layout-se_receiver_dp/artifacts/20261124-015258-bc17801-se_receiver_dp/lvs-curated-report.json",
           "command": null,
           "kind": "lvs",
           "check_status": "match",
@@ -1456,7 +1456,7 @@
         "power_delivery": {
           "substrate_isolation_missing": [
             "--deck naming the PDK family, so the isolation layers can be measured",
-            "or assert ties[].isolation_boxes"
+            "declare ties[].isolation_boxes for isolated regions, or common_native_substrate: true for a shared native substrate"
           ]
         }
       }

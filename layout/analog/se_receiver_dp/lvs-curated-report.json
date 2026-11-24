@@ -153,6 +153,7 @@
       ]
     }
   ],
+  "mismatches_omitted": false,
   "mismatch_count": 4,
   "error_count": 0,
   "category_counts": {
@@ -177,6 +178,23 @@
       "matched": 4
     }
   },
+  "pin_set_difference": {
+    "deck_synthesized_layout_pins": [],
+    "layout_only_pins": [],
+    "layout_only_pins_count": 0,
+    "layout_only_pins_truncated": false,
+    "reference_only_pins": [],
+    "reference_only_pins_count": 0,
+    "reference_only_pins_truncated": false
+  },
+  "ignored_layers": [
+    {
+      "layer": 95,
+      "datatype": 20,
+      "shapes": 26
+    }
+  ],
+  "warnings": [],
   "device_classes": [
     "nfet",
     "pfet",
@@ -195,28 +213,28 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.14",
+    "engine_version": "0.30.13",
     "netgen_binary": null,
     "layout_sha256": "cd3a3f7a6b7ff8cc582a535d65c261d18fc805cfe5535b9eb785488358f98df2",
     "reference_sha256": "e4d5d15316be7f26ba3a7dd06727c17537083808e5e96a03604f3e44d6413ef6",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
-    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klayout_version": "0.30.14",
+    "klt_version": "0.9.3.dev4558+g8750382abcd8",
+    "klt_git_commit": "8750382abcd8faa00277b632476edd78d6b0b2a9",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@8750382abcd8faa00277b632476edd78d6b0b2a9",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sky130",
-      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "content_hash": "sha256:16f864ebc7de350ce4a4e70b13fc4d8982b9fac62dd33871bad13e2d9678defe",
       "released": false
     },
     "input": {
       "content_hash": "sha256:cd3a3f7a6b7ff8cc582a535d65c261d18fc805cfe5535b9eb785488358f98df2",
       "role": "layout"
     },
-    "klayout_version_mismatch": true
+    "klayout_version_mismatch": false
   },
   "mismatches": [
     {
