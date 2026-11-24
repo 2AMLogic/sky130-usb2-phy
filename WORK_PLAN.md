@@ -6,7 +6,7 @@ machine-generated and is overwritten wholesale on each update; nothing
 outside the markers is touched by automation.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-24T03:50:00Z (snapshot; compare against live labels)_
+_Generated: 2026-11-24T13:30:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -29,7 +29,7 @@ _None._
 
 Human-approved issues ready for implementation (`loom:issue`).
 
-- **#413**: Parse ngspice library sections once per simulation preflight
+_None._
 
 ## In Progress
 
@@ -41,7 +41,7 @@ _None._
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#418**: refactor(sim): parse the ngspice library once per PVT preflight
+_None._
 
 ## Approved (Awaiting Merge)
 
@@ -61,8 +61,7 @@ Issues carrying `loom:curated`.
 
 ## Proposed (Architect / Hermit)
 
-- **#413**: Parse ngspice library sections once per simulation preflight *(hermit)*
-- **#460**: Scope dplus-pullup and resistor-sets test sandboxes to testbench plus the single record under test *(hermit)* *(held)*
+- **#460**: Scope dplus-pullup and resistor-sets test sandboxes to testbench plus the single record under test *(hermit)*
 
 ## Epics
 
@@ -76,11 +75,11 @@ Issues carrying `loom:curated`.
 | Operator merge-risk holds | 0 |
 | Very important | 1 |
 | Important | 1 |
-| Ready (`loom:issue`) | 1 |
+| Ready (`loom:issue`) | 0 |
 | In Progress (`loom:building`) | 0 |
-| PRs awaiting review | 1 |
+| PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 5 |
-| Architect / Hermit proposals | 2 |
+| Architect / Hermit proposals | 1 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->

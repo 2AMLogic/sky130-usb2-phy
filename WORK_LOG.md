@@ -10,6 +10,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-24
 
+- **PR #418**: refactor(sim): parse the ngspice library once per PVT preflight
+- **Issue #413** (closed): Parse ngspice library sections once per simulation preflight
 - **PR #417**: fix: restructure dplus_pullup ladder interconnect so post-layout trim codes reach the 1.5k window
 
 ### 2026-11-23
