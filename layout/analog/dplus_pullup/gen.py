@@ -63,6 +63,9 @@ SW_GROUPS = 10  # interleaved finger groups across the switch row
 SUB_GAP = 0.8  # poly space between neighbouring sub-blocks in a group
 SPINE_GAP = 2.5  # poly space between neighbouring resistor bars in the spine
 CONTACT_ROWS = 2  # licon rows per non-rail switch column, at the pad end
+LICON_END = 0.125  # tap past a ring licon, along the strip (licon.7 needs 0.12)
+POLY_TAP = 0.5  # poly resistor to tap spacing (poly.9 needs 0.48)
+WELL_ENC = 0.5  # n-well past the p-ring (diff/tap.19 needs 0.33, layout README 0.5)
 LI1_HW = 0.345  # switch-column li1 half-width: ~square pad over 2 licon rows
 
 # Nets that are cell pins. Only these are labelled: the SKY130 LVS runset turns
@@ -146,11 +149,12 @@ def ring_side(cv: Canvas, kind: str, x0: float, y0: float, x1: float,
     cv.rect(dop, x0 - 0.125, y0 - 0.125, x1 + 0.125, y1 + 0.125)
     cv.rect("li1", x0, y0, x1, y1)
     horiz = x1 - x0 >= y1 - y0
-    lo, hi = ((x0, x1) if horiz else (y0 + STRIP_W + 0.1, y1 - STRIP_W - 0.1))
-    n = int((hi - lo - 2 * 0.1) / (2 * LIC_PITCH))
+    m = LICON_END  # licon.7: >= 0.12 um of tap past the contact along the strip
+    lo, hi = ((x0, x1) if horiz else (y0 + STRIP_W + m, y1 - STRIP_W - m))
+    n = int((hi - lo - 2 * m) / (2 * LIC_PITCH))
     for i in range(n + 1):
-        p = lo + 0.1 + LIC / 2 + i * 2 * LIC_PITCH
-        if p + LIC / 2 > hi - 0.1:
+        p = lo + m + LIC / 2 + i * 2 * LIC_PITCH
+        if p + LIC / 2 > hi - m:
             break
         cx, cy = (p, (y0 + y1) / 2) if horiz else ((x0 + x1) / 2, p)
         cv.centred("licon", cx, cy, LIC, LIC)
@@ -236,7 +240,7 @@ def build() -> Canvas:
     # (legs down into the trunk band) and R3 fold; the short bars sit inside
     # the switch-row band. All of them pass through the row's middle gap, so
     # every ladder net's terminals cluster around the spine.
-    ybase = {"RBASE": 11.0, "R3": 20.6, "R2": 20.1, "R1": 22.5, "R0": 23.1}
+    ybase = {"RBASE": 10.8, "R3": 20.6, "R2": 19.6, "R1": 22.5, "R0": 23.1}
     rbase_x0, rbase_x1 = spine_x, spine_x + 2 * RES_W + 0.5
     sx = spine_x
     for name, length, lo, hi, folded in LADDER:
@@ -250,17 +254,27 @@ def build() -> Canvas:
     # ---------------------------------------------------------------- rings
     tap_ring(cv, "n", 0.0, N_RING_Y0, n_ring_x1, N_RING_Y1, ("b",))
     rx0, rx1 = nw_x0 - 0.5, sw_end + 0.9 + STRIP_W + 0.5
-    # The p-ring's bottom strip runs around RBASE's legs (the legs descend
-    # into the trunk band); the left, right and top runs close the ring, and
-    # the top run is the VPU rail.
-    cut0, cut1 = rbase_x0 - 0.3, rbase_x1 + 0.3
-    ring_side(cv, "p", rx0, P_RING_Y0, cut0, P_RING_Y0 + STRIP_W, False)
-    ring_side(cv, "p", cut1, P_RING_Y0, rx1, P_RING_Y0 + STRIP_W, False)
+    # The p-ring stays one closed loop. Its bottom run steps down into the
+    # channel band around the whole resistor spine -- RBASE's legs end in heads
+    # down there, so the ring has to pass beneath them rather than be cut --
+    # and every resistor poly then sits POLY_TAP clear of a tap on all sides.
+    pl1 = spine_x - POLY_TAP
+    pl0 = pl1 - STRIP_W
+    pr0 = spine_x + spine_w + POLY_TAP
+    pr1 = pr0 + STRIP_W
+    pb0 = ybase["RBASE"] - RES_HEAD - POLY_TAP - STRIP_W  # pocket floor strip
+    ring_side(cv, "p", rx0, P_RING_Y0, pl1, P_RING_Y0 + STRIP_W, False)
+    ring_side(cv, "p", pr0, P_RING_Y0, rx1, P_RING_Y0 + STRIP_W, False)
+    ring_side(cv, "p", pl0, pb0, pr1, pb0 + STRIP_W, False)
+    ring_side(cv, "p", pl0, pb0 + STRIP_W, pl1, P_RING_Y0, False)
+    ring_side(cv, "p", pr0, pb0 + STRIP_W, pr1, P_RING_Y0, False)
     ring_side(cv, "p", rx0, P_RING_Y0 + STRIP_W, rx0 + STRIP_W, P_RING_Y1, False)
     ring_side(cv, "p", rx1 - STRIP_W, P_RING_Y0 + STRIP_W, rx1, P_RING_Y1, False)
     ring_side(cv, "p", rx0, P_RING_Y1 - STRIP_W, rx1, P_RING_Y1, True)
-    cv.rect("nwell", rx0, NW_Y0, rx1, NW_Y1)
-    cv.rect("hvi", -0.4, N_RING_Y0 - 0.4, max(n_ring_x1, rx1) + 0.4, NW_Y1 + 0.4)
+    assert pb0 - WELL_ENC > N_RING_Y1 + 1.0 and pl0 - WELL_ENC > n_ring_x1 + 1.0
+    cv.rect("nwell", rx0 - WELL_ENC, NW_Y0, rx1 + WELL_ENC, NW_Y1)
+    cv.rect("nwell", pl0 - WELL_ENC, pb0 - WELL_ENC, pr1 + WELL_ENC, NW_Y0 + 0.5)
+    cv.rect("hvi", -0.4, N_RING_Y0 - 0.4, max(n_ring_x1, rx1 + WELL_ENC) + 0.4, NW_Y1 + 0.4)
 
     # ---------------------------------------------------------------- routing
     route_nets(cv, ports, ty_of, ("VSS", "VPU"), PIN_NETS)

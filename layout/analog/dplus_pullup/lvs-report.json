@@ -5,7 +5,7 @@
     "path": "layout/analog/dplus_pullup/dplus_pullup.gds",
     "scope": "repo"
   },
-  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-406/design/netlist/dplus_pullup.spice",
+  "reference": "/home/ubuntu/GitHub/sky130-usb2-phy/.loom/worktrees/issue-414/design/netlist/dplus_pullup.spice",
   "top": "dplus_pullup",
   "reference_top": "dplus_pullup",
   "deck_file": "/home/ubuntu/.ciel/sky130A/libs.tech/klayout/lvs/sky130.lvs",
@@ -697,6 +697,16 @@
       "SKY130_FD_PR__PFET_G5V0D10V5": 10,
       "SKY130_FD_PR__NFET_G5V0D10V5": 5,
       "SKY130_FD_PR__RES_GENERIC_PO": 5
+    },
+    "reference_source": {
+      "SKY130_FD_PR__NFET_G5V0D10V5": 5,
+      "SKY130_FD_PR__PFET_G5V0D10V5": 10,
+      "SKY130_FD_PR__RES_GENERIC_PO": 5
+    },
+    "reference_source_subcircuits": {
+      "SKY130_FD_PR__PFET_G5V0D10V5": 10,
+      "SKY130_FD_PR__NFET_G5V0D10V5": 5,
+      "SKY130_FD_PR__RES_GENERIC_PO": 5
     }
   },
   "mismatch_count": 0,
@@ -832,15 +842,15 @@
     "engine_version": "0.30.12",
     "klayout_binary": "klayout",
     "netgen_binary": null,
-    "layout_sha256": "7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+    "layout_sha256": "389fb5d9de15c0230c48b2c08c1cf29e5649d583a4df389e431c8a050af0b441",
     "reference_sha256": "b824c18d57e4e493b1b733cf8d3670ef5eada615f2b5f32f2e796ef7170d20e3",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
-    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klayout_version": "0.30.14",
+    "klt_version": "0.9.3.dev4559+gdc3ef247a7d5",
+    "klt_git_commit": "dc3ef247a7d5651a1a55e2e015de796e819bf011",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dc3ef247a7d5651a1a55e2e015de796e819bf011",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sky130.lvs",
@@ -848,7 +858,7 @@
       "released": null
     },
     "input": {
-      "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+      "content_hash": "sha256:389fb5d9de15c0230c48b2c08c1cf29e5649d583a4df389e431c8a050af0b441",
       "role": "layout"
     },
     "runset": {
@@ -872,27 +882,27 @@
       "pin": true
     },
     {
-      "layout": "\\$8",
+      "layout": "\\$13",
       "reference": "N0",
       "pin": false
     },
     {
-      "layout": "\\$9",
+      "layout": "\\$15",
       "reference": "N1",
       "pin": false
     },
     {
-      "layout": "\\$10",
+      "layout": "\\$14",
       "reference": "N2",
       "pin": false
     },
     {
-      "layout": "\\$11",
+      "layout": "\\$16",
       "reference": "N3",
       "pin": false
     },
     {
-      "layout": "\\$12",
+      "layout": "\\$17",
       "reference": "N4",
       "pin": false
     },
@@ -956,5 +966,6 @@
       "reference": "VSS",
       "pin": true
     }
-  ]
+  ],
+  "mismatches_omitted": false
 }

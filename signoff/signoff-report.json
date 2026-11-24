@@ -108,7 +108,7 @@
         "command": null,
         "kind": "generic",
         "check_status": "pass",
-        "content_hash": "sha256:0fc4ae1c914d2f206ac3bb723d31577f9471d506d2327302cc63b284f7dd5ff6",
+        "content_hash": "sha256:dd2d4dc9df824af07f4710b10793c113df9a36d659d1f365f059a37a4a89aebe",
         "input_verified": true,
         "exit_status": 0,
         "artifact_binding": {
@@ -117,7 +117,7 @@
             "path": "signoff/inventory/item-2-analog-layout.json",
             "scope": "repo"
           },
-          "content_hash": "sha256:0fc4ae1c914d2f206ac3bb723d31577f9471d506d2327302cc63b284f7dd5ff6",
+          "content_hash": "sha256:dd2d4dc9df824af07f4710b10793c113df9a36d659d1f365f059a37a4a89aebe",
           "input_verified": true,
           "summary": "T1 item 2.analog: the five analog leaf GDS streams under layout/analog/ and the generator of each are committed, with the pinned stream hashes. The audited artifact is signoff/inventory/item-2-analog-layout.json; check.py additionally re-hashes every file it lists. This asserts the inventory is complete and current; it does not assert that any test passes or any spec row is met.",
           "source": "signoff/inventory/item-2-analog-layout.json"
@@ -254,7 +254,7 @@
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261123-000436-6beff8e-dplus_pullup/drc-report.json",
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/drc-report.json",
           "status": "met",
           "reason": null
         },
@@ -481,11 +481,11 @@
           }
         },
         {
-          "file": "flow/analog-layout-dplus_pullup/artifacts/20261123-000436-6beff8e-dplus_pullup/drc-report.json",
+          "file": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/drc-report.json",
           "command": null,
           "kind": "drc",
           "check_status": "clean",
-          "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+          "content_hash": "sha256:389fb5d9de15c0230c48b2c08c1cf29e5649d583a4df389e431c8a050af0b441",
           "input_verified": true,
           "exit_status": 0,
           "coverage": {
@@ -870,7 +870,7 @@
           "reason": null
         },
         {
-          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261123-000436-6beff8e-dplus_pullup/lvs-curated-report.json",
+          "citation": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/lvs-curated-report.json",
           "status": "met",
           "reason": null
         },
@@ -905,11 +905,11 @@
           "exit_status": 0
         },
         {
-          "file": "flow/analog-layout-dplus_pullup/artifacts/20261123-000436-6beff8e-dplus_pullup/lvs-curated-report.json",
+          "file": "flow/analog-layout-dplus_pullup/artifacts/20261124-011837-274376a-dplus_pullup/lvs-curated-report.json",
           "command": null,
           "kind": "lvs",
           "check_status": "match",
-          "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+          "content_hash": "sha256:389fb5d9de15c0230c48b2c08c1cf29e5649d583a4df389e431c8a050af0b441",
           "input_verified": true,
           "exit_status": 0
         },

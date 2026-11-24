@@ -153,6 +153,7 @@
       ]
     }
   ],
+  "mismatches_omitted": false,
   "mismatch_count": 4,
   "error_count": 0,
   "category_counts": {
@@ -177,6 +178,23 @@
       "matched": 8
     }
   },
+  "pin_set_difference": {
+    "deck_synthesized_layout_pins": [],
+    "layout_only_pins": [],
+    "layout_only_pins_count": 0,
+    "layout_only_pins_truncated": false,
+    "reference_only_pins": [],
+    "reference_only_pins_count": 0,
+    "reference_only_pins_truncated": false
+  },
+  "ignored_layers": [
+    {
+      "layer": 95,
+      "datatype": 20,
+      "shapes": 300
+    }
+  ],
+  "warnings": [],
   "device_classes": [
     "nfet",
     "pfet",
@@ -195,28 +213,28 @@
   ],
   "environment": {
     "engine": "klayout",
-    "engine_version": "0.30.14",
+    "engine_version": "0.30.13",
     "netgen_binary": null,
-    "layout_sha256": "7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+    "layout_sha256": "389fb5d9de15c0230c48b2c08c1cf29e5649d583a4df389e431c8a050af0b441",
     "reference_sha256": "b824c18d57e4e493b1b733cf8d3670ef5eada615f2b5f32f2e796ef7170d20e3",
     "extracted_netlist": null
   },
   "provenance": {
-    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
-    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klayout_version": "0.30.14",
+    "klt_version": "0.9.3.dev4559+gdc3ef247a7d5",
+    "klt_git_commit": "dc3ef247a7d5651a1a55e2e015de796e819bf011",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@dc3ef247a7d5651a1a55e2e015de796e819bf011",
+    "klayout_version": "0.30.13",
     "pdk": null,
     "deck": {
       "name": "sky130",
-      "content_hash": "sha256:f78d2c3c9e92909b5baff6e00ece15a4158a55ca027a3ca20a96a7c6f10c0f42",
+      "content_hash": "sha256:16f864ebc7de350ce4a4e70b13fc4d8982b9fac62dd33871bad13e2d9678defe",
       "released": false
     },
     "input": {
-      "content_hash": "sha256:7c262e2660c97ee247758b7d2d385a681f5fb55815fa920e8ff276d4198626d4",
+      "content_hash": "sha256:389fb5d9de15c0230c48b2c08c1cf29e5649d583a4df389e431c8a050af0b441",
       "role": "layout"
     },
-    "klayout_version_mismatch": true
+    "klayout_version_mismatch": false
   },
   "mismatches": [
     {
@@ -352,29 +370,29 @@
       "pin": true
     },
     {
-      "layout": "\\$3",
-      "layout_id": 1,
+      "layout": "\\$5",
+      "layout_id": 3,
       "reference": "PU_ENB",
       "reference_id": 8,
       "pin": false
     },
     {
       "layout": "TRIM0",
-      "layout_id": 2,
+      "layout_id": 8,
       "reference": "TRIM0",
       "reference_id": 4,
       "pin": true
     },
     {
-      "layout": "\\$5",
-      "layout_id": 3,
+      "layout": "\\$6",
+      "layout_id": 4,
       "reference": "TRIM0B",
       "reference_id": 9,
       "pin": false
     },
     {
       "layout": "TRIM1",
-      "layout_id": 4,
+      "layout_id": 1,
       "reference": "TRIM1",
       "reference_id": 5,
       "pin": true
@@ -388,28 +406,28 @@
     },
     {
       "layout": "TRIM2",
-      "layout_id": 6,
+      "layout_id": 9,
       "reference": "TRIM2",
       "reference_id": 6,
       "pin": true
     },
     {
-      "layout": "\\$9",
-      "layout_id": 7,
+      "layout": "\\$8",
+      "layout_id": 6,
       "reference": "TRIM2B",
       "reference_id": 11,
       "pin": false
     },
     {
       "layout": "TRIM3",
-      "layout_id": 8,
+      "layout_id": 2,
       "reference": "TRIM3",
       "reference_id": 7,
       "pin": true
     },
     {
-      "layout": "\\$11",
-      "layout_id": 9,
+      "layout": "\\$9",
+      "layout_id": 7,
       "reference": "TRIM3B",
       "reference_id": 12,
       "pin": false
