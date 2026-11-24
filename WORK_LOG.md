@@ -8,6 +8,10 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-24
+
+- **PR #417**: fix: restructure dplus_pullup ladder interconnect so post-layout trim codes reach the 1.5k window
+
 ### 2026-11-23
 
 - **PR #452**: feat(sim): finish Part A -- rows 6-11/6-14 limits in klt sim for the last three benches
