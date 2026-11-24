@@ -183,9 +183,11 @@ def scratch_repo(tmp_path, cfg):
 
 
 def committed_snapshot(cfg):
+    """The snapshot the bench's standing (newest) record froze. Evidence is append-only,
+    so superseded runs' snapshots stay committed; the run id sorts chronologically."""
     snaps = sorted((cfg.bench_dir() / "netlist-snapshots").glob(f"*{cfg.suffix}.spice"))
-    assert len(snaps) == 1  # one committed run per bench today
-    return snaps[0]
+    assert snaps, "no committed netlist snapshot for this bench"
+    return snaps[-1]
 
 
 def composed_snapshot(cfg, repo):

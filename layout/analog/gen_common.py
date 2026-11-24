@@ -265,6 +265,8 @@ def mos(
     *,
     gl: float = GATE_L,
     supply: frozenset[str] = frozenset(),
+    contact_rows: int | None = None,
+    li1_hw: float | None = None,
 ) -> float:
     """Draw one multi-finger g5v0d10v5 MOSFET with its diff-bottom at `y_diff`.
 
@@ -276,6 +278,12 @@ def mos(
     `gl` is the drawn gate length (the default `GATE_L` unless the leaf's
     netlist asks for another); `supply`, when given, asserts none of its nets
     lands on a foreign rail or a gate.
+
+    `contact_rows` (#414), when set, licons only the `contact_rows` rows of
+    each *non-rail* column nearest that column's met1 pad (rail columns keep
+    the full column), and `li1_hw` widens the li1 strap's x half-width from
+    the historical 0.165. Both default to the pre-#414 behaviour, so leaves
+    that do not pass them draw byte-identical streams.
 
     NMOS exits upward (channel above), PMOS exits downward (channel below);
     the supply rail is on the opposite side in each case.
@@ -293,13 +301,18 @@ def mos(
     cv.rect(dop, x0 - 0.125, y_diff - 0.125, x0 + width + 0.125, y_diff + wf + 0.125)
 
     # column contacts: licon -> li1 -> mcon -> met1
+    hw = 0.165 if li1_hw is None else li1_hw
     for i, net in enumerate(cols):
         xc = x0 + SD_W / 2 + i * pitch
-        ys = [y_diff + y for y in contacts_y(wf)]
+        ys_all = [y_diff + y for y in contacts_y(wf)]
+        if contact_rows is not None and net != rail_net:
+            ys = ys_all[-contact_rows:] if up else ys_all[:contact_rows]
+        else:
+            ys = ys_all
         for y in ys:
             cv.centred("licon", xc, y, LIC, LIC)
             cv.centred("mcon", xc, y, LIC, LIC)
-        cv.rect("li1", xc - 0.165, ys[0] - LIC / 2 - 0.08, xc + 0.165, ys[-1] + LIC / 2 + 0.08)
+        cv.rect("li1", xc - hw, ys[0] - LIC / 2 - 0.08, xc + hw, ys[-1] + LIC / 2 + 0.08)
         if net == rail_net:
             lo, hi = (rail_y, ys[-1] + 0.23) if up else (ys[0] - 0.23, rail_y)
             cv.rect("met1", xc - 0.145, lo, xc + 0.145, hi)

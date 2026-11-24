@@ -4,6 +4,7 @@
     "path": "layout/analog/se_receiver_dp/se_receiver_dp.gds",
     "scope": "repo"
   },
+  "top": "se_receiver_dp",
   "spec": "layout/analog/se_receiver_dp/erc-supply-spec.json",
   "pdk": "sky130",
   "findings_only": false,
@@ -450,7 +451,7 @@
         "id": "erc.supply_short",
         "missing": [
           "--deck naming the PDK family, so the isolation layers can be measured",
-          "or assert ties[].isolation_boxes"
+          "declare ties[].isolation_boxes for isolated regions, or common_native_substrate: true for a shared native substrate"
         ],
         "reason": "substrate_isolation_undecidable"
       }
@@ -474,10 +475,10 @@
   },
   "ties_disclosure": null,
   "provenance": {
-    "klt_version": "0.9.3.dev2626+g0e5dd121c7d2",
-    "klt_git_commit": "0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@0e5dd121c7d2acdeb6b2375011986bb39325cc28",
-    "klayout_version": "0.30.14",
+    "klt_version": "0.9.3.dev4558+g8750382abcd8",
+    "klt_git_commit": "8750382abcd8faa00277b632476edd78d6b0b2a9",
+    "klt_reinstall_spec": "klayout-tools @ git+https://github.com/2AMLogic/klayout-tools@8750382abcd8faa00277b632476edd78d6b0b2a9",
+    "klayout_version": "0.30.13",
     "pdk": {
       "name": "sky130",
       "source": "built-in",
