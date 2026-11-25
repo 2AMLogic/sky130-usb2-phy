@@ -47,11 +47,11 @@
 //
 // TxReady back-pressure: TxReady is asserted, continuously, for the
 // entire bit-time during which this byte's *last* real bit is pending
-// (byte_idx == 7 and the bit stuffer confirms it will really be consumed,
+// (bit_idx == 7 and the bit stuffer confirms it will really be consumed,
 // not stuffed) -- so a byte's request-to-request interval is 8 bit-times
 // normally and stretches to exactly 9 bit-times when a stuff bit falls
 // within that byte (the extra bit-time the stuffer spends *not*
-// consuming a real bit delays byte_idx from ever reaching a
+// consuming a real bit delays bit_idx from ever reaching a
 // consumed-and-equal-7 cycle by one tick). This is issue #12's required
 // "TxReady deasserts for exactly one extra bit time" behavior, and it
 // falls out of the mechanism with no special-casing for where the stuff
@@ -120,12 +120,9 @@ module usb_tx_framer (
     wire raw_mode = (OpMode == 2'b10);
 
     reg [2:0] state;
-    reg [2:0] sync_idx;
     reg [7:0] byte_reg;
-    reg [2:0] byte_idx;
+    reg [2:0] bit_idx;
     reg       first_byte;
-
-    wire sync_bit = SYNC_PATTERN[sync_idx];
 
     // `entering_sync`: the IDLE->SYNC transition edge itself. `state` is a
     // *registered* value, so on the bit_stb edge where the FSM below moves
@@ -146,18 +143,16 @@ module usb_tx_framer (
     wire entering_sync = (state == ST_IDLE) && TxValid;
 
     // ---- usb_bit_stuffer.v interface -------------------------------
-    assign stuff_bit_in  = (state == ST_FLUSH) ? 1'b0 : byte_reg[byte_idx];
-    assign stuff_sof     = bit_stb && (state == ST_DATA) && first_byte && (byte_idx == 3'd0);
+    assign stuff_bit_in  = (state == ST_FLUSH) ? 1'b0 : byte_reg[bit_idx];
+    assign stuff_sof     = bit_stb && (state == ST_DATA) && first_byte && (bit_idx == 3'd0);
     assign stuff_bypass  = raw_mode;
     assign stuff_bit_stb = bit_stb && ((state == ST_DATA) || (state == ST_FLUSH));
 
     // ---- usb_nrzi_encoder.v interface ------------------------------
-    // `sync_idx` is advanced to 1 the instant SYNC is entered (see the
-    // ST_IDLE FSM case below), so bit index 0 is never re-observed with
-    // `state == ST_SYNC` -- `entering_sync` is therefore the *only* source
-    // of SYNC's sof pulse; the `sync_idx == 0` reading would be dead
-    // (structurally unreachable) if also OR'd in here.
-    assign nrzi_bit_in  = (state == ST_SYNC || entering_sync) ? sync_bit : stuff_bit_out;
+    // On packet start the encoder samples SYNC bit 0 on the same edge
+    // that loads bit_idx with 1 for the following bit time.
+    assign nrzi_bit_in  = entering_sync      ? SYNC_PATTERN[0] :
+                          (state == ST_SYNC) ? SYNC_PATTERN[bit_idx] : stuff_bit_out;
     assign nrzi_sof     = bit_stb && entering_sync;
     assign nrzi_bypass  = raw_mode && ((state == ST_DATA) || (state == ST_FLUSH));
     assign nrzi_bit_stb = bit_stb && ((state == ST_SYNC) || (state == ST_DATA) || (state == ST_FLUSH) || entering_sync);
@@ -167,7 +162,7 @@ module usb_tx_framer (
     // full bit-time leading up to the tick that needs the byte -- see
     // header comment.
     assign TxReady = (state == ST_IDLE) ||
-                      ((state == ST_DATA) && (byte_idx == 3'd7) && stuff_consume);
+                      ((state == ST_DATA) && (bit_idx == 3'd7) && stuff_consume);
 
     // ---- Line-state driver interface -------------------------------
     wire driving = (state == ST_SYNC) || (state == ST_DATA) || (state == ST_FLUSH) ||
@@ -191,8 +186,7 @@ module usb_tx_framer (
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state      <= ST_IDLE;
-            sync_idx   <= 3'd0;
-            byte_idx   <= 3'd0;
+            bit_idx    <= 3'd0;
             byte_reg   <= 8'd0;
             first_byte <= 1'b0;
         end else if (bit_stb) begin
@@ -201,31 +195,23 @@ module usb_tx_framer (
                     if (TxValid) begin
                         byte_reg   <= DataOut;
                         state      <= ST_SYNC;
-                        // `entering_sync` above already encodes SYNC bit 0
-                        // combinationally on *this* edge (using sync_idx's
-                        // pre-edge value, 0) -- advance sync_idx to 1 here
-                        // so the next bit_stb pulse (now state == ST_SYNC)
-                        // encodes bit 1, not bit 0 a second time.
-                        sync_idx   <= 3'd1;
+                        bit_idx    <= 3'd1;
                         first_byte <= 1'b1;
                     end
                 end
 
                 ST_SYNC: begin
-                    if (sync_idx == 3'd7) begin
-                        state    <= ST_DATA;
-                        byte_idx <= 3'd0;
-                    end else begin
-                        sync_idx <= sync_idx + 3'd1;
-                    end
+                    bit_idx <= bit_idx + 3'd1;
+                    if (bit_idx == 3'd7)
+                        state <= ST_DATA;
                 end
 
                 ST_DATA: begin
                     if (stuff_consume) begin
-                        if (byte_idx == 3'd7) begin
+                        bit_idx <= bit_idx + 3'd1;
+                        if (bit_idx == 3'd7) begin
                             if (TxValid) begin
                                 byte_reg   <= DataOut;
-                                byte_idx   <= 3'd0;
                                 first_byte <= 1'b0;
                             end else begin
                                 // See HOLD's header-comment note: neither
@@ -237,11 +223,9 @@ module usb_tx_framer (
                                 // before EOP0's override takes over.
                                 state <= stuff_pending_after ? ST_FLUSH : ST_HOLD;
                             end
-                        end else begin
-                            byte_idx <= byte_idx + 3'd1;
                         end
                     end
-                    // else: this cycle inserted a stuff bit -- byte_idx and
+                    // else: this cycle inserted a stuff bit -- bit_idx and
                     // byte_reg hold, the same real bit is retried next cycle.
                 end
 
