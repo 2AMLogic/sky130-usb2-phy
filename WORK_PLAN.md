@@ -6,7 +6,7 @@ machine-generated and is overwritten wholesale on each update; nothing
 outside the markers is touched by automation.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-24T13:30:00Z (snapshot; compare against live labels)_
+_Generated: 2026-11-25T19:15:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -61,7 +61,7 @@ Issues carrying `loom:curated`.
 
 ## Proposed (Architect / Hermit)
 
-- **#460**: Scope dplus-pullup and resistor-sets test sandboxes to testbench plus the single record under test *(hermit)*
+_None._
 
 ## Epics
 
@@ -80,6 +80,6 @@ Issues carrying `loom:curated`.
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 5 |
-| Architect / Hermit proposals | 1 |
+| Architect / Hermit proposals | 0 |
 | Active epics | 2 |
 <!-- guide:plan-body:end -->
