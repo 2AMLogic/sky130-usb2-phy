@@ -30,7 +30,7 @@
           "--pdk",
           "sky130A",
           "--check",
-          "flow/utmi-top/artifacts/20261117-051541-1378c0e-tt_025C_1v80/synthesize-report.json"
+          "flow/utmi-top/artifacts/20261125-214533-ccf13c5-tt_025C_1v80/synthesize-report.json"
         ],
         "local_only": true
       }

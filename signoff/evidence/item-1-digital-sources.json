@@ -87,7 +87,7 @@
         "role": "source",
         "path": "rtl/usb_tx_framer.v",
         "passed": true,
-        "content_hash": "sha256:ee88fd2b593fa631a212d41fd00034422e7a8e99caaee96184d943475080952e"
+        "content_hash": "sha256:063ab3640a1152d88e234ccae947b3f0b4f0586c677c48a7124f708426231e6b"
       },
       {
         "check": "present",
@@ -101,14 +101,14 @@
         "role": "source",
         "path": "rtl/usb_utmi_top.v",
         "passed": true,
-        "content_hash": "sha256:da74d9a87c09317719cff4be9a2ebf315038bddab7336c25725c811bf2a290c1"
+        "content_hash": "sha256:3acbab836ff39b38cce9423a85016c1eba33e85b0c84ad443b0ee5818e5757df"
       },
       {
         "check": "present",
         "role": "derived",
         "path": "design/netlist/usb_utmi_top.v",
         "passed": true,
-        "content_hash": "sha256:2dc5804c9ef576dba0f0a9e06bb3c99595fe454d82e5eac645f6cf38a0e1b223"
+        "content_hash": "sha256:4f38c4dca945536f3b0cf6b50df19879e2de1cc0095d44a23a592902c7272275"
       },
       {
         "check": "command",
@@ -122,7 +122,7 @@
           "--pdk",
           "sky130A",
           "--check",
-          "flow/utmi-top/artifacts/20261117-051541-1378c0e-tt_025C_1v80/synthesize-report.json"
+          "flow/utmi-top/artifacts/20261125-214533-ccf13c5-tt_025C_1v80/synthesize-report.json"
         ],
         "cwd": ".",
         "exit_status": 0,
@@ -141,7 +141,7 @@
         "path": "signoff/inventory/item-1-digital-sources.json",
         "scope": "repo"
       },
-      "content_hash": "sha256:6c566049782e09c8790943eaf805151957ae9b631a019dcdfd5e2913b713a4e1"
+      "content_hash": "sha256:36367a105093ab74c5e9f048942fce87e05cac351767bea4f8e85e8ce0253a57"
     }
   }
 }
