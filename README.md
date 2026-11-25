@@ -8,10 +8,9 @@ PDK, designed by AI agents driving
 open-source flow — cocotb + Icarus and Yosys/OpenROAD on the digital side,
 xschem + ngspice on the analog side.
 
-**Status: digital UTMI-side RTL implemented and cocotb-verified; the five
-analog leaves are drawn and DRC/LVS/ERC-recorded; no cited post-layout
-evidence (the first `klt pex` leaf record is committed but deliberately
-uncited — see the scope note), and no PHY-level assembly.**
+**The digital UTMI-side RTL is implemented and cocotb-verified. All five
+analog leaves have committed layout, parasitic extraction and post-layout
+simulation records. The PHY remains unassembled.**
 The full-speed receive and transmit paths (bit sync, NRZI encode/decode,
 (de)stuffing, framing, UTMI CDC) are implemented and verified under cocotb. A
 design-anchored synthesis experiment and gate-level netlist now exist for the
@@ -20,18 +19,13 @@ limitations recorded in the characterization report; real-UTMI place-and-route
 remains pending. The FS line driver, differential and single-ended receivers,
 and trimmed D+ pull-up have schematic-level sky130 simulation evidence, and
 each of those five leaves now has committed GDS with a clean `klt drc` record,
-a matching PDK-runset LVS record and a `clean_partial` `klt erc` record — leaf-level
-only; of the graded T1 rows behind those checks, DRC and curated LVS (items 3
-and 4, analog) read `met` under the 0.9.2 grader pin while supply-ERC
-(item 11) is still `unmet`. One
-leaf (the differential receiver) has the repo's first committed post-layout
-record — a `klt pex` re-run of its sensitivity bench, deliberately uncited
-(item 7 takes a single citation and one leaf is not the partition); the other
-four leaves have no parasitic extraction or post-layout re-simulation, so
-every other circuit result in this repo is schematic-level. See the scope note below for the coverage
-limits, and [`signoff/README.md`](signoff/README.md) for the machine-graded T1
-verdict (11 of 22 rows `met` as read from `signoff/signoff-report.json` on
-2026-11-22).
+a matching PDK-runset LVS record and a `clean_partial` `klt erc` record.
+The [post-layout records](#post-layout-records) cover individual leaf benches.
+The [committed T1 report](signoff/signoff-report.json) grades 11 of 22 rows
+`met`. For the analog partition, DRC and curated LVS (items 3 and 4) are
+`met`, and supply ERC (item 11) is `unmet`. Post-layout verification (analog
+item 7) remains `unmet` with reason `no_evidence` because the manifest has
+no partition-level post-layout citation.
 
 **Built agent-native.** Every specification, decision record, testbench, and
 line of documentation in this repo is produced by AI agents working from a
@@ -97,15 +91,7 @@ pull-up, and a digital UTMI layer.
   (status: proposed, awaiting operator ratification) over the case table in
   [`docs/disabled-pad-envelope-study.md`](docs/disabled-pad-envelope-study.md).
 
-  **Layout, mismatch and integrated PHY behaviour — the partial state, not one
-  word.** *Layout:* each of the five leaves has committed GDS with a clean
-  `klt drc` record (0 violations), a matching PDK-runset LVS record and a
-  `clean_partial` `klt erc` record; the differential receiver additionally has
-  the repo's first committed `klt pex` record (deliberately uncited — item 7
-  takes a single citation and one leaf is not the partition), and the other
-  four leaves have no parasitic extraction or post-layout re-simulation (the
-  roadmap *Next* item), so every result above stays
-  schematic-level. *Mismatch:* committed Monte Carlo records exist for the
+  *Mismatch:* committed Monte Carlo records exist for the
   differential receiver, both single-ended receivers and the D+ pull-up trim,
   and `sim/driver-matching-mismatch/` has all four of its declared corners
   recorded as stored evidence (not yet cited by the manifest) — leaving spec
@@ -119,6 +105,21 @@ pull-up, and a digital UTMI layer.
 
 Full-speed (12 Mbps) is the first functional target; high-speed (480 Mbps) is
 a stretch goal, not a commitment.
+
+### Post-layout records
+
+All five analog leaves have committed `klt pex` records. The 45- and
+225-point sweeps above used schematic netlists. The benches below used
+extracted netlists at selected corners. Nominal is `tt_27c_3.30v`.
+
+| Leaf and bench record | Corners tested | Post-layout result |
+| --- | --- | --- |
+| [Differential receiver sensitivity](sim/diff-receiver-pex/records/20261115-051001-f76df63.md) | Nominal and binding `sf_100c_3.00v` | `PASS` |
+| [D+ single-ended receiver thresholds](sim/se-receiver-dp-pex/records/20261121-001320-3190eab.md) | Nominal and binding `ff_lh_100c_3.00v` | `PASS` |
+| [D− single-ended receiver thresholds](sim/se-receiver-dm-pex/records/20261121-001624-3190eab.md) | Nominal and binding `ff_lh_100c_3.00v` | `PASS` |
+| [DRC-repaired D+ pull-up](sim/dplus-pullup-pex/records/20261124-011843-274376a.md) | Nominal and binding `fs_hl_100c_3.00v` | `PASS` (52/52 measurement comparisons across both corners) |
+| [Driver static](sim/diff-driver-pex/records/20261121-013701-e0b9d95-static.md) | 3 (nominal, `fs_-40c_3.60v`, `sf_-40c_3.60v`) | `FAIL` |
+| [Driver signal quality](sim/diff-driver-pex/records/20261121-015751-e0b9d95-sq.md) | 4 (nominal, `fs_100c_3.60v`, `sf_-40c_3.60v`, `fs_100c_3.00v`) | `ERROR` |
 
 ## Why this block
 
@@ -151,10 +152,9 @@ position: spec ratified, FS receive/transmit RTL implemented and
 cocotb-verified, and the real `usb_utmi_top` has a design-anchored
 synthesis-only record and committed gate-level netlist. On the digital side,
 P&R/STA/LVS/DRC have still been run only for the toolchain-plumbing stub, not
-the real UTMI RTL. On the analog side the five ported leaves are DRC-clean,
-LVS-matching and ERC-`clean_partial`, but no leaf is parasitic-extracted and
-nothing is assembled, so the "DRC/LVS-clean" rung is reached per leaf and not
-for the PHY.**
+the real UTMI RTL. All five analog leaves are DRC-clean, LVS-matching and
+ERC-`clean_partial`, with committed [post-layout records](#post-layout-records).
+The PHY remains at the pre-assembly stage.**
 
 ## Characterization
 
