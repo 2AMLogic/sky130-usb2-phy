@@ -6,7 +6,7 @@ machine-generated and is overwritten wholesale on each update; nothing
 outside the markers is touched by automation.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-25T19:15:00Z (snapshot; compare against live labels)_
+_Generated: 2026-11-25T21:43:15Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -35,7 +35,7 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-_None._
+- **#468**: Share the TX framer bit counter and correct SYNC on successive packets
 
 ## PRs Awaiting Review
 
@@ -56,7 +56,7 @@ Issues carrying `loom:curated`.
 - **#86**: README: embed the fleet burndown chart (one line) *(curated)* *(held)*
 - **#116**: Real UTMI physical flow: add stage 2–6 driver and request templates *(curated)* *(held)*
 - **#331**: T1 item 6 (analog): cite the driver-matching and D+ pull-up klt yield reports in the manifest (6-06, 6-14) *(curated)* *(held)*
-- **#394**: Merge queue: add the merge_group trigger and adapt the PR-metadata gates *(curated)*
+- **#394**: Merge queue: add the merge_group trigger and adapt the PR-metadata gates *(curated)* *(held)*
 - **#404**: T1 item 7 (analog): klt pex report for the differential_driver leaf, then cite all five leaf reports as 7.analog *(curated)* *(held)*
 
 ## Proposed (Architect / Hermit)
@@ -76,7 +76,7 @@ _None._
 | Very important | 1 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 0 |
+| In Progress (`loom:building`) | 1 |
 | PRs awaiting review | 0 |
 | Approved PRs awaiting merge | 0 |
 | Curated | 5 |
