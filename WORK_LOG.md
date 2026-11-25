@@ -8,6 +8,11 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-25
+
+- **PR #470**: docs: link post-layout results for all five analog leaves and refresh signoff pins
+- **Issue #469** (closed): Correct the root README’s post-layout coverage and refresh its item-10 signoff pin
+
 ### 2026-11-24
 
 - **PR #466**: test: scope dplus-pullup sandboxes to testbench plus the record under test
