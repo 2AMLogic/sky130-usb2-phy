@@ -155,11 +155,11 @@
 //
 //       Why the falling edge of `TxReady` is exactly "a byte was
 //       captured": `usb_tx_framer.v` asserts `TxReady` only in `ST_IDLE`
-//       and in `ST_DATA` when `byte_idx == 7 && stuff_consume`. All of its
+//       and in `ST_DATA` when `bit_idx == 7 && stuff_consume`. All of its
 //       inputs change only on `bit_stb` edges, so `TxReady` is constant
 //       within a bit time and can only fall on a bit-time edge. Leaving
 //       `ST_IDLE` requires `TxValid` and captures a byte; leaving
-//       `byte_idx == 7 && stuff_consume` either captures the next byte
+//       `bit_idx == 7 && stuff_consume` either captures the next byte
 //       (when `TxValid` is high) or ends the packet (when it is not) --
 //       which is why the detector below is gated with `txvalid_144`, so an
 //       end-of-packet fall never fabricates an acknowledge for a byte the

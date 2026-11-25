@@ -107,7 +107,7 @@
       "members": [
         {
           "path": "verification/test_usb_tx.py",
-          "sha256": "sha256:2f23ad058e86329dafda6a14d725d4de933d0d8c60bfe5fc76d588a1a3f7318d",
+          "sha256": "sha256:750b6df1ebdb9136b8577009e7519f21c4968aecdf477abc0002667dc7e338ce",
           "role": "testbench"
         },
         {

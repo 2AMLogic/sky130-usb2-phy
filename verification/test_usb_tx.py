@@ -22,7 +22,7 @@ either side of the comparison.
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import NextTimeStep, ReadOnly, RisingEdge
+from cocotb.triggers import ClockCycles, NextTimeStep, ReadOnly, RisingEdge
 
 from usbfs import packets, scenarios
 from usbfs.bits import bits_to_bytes
@@ -140,6 +140,22 @@ async def _run_scenario(dut, scenario):
 
 
 @cocotb.test()
+async def test_successive_acks(dut):
+    """Both ACKs must match the reference from SYNC through EOP after one reset."""
+    _start_clock(dut)
+    await reset(dut)
+
+    expected = packets.build("ACK")
+    for packet_number in (1, 2):
+        if packet_number == 2:
+            await ClockCycles(dut.clk, 4 * BIT_STB_PERIOD_CYCLES)
+        send_task = cocotb.start_soon(send_bytes(dut, [0xD2]))
+        observed = await collect_line_states(dut)
+        await send_task
+        assert observed == expected, f"ACK {packet_number}: {observed} != {expected}"
+
+
+@cocotb.test()
 async def test_max_length_bulk_payload(dut):
     """Max-length FS payload (64 bytes, FS bulk max, USB 2.0 Table 5-5)
     transmits with no under-run/dropped byte: a bit-exact match across the
@@ -247,9 +263,9 @@ async def test_txready_backpressure_stretches_by_one_bit_time_on_stuff(dut):
     dense stuffing forces *two* stuff bits into some bytes, one of which
     always lands exactly on a byte's own last raw bit (`stuffing.stuff()`
     then counts it as that byte's, per its raw-8-bit-chunk convention) --
-    but the RTL's `byte_idx` counter has, by that same bit-time, already
-    advanced to the *next* byte's byte_idx == 0 (see rtl/usb_tx_framer.v's
-    `ST_DATA` case: `byte_idx <= 0` fires in the same cycle the stuffer's
+    but the RTL's `bit_idx` counter has, by that same bit-time, already
+    advanced to the *next* byte's bit_idx == 0 (see rtl/usb_tx_framer.v's
+    `ST_DATA` case: `bit_idx` wraps to zero in the same cycle the stuffer's
     `run` register reaches its stuff-triggering value of 6), so the RTL
     attributes that specific bit-time's stretch to the *following* byte
     instead. Both attributions are internally consistent and the
