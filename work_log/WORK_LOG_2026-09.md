@@ -2,6 +2,11 @@
 
 Sections moved byte-for-byte from [WORK_LOG.md](../WORK_LOG.md) by `loom-daemon work-docs archive`.
 
+### 2026-09-26
+
+- **Issue #87** (closed): Guard trigger review: loom:installed-file-write false-denies a same-command cd-then-relative-write into a scratch dir
+- **PR #88**: test: add regression test + resync pin for the #87 installed-file-write false DENY
+
 ### 2026-09-22
 
 - **Issue #81** (closed): docs: rtl/README.md cites DR-0001 'Decision 6 (bit-rate timing)' which does not exist
