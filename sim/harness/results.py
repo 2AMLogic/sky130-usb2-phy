@@ -98,6 +98,39 @@ def corner_key(c: dict):
         return None
 
 
+def scaled_measurements(samples, definitions: dict) -> dict[str, float]:
+    """Select finite (name, raw value) samples and apply the bench's unit scales."""
+    return {
+        name: float(value) * float(definitions[name].get("scale", 1.0))
+        for name, value in samples
+        if name in definitions and _finite(value)
+    }
+
+
+def rule_problems(name: str, rule: dict, meas: dict, supply_v: float) -> list[str]:
+    """Check one present, scaled measurement against its per-corner rule."""
+    v = meas[name] / supply_v if rule.get("per_supply") else meas[name]
+    problems = []
+    if "min" in rule and v < rule["min"]:
+        problems.append(f"{name}={v:g} below min {rule['min']}")
+    if "max" in rule and v > rule["max"]:
+        problems.append(f"{name}={v:g} above max {rule['max']}")
+    if "gt" in rule and not v > rule["gt"]:
+        problems.append(f"{name}={v:g} not strictly above {rule['gt']}")
+    if "lt" in rule and not v < rule["lt"]:
+        problems.append(f"{name}={v:g} not strictly below {rule['lt']}")
+    same = rule.get("same_as")
+    if same:
+        other = meas.get(same["measure"])
+        if other is None or abs(meas[name] - other) > float(same.get("tol", 0.0)):
+            problems.append(
+                f"{name}={meas[name]:g} differs from {same['measure']}="
+                f"{other if other is None else format(other, 'g')} "
+                f"by more than {same.get('tol', 0.0)}"
+            )
+    return problems
+
+
 def evaluate(report: dict, expected_points, tb: dict) -> tuple[list[dict], list[str]]:
     """Per-point results (in `expected_points` order) and a list of problems.
 
@@ -143,10 +176,10 @@ def evaluate(report: dict, expected_points, tb: dict) -> tuple[list[dict], list[
             problems.append(f"{cid}: missing from report")
             results.append({"corner_id": cid, "status": "missing", "measurements": {}})
             continue
-        meas = {}
-        for m in c.get("measurements") or []:
-            if isinstance(m, dict) and m.get("name") in tb["measure"] and _finite(m.get("value")):
-                meas[m["name"]] = float(m["value"]) * float(tb["measure"][m["name"]].get("scale", 1.0))
+        samples = (
+            (m.get("name"), m.get("value")) for m in c.get("measurements") or [] if isinstance(m, dict)
+        )
+        meas = scaled_measurements(samples, tb["measure"])
         status = "ok"
         if c.get("status") not in ("pass",):
             status = "failed"
@@ -169,34 +202,10 @@ def evaluate(report: dict, expected_points, tb: dict) -> tuple[list[dict], list[
                 status = "failed"
                 problems.append(f"{cid}: {tp}")
         for name, rule in (tb.get("checks") or {}).items():
-            v = meas.get(name)
-            if v is None:
-                continue
-            if rule.get("per_supply"):
-                v = v / k[2]
-            if "min" in rule and v < rule["min"]:
-                status = "failed"
-                problems.append(f"{cid}: {name}={v:g} below min {rule['min']}")
-            if "max" in rule and v > rule["max"]:
-                status = "failed"
-                problems.append(f"{cid}: {name}={v:g} above max {rule['max']}")
-            # Strict (exclusive) bounds: an endpoint value is not "strictly inside".
-            if "gt" in rule and not v > rule["gt"]:
-                status = "failed"
-                problems.append(f"{cid}: {name}={v:g} not strictly above {rule['gt']}")
-            if "lt" in rule and not v < rule["lt"]:
-                status = "failed"
-                problems.append(f"{cid}: {name}={v:g} not strictly below {rule['lt']}")
-            # Agreement with another measurement of the same corner (e.g. first and last
-            # threshold crossing coincide only for a single-crossing, monotonic response).
-            same = rule.get("same_as")
-            if same:
-                other = meas.get(same["measure"])
-                if other is None or abs(meas[name] - other) > float(same.get("tol", 0.0)):
+            if meas.get(name) is not None:
+                for problem in rule_problems(name, rule, meas, k[2]):
                     status = "failed"
-                    problems.append(f"{cid}: {name}={meas[name]:g} differs from {same['measure']}="
-                                    f"{other if other is None else format(other, 'g')} "
-                                    f"by more than {same.get('tol', 0.0)}")
+                    problems.append(f"{cid}: {problem}")
         results.append({"corner_id": cid, "status": status, "measurements": meas})
 
     for name, rule in (tb.get("checks") or {}).items():

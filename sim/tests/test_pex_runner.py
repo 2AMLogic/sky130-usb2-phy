@@ -37,7 +37,7 @@ import pytest
 SIM = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SIM))
 
-from harness import pex_equivalence, pex_runner, runner  # noqa: E402
+from harness import pex_equivalence, pex_runner, results, runner  # noqa: E402
 
 
 def load_entry(bench):
@@ -422,6 +422,54 @@ def test_receiver_extracted_leg_failure_is_graded_not_exit_changing(
     assert [(c["corner_id"], c["check"]) for c in failed] == \
         [(TT, "rxd_low_max_v <= 0.1*VDD")]
     assert failed[0]["bound"] == "<= 0.33 V"
+
+
+@pytest.mark.parametrize("polarity", ["dp", "dm"])
+@pytest.mark.parametrize(
+    "name,replace,failed_rows",
+    [
+        ("rxd_low_max_v", lambda v: False, ["rxd_low_max_v"]),
+        ("rxd_low_max_v", lambda v: 0.30000000000000004, ["rxd_low_max_v"]),
+        ("rxd_low_max_v", lambda v: 0.3, []),
+        ("rxd_high_min_v", lambda v: float("inf"), ["rxd_high_min_v"]),
+        ("vth_v", None, ["vth_v", "vth_last_v equals"]),
+        ("vth_last_v", lambda v: "invalid", ["vth_last_v strictly", "vth_last_v equals"]),
+        ("vth_v", lambda v: 0.8, ["vth_v", "vth_last_v equals"]),
+        ("vth_last_v", lambda v: 2.0, ["vth_last_v strictly", "vth_last_v equals"]),
+        ("vth_last_v", lambda v: v + 0.00099, []),
+        ("vth_last_v", lambda v: v + 0.00101, ["vth_last_v equals"]),
+        ("isup_ua", lambda v: 500e-6, []),
+        ("isup_ua", lambda v: 501e-6, ["isup_ua"]),
+    ],
+)
+def test_receiver_extracted_and_schematic_checks_agree(polarity, name, replace, failed_rows):
+    cfg = cfg_of(f"se-receiver-{polarity}-pex")
+    cid = FACTS[cfg.bench]["binding"][0]
+    env = envelope_from_reference(cfg)
+    corner = next(c for c in reference_of(cfg)["corners"] if c["corner_id"] == cid)
+    sample = next(m for m in corner["measurements"] if m["name"] == name)
+    delta = next(r for r in env["delta"] if (r["corner_id"], r["spec_row"]) == (cid, name))
+    if replace is None:
+        corner["measurements"].remove(sample)
+        del delta["extracted_value"]
+    else:
+        sample["value"] = delta["extracted_value"] = replace(sample["value"])
+
+    thresholds = json.loads((SIM / f"se-receiver-{polarity}-thresholds/testbench/tb.json").read_text())
+    points, problems = results.evaluate({"corners": [corner]}, [results.corner_key(corner)], thresholds)
+    grading = cfg.grade_extracted(cfg, env, json.loads(cfg.tb().read_text()))
+    schematic_pass = points[0]["status"] == "ok"
+    assert schematic_pass == (not failed_rows), problems
+    assert grading["all_pass"] == schematic_pass
+    checks = grading["corners"][cid]["checks"]
+    failed = [r["check"] for r in checks if r["verdict"] == "FAIL"]
+    assert len(failed) == len(failed_rows)
+    assert all(label.startswith(prefix) for label, prefix in zip(failed, failed_rows))
+    assert len(checks) == 8 and len(grading["corners"][TT]["checks"]) == 8
+    assert all(r["verdict"] == "pass" for r in grading["corners"][TT]["checks"])
+    raw = delta.get("extracted_value")
+    reported = next(r for r in checks if r["check"].startswith(name + " "))["value"]
+    assert reported == (None if raw == float("inf") else raw)
 
 
 def test_pullup_trim_grading_pass_or_fail_never_changes_the_exit_code(
