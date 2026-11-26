@@ -23,6 +23,7 @@ either side of the comparison.
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, NextTimeStep, ReadOnly, RisingEdge
+from cocotb.utils import get_sim_time
 
 from monitors import collect_tx_line_states
 from usbfs import packets, scenarios
@@ -130,11 +131,23 @@ async def test_successive_acks(dut):
     await reset(dut)
 
     expected = packets.build("ACK")
+    packet_cycles = len(expected) * BIT_STB_PERIOD_CYCLES
     for packet_number in (1, 2):
         if packet_number == 2:
+            # After a whole number of idle bit times, the second ACK starts
+            # on the next bit strobe, exactly one bit period from this edge.
             await ClockCycles(dut.clk, 4 * BIT_STB_PERIOD_CYCLES)
+        start_ps = get_sim_time(unit="ps")
         send_task = cocotb.start_soon(send_bytes(dut, [0xD2]))
-        observed = await collect_tx_line_states(dut, dut.clk)
+        observed = await collect_tx_line_states(
+            dut,
+            dut.clk,
+            max_assert_wait_cycles=BIT_STB_PERIOD_CYCLES,
+            max_release_wait_cycles=packet_cycles,
+        )
+        if packet_number == 2:
+            elapsed_ps = get_sim_time(unit="ps") - start_ps
+            assert elapsed_ps == (BIT_STB_PERIOD_CYCLES + packet_cycles) * CLK_PERIOD_PS
         await send_task
         assert observed == expected, f"ACK {packet_number}: {observed} != {expected}"
 
@@ -408,28 +421,36 @@ async def test_collector_diagnostic_tx_oe_never_asserts(dut):
         assert False, "capture returned although tx_oe never asserted"
 
 
-@cocotb.test()
+@cocotb.test(timeout_time=1, timeout_unit="us")
 async def test_collector_diagnostic_tx_oe_never_releases(dut):
-    """Stuck-high enable: an ACK is 19 bit times of driven line
-    (`usbfs.packets.build("ACK")`: SYNC 8 + PID 8 + EOP 3), so a release
-    bound of 3 bit times expires while the driver is still enabled -- the
-    capture must fail with the *release* diagnostic, not the assertion
-    one."""
+    """An ACK stays enabled past a five-cycle deadline inside its first bit."""
     _start_clock(dut)
     await reset(dut)
+    await send_bytes(dut, [0xD2])
+    await ReadOnly()
+    assert int(dut.tx_oe.value)
 
-    send_task = cocotb.start_soon(send_bytes(dut, [0xD2]))
+    limit = 5
+    start_ps = get_sim_time(unit="ps")
     try:
-        await collect_tx_line_states(
-            dut, dut.clk, max_release_wait_cycles=3 * BIT_STB_PERIOD_CYCLES
-        )
+        await collect_tx_line_states(dut, dut.clk, max_release_wait_cycles=limit)
     except AssertionError as err:
-        assert "never released" in str(err), (
-            f"expected the release-wait diagnostic, got: {err}"
-        )
+        assert "never released" in str(err), str(err)
+        assert get_sim_time(unit="ps") - start_ps == limit * CLK_PERIOD_PS
     else:
         assert False, "capture returned although tx_oe never released"
-    # `send_bytes` finishes as soon as the single byte is acknowledged
-    # (the start of SYNC), long before the 3-bit-time release bound, so
-    # this join cannot hang.
-    await send_task
+
+
+@cocotb.test()
+async def test_collector_rejects_nonpositive_bit_period(dut):
+    _start_clock(dut)
+    await reset(dut)
+    for period in (0, -1):
+        try:
+            await collect_tx_line_states(
+                dut, dut.clk, bit_period_cycles=period, max_assert_wait_cycles=0
+            )
+        except ValueError as err:
+            assert "bit_period_cycles" in str(err)
+        else:
+            raise AssertionError(f"collector accepted bit_period_cycles={period}")

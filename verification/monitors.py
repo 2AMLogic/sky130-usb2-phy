@@ -7,6 +7,8 @@ package: `usbfs/__init__.py` documents that cocotb-importing code is not
 imported there, and these helpers need `cocotb`.
 """
 
+from operator import index
+
 import cocotb
 from cocotb.triggers import ReadOnly, RisingEdge
 from cocotb.utils import get_sim_time
@@ -107,10 +109,10 @@ async def collect_tx_line_states(
 
     The one capture loop both TX-side suites use (issue #475): pass the
     clock of the domain the serializer runs in explicitly -- `dut.clk` in
-    `test_usb_tx.py`, `dut.clk_144` in `test_usb_utmi_top.py`. Each
-    sample lands one `RisingEdge` plus one `ReadOnly` after the previous
-    one, so it reads post-settle values exactly where the original
-    per-suite collectors did.
+    `test_usb_tx.py`, `dut.clk_144` in `test_usb_utmi_top.py`. Check
+    `tx_oe` after each rising edge settles, including the final allowed
+    edge of each wait. Sample the pads on assertion and every
+    `bit_period_cycles` driven cycles thereafter.
 
     Read-only: never writes a signal, so it is always safe to leave this
     coroutine parked in the ReadOnly phase between samples (and it
@@ -123,25 +125,30 @@ async def collect_tx_line_states(
     asserting trips the assert-wait message, `tx_oe` never releasing
     trips the release-wait message.
     """
+    bit_period_cycles = index(bit_period_cycles)
+    if bit_period_cycles <= 0:
+        raise ValueError("bit_period_cycles must be positive")
+
     waited = 0
     while not int(dut.tx_oe.value):
-        await RisingEdge(clock)
-        await ReadOnly()
-        waited += 1
         assert waited < max_assert_wait_cycles, (
             f"tx_oe never asserted within {max_assert_wait_cycles} "
             f"clock cycles"
         )
+        await RisingEdge(clock)
+        await ReadOnly()
+        waited += 1
+
     states = []
     driven = 0
     while int(dut.tx_oe.value):
-        states.append(from_dpdm(dut.tx_dp.value, dut.tx_dn.value))
-        for _ in range(bit_period_cycles):
-            await RisingEdge(clock)
-            await ReadOnly()
-            driven += 1
         assert driven < max_release_wait_cycles, (
             f"tx_oe never released within {max_release_wait_cycles} clock "
             f"cycles ({len(states)} line states sampled)"
         )
+        if driven % bit_period_cycles == 0:
+            states.append(from_dpdm(dut.tx_dp.value, dut.tx_dn.value))
+        await RisingEdge(clock)
+        await ReadOnly()
+        driven += 1
     return states

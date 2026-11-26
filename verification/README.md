@@ -271,8 +271,10 @@ issue #12's own required edge cases:
   reference model defines (worst-case-stuffed 1023-byte FS isochronous
   max, with 2x headroom), so a driver that never enables or never
   releases fails with a diagnostic naming *which* wait expired instead of
-  hanging the regression. Stuck-low and stuck-high enable, each with a
-  small limit, pin the two diagnostics.
+  hanging the regression. The successive-ACK test exercises assertion and
+  release on the final allowed edge. The stuck-high test checks that a
+  five-cycle release limit expires during the first bit. The collector
+  requires a positive integer number of clock cycles per bit.
 
 Run it with:
 
