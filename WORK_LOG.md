@@ -8,8 +8,14 @@ by the Guide triage agent. Newest entries first.
 - [2026-09](work_log/WORK_LOG_2026-09.md)
 - [2026-08](work_log/WORK_LOG_2026-08.md)
 
+### 2026-11-26
+
+- **Issue #86** (closed as not planned): README: embed the fleet burndown chart (one line)
+
 ### 2026-11-25
 
+- **PR #472**: fix: start successive USB TX packets at SYNC bit zero
+- **Issue #468** (closed): Share the TX framer bit counter and correct SYNC on successive packets
 - **PR #470**: docs: link post-layout results for all five analog leaves and refresh signoff pins
 - **Issue #469** (closed): Correct the root README’s post-layout coverage and refresh its item-10 signoff pin
 
@@ -387,9 +393,4 @@ by the Guide triage agent. Newest entries first.
 - **PR #97**: docs: stop implying cocotb must be exactly 2.0.1 in environment-setup
 - **Issue #91** (closed): Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py
 - **PR #93**: Remove 3 dead imports in flow/run_flow.py and verification/test_usb_rx.py
-
-### 2026-09-26
-
-- **Issue #87** (closed): Guard trigger review: loom:installed-file-write false-denies a same-command cd-then-relative-write into a scratch dir
-- **PR #88**: test: add regression test + resync pin for the #87 installed-file-write false DENY
 
