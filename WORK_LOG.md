@@ -10,6 +10,8 @@ by the Guide triage agent. Newest entries first.
 
 ### 2026-11-26
 
+- **PR #476**: refactor(verification): share one bounded TX line-state sampler across both TX suites
+- **Issue #475** (closed): Share the bounded TX line-state sampler across the serializer and UTMI-top tests
 - **Issue #86** (closed as not planned): README: embed the fleet burndown chart (one line)
 
 ### 2026-11-25
