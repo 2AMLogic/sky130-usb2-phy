@@ -1,13 +1,20 @@
-"""Shared cocotb background monitors for the verification suites.
+"""Shared cocotb helpers for the verification suites: background monitors
+plus the bounded TX line-state capture coroutine both TX-side suites use
+(issue #475).
 
 Deliberately a sibling of the `test_*.py` files, not part of the `usbfs`
 package: `usbfs/__init__.py` documents that cocotb-importing code is not
-imported there, and these monitors need `cocotb`.
+imported there, and these helpers need `cocotb`.
 """
+
+from operator import index
 
 import cocotb
 from cocotb.triggers import ReadOnly, RisingEdge
 from cocotb.utils import get_sim_time
+
+from usbfs.linestate import from_dpdm
+from usbfs.scenarios import FS_MAX_ISOCHRONOUS_PACKET_SIZE
 
 
 class Monitor:
@@ -56,3 +63,92 @@ class RxMonitor(Monitor):
                 self.saw_error = True
             self.active_trace.append(bool(self.dut.RxActive.value))
             self.sample_times_ns.append(get_sim_time(units="ns"))
+
+
+# ---------------------------------------------------------------------------
+# Bounded TX line-state capture (issue #475), shared by test_usb_tx.py and
+# test_usb_utmi_top.py.
+# ---------------------------------------------------------------------------
+
+# 144 MHz oversampling clock / 12 = 12 Mbps FS bit rate (decision record
+# #9, Decision 6) -- the divide `rtl/usb_tx_serializer.v` implements, and
+# hence the bit-time length in `clock` cycles of every suite that drives
+# that serializer.
+FS_BIT_PERIOD_CYCLES = 12
+
+# Worst-case length, in bit times, of the longest packet the reference
+# model defines: the 1023-byte FS isochronous maximum payload
+# (`usbfs.scenarios.FS_MAX_ISOCHRONOUS_PACKET_SIZE`, USB 2.0's largest
+# single FS transaction). PID (8) + payload (8*N) + CRC16 (16) raw field
+# bits, plus one forced stuff bit per 6 raw bits (the all-ones maximum
+# stuffing density), plus SYNC (8, never stuffed) and EOP (2x SE0 + J).
+_MAX_PACKET_RAW_BITS = 8 + 8 * FS_MAX_ISOCHRONOUS_PACKET_SIZE + 16
+_MAX_PACKET_BIT_TIMES = (
+    8 + _MAX_PACKET_RAW_BITS + _MAX_PACKET_RAW_BITS // 6 + 3
+)
+
+# Default bound for both capture waits, in clock cycles of the `clock`
+# passed to `collect_tx_line_states()`: the longest packet's worst-case
+# duration with 2x headroom, so a passing capture never trips it while a
+# driver stuck either way fails in bounded time with a readable
+# assertion instead of hanging the regression (issue #475).
+DEFAULT_CAPTURE_LIMIT_CYCLES = 2 * _MAX_PACKET_BIT_TIMES * FS_BIT_PERIOD_CYCLES
+
+
+async def collect_tx_line_states(
+    dut,
+    clock,
+    bit_period_cycles=FS_BIT_PERIOD_CYCLES,
+    max_assert_wait_cycles=DEFAULT_CAPTURE_LIMIT_CYCLES,
+    max_release_wait_cycles=DEFAULT_CAPTURE_LIMIT_CYCLES,
+):
+    """Sample `tx_dp`/`tx_dn` once per bit time, from the bit time `tx_oe`
+    first asserts (SYNC bit 0) through the bit time before it releases
+    (the EOP J bit time) -- exactly the `SYNC + body + EOP` sequence
+    `usbfs.packets.build()` returns.
+
+    The one capture loop both TX-side suites use (issue #475): pass the
+    clock of the domain the serializer runs in explicitly -- `dut.clk` in
+    `test_usb_tx.py`, `dut.clk_144` in `test_usb_utmi_top.py`. Check
+    `tx_oe` after each rising edge settles, including the final allowed
+    edge of each wait. Sample the pads on assertion and every
+    `bit_period_cycles` driven cycles thereafter.
+
+    Read-only: never writes a signal, so it is always safe to leave this
+    coroutine parked in the ReadOnly phase between samples (and it
+    returns the caller parked in one -- a caller that then needs to write
+    a signal must `NextTimeStep()` first).
+
+    Both waits are bounded in `clock` cycles (the units are in the
+    parameter names) so a broken DUT reports a diagnostic naming *which*
+    wait expired instead of hanging the simulator: `tx_oe` never
+    asserting trips the assert-wait message, `tx_oe` never releasing
+    trips the release-wait message.
+    """
+    bit_period_cycles = index(bit_period_cycles)
+    if bit_period_cycles <= 0:
+        raise ValueError("bit_period_cycles must be positive")
+
+    waited = 0
+    while not int(dut.tx_oe.value):
+        assert waited < max_assert_wait_cycles, (
+            f"tx_oe never asserted within {max_assert_wait_cycles} "
+            f"clock cycles"
+        )
+        await RisingEdge(clock)
+        await ReadOnly()
+        waited += 1
+
+    states = []
+    driven = 0
+    while int(dut.tx_oe.value):
+        assert driven < max_release_wait_cycles, (
+            f"tx_oe never released within {max_release_wait_cycles} clock "
+            f"cycles ({len(states)} line states sampled)"
+        )
+        if driven % bit_period_cycles == 0:
+            states.append(from_dpdm(dut.tx_dp.value, dut.tx_dn.value))
+        await RisingEdge(clock)
+        await ReadOnly()
+        driven += 1
+    return states

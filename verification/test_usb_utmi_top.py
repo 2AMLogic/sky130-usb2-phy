@@ -74,9 +74,8 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, NextTimeStep, ReadOnly, RisingEdge, Timer
 
-from monitors import Monitor, RxMonitor
+from monitors import Monitor, RxMonitor, collect_tx_line_states
 from usbfs import packets, scenarios
-from usbfs.linestate import from_dpdm
 from usbfs.transceiver import IdealTransceiver
 
 # 144 MHz / 30 MHz, in whole picoseconds: neither period is an integer
@@ -89,9 +88,10 @@ CLK_UTMI_PERIOD_PS = round(1_000_000_000_000 / 30_000_000)
 # the same divide `rtl/usb_tx_serializer.v` implements.
 BIT_STB_PERIOD_CYCLES = 12
 
-# Generous per-loop caps so a broken DUT fails with a readable assertion
-# instead of hanging the simulator until `klt`'s own timeout.
-MAX_WAIT_144_CYCLES = 4_000_000
+# Generous cap so a `TxReady` that never acknowledges fails with a
+# readable assertion instead of hanging the simulator until `klt`'s own
+# timeout. The TX line-state capture's bounds are the shared
+# `monitors.collect_tx_line_states()` defaults (issue #475).
 MAX_WAIT_UTMI_CYCLES = 1_000_000
 
 _clock_tasks = {}
@@ -147,15 +147,6 @@ async def _start_test(dut):
     await _reset_dut(dut)
 
 
-async def _tick144(dut):
-    """Advance one `clk_144` edge and settle. Leaves the caller parked in
-    the ReadOnly phase, so a coroutine that calls this must do its writes
-    *before* the call (or step to a writable phase with `NextTimeStep()`
-    afterwards) -- same convention as `test_usb_tx.py`."""
-    await RisingEdge(dut.clk_144)
-    await ReadOnly()
-
-
 # ---------------------------------------------------------------------------
 # UTMI-side link-controller model, pad-side monitors, loopback wire.
 # ---------------------------------------------------------------------------
@@ -194,26 +185,6 @@ async def _utmi_send_bytes(dut, data_bytes, bytes_per_ack=1, ack_times=None):
             f"TxReady never acknowledged byte {idx} within "
             f"{MAX_WAIT_UTMI_CYCLES} clk_utmi cycles"
         )
-
-
-async def _collect_tx_line_states(dut):
-    """Sample `tx_dp`/`tx_dn` once per bit time, from the bit time `tx_oe`
-    first asserts (SYNC bit 0) through the bit time before it releases (the
-    EOP J bit time) -- exactly the `SYNC + body + EOP` sequence
-    `usbfs.packets.build()` returns. Read-only, so it is safe to leave this
-    coroutine parked in `_tick144()`'s ReadOnly phase."""
-    waited = 0
-    while not int(dut.tx_oe.value):
-        await _tick144(dut)
-        waited += 1
-        assert waited < MAX_WAIT_144_CYCLES, "tx_oe never asserted"
-    states = []
-    while int(dut.tx_oe.value):
-        states.append(from_dpdm(dut.tx_dp.value, dut.tx_dn.value))
-        for _ in range(BIT_STB_PERIOD_CYCLES):
-            await _tick144(dut)
-        assert len(states) < MAX_WAIT_144_CYCLES, "tx_oe never released"
-    return states
 
 
 class DriverMonitor(Monitor):
@@ -280,7 +251,7 @@ async def _run_loopback(dut, scenario, settle_utmi_cycles=60):
     try:
         data_bytes = scenarios.byte_stream_for_scenario(scenario)
         send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes))
-        observed = await _collect_tx_line_states(dut)
+        observed = await collect_tx_line_states(dut, dut.clk_144)
         await send
         await ClockCycles(dut.clk_utmi, settle_utmi_cycles)
     finally:
@@ -352,7 +323,7 @@ def _make_tx_only_test(name, builder):
         scenario = builder()
         data_bytes = scenarios.byte_stream_for_scenario(scenario)
         send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes))
-        observed = await _collect_tx_line_states(dut)
+        observed = await collect_tx_line_states(dut, dut.clk_144)
         await send
         assert observed == scenario.states, (
             f"{name}: TX line states differ from usbfs.scenarios"
@@ -432,12 +403,12 @@ async def test_opmode_bypass_at_top_ports(dut):
 
     payload_bytes = [0xFF, 0xFF, 0xFF]
     send = cocotb.start_soon(_utmi_send_bytes(dut, payload_bytes))
-    observed = await _collect_tx_line_states(dut)
+    observed = await collect_tx_line_states(dut, dut.clk_144)
     await send
 
     assert observed == packets.raw_mode_expected(bytes(payload_bytes))
 
-    # `_collect_tx_line_states()` leaves this coroutine parked in the
+    # `collect_tx_line_states()` leaves this coroutine parked in the
     # ReadOnly phase; step to a writable one before restoring `OpMode`.
     await NextTimeStep()
     dut.OpMode.value = 0b00
@@ -521,7 +492,7 @@ async def test_suspendm_disables_the_line_drivers(dut):
     await ClockCycles(dut.clk_utmi, 4)
     await _start_test(dut)
     send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes))
-    observed = await _collect_tx_line_states(dut)
+    observed = await collect_tx_line_states(dut, dut.clk_144)
     await send
     assert observed == scenario.states, "driving did not resume once suspend lifted"
 
@@ -620,7 +591,7 @@ async def test_txready_is_exactly_one_utmi_cycle_per_byte(dut):
 
     ack_times = []
     send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes, ack_times=ack_times))
-    observed = await _collect_tx_line_states(dut)
+    observed = await collect_tx_line_states(dut, dut.clk_144)
     await send
 
     assert observed == scenario.states, "packet was not transmitted correctly"
@@ -672,7 +643,7 @@ async def test_negative_control_over_advancing_link_corrupts_packet(dut):
     rx.start()
     try:
         send = cocotb.start_soon(_utmi_send_bytes(dut, data_bytes, bytes_per_ack=3))
-        observed = await _collect_tx_line_states(dut)
+        observed = await collect_tx_line_states(dut, dut.clk_144)
         await send
         await ClockCycles(dut.clk_utmi, 60)
     finally:

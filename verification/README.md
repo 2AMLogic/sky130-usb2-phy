@@ -263,6 +263,18 @@ issue #12's own required edge cases:
   mutation `test_usbfs_model.py` uses) is demonstrated to disagree with the
   RTL's correct output, proving the suite's bit-exact comparison can
   actually fail, not just always pass.
+- Bounded TX line-state capture (issue #475): the once-per-bit-time
+  capture loop both TX-side suites use lives in `verification/monitors.py`
+  (`collect_tx_line_states`, taking the serializer's clock explicitly).
+  Both waits — for `tx_oe` to assert and for it to release — are bounded
+  in clock cycles, with defaults sized from the longest packet the
+  reference model defines (worst-case-stuffed 1023-byte FS isochronous
+  max, with 2x headroom), so a driver that never enables or never
+  releases fails with a diagnostic naming *which* wait expired instead of
+  hanging the regression. The successive-ACK test exercises assertion and
+  release on the final allowed edge. The stuck-high test checks that a
+  five-cycle release limit expires during the first bit. The collector
+  requires a positive integer number of clock cycles per bit.
 
 Run it with:
 

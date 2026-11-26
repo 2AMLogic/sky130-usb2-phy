@@ -1062,6 +1062,13 @@ def test_committed_synthesis_record_anchors_a_design_claim_and_hashes_every_rtl_
         assert src.relative_to(REPO_ROOT).as_posix() in hashed
 
 
+def test_committed_synthesis_record_pins_shared_tx_sampler():
+    inputs = read_meta(synth_record(FLOW_DIR))["provenance"]["inputs"]
+    sampler = "verification/monitors.py"
+    sampler_hash = check_records.sha256_file(REPO_ROOT / sampler)
+    assert {"path": sampler, "content_hash": sampler_hash} in inputs
+
+
 def test_synthesis_only_record_missing_a_field_fails(synth_sandbox: Path):
     findings = mutate_synth(
         synth_sandbox, lambda m: m["stages"]["synthesize"].pop("flip_flop_count")
