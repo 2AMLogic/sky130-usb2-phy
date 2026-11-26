@@ -406,6 +406,7 @@ def main(argv: list[str] | None = None) -> int:
             FV_TEMPLATE,
             RTL_FV_REQUEST,
             REPO_ROOT / "verification" / "test_usb_utmi_top.py",
+            REPO_ROOT / "verification" / "monitors.py",
             FLOW_DIR / "corners.json",
         )
     ]
