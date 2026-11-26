@@ -107,7 +107,7 @@
       "members": [
         {
           "path": "verification/test_usb_tx.py",
-          "sha256": "sha256:750b6df1ebdb9136b8577009e7519f21c4968aecdf477abc0002667dc7e338ce",
+          "sha256": "sha256:abe6618d4876f7d606dcaad2b11ba5030888f4835344817679eefba3bf80a155",
           "role": "testbench"
         },
         {
@@ -126,7 +126,7 @@
       "members": [
         {
           "path": "verification/test_usb_utmi_top.py",
-          "sha256": "sha256:0a6f7de96839e5ba854c8fe600839efb41edabcee177f8daeac88609040b2cee",
+          "sha256": "sha256:26a85caa4060ce0429c0a409d044f9cbbbc23fea15bfd362c0854a5661bca637",
           "role": "testbench"
         },
         {
