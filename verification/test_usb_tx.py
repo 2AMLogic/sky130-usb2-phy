@@ -24,9 +24,9 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles, NextTimeStep, ReadOnly, RisingEdge
 
+from monitors import collect_tx_line_states
 from usbfs import packets, scenarios
 from usbfs.bits import bits_to_bytes
-from usbfs.linestate import from_dpdm
 
 BIT_STB_PERIOD_CYCLES = 12  # 144 MHz / 12 = 12 MHz FS bit rate (issue scope item 6)
 
@@ -63,8 +63,9 @@ async def _tick(dut):
     *subsequent reads* see this edge's post-update combinational values.
     Signal writes must happen *before* calling this, never after (cocotb
     forbids writes during the ReadOnly phase this leaves the coroutine
-    parked in) -- see `send_bytes`/`collect_line_states` for the two
-    write-then-tick / tick-then-read usages this splits cleanly between.
+    parked in) -- see `send_bytes` / `monitors.collect_tx_line_states`
+    for the two write-then-tick / tick-then-read usages this splits
+    cleanly between.
     """
     await RisingEdge(dut.clk)
     await ReadOnly()
@@ -106,30 +107,13 @@ async def send_bytes(dut, data_bytes, capture_times=None):
     dut.TxValid.value = 0
 
 
-async def collect_line_states(dut):
-    """Sample `tx_dp`/`tx_dn` once per bit-time, from the bit-time `tx_oe`
-    first asserts (SYNC bit 0) through the bit-time before it releases
-    (the EOP J bit-time) -- exactly the `SYNC + body + EOP` sequence
-    `usbfs.packets.build()` returns. Read-only: never writes a signal, so
-    it is always safe to leave this coroutine parked in `_tick()`'s
-    ReadOnly phase between samples."""
-    while not int(dut.tx_oe.value):
-        await _tick(dut)
-    states = []
-    while int(dut.tx_oe.value):
-        states.append(from_dpdm(dut.tx_dp.value, dut.tx_dn.value))
-        for _ in range(BIT_STB_PERIOD_CYCLES):
-            await _tick(dut)
-    return states
-
-
 async def _run_scenario(dut, scenario):
     _start_clock(dut)
     await reset(dut)
 
     data_bytes = scenarios.byte_stream_for_scenario(scenario)
     send_task = cocotb.start_soon(send_bytes(dut, data_bytes))
-    observed = await collect_line_states(dut)
+    observed = await collect_tx_line_states(dut, dut.clk)
     await send_task
     return observed
 
@@ -150,7 +134,7 @@ async def test_successive_acks(dut):
         if packet_number == 2:
             await ClockCycles(dut.clk, 4 * BIT_STB_PERIOD_CYCLES)
         send_task = cocotb.start_soon(send_bytes(dut, [0xD2]))
-        observed = await collect_line_states(dut)
+        observed = await collect_tx_line_states(dut, dut.clk)
         await send_task
         assert observed == expected, f"ACK {packet_number}: {observed} != {expected}"
 
@@ -310,7 +294,7 @@ async def test_txready_backpressure_stretches_by_one_bit_time_on_stuff(dut):
     send_task = cocotb.start_soon(
         send_bytes(dut, data_bytes, capture_times=capture_times)
     )
-    await collect_line_states(dut)
+    await collect_tx_line_states(dut, dut.clk)
     await send_task
 
     assert len(capture_times) == n_bytes
@@ -357,7 +341,7 @@ async def test_bit_stuffing_nrzi_bypass_mode(dut):
 
     payload_bytes = bytes([0xFF, 0xFF, 0xFF])
     send_task = cocotb.start_soon(send_bytes(dut, payload_bytes))
-    observed = await collect_line_states(dut)
+    observed = await collect_tx_line_states(dut, dut.clk)
     await send_task
 
     assert observed == packets.raw_mode_expected(payload_bytes)
@@ -390,3 +374,62 @@ async def test_negative_control_missing_stuff_bit_would_be_caught(dut):
         scenario.fields["pid"], payload=scenario.payload
     )
     assert observed != mutated, "negative control did not fail as expected"
+
+
+# ---------------------------------------------------------------------------
+# Bounded-capture diagnostics (issue #475): the TX line-state capture this
+# suite shares with `test_usb_utmi_top.py` (monitors.collect_tx_line_states)
+# bounds *both* of its waits, so a driver that never enables -- the
+# regression this suite's original unbounded collector could hang on -- or
+# never releases fails with a readable assertion naming which wait expired,
+# instead of stalling the regression until the simulator timeout. Small
+# limits keep each diagnostic test a few bit times long.
+# ---------------------------------------------------------------------------
+
+
+@cocotb.test()
+async def test_collector_diagnostic_tx_oe_never_asserts(dut):
+    """Stuck-low enable: with no `TxValid` stimulus the driver never
+    enables, and a small `max_assert_wait_cycles` (2 bit times) must fail
+    the capture with the *assertion* diagnostic -- not the release one,
+    and not an unbounded wait."""
+    _start_clock(dut)
+    await reset(dut)
+
+    try:
+        await collect_tx_line_states(
+            dut, dut.clk, max_assert_wait_cycles=2 * BIT_STB_PERIOD_CYCLES
+        )
+    except AssertionError as err:
+        assert "never asserted" in str(err), (
+            f"expected the assertion-wait diagnostic, got: {err}"
+        )
+    else:
+        assert False, "capture returned although tx_oe never asserted"
+
+
+@cocotb.test()
+async def test_collector_diagnostic_tx_oe_never_releases(dut):
+    """Stuck-high enable: an ACK is 19 bit times of driven line
+    (`usbfs.packets.build("ACK")`: SYNC 8 + PID 8 + EOP 3), so a release
+    bound of 3 bit times expires while the driver is still enabled -- the
+    capture must fail with the *release* diagnostic, not the assertion
+    one."""
+    _start_clock(dut)
+    await reset(dut)
+
+    send_task = cocotb.start_soon(send_bytes(dut, [0xD2]))
+    try:
+        await collect_tx_line_states(
+            dut, dut.clk, max_release_wait_cycles=3 * BIT_STB_PERIOD_CYCLES
+        )
+    except AssertionError as err:
+        assert "never released" in str(err), (
+            f"expected the release-wait diagnostic, got: {err}"
+        )
+    else:
+        assert False, "capture returned although tx_oe never released"
+    # `send_bytes` finishes as soon as the single byte is acknowledged
+    # (the start of SYNC), long before the 3-bit-time release bound, so
+    # this join cannot hang.
+    await send_task
