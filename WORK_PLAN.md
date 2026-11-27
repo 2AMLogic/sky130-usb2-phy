@@ -6,7 +6,7 @@ machine-generated and is overwritten wholesale on each update; nothing
 outside the markers is touched by automation.
 
 <!-- guide:plan-body:start -->
-_Generated: 2026-11-26T02:32:07Z (snapshot; compare against live labels)_
+_Generated: 2026-11-27T18:40:00Z (snapshot; compare against live labels)_
 ## Operator Attention: Merge-Risk-Hold Pileup
 
 Judge-approved PRs under a hold (`loom:blocked` or `loom:operator`) — only a human merge decision is missing.
@@ -35,20 +35,19 @@ _None._
 
 Issues currently being built (`loom:building`).
 
-- **#473**: Share the receiver grading rules so PEX rejects invalid voltages on D+ and D−
-- **#475**: Share the bounded TX line-state sampler across the serializer and UTMI-top tests
+_None._
 
 ## PRs Awaiting Review
 
 PRs waiting on Judge (`loom:review-requested`).
 
-- **#476**: refactor(verification): share one bounded TX line-state sampler across both TX suites
+_None._
 
 ## Approved (Awaiting Merge)
 
 PRs that passed review and are queued for Champion auto-merge (`loom:pr`).
 
-- **#474**: fix(sim): grade extracted receivers with schematic bench rules
+_None._
 
 ## Proposed
 
@@ -76,9 +75,9 @@ _None._
 | Very important | 1 |
 | Important | 1 |
 | Ready (`loom:issue`) | 0 |
-| In Progress (`loom:building`) | 2 |
-| PRs awaiting review | 1 |
-| Approved PRs awaiting merge | 1 |
+| In Progress (`loom:building`) | 0 |
+| PRs awaiting review | 0 |
+| Approved PRs awaiting merge | 0 |
 | Curated | 4 |
 | Architect / Hermit proposals | 0 |
 | Active epics | 2 |
