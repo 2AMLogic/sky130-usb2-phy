@@ -28,7 +28,10 @@ per corner, from the delta rows.
 
 from __future__ import annotations
 
-from . import pex_equivalence
+import json
+import math
+
+from . import pex_equivalence, results
 from .pex_runner import Bench
 
 
@@ -36,44 +39,82 @@ def supply_v(unit: dict) -> float:
     return float(next(iter(unit["supply_v"].values())))
 
 
+def _corner_checks(cid: str, vdd: float, raw: dict, thresholds: dict) -> list[dict]:
+    """Render the receiver report in raw units, grading in the threshold bench's units."""
+    rules = thresholds["checks"]
+    meas = results.scaled_measurements(raw.items(), thresholds["measure"])
+    rows = []
+
+    def check(name, rule, label, value, bound):
+        passed = name in meas and not results.rule_problems(name, rule, meas, vdd)
+        if isinstance(value, float) and not math.isfinite(value):
+            value = None  # JSON has no representation for infinity or NaN.
+        rows.append(
+            {
+                "corner_id": cid,
+                "check": label,
+                "value": value,
+                "verdict": "pass" if passed else "FAIL",
+                "bound": bound,
+            }
+        )
+
+    for name in ("vth_v", "vth_last_v"):
+        rule = rules[name].copy()
+        same = rule.pop("same_as", None)
+        lo, hi = rule["gt"], rule["lt"]
+        check(
+            name,
+            rule,
+            f"{name} strictly inside ({lo}, {hi}) V",
+            raw.get(name),
+            f"{lo} V < x < {hi} V (exclusive)",
+        )
+        if same:
+            other, tol = same["measure"], same.get("tol", 0.0)
+            gap = abs(raw[name] - raw[other]) if name in meas and other in meas else None
+            check(
+                name,
+                {"same_as": same},
+                f"{name} equals {other} within {tol * 1000:g} mV",
+                gap,
+                f"|{name} - {other}| <= {tol:g} V",
+            )
+
+    for name in ("rxd_low_max_v", "rxd_at_vil_v", "rxd_high_min_v", "rxd_at_vih_v"):
+        rule = rules[name]
+        op, limit = ("<=", rule["max"]) if "max" in rule else (">=", rule["min"])
+        check(name, rule, f"{name} {op} {limit:g}*VDD", raw.get(name), f"{op} {limit * vdd:g} V")
+
+    name = "isup_ua"
+    rule = rules[name]
+    lo, hi = rule["min"], rule["max"]
+    scale = thresholds["measure"][name].get("scale", 1.0)
+    check(
+        name,
+        rule,
+        f"{name} in [{lo:g}, {hi:g}] uA (raw A)",
+        raw.get(name),
+        f"[{lo / scale:g}, {hi / scale:g}] A",
+    )
+    return rows
+
+
 def grade_extracted(cfg: Bench, envelope: dict, tb: dict) -> dict:
     """The bench's own checks, evaluated on the extracted leg per corner (the
     supply-relative criteria klt pex cannot declare in one request)."""
     extracted = {(r.get("corner_id"), r.get("spec_row")): r.get("extracted_value")
                  for r in envelope.get("delta") or []}
-
-    def check(cid, name, value, ok, bound):
-        return {"corner_id": cid, "check": name, "value": value,
-                "verdict": "pass" if (value is not None and ok(value)) else "FAIL",
-                "bound": bound}
+    # The reference belongs to <threshold bench>/corners/<run>/report.json.
+    thresholds = json.loads((cfg.reference_report.parents[2] / "testbench/tb.json").read_text())
 
     corners = {}
     all_pass = True
     for unit in tb["corners"]["units"]:
         cid = pex_equivalence.unit_corner_id(unit)
         vdd = supply_v(unit)
-        rows = []
-
-        def v(name):
-            return extracted.get((cid, name))
-
-        for name in ("vth_v", "vth_last_v"):
-            rows.append(check(cid, f"{name} strictly inside (0.8, 2.0) V", v(name),
-                              lambda x: 0.8 < x < 2.0, "0.8 V < x < 2.0 V (exclusive)"))
-        rows.append(check(cid, "vth_last_v equals vth_v within one 1 mV step",
-                          None if v("vth_v") is None or v("vth_last_v") is None
-                          else abs(v("vth_last_v") - v("vth_v")),
-                          lambda x: x <= 0.001, "|vth_last_v - vth_v| <= 0.001 V"))
-        rows.append(check(cid, "rxd_low_max_v <= 0.1*VDD", v("rxd_low_max_v"),
-                          lambda x: x <= 0.1 * vdd, f"<= {0.1 * vdd:g} V"))
-        rows.append(check(cid, "rxd_at_vil_v <= 0.1*VDD", v("rxd_at_vil_v"),
-                          lambda x: x <= 0.1 * vdd, f"<= {0.1 * vdd:g} V"))
-        rows.append(check(cid, "rxd_high_min_v >= 0.9*VDD", v("rxd_high_min_v"),
-                          lambda x: x >= 0.9 * vdd, f">= {0.9 * vdd:g} V"))
-        rows.append(check(cid, "rxd_at_vih_v >= 0.9*VDD", v("rxd_at_vih_v"),
-                          lambda x: x >= 0.9 * vdd, f">= {0.9 * vdd:g} V"))
-        rows.append(check(cid, "isup_ua in [1, 500] uA (raw A)", v("isup_ua"),
-                          lambda x: 1e-06 <= x <= 5e-04, "[1e-06, 5e-04] A"))
+        raw = {m["name"]: extracted.get((cid, m["name"])) for m in tb["measurements"]}
+        rows = _corner_checks(cid, vdd, raw, thresholds)
         corners[cid] = {"supply_v": vdd, "checks": rows}
         all_pass = all_pass and all(r["verdict"] == "pass" for r in rows)
     return {"leaf": cfg.leaf, "leg": "extracted", "all_pass": all_pass, "corners": corners}
